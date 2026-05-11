@@ -205,15 +205,46 @@ export default function TaxCalculatorPage() {
   const [showWalletForm, setShowWalletForm] = useState(false);
   const [importingId, setImportingId] = useState<string | null>(null);
   const [importMsg, setImportMsg] = useState<Record<string, string>>({});
+  const [connecting, setConnecting] = useState(false);
+  const [hasMetaMask, setHasMetaMask] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("pb_tax_wallets");
     if (saved) { try { setWallets(JSON.parse(saved)); } catch {} }
+    // Detect MetaMask / browser wallet
+    if (typeof window !== "undefined" && (window as { ethereum?: unknown }).ethereum) {
+      setHasMetaMask(true);
+    }
   }, []);
 
   function saveWallets(next: Wallet[]) {
     setWallets(next);
     localStorage.setItem("pb_tax_wallets", JSON.stringify(next));
+  }
+
+  async function connectBrowserWallet() {
+    const eth = (window as { ethereum?: { request: (args: { method: string }) => Promise<string[]> } }).ethereum;
+    if (!eth) { alert("No browser wallet detected. Install MetaMask first."); return; }
+    setConnecting(true);
+    try {
+      const accounts: string[] = await eth.request({ method: "eth_requestAccounts" });
+      if (!accounts.length) return;
+      const addr = accounts[0].toLowerCase();
+      // Add the address once for each chain, deduplicating already-added ones
+      const existingAddrs = new Set(wallets.map((w) => w.address));
+      const toAdd: Wallet[] = [];
+      for (const net of NETWORKS) {
+        const key = `${addr}-${net.code}`;
+        if (!existingAddrs.has(addr) || !wallets.find((w) => w.address === addr && w.network === net.code)) {
+          toAdd.push({ id: uid(), address: addr, network: net.code, label: net.label });
+        }
+      }
+      if (toAdd.length) saveWallets([...wallets, ...toAdd]);
+    } catch (e) {
+      console.error("Wallet connect error", e);
+    } finally {
+      setConnecting(false);
+    }
   }
 
   function addWallet() {
@@ -230,6 +261,33 @@ export default function TaxCalculatorPage() {
 
   function removeWallet(id: string) {
     saveWallets(wallets.filter((w) => w.id !== id));
+  }
+
+  async function importAllChains(address: string) {
+    const newMsg: Record<string, string> = {};
+    let totalFresh = 0;
+    for (const net of NETWORKS) {
+      const w = wallets.find((x) => x.address === address && x.network === net.code);
+      if (!w) continue;
+      setImportingId(w.id);
+      try {
+        const res = await fetch(`/api/wallet-import?address=${address}&network=${net.code}`);
+        const data = await res.json();
+        if (!data.error) {
+          const incoming = data.trades as Trade[];
+          setTrades((prev) => {
+            const existingIds = new Set(prev.map((t) => t.id));
+            const fresh = incoming.filter((t) => !existingIds.has(t.id));
+            totalFresh += fresh.length;
+            return [...prev, ...fresh];
+          });
+        }
+      } catch {}
+    }
+    setImportingId(null);
+    const allIds = wallets.filter((w) => w.address === address).map((w) => w.id);
+    allIds.forEach((id) => { newMsg[id] = `Imported ${totalFresh} trades across all chains`; });
+    setImportMsg((m) => ({ ...m, ...newMsg }));
   }
 
   async function importWallet(w: Wallet) {
@@ -343,12 +401,24 @@ export default function TaxCalculatorPage() {
         <div className="mb-10">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold">Wallets</h2>
-            <button
-              onClick={() => setShowWalletForm((v) => !v)}
-              className="text-sm bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.12] px-4 py-2 rounded-lg transition-colors"
-            >
-              + Add wallet
-            </button>
+            <div className="flex gap-2">
+              {hasMetaMask && (
+                <button
+                  onClick={connectBrowserWallet}
+                  disabled={connecting}
+                  className="text-sm bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                >
+                  <span>🦊</span>
+                  {connecting ? "Connecting…" : "Connect Wallet"}
+                </button>
+              )}
+              <button
+                onClick={() => setShowWalletForm((v) => !v)}
+                className="text-sm bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.12] px-4 py-2 rounded-lg transition-colors"
+              >
+                + Add wallet
+              </button>
+            </div>
           </div>
 
           {showWalletForm && (
@@ -419,13 +489,20 @@ export default function TaxCalculatorPage() {
                       </p>
                     )}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap">
                     <button
-                      onClick={() => importWallet(w)}
-                      disabled={importingId === w.id}
+                      onClick={() => importAllChains(w.address)}
+                      disabled={!!importingId}
                       className="text-sm bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold px-4 py-2 rounded-lg transition-colors"
                     >
-                      {importingId === w.id ? "Importing…" : "Import trades"}
+                      {importingId ? "Importing…" : "All chains"}
+                    </button>
+                    <button
+                      onClick={() => importWallet(w)}
+                      disabled={!!importingId}
+                      className="text-sm bg-white/[0.06] hover:bg-white/[0.1] disabled:opacity-50 border border-white/[0.12] px-4 py-2 rounded-lg transition-colors text-sm"
+                    >
+                      {importingId === w.id ? "Importing…" : "This chain"}
                     </button>
                     <button
                       onClick={() => removeWallet(w.id)}
