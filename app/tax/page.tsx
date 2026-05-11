@@ -202,61 +202,146 @@ export default function TaxCalculatorPage() {
   // Wallet state
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [walletForm, setWalletForm] = useState<Omit<Wallet, "id">>(BLANK_WALLET);
-  const [showWalletForm, setShowWalletForm] = useState(false);
   const [importingId, setImportingId] = useState<string | null>(null);
   const [importMsg, setImportMsg] = useState<Record<string, string>>({});
   const [connecting, setConnecting] = useState(false);
-  const [hasMetaMask, setHasMetaMask] = useState(false);
+  const [installed, setInstalled] = useState<Record<string, boolean>>({
+    metamask: false, rabby: false, phantom: false,
+    coinbase: false, rainbow: false, trust: false,
+    ledger: false, walletconnect: false,
+  });
+  const [showPhantomPicker, setShowPhantomPicker] = useState(false);
+  const [ledgerConnecting, setLedgerConnecting] = useState(false);
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("pb_tax_wallets");
     if (saved) { try { setWallets(JSON.parse(saved)); } catch {} }
-    // Detect MetaMask / browser wallet
-    if (typeof window !== "undefined" && (window as { ethereum?: unknown }).ethereum) {
-      setHasMetaMask(true);
-    }
-  }, []);
+    detectWallets();
+    const t1 = setTimeout(detectWallets, 500);
+    const t2 = setTimeout(detectWallets, 1500);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!showPhantomPicker) return;
+    const close = (e: MouseEvent) => {
+      if (!(e.target as Element).closest("[data-phantom-picker]")) setShowPhantomPicker(false);
+    };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [showPhantomPicker]);
+
+  function detectWallets() {
+    if (typeof window === "undefined") return;
+    const win = window as unknown as Record<string, unknown>;
+    const eth = win.ethereum as Record<string, unknown> | undefined;
+    const hasUsb = typeof navigator !== "undefined" && !!(navigator as unknown as Record<string, unknown>).usb;
+    setInstalled({
+      metamask:     !!(eth?.isMetaMask && !eth?.isRabby),
+      rabby:        !!(eth?.isRabby),
+      phantom:      !!(win.phantom || (win.solana as Record<string, unknown>)?.isPhantom),
+      coinbase:     !!(eth?.isCoinbaseWallet || win.coinbaseWalletExtension),
+      rainbow:      !!(eth?.isRainbow),
+      trust:        !!(eth?.isTrust || eth?.isTrustWallet || win.trustwallet),
+      ledger:       hasUsb,
+      walletconnect: false,
+    });
+  }
 
   function saveWallets(next: Wallet[]) {
     setWallets(next);
     localStorage.setItem("pb_tax_wallets", JSON.stringify(next));
   }
 
-  async function connectBrowserWallet() {
-    const eth = (window as { ethereum?: { request: (args: { method: string }) => Promise<string[]> } }).ethereum;
-    if (!eth) { alert("No browser wallet detected. Install MetaMask first."); return; }
+  function getEVMProvider(flag: string): { request: (a: { method: string }) => Promise<string[]> } | null {
+    if (typeof window === "undefined") return null;
+    const eth = (window as unknown as Record<string, Record<string, unknown>>).ethereum;
+    if (!eth) return null;
+    if (eth[flag]) return eth as unknown as { request: (a: { method: string }) => Promise<string[]> };
+    if (Array.isArray(eth.providers)) {
+      const match = (eth.providers as Record<string, unknown>[]).find(p => p[flag]);
+      return match ? match as unknown as { request: (a: { method: string }) => Promise<string[]> } : null;
+    }
+    return null;
+  }
+
+  async function connectEVM(provider: { request: (a: { method: string }) => Promise<string[]> }, wLabel: string) {
     setConnecting(true);
     try {
-      const accounts: string[] = await eth.request({ method: "eth_requestAccounts" });
-      if (!accounts.length) return;
+      const accounts = await provider.request({ method: "eth_requestAccounts" });
+      if (!accounts?.length) return;
       const addr = accounts[0].toLowerCase();
-      // Add the address once for each chain, deduplicating already-added ones
-      const existingAddrs = new Set(wallets.map((w) => w.address));
       const toAdd: Wallet[] = [];
       for (const net of NETWORKS) {
-        const key = `${addr}-${net.code}`;
-        if (!existingAddrs.has(addr) || !wallets.find((w) => w.address === addr && w.network === net.code)) {
-          toAdd.push({ id: uid(), address: addr, network: net.code, label: net.label });
+        if (!wallets.find((w) => w.address === addr && w.network === net.code)) {
+          toAdd.push({ id: uid(), address: addr, network: net.code, label: wLabel });
         }
       }
       if (toAdd.length) saveWallets([...wallets, ...toAdd]);
-    } catch (e) {
-      console.error("Wallet connect error", e);
+    } catch (e: unknown) {
+      const err = e as { code?: number; message?: string };
+      if (err.code !== 4001) alert("Connection error: " + (err.message || String(e)));
     } finally {
       setConnecting(false);
     }
   }
 
+  async function connectMetaMask() {
+    const p = getEVMProvider("isMetaMask");
+    if (!p || (p as unknown as Record<string, unknown>).isRabby) { window.open("https://metamask.io/download/", "_blank"); return; }
+    await connectEVM(p, "MetaMask");
+  }
+  async function connectRabby() {
+    const p = getEVMProvider("isRabby");
+    if (!p) { window.open("https://rabby.io/", "_blank"); return; }
+    await connectEVM(p, "Rabby");
+  }
+  async function connectCoinbase() {
+    const p = getEVMProvider("isCoinbaseWallet");
+    if (!p) { window.open("https://www.coinbase.com/wallet", "_blank"); return; }
+    await connectEVM(p, "Coinbase Wallet");
+  }
+  async function connectRainbow() {
+    const p = getEVMProvider("isRainbow");
+    if (!p) { window.open("https://rainbow.me/", "_blank"); return; }
+    await connectEVM(p, "Rainbow");
+  }
+  async function connectTrust() {
+    const p = getEVMProvider("isTrust") || getEVMProvider("isTrustWallet");
+    if (!p) { window.open("https://trustwallet.com/browser-extension", "_blank"); return; }
+    await connectEVM(p, "Trust Wallet");
+  }
+  async function connectPhantomEVM() {
+    setShowPhantomPicker(false);
+    const win = window as unknown as Record<string, Record<string, unknown>>;
+    const p = win.phantom?.ethereum as unknown as { request: (a: { method: string }) => Promise<string[]> } | undefined;
+    if (!p) { alert("Enable EVM in Phantom settings, then refresh."); return; }
+    await connectEVM(p, "Phantom (EVM)");
+  }
+  async function connectPhantomSolana() {
+    setShowPhantomPicker(false);
+    alert("Solana trade import coming soon. Add your Solana address manually if needed.");
+  }
+  async function connectLedger() {
+    const hasUsb = typeof navigator !== "undefined" && !!(navigator as unknown as Record<string, unknown>).usb;
+    if (!hasUsb) {
+      window.open("https://www.ledger.com/", "_blank"); return;
+    }
+    setLedgerConnecting(true);
+    alert("Ledger WebUSB: add your EVM address manually for now. (Full USB support coming soon)");
+    setLedgerConnecting(false);
+  }
+
   function addWallet() {
     const addr = walletForm.address.trim().toLowerCase();
-    if (!/^0x[0-9a-f]{40}$/.test(addr)) {
-      alert("Enter a valid EVM address (0x...)");
-      return;
+    if (!/^0x[0-9a-f]{40}$/.test(addr)) { alert("Enter a valid EVM address (0x...)"); return; }
+    if (wallets.find((w) => w.address === addr && w.network === walletForm.network)) {
+      alert("This address + network is already added."); return;
     }
     const w: Wallet = { ...walletForm, address: addr, id: uid() };
     saveWallets([...wallets, w]);
     setWalletForm(BLANK_WALLET);
-    setShowWalletForm(false);
   }
 
   function removeWallet(id: string) {
@@ -348,6 +433,17 @@ export default function TaxCalculatorPage() {
     if (confirm("Clear all trades?")) setTrades([]);
   }
 
+  const WALLET_CARDS = [
+    { id: "metamask",     icon: "🦊", name: "MetaMask",        desc: "Browser Extension", action: connectMetaMask,  install: "https://metamask.io/download/",            soon: false },
+    { id: "rabby",        icon: "🐰", name: "Rabby",           desc: "Browser Extension", action: connectRabby,     install: "https://rabby.io/",                        soon: false },
+    { id: "phantom",      icon: "👻", name: "Phantom",         desc: "EVM + Solana",      action: () => { detectWallets(); setTimeout(() => setShowPhantomPicker(v => !v), 100); }, install: "https://phantom.app/", soon: false },
+    { id: "coinbase",     icon: "🔵", name: "Coinbase Wallet", desc: "Browser Extension", action: connectCoinbase,  install: "https://www.coinbase.com/wallet",          soon: false },
+    { id: "rainbow",      icon: "🌈", name: "Rainbow",         desc: "Browser Extension", action: connectRainbow,   install: "https://rainbow.me/",                      soon: false },
+    { id: "trust",        icon: "🛡️", name: "Trust Wallet",    desc: "Browser Extension", action: connectTrust,     install: "https://trustwallet.com/browser-extension", soon: false },
+    { id: "ledger",       icon: ledgerConnecting ? "⏳" : "🔒", name: "Ledger", desc: ledgerConnecting ? "Connecting…" : "Hardware · WebUSB", action: connectLedger, install: "https://www.ledger.com/", soon: false },
+    { id: "walletconnect",icon: "📡", name: "WalletConnect",   desc: "Mobile & Desktop",  action: null,             install: null,                                        soon: true  },
+  ];
+
   const tradeTypeLabel: Record<TradeType, string> = { buy: "Buy", sell: "Sell", yield: "Yield / Staking", fee: "Fee" };
   const tradeTypeColor: Record<TradeType, string> = { buy: "text-blue-400", sell: "text-green-400", yield: "text-yellow-400", fee: "text-red-400" };
 
@@ -399,77 +495,140 @@ export default function TaxCalculatorPage() {
 
         {/* Wallets */}
         <div className="mb-10">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold">Wallets</h2>
-            <div className="flex gap-2">
-              <button
-                onClick={connectBrowserWallet}
-                disabled={connecting}
-                className="text-sm bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
-              >
-                <span>🦊</span>
-                {connecting ? "Connecting…" : "Connect Wallet"}
-              </button>
-              <button
-                onClick={() => setShowWalletForm((v) => !v)}
-                className="text-sm bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.12] px-4 py-2 rounded-lg transition-colors"
-              >
-                + Add wallet
-              </button>
+
+          {/* ── CONNECT A WALLET card ─────────────────────────────────────── */}
+          <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6 mb-4">
+            <p className="text-xs font-bold tracking-widest uppercase text-white/60 mb-1">Connect a Wallet</p>
+            <p className="text-xs text-white/30 mb-5">
+              ✓ green badge = detected in your browser &nbsp;·&nbsp; grey = not installed (click for install link)
+            </p>
+
+            {/* 4×2 wallet grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-2">
+              {WALLET_CARDS.map((wc) => {
+                const isInstalled = installed[wc.id];
+                const isHovered   = hoveredCard === wc.id;
+                const isPhantomOpen = wc.id === "phantom" && showPhantomPicker;
+
+                if (wc.soon) return (
+                  <div key={wc.id} title="Coming soon"
+                    style={{ position: "relative" }}
+                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-white/[0.06] bg-white/[0.02] text-center opacity-40 cursor-not-allowed min-h-[110px]">
+                    <span className="text-3xl">{wc.icon}</span>
+                    <span className="text-sm font-semibold text-white/80">{wc.name}</span>
+                    <span className="text-[10px] text-white/30">{wc.desc}</span>
+                    <span className="absolute top-2 right-2 text-[9px] font-bold text-blue-400 bg-blue-400/10 border border-blue-400/20 px-1.5 py-0.5 rounded">SOON</span>
+                  </div>
+                );
+
+                return (
+                  <div key={wc.id} style={{ position: "relative" }} data-phantom-picker={wc.id === "phantom" ? "true" : undefined}>
+                    <button
+                      onClick={() => wc.action?.()}
+                      disabled={connecting}
+                      onMouseEnter={() => setHoveredCard(wc.id)}
+                      onMouseLeave={() => setHoveredCard(null)}
+                      className={`w-full flex flex-col items-center justify-center gap-2 p-4 rounded-xl border text-center transition-all min-h-[110px] ${
+                        isPhantomOpen
+                          ? "border-purple-500 bg-purple-500/10"
+                          : isHovered
+                            ? isInstalled ? "border-blue-400/60 bg-white/[0.06]" : "border-white/20 bg-white/[0.04]"
+                            : isInstalled ? "border-white/[0.14] bg-white/[0.03]" : "border-white/[0.06] bg-white/[0.01]"
+                      } ${isInstalled ? "opacity-100" : "opacity-50"}`}
+                      style={{ position: "relative" }}
+                    >
+                      <span className="text-3xl">{wc.icon}</span>
+                      <span className="text-sm font-semibold text-white/80">{wc.name}</span>
+                      <span className="text-[10px] text-white/35">{isInstalled ? wc.desc : "Install →"}</span>
+                      {isInstalled && (
+                        <span className="absolute top-2 right-2 w-4 h-4 rounded-full bg-green-500/20 border border-green-500/40 flex items-center justify-center text-[9px] text-green-400 font-bold">✓</span>
+                      )}
+                    </button>
+
+                    {/* Phantom sub-picker */}
+                    {isPhantomOpen && (
+                      <div className="absolute top-[calc(100%+6px)] left-0 right-0 z-50 bg-[#1e1124] border border-purple-500/60 rounded-xl p-2 flex flex-col gap-1.5">
+                        <button onClick={connectPhantomEVM}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-900/40 hover:bg-purple-900/60 text-sm font-semibold text-white/80 transition-colors text-left">
+                          <span>⟠</span> EVM (Ethereum)
+                        </button>
+                        <button onClick={connectPhantomSolana}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-900/40 hover:bg-purple-900/60 text-sm font-semibold text-white/80 transition-colors text-left">
+                          <span>◎</span> Solana
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
+
+            {/* Divider */}
+            <div className="flex items-center gap-3 my-6">
+              <div className="flex-1 h-px bg-white/[0.06]" />
+              <span className="text-xs text-white/25 whitespace-nowrap">or add address manually</span>
+              <div className="flex-1 h-px bg-white/[0.06]" />
+            </div>
+
+            {/* Manual form */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className="text-xs text-white/40 block mb-1.5">Wallet Address *</label>
+                <input
+                  type="text"
+                  placeholder="0x… or Solana address"
+                  value={walletForm.address}
+                  onChange={(e) => setWalletForm({ ...walletForm, address: e.target.value })}
+                  className="w-full bg-white/[0.06] border border-white/[0.12] rounded-lg px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-blue-400/50"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-white/40 block mb-1.5">Label (optional)</label>
+                <input
+                  type="text"
+                  placeholder="My DeFi Wallet"
+                  value={walletForm.label}
+                  onChange={(e) => setWalletForm({ ...walletForm, label: e.target.value })}
+                  className="w-full bg-white/[0.06] border border-white/[0.12] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-400/50"
+                />
+              </div>
+            </div>
+
+            {/* Network pills */}
+            <div className="mb-5">
+              <label className="text-xs text-white/40 block mb-2">Network</label>
+              <div className="flex flex-wrap gap-2">
+                {NETWORKS.map((n) => (
+                  <button
+                    key={n.code}
+                    type="button"
+                    onClick={() => setWalletForm({ ...walletForm, network: n.code })}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all border ${
+                      walletForm.network === n.code
+                        ? "bg-blue-600/20 border-blue-500/60 text-blue-400"
+                        : "border-white/[0.1] text-white/40 hover:border-white/25 hover:text-white/60"
+                    }`}
+                  >
+                    {n.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={addWallet}
+              className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-2.5 rounded-lg text-sm transition-colors"
+            >
+              ➕ Add Wallet
+            </button>
           </div>
 
-          {showWalletForm && (
-            <div className="bg-white/[0.03] border border-blue-400/20 rounded-2xl p-5 mb-4">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="sm:col-span-1">
-                  <label className="text-xs text-white/40 block mb-1">Network</label>
-                  <select
-                    value={walletForm.network}
-                    onChange={(e) => setWalletForm({ ...walletForm, network: e.target.value as Network })}
-                    className="w-full bg-white/[0.06] border border-white/[0.12] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400/50"
-                  >
-                    {NETWORKS.map((n) => <option key={n.code} value={n.code}>{n.label}</option>)}
-                  </select>
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="text-xs text-white/40 block mb-1">Wallet address (0x…)</label>
-                  <input
-                    type="text"
-                    placeholder="0xabc123…"
-                    value={walletForm.address}
-                    onChange={(e) => setWalletForm({ ...walletForm, address: e.target.value })}
-                    className="w-full bg-white/[0.06] border border-white/[0.12] rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-blue-400/50"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-white/40 block mb-1">Label (optional)</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. DeFi wallet"
-                    value={walletForm.label}
-                    onChange={(e) => setWalletForm({ ...walletForm, label: e.target.value })}
-                    className="w-full bg-white/[0.06] border border-white/[0.12] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400/50"
-                  />
-                </div>
-              </div>
-              <div className="flex gap-3 mt-4">
-                <button onClick={addWallet} className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-5 py-2 rounded-lg text-sm transition-colors">
-                  Add wallet
-                </button>
-                <button onClick={() => setShowWalletForm(false)} className="border border-white/20 hover:border-white/40 px-5 py-2 rounded-lg text-sm transition-colors">
-                  Cancel
-                </button>
-              </div>
-              <p className="text-xs text-white/25 mt-3">
-                Auto-import reads on-chain token transfers and fetches historical prices via DeFiLlama. Requires ETHERSCAN_API_KEY in Vercel env vars.
-              </p>
-            </div>
-          )}
-
+          {/* ── Connected wallet list ──────────────────────────────────────── */}
           {wallets.length === 0 ? (
-            <div className="bg-white/[0.02] border border-white/[0.07] rounded-2xl px-5 py-6 text-center text-white/30 text-sm">
-              No wallets added. Add a wallet address to auto-import trades from chain.
+            <div className="bg-white/[0.02] border border-white/[0.07] rounded-2xl px-5 py-14 text-center">
+              <div className="text-4xl mb-3">📭</div>
+              <p className="font-semibold text-white/50 mb-1">No wallets connected yet</p>
+              <p className="text-sm text-white/25">Connect a wallet above or paste an address manually.</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -498,7 +657,7 @@ export default function TaxCalculatorPage() {
                     <button
                       onClick={() => importWallet(w)}
                       disabled={!!importingId}
-                      className="text-sm bg-white/[0.06] hover:bg-white/[0.1] disabled:opacity-50 border border-white/[0.12] px-4 py-2 rounded-lg transition-colors text-sm"
+                      className="text-sm bg-white/[0.06] hover:bg-white/[0.1] disabled:opacity-50 border border-white/[0.12] px-4 py-2 rounded-lg transition-colors"
                     >
                       {importingId === w.id ? "Importing…" : "This chain"}
                     </button>
