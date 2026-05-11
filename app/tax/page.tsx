@@ -1,12 +1,21 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type TradeType = "buy" | "sell" | "yield" | "fee";
+
+type Network = "ethereum" | "base" | "arbitrum" | "polygon";
+
+interface Wallet {
+  id: string;
+  address: string;
+  network: Network;
+  label: string;
+}
 
 interface Trade {
   id: string;
@@ -174,12 +183,76 @@ function exportCSV(gains: MatchedGain[], yieldTotal: number, country: Country) {
 
 const BLANK_TRADE: Omit<Trade, "id"> = { date: "", type: "buy", asset: "", quantity: 0, priceUsd: 0, notes: "" };
 
+const NETWORKS: { code: Network; label: string }[] = [
+  { code: "ethereum", label: "Ethereum" },
+  { code: "base",     label: "Base"     },
+  { code: "arbitrum", label: "Arbitrum" },
+  { code: "polygon",  label: "Polygon"  },
+];
+
+const BLANK_WALLET: Omit<Wallet, "id"> = { address: "", network: "ethereum", label: "" };
+
 export default function TaxCalculatorPage() {
   const [trades, setTrades] = useState<Trade[]>(EXAMPLE_TRADES);
   const [countryCode, setCountryCode] = useState<CountryCode>("AU");
   const [form, setForm] = useState<Omit<Trade, "id">>(BLANK_TRADE);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
+
+  // Wallet state
+  const [wallets, setWallets] = useState<Wallet[]>([]);
+  const [walletForm, setWalletForm] = useState<Omit<Wallet, "id">>(BLANK_WALLET);
+  const [showWalletForm, setShowWalletForm] = useState(false);
+  const [importingId, setImportingId] = useState<string | null>(null);
+  const [importMsg, setImportMsg] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const saved = localStorage.getItem("pb_tax_wallets");
+    if (saved) { try { setWallets(JSON.parse(saved)); } catch {} }
+  }, []);
+
+  function saveWallets(next: Wallet[]) {
+    setWallets(next);
+    localStorage.setItem("pb_tax_wallets", JSON.stringify(next));
+  }
+
+  function addWallet() {
+    const addr = walletForm.address.trim().toLowerCase();
+    if (!/^0x[0-9a-f]{40}$/.test(addr)) {
+      alert("Enter a valid EVM address (0x...)");
+      return;
+    }
+    const w: Wallet = { ...walletForm, address: addr, id: uid() };
+    saveWallets([...wallets, w]);
+    setWalletForm(BLANK_WALLET);
+    setShowWalletForm(false);
+  }
+
+  function removeWallet(id: string) {
+    saveWallets(wallets.filter((w) => w.id !== id));
+  }
+
+  async function importWallet(w: Wallet) {
+    setImportingId(w.id);
+    setImportMsg((m) => ({ ...m, [w.id]: "Fetching transactions…" }));
+    try {
+      const res = await fetch(`/api/wallet-import?address=${w.address}&network=${w.network}`);
+      const data = await res.json();
+      if (data.error) {
+        setImportMsg((m) => ({ ...m, [w.id]: `Error: ${data.error}` }));
+      } else {
+        const incoming = data.trades as Trade[];
+        const existingIds = new Set(trades.map((t) => t.id));
+        const fresh = incoming.filter((t) => !existingIds.has(t.id));
+        setTrades((prev) => [...prev, ...fresh]);
+        setImportMsg((m) => ({ ...m, [w.id]: `Imported ${fresh.length} trades (${incoming.length - fresh.length} already present)` }));
+      }
+    } catch (e) {
+      setImportMsg((m) => ({ ...m, [w.id]: `Failed: ${String(e)}` }));
+    } finally {
+      setImportingId(null);
+    }
+  }
 
   const country = getCountry(countryCode);
 
@@ -264,6 +337,107 @@ export default function TaxCalculatorPage() {
           <span className="text-xs text-white/30 bg-white/[0.03] border border-white/[0.07] px-3 py-1.5 rounded-full">
             {country.note}
           </span>
+        </div>
+
+        {/* Wallets */}
+        <div className="mb-10">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold">Wallets</h2>
+            <button
+              onClick={() => setShowWalletForm((v) => !v)}
+              className="text-sm bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.12] px-4 py-2 rounded-lg transition-colors"
+            >
+              + Add wallet
+            </button>
+          </div>
+
+          {showWalletForm && (
+            <div className="bg-white/[0.03] border border-blue-400/20 rounded-2xl p-5 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="sm:col-span-1">
+                  <label className="text-xs text-white/40 block mb-1">Network</label>
+                  <select
+                    value={walletForm.network}
+                    onChange={(e) => setWalletForm({ ...walletForm, network: e.target.value as Network })}
+                    className="w-full bg-white/[0.06] border border-white/[0.12] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400/50"
+                  >
+                    {NETWORKS.map((n) => <option key={n.code} value={n.code}>{n.label}</option>)}
+                  </select>
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="text-xs text-white/40 block mb-1">Wallet address (0x…)</label>
+                  <input
+                    type="text"
+                    placeholder="0xabc123…"
+                    value={walletForm.address}
+                    onChange={(e) => setWalletForm({ ...walletForm, address: e.target.value })}
+                    className="w-full bg-white/[0.06] border border-white/[0.12] rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-blue-400/50"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-white/40 block mb-1">Label (optional)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. DeFi wallet"
+                    value={walletForm.label}
+                    onChange={(e) => setWalletForm({ ...walletForm, label: e.target.value })}
+                    className="w-full bg-white/[0.06] border border-white/[0.12] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400/50"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-3 mt-4">
+                <button onClick={addWallet} className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-5 py-2 rounded-lg text-sm transition-colors">
+                  Add wallet
+                </button>
+                <button onClick={() => setShowWalletForm(false)} className="border border-white/20 hover:border-white/40 px-5 py-2 rounded-lg text-sm transition-colors">
+                  Cancel
+                </button>
+              </div>
+              <p className="text-xs text-white/25 mt-3">
+                Auto-import reads on-chain token transfers and fetches historical prices via DeFiLlama. Requires ETHERSCAN_API_KEY in Vercel env vars.
+              </p>
+            </div>
+          )}
+
+          {wallets.length === 0 ? (
+            <div className="bg-white/[0.02] border border-white/[0.07] rounded-2xl px-5 py-6 text-center text-white/30 text-sm">
+              No wallets added. Add a wallet address to auto-import trades from chain.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {wallets.map((w) => (
+                <div key={w.id} className="bg-white/[0.02] border border-white/[0.07] hover:border-white/[0.12] rounded-2xl px-5 py-4 flex flex-wrap items-center justify-between gap-3 transition-colors">
+                  <div>
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="text-xs font-bold text-white/40 uppercase tracking-widest">{w.network}</span>
+                      {w.label && <span className="text-xs text-white/60">{w.label}</span>}
+                    </div>
+                    <span className="font-mono text-sm text-white/70">{w.address.slice(0, 10)}…{w.address.slice(-8)}</span>
+                    {importMsg[w.id] && (
+                      <p className={`text-xs mt-1 ${importMsg[w.id].startsWith("Error") || importMsg[w.id].startsWith("Failed") ? "text-red-400" : "text-blue-400"}`}>
+                        {importMsg[w.id]}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => importWallet(w)}
+                      disabled={importingId === w.id}
+                      className="text-sm bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold px-4 py-2 rounded-lg transition-colors"
+                    >
+                      {importingId === w.id ? "Importing…" : "Import trades"}
+                    </button>
+                    <button
+                      onClick={() => removeWallet(w.id)}
+                      className="text-sm border border-red-500/30 text-red-400 hover:border-red-500/60 px-3 py-2 rounded-lg transition-colors"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Summary cards */}
