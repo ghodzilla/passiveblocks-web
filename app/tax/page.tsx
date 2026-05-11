@@ -402,16 +402,14 @@ export default function TaxCalculatorPage() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold">Wallets</h2>
             <div className="flex gap-2">
-              {hasMetaMask && (
-                <button
-                  onClick={connectBrowserWallet}
-                  disabled={connecting}
-                  className="text-sm bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
-                >
-                  <span>🦊</span>
-                  {connecting ? "Connecting…" : "Connect Wallet"}
-                </button>
-              )}
+              <button
+                onClick={connectBrowserWallet}
+                disabled={connecting}
+                className="text-sm bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+              >
+                <span>🦊</span>
+                {connecting ? "Connecting…" : "Connect Wallet"}
+              </button>
               <button
                 onClick={() => setShowWalletForm((v) => !v)}
                 className="text-sm bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.12] px-4 py-2 rounded-lg transition-colors"
