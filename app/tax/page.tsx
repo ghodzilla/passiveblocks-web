@@ -143,13 +143,7 @@ function uid(): string {
   return Math.random().toString(36).slice(2);
 }
 
-const EXAMPLE_TRADES: Trade[] = [
-  { id: uid(), date: "2025-02-10", type: "buy",   asset: "ETH",  quantity: 2,    priceUsd: 2800, notes: "" },
-  { id: uid(), date: "2025-03-15", type: "buy",   asset: "SOL",  quantity: 20,   priceUsd: 145,  notes: "" },
-  { id: uid(), date: "2025-06-01", type: "sell",  asset: "ETH",  quantity: 1,    priceUsd: 3400, notes: "" },
-  { id: uid(), date: "2025-09-20", type: "yield", asset: "USDC", quantity: 380,  priceUsd: 1,    notes: "Aave lending income" },
-  { id: uid(), date: "2026-03-10", type: "sell",  asset: "SOL",  quantity: 10,   priceUsd: 195,  notes: "" },
-];
+const EXAMPLE_TRADES: Trade[] = [];
 
 // ─── CSV export ───────────────────────────────────────────────────────────────
 
@@ -819,7 +813,8 @@ export default function TaxCalculatorPage() {
           {trades.length === 0 ? (
             <div className="text-center py-16 text-white/30">
               <div className="text-4xl mb-3">📋</div>
-              <p>No trades yet. Add your first trade above.</p>
+              <p className="mb-1">No trades yet.</p>
+              <p className="text-xs text-white/20">Connect a wallet and click <strong className="text-white/30">Scan All Chains</strong> to auto-import, or add trades manually above.</p>
             </div>
           ) : (
             <table className="w-full text-sm">
