@@ -51,7 +51,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#08080f] text-white">
       {/* Top banner */}
-      <div className="bg-emerald-500 text-black text-center text-sm font-semibold py-2 px-4">
+      <div className="bg-amber-500 text-black text-center text-sm font-semibold py-2 px-4">
         New issue every Monday — free forever. Premium signals from $19/mo.
       </div>
 
@@ -68,7 +68,7 @@ export default function Home() {
           />
           <a
             href="#subscribe"
-            className="text-sm bg-emerald-500 hover:bg-emerald-400 text-black font-bold px-4 py-2 rounded-lg transition-colors"
+            className="text-sm bg-amber-500 hover:bg-amber-400 text-black font-bold px-4 py-2 rounded-lg transition-colors"
           >
             Subscribe free →
           </a>
@@ -78,12 +78,12 @@ export default function Home() {
       {/* Hero */}
       <section className="px-6 pt-20 pb-16 text-center">
         <div className="max-w-3xl mx-auto">
-          <div className="inline-block text-xs font-bold tracking-widest uppercase text-emerald-400 border border-emerald-400/30 rounded-full px-3 py-1 mb-8">
+          <div className="inline-block text-xs font-bold tracking-widest uppercase text-amber-400 border border-amber-400/30 rounded-full px-3 py-1 mb-8">
             DeFi Yield Intelligence
           </div>
           <h1 className="text-4xl sm:text-6xl font-extrabold leading-tight text-balance mb-6">
             Build Wealth,{" "}
-            <span className="text-emerald-400">Block by Block.</span>
+            <span className="text-amber-400">Block by Block.</span>
           </h1>
           <p className="text-lg sm:text-xl text-white/55 max-w-2xl mx-auto mb-8 text-balance leading-relaxed">
             Weekly DeFi yield analysis — protocols, rates, and risk — written by
@@ -108,7 +108,7 @@ export default function Home() {
             { value: "$19/mo", label: "Premium signals" },
           ].map((s) => (
             <div key={s.label}>
-              <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400">
+              <div className="text-2xl sm:text-3xl font-extrabold text-amber-400">
                 {s.value}
               </div>
               <div className="text-xs sm:text-sm text-white/40 mt-1">{s.label}</div>
@@ -146,7 +146,7 @@ export default function Home() {
             ].map((item) => (
               <div
                 key={item.title}
-                className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6 hover:border-emerald-400/20 transition-colors"
+                className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6 hover:border-amber-400/20 transition-colors"
               >
                 <div className="text-3xl mb-4">{item.icon}</div>
                 <h3 className="font-bold mb-2">{item.title}</h3>
@@ -182,7 +182,7 @@ export default function Home() {
                   "Market commentary",
                 ].map((f) => (
                   <li key={f} className="flex items-center gap-2 text-white/70">
-                    <span className="text-emerald-400 font-bold">✓</span> {f}
+                    <span className="text-amber-400 font-bold">✓</span> {f}
                   </li>
                 ))}
               </ul>
@@ -193,11 +193,11 @@ export default function Home() {
                 Subscribe free
               </a>
             </div>
-            <div className="bg-emerald-950/40 border border-emerald-400/30 rounded-2xl p-6 relative">
-              <div className="absolute -top-3 right-5 bg-emerald-400 text-black text-xs font-extrabold px-3 py-1 rounded-full">
+            <div className="bg-amber-950/40 border border-amber-400/30 rounded-2xl p-6 relative">
+              <div className="absolute -top-3 right-5 bg-amber-400 text-black text-xs font-extrabold px-3 py-1 rounded-full">
                 PREMIUM
               </div>
-              <div className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">
+              <div className="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">
                 Premium
               </div>
               <div className="text-3xl font-extrabold mb-6">
@@ -212,13 +212,13 @@ export default function Home() {
                   "Priority reader Q&A",
                 ].map((f) => (
                   <li key={f} className="flex items-center gap-2 text-white/80">
-                    <span className="text-emerald-400 font-bold">✓</span> {f}
+                    <span className="text-amber-400 font-bold">✓</span> {f}
                   </li>
                 ))}
               </ul>
               <a
                 href="#subscribe"
-                className="block mt-8 text-center bg-emerald-500 hover:bg-emerald-400 text-black rounded-xl py-3 text-sm font-extrabold transition-colors"
+                className="block mt-8 text-center bg-amber-500 hover:bg-amber-400 text-black rounded-xl py-3 text-sm font-extrabold transition-colors"
               >
                 Start with free →
               </a>
@@ -278,7 +278,7 @@ export default function Home() {
       {/* Bottom CTA */}
       <section
         id="subscribe"
-        className="px-6 py-20 border-t border-white/5 text-center bg-emerald-950/20"
+        className="px-6 py-20 border-t border-white/5 text-center bg-amber-950/20"
       >
         <div className="max-w-2xl mx-auto">
           <div className="text-4xl mb-4">📬</div>

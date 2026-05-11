@@ -30,7 +30,7 @@ export default function SubscribeForm() {
   if (status === "success") {
     return (
       <div className="text-center py-4">
-        <div className="text-emerald-400 font-semibold text-lg mb-1">You&apos;re in.</div>
+        <div className="text-amber-400 font-semibold text-lg mb-1">You&apos;re in.</div>
         <div className="text-white/50 text-sm">Check your inbox for a confirmation email.</div>
       </div>
     );
@@ -44,12 +44,12 @@ export default function SubscribeForm() {
         placeholder="your@email.com"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="flex-1 bg-white/[0.06] border border-white/[0.12] rounded-lg px-4 py-3 text-sm placeholder:text-white/30 focus:outline-none focus:border-emerald-400/50 transition-colors"
+        className="flex-1 bg-white/[0.06] border border-white/[0.12] rounded-lg px-4 py-3 text-sm placeholder:text-white/30 focus:outline-none focus:border-amber-400/50 transition-colors"
       />
       <button
         type="submit"
         disabled={status === "loading"}
-        className="bg-emerald-500 hover:bg-emerald-400 disabled:opacity-60 text-black font-semibold px-6 py-3 rounded-lg text-sm transition-colors whitespace-nowrap"
+        className="bg-amber-500 hover:bg-amber-400 disabled:opacity-60 text-black font-semibold px-6 py-3 rounded-lg text-sm transition-colors whitespace-nowrap"
       >
         {status === "loading" ? "Subscribing…" : "Get free access"}
       </button>
