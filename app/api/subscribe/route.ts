@@ -1,5 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 
+async function notifyTelegram(email: string) {
+  const token = process.env.TG_TOKEN;
+  const chat = process.env.TG_CHAT || "6571132280";
+  if (!token) return;
+  await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: chat,
+      text: `📬 New PassiveBlocks subscriber: ${email}`,
+    }),
+  }).catch(() => {});
+}
+
 export async function POST(req: NextRequest) {
   const { email } = await req.json();
   if (!email || typeof email !== "string" || !email.includes("@")) {
@@ -10,8 +24,8 @@ export async function POST(req: NextRequest) {
   const pubId = process.env.BEEHIIV_PUBLICATION_ID;
 
   if (!apiKey || !pubId) {
-    // Log locally for now until Beehiiv is configured
     console.log(`[subscribe] ${new Date().toISOString()} — ${email}`);
+    await notifyTelegram(email);
     return NextResponse.json({ ok: true });
   }
 
@@ -33,5 +47,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Subscription failed" }, { status: 500 });
   }
 
+  await notifyTelegram(email);
   return NextResponse.json({ ok: true });
 }

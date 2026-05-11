@@ -15,7 +15,7 @@ export default function AboutPage() {
           <Link href="/">
             <Image src="/passiveblocks_logo_cropped.png" alt="PassiveBlocks" width={172} height={40} className="h-10 w-auto" priority />
           </Link>
-          <Link href="/#subscribe" className="text-sm bg-blue-600 hover:bg-blue-500 text-black font-bold px-4 py-2 rounded-lg transition-colors">
+          <Link href="/#subscribe" className="text-sm bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2 rounded-lg transition-colors">
             Subscribe free →
           </Link>
         </div>
@@ -63,7 +63,7 @@ export default function AboutPage() {
 
         <div className="mt-12 p-6 bg-blue-950/30 border border-blue-400/20 rounded-2xl text-center">
           <p className="text-sm text-white/60 mb-3">Join the newsletter — free.</p>
-          <Link href="/#subscribe" className="inline-block bg-blue-600 hover:bg-blue-500 text-black font-bold px-6 py-3 rounded-lg text-sm transition-colors">
+          <Link href="/#subscribe" className="inline-block bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-lg text-sm transition-colors">
             Subscribe to PassiveBlocks →
           </Link>
         </div>

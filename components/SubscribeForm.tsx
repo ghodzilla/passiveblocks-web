@@ -49,7 +49,7 @@ export default function SubscribeForm() {
       <button
         type="submit"
         disabled={status === "loading"}
-        className="bg-blue-600 hover:bg-blue-500 disabled:opacity-60 text-black font-semibold px-6 py-3 rounded-lg text-sm transition-colors whitespace-nowrap"
+        className="bg-blue-600 hover:bg-blue-500 disabled:opacity-60 text-white font-semibold px-6 py-3 rounded-lg text-sm transition-colors whitespace-nowrap"
       >
         {status === "loading" ? "Subscribing…" : "Get free access"}
       </button>

@@ -53,7 +53,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#08080f] text-white">
       {/* Top banner */}
-      <div className="bg-blue-600 text-black text-center text-sm font-semibold py-2 px-4">
+      <div className="bg-blue-600 text-white text-center text-sm font-semibold py-2 px-4">
         New issue every Monday — free forever. Premium signals from $19/mo.
       </div>
 
@@ -76,7 +76,7 @@ export default function Home() {
           </div>
           <Link
             href="#subscribe"
-            className="text-sm bg-blue-600 hover:bg-blue-500 text-black font-bold px-4 py-2 rounded-lg transition-colors"
+            className="text-sm bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2 rounded-lg transition-colors"
           >
             Subscribe free →
           </Link>
@@ -202,7 +202,7 @@ export default function Home() {
               </a>
             </div>
             <div className="bg-blue-950/40 border border-blue-400/30 rounded-2xl p-6 relative">
-              <div className="absolute -top-3 right-5 bg-blue-500 text-black text-xs font-extrabold px-3 py-1 rounded-full">
+              <div className="absolute -top-3 right-5 bg-blue-500 text-white text-xs font-extrabold px-3 py-1 rounded-full">
                 PREMIUM
               </div>
               <div className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-1">
@@ -226,7 +226,7 @@ export default function Home() {
               </ul>
               <a
                 href="#subscribe"
-                className="block mt-8 text-center bg-blue-600 hover:bg-blue-500 text-black rounded-xl py-3 text-sm font-extrabold transition-colors"
+                className="block mt-8 text-center bg-blue-600 hover:bg-blue-500 text-white rounded-xl py-3 text-sm font-extrabold transition-colors"
               >
                 Start with free →
               </a>

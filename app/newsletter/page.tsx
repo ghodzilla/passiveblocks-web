@@ -35,7 +35,7 @@ export default function NewsletterPage() {
           </Link>
           <Link
             href="/#subscribe"
-            className="text-sm bg-blue-600 hover:bg-blue-500 text-black font-bold px-4 py-2 rounded-lg transition-colors"
+            className="text-sm bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2 rounded-lg transition-colors"
           >
             Subscribe free →
           </Link>
@@ -55,7 +55,7 @@ export default function NewsletterPage() {
           <div className="text-center py-20 text-white/30">
             <p className="text-5xl mb-4">📬</p>
             <p className="text-lg">First issue drops Monday 12 May 2026.</p>
-            <Link href="/#subscribe" className="mt-6 inline-block bg-blue-600 hover:bg-blue-500 text-black font-bold px-6 py-3 rounded-lg text-sm transition-colors">
+            <Link href="/#subscribe" className="mt-6 inline-block bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-lg text-sm transition-colors">
               Get notified →
             </Link>
           </div>

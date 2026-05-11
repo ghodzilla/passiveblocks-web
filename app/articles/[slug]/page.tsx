@@ -51,7 +51,7 @@ export default function ArticlePage({
           </Link>
           <Link
             href="/#subscribe"
-            className="text-sm bg-blue-600 hover:bg-blue-500 text-black font-bold px-4 py-2 rounded-lg transition-colors"
+            className="text-sm bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2 rounded-lg transition-colors"
           >
             Subscribe free →
           </Link>
@@ -125,7 +125,7 @@ export default function ArticlePage({
           </p>
           <Link
             href="/#subscribe"
-            className="inline-block bg-blue-600 hover:bg-blue-500 text-black font-bold px-6 py-3 rounded-lg text-sm transition-colors"
+            className="inline-block bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-lg text-sm transition-colors"
           >
             Subscribe to PassiveBlocks →
           </Link>
