@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const EXPLORER_APIS: Record<string, { url: string; envKey: string }> = {
-  ethereum: { url: "https://api.etherscan.io/api",    envKey: "ETHERSCAN_API_KEY"  },
-  base:     { url: "https://api.basescan.org/api",    envKey: "ETHERSCAN_API_KEY"  },
-  arbitrum: { url: "https://api.arbiscan.io/api",     envKey: "ETHERSCAN_API_KEY"  },
-  polygon:  { url: "https://api.polygonscan.com/api", envKey: "ETHERSCAN_API_KEY"  },
+  ethereum: { url: "https://api.etherscan.io/api",              envKey: "ETHERSCAN_API_KEY"  },
+  base:     { url: "https://api.basescan.org/api",              envKey: "ETHERSCAN_API_KEY"  },
+  arbitrum: { url: "https://api.arbiscan.io/api",               envKey: "ETHERSCAN_API_KEY"  },
+  optimism: { url: "https://api-optimistic.etherscan.io/api",   envKey: "ETHERSCAN_API_KEY"  },
+  polygon:  { url: "https://api.polygonscan.com/api",           envKey: "ETHERSCAN_API_KEY"  },
 };
 
 // DeFiLlama token slug map (best-effort; unmapped tokens get price 0)

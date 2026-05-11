@@ -8,7 +8,7 @@ import Image from "next/image";
 
 type TradeType = "buy" | "sell" | "yield" | "fee";
 
-type Network = "ethereum" | "base" | "arbitrum" | "polygon";
+type Network = "ethereum" | "base" | "arbitrum" | "optimism" | "polygon" | "solana";
 
 interface Wallet {
   id: string;
@@ -183,11 +183,13 @@ function exportCSV(gains: MatchedGain[], yieldTotal: number, country: Country) {
 
 const BLANK_TRADE: Omit<Trade, "id"> = { date: "", type: "buy", asset: "", quantity: 0, priceUsd: 0, notes: "" };
 
-const NETWORKS: { code: Network; label: string }[] = [
-  { code: "ethereum", label: "Ethereum" },
-  { code: "base",     label: "Base"     },
-  { code: "arbitrum", label: "Arbitrum" },
-  { code: "polygon",  label: "Polygon"  },
+const NETWORKS: { code: Network; label: string; icon: string; evm: boolean }[] = [
+  { code: "ethereum", label: "Ethereum", icon: "⟠",  evm: true  },
+  { code: "base",     label: "Base",     icon: "🔵", evm: true  },
+  { code: "arbitrum", label: "Arbitrum", icon: "🔷", evm: true  },
+  { code: "optimism", label: "Optimism", icon: "🔴", evm: true  },
+  { code: "polygon",  label: "Polygon",  icon: "🟣", evm: true  },
+  { code: "solana",   label: "Solana",   icon: "◎",  evm: false },
 ];
 
 const BLANK_WALLET: Omit<Wallet, "id"> = { address: "", network: "ethereum", label: "" };
@@ -205,6 +207,7 @@ export default function TaxCalculatorPage() {
   const [importingId, setImportingId] = useState<string | null>(null);
   const [importMsg, setImportMsg] = useState<Record<string, string>>({});
   const [connecting, setConnecting] = useState(false);
+  const [scanningAll, setScanningAll] = useState(false);
   const [installed, setInstalled] = useState<Record<string, boolean>>({
     metamask: false, rabby: false, phantom: false,
     coinbase: false, rainbow: false, trust: false,
@@ -395,6 +398,33 @@ export default function TaxCalculatorPage() {
     } finally {
       setImportingId(null);
     }
+  }
+
+  async function scanAllWallets() {
+    const evmNetworks = NETWORKS.filter((n) => n.evm);
+    const uniqueAddresses = Array.from(new Set(wallets.filter((w) => w.network !== "solana").map((w) => w.address)));
+    if (!uniqueAddresses.length) { alert("No EVM wallets connected."); return; }
+    setScanningAll(true);
+    let grandTotal = 0;
+    for (const addr of uniqueAddresses) {
+      for (const net of evmNetworks) {
+        try {
+          const res = await fetch(`/api/wallet-import?address=${addr}&network=${net.code}`);
+          const data = await res.json();
+          if (!data.error) {
+            const incoming = data.trades as Trade[];
+            setTrades((prev) => {
+              const existingIds = new Set(prev.map((t) => t.id));
+              const fresh = incoming.filter((t) => !existingIds.has(t.id));
+              grandTotal += fresh.length;
+              return [...prev, ...fresh];
+            });
+          }
+        } catch {}
+      }
+    }
+    setScanningAll(false);
+    alert(`Scan complete — imported ${grandTotal} new trades across ${uniqueAddresses.length} wallet${uniqueAddresses.length > 1 ? "s" : ""} and all chains.`);
   }
 
   const country = getCountry(countryCode);
@@ -603,13 +633,13 @@ export default function TaxCalculatorPage() {
                     key={n.code}
                     type="button"
                     onClick={() => setWalletForm({ ...walletForm, network: n.code })}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all border ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all border ${
                       walletForm.network === n.code
                         ? "bg-blue-600/20 border-blue-500/60 text-blue-400"
                         : "border-white/[0.1] text-white/40 hover:border-white/25 hover:text-white/60"
                     }`}
                   >
-                    {n.label}
+                    <span>{n.icon}</span> {n.label}
                   </button>
                 ))}
               </div>
@@ -622,6 +652,22 @@ export default function TaxCalculatorPage() {
               ➕ Add Wallet
             </button>
           </div>
+
+          {/* ── Scan All Chains button ────────────────────────────────────── */}
+          {wallets.length > 0 && (
+            <div className="flex justify-between items-center mb-3">
+              <p className="text-xs text-white/30">
+                {wallets.length} wallet entry{wallets.length > 1 ? "s" : ""} · {Array.from(new Set(wallets.map(w => w.address))).length} address{Array.from(new Set(wallets.map(w => w.address))).length > 1 ? "es" : ""}
+              </p>
+              <button
+                onClick={scanAllWallets}
+                disabled={scanningAll || !!importingId}
+                className="flex items-center gap-2 text-sm bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-400 font-bold px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+              >
+                {scanningAll ? <><span className="animate-spin inline-block">↻</span> Scanning…</> : "🔍 Scan All Chains"}
+              </button>
+            </div>
+          )}
 
           {/* ── Connected wallet list ──────────────────────────────────────── */}
           {wallets.length === 0 ? (
