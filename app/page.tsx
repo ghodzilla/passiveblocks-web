@@ -1,3 +1,4 @@
+import Image from "next/image";
 import SubscribeForm from "@/components/SubscribeForm";
 import ArticleCard from "@/components/ArticleCard";
 
@@ -57,9 +58,14 @@ export default function Home() {
       {/* Nav */}
       <nav className="border-b border-white/5 px-6 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <span className="font-bold text-xl tracking-tight">
-            Passive<span className="text-emerald-400">Blocks</span>
-          </span>
+          <Image
+            src="/passiveblocks_logo.png"
+            alt="PassiveBlocks"
+            width={200}
+            height={48}
+            className="h-10 w-auto"
+            priority
+          />
           <a
             href="#subscribe"
             className="text-sm bg-emerald-500 hover:bg-emerald-400 text-black font-bold px-4 py-2 rounded-lg transition-colors"
@@ -76,8 +82,8 @@ export default function Home() {
             DeFi Yield Intelligence
           </div>
           <h1 className="text-4xl sm:text-6xl font-extrabold leading-tight text-balance mb-6">
-            Make your money work.{" "}
-            <span className="text-emerald-400">Without the noise.</span>
+            Build Wealth,{" "}
+            <span className="text-emerald-400">Block by Block.</span>
           </h1>
           <p className="text-lg sm:text-xl text-white/55 max-w-2xl mx-auto mb-8 text-balance leading-relaxed">
             Weekly DeFi yield analysis — protocols, rates, and risk — written by
@@ -292,9 +298,13 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-white/5 px-6 py-8">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/25">
-          <span className="font-bold">
-            Passive<span className="text-emerald-400/60">Blocks</span>
-          </span>
+          <Image
+            src="/passiveblocks_logo.png"
+            alt="PassiveBlocks"
+            width={160}
+            height={40}
+            className="h-8 w-auto opacity-60"
+          />
           <span>© {new Date().getFullYear()} PassiveBlocks. All rights reserved.</span>
         </div>
       </footer>
