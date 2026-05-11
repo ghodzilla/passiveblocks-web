@@ -57,7 +57,7 @@ export default function AboutPage() {
           <div className="border-t border-white/10 pt-8">
             <h2 className="text-xl font-bold text-white mb-4">The model</h2>
             <p>Free newsletter, forever. Premium tier at $19/month for readers who want signals and allocation models, not just analysis.</p>
-            <p className="mt-3">We&apos;re building to the Milk Road model: grow the audience, deliver real value, and eventually sell to the right acquirer. We&apos;ll be transparent about that when the time comes.</p>
+            <p className="mt-3">We grow the audience, deliver real value, and eventually sell to the right acquirer. We&apos;ll be transparent about that when the time comes.</p>
           </div>
         </div>
 
