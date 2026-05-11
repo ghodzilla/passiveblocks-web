@@ -1,31 +1,33 @@
 import Image from "next/image";
+import Link from "next/link";
 import SubscribeForm from "@/components/SubscribeForm";
 import ArticleCard from "@/components/ArticleCard";
+import { ARTICLES } from "@/lib/articles";
 
-const ARTICLES = [
+const NEWS_ITEMS = [
   {
-    tag: "Yield Analysis",
-    title: "Fluid Protocol: The Quiet Monster Eating DeFi Lending",
-    excerpt:
-      "Fluid's unified liquidity layer is capturing market share from Aave and Compound at a pace most analysts haven't noticed yet. Here's the mechanics and the yield opportunity.",
-    date: "2026-05-07",
-    readTime: "6 min",
+    source: "The Block",
+    headline: "Ethereum mainnet gas fees hit 3-month low as L2 adoption accelerates",
+    tag: "Ethereum",
+    date: "May 11",
   },
   {
-    tag: "Protocol Deep Dive",
-    title: "Aerodrome vs Uniswap V3: Where the Real Swap Fees Live",
-    excerpt:
-      "Same token pairs, radically different fee distribution. On Base, the delta between platforms on WETH/USDC is 38 APY points. We break down why — and when each wins.",
-    date: "2026-04-30",
-    readTime: "8 min",
+    source: "DeFiLlama",
+    headline: "Total DeFi TVL surpasses $120B for first time since 2022 bull cycle",
+    tag: "Market",
+    date: "May 10",
   },
   {
-    tag: "Risk Framework",
-    title: "Stablecoin Lending in 2026: The Risk Hierarchy You Need",
-    excerpt:
-      "Not all 5% APY is equal. Between custodial risk, smart contract risk, oracle manipulation, and peg deviation, the spread between the safest and riskiest USDC yield is wider than most people think.",
-    date: "2026-04-21",
-    readTime: "7 min",
+    source: "Coindesk",
+    headline: "Aave governance approves new risk parameters for cbBTC collateral on Base",
+    tag: "Aave",
+    date: "May 10",
+  },
+  {
+    source: "Blockworks",
+    headline: "Base daily active addresses overtakes Arbitrum for second consecutive week",
+    tag: "Base",
+    date: "May 9",
   },
 ];
 
@@ -51,39 +53,45 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#08080f] text-white">
       {/* Top banner */}
-      <div className="bg-amber-500 text-black text-center text-sm font-semibold py-2 px-4">
+      <div className="bg-blue-600 text-black text-center text-sm font-semibold py-2 px-4">
         New issue every Monday — free forever. Premium signals from $19/mo.
       </div>
 
       {/* Nav */}
       <nav className="border-b border-white/5 px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Image
-            src="/passiveblocks_logo_cropped.png"
-            alt="PassiveBlocks"
-            width={172}
-            height={40}
-            className="h-10 w-auto"
-            priority
-          />
-          <a
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-6">
+          <Link href="/">
+            <Image
+              src="/passiveblocks_logo_cropped.png"
+              alt="PassiveBlocks"
+              width={172}
+              height={40}
+              className="h-10 w-auto"
+              priority
+            />
+          </Link>
+          <div className="hidden sm:flex items-center gap-6 text-sm text-white/50">
+            <Link href="/newsletter" className="hover:text-white transition-colors">Archive</Link>
+            <Link href="/about" className="hover:text-white transition-colors">About</Link>
+          </div>
+          <Link
             href="#subscribe"
-            className="text-sm bg-amber-500 hover:bg-amber-400 text-black font-bold px-4 py-2 rounded-lg transition-colors"
+            className="text-sm bg-blue-600 hover:bg-blue-500 text-black font-bold px-4 py-2 rounded-lg transition-colors"
           >
             Subscribe free →
-          </a>
+          </Link>
         </div>
       </nav>
 
       {/* Hero */}
       <section className="px-6 pt-20 pb-16 text-center">
         <div className="max-w-3xl mx-auto">
-          <div className="inline-block text-xs font-bold tracking-widest uppercase text-amber-400 border border-amber-400/30 rounded-full px-3 py-1 mb-8">
+          <div className="inline-block text-xs font-bold tracking-widest uppercase text-blue-400 border border-blue-400/30 rounded-full px-3 py-1 mb-8">
             DeFi Yield Intelligence
           </div>
           <h1 className="text-4xl sm:text-6xl font-extrabold leading-tight text-balance mb-6">
             Build Wealth,{" "}
-            <span className="text-amber-400">Block by Block.</span>
+            <span className="text-blue-400">Block by Block.</span>
           </h1>
           <p className="text-lg sm:text-xl text-white/55 max-w-2xl mx-auto mb-8 text-balance leading-relaxed">
             Weekly DeFi yield analysis — protocols, rates, and risk — written by
@@ -108,7 +116,7 @@ export default function Home() {
             { value: "$19/mo", label: "Premium signals" },
           ].map((s) => (
             <div key={s.label}>
-              <div className="text-2xl sm:text-3xl font-extrabold text-amber-400">
+              <div className="text-2xl sm:text-3xl font-extrabold text-blue-400">
                 {s.value}
               </div>
               <div className="text-xs sm:text-sm text-white/40 mt-1">{s.label}</div>
@@ -146,7 +154,7 @@ export default function Home() {
             ].map((item) => (
               <div
                 key={item.title}
-                className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6 hover:border-amber-400/20 transition-colors"
+                className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6 hover:border-blue-400/20 transition-colors"
               >
                 <div className="text-3xl mb-4">{item.icon}</div>
                 <h3 className="font-bold mb-2">{item.title}</h3>
@@ -182,7 +190,7 @@ export default function Home() {
                   "Market commentary",
                 ].map((f) => (
                   <li key={f} className="flex items-center gap-2 text-white/70">
-                    <span className="text-amber-400 font-bold">✓</span> {f}
+                    <span className="text-blue-400 font-bold">✓</span> {f}
                   </li>
                 ))}
               </ul>
@@ -193,11 +201,11 @@ export default function Home() {
                 Subscribe free
               </a>
             </div>
-            <div className="bg-amber-950/40 border border-amber-400/30 rounded-2xl p-6 relative">
-              <div className="absolute -top-3 right-5 bg-amber-400 text-black text-xs font-extrabold px-3 py-1 rounded-full">
+            <div className="bg-blue-950/40 border border-blue-400/30 rounded-2xl p-6 relative">
+              <div className="absolute -top-3 right-5 bg-blue-500 text-black text-xs font-extrabold px-3 py-1 rounded-full">
                 PREMIUM
               </div>
-              <div className="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">
+              <div className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-1">
                 Premium
               </div>
               <div className="text-3xl font-extrabold mb-6">
@@ -212,13 +220,13 @@ export default function Home() {
                   "Priority reader Q&A",
                 ].map((f) => (
                   <li key={f} className="flex items-center gap-2 text-white/80">
-                    <span className="text-amber-400 font-bold">✓</span> {f}
+                    <span className="text-blue-400 font-bold">✓</span> {f}
                   </li>
                 ))}
               </ul>
               <a
                 href="#subscribe"
-                className="block mt-8 text-center bg-amber-500 hover:bg-amber-400 text-black rounded-xl py-3 text-sm font-extrabold transition-colors"
+                className="block mt-8 text-center bg-blue-600 hover:bg-blue-500 text-black rounded-xl py-3 text-sm font-extrabold transition-colors"
               >
                 Start with free →
               </a>
@@ -255,6 +263,39 @@ export default function Home() {
         </div>
       </section>
 
+      {/* DeFi News */}
+      <section className="px-6 py-16 border-t border-white/5">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex items-center justify-between mb-10">
+            <div>
+              <p className="text-xs font-bold tracking-widest uppercase text-white/30 mb-1">
+                DeFi News
+              </p>
+              <h2 className="text-2xl font-extrabold">This week in crypto</h2>
+            </div>
+            <span className="text-sm text-white/30 hidden sm:block">Updated weekly</span>
+          </div>
+          <div className="space-y-3">
+            {NEWS_ITEMS.map((item) => (
+              <div
+                key={item.headline}
+                className="flex items-start gap-4 bg-white/[0.02] border border-white/[0.05] rounded-xl px-5 py-4"
+              >
+                <span className="text-xs font-bold text-white/20 uppercase tracking-widest mt-0.5 w-16 shrink-0">
+                  {item.date}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-white/80 leading-snug">{item.headline}</p>
+                </div>
+                <span className="text-xs font-semibold text-white/30 bg-white/[0.05] px-2 py-0.5 rounded-full shrink-0 hidden sm:block">
+                  {item.tag}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Articles */}
       <section className="px-6 py-16 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
@@ -265,11 +306,13 @@ export default function Home() {
               </p>
               <h2 className="text-2xl font-extrabold">Latest articles</h2>
             </div>
-            <span className="text-sm text-white/30 hidden sm:block">New every week</span>
+            <Link href="/newsletter" className="text-sm text-white/30 hover:text-white/60 transition-colors hidden sm:block">
+              View archive →
+            </Link>
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
             {ARTICLES.map((a) => (
-              <ArticleCard key={a.title} {...a} />
+              <ArticleCard key={a.title} {...a} href={`/articles/${a.slug}`} />
             ))}
           </div>
         </div>
@@ -278,7 +321,7 @@ export default function Home() {
       {/* Bottom CTA */}
       <section
         id="subscribe"
-        className="px-6 py-20 border-t border-white/5 text-center bg-amber-950/20"
+        className="px-6 py-20 border-t border-white/5 text-center bg-blue-950/20"
       >
         <div className="max-w-2xl mx-auto">
           <div className="text-4xl mb-4">📬</div>
