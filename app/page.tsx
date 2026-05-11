@@ -72,6 +72,7 @@ export default function Home() {
           </Link>
           <div className="hidden sm:flex items-center gap-6 text-sm text-white/50">
             <Link href="/newsletter" className="hover:text-white transition-colors">Archive</Link>
+            <Link href="/tax" className="hover:text-white transition-colors">Tax Calculator</Link>
             <Link href="/about" className="hover:text-white transition-colors">About</Link>
           </div>
           <Link
