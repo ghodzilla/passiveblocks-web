@@ -1,3 +1,4 @@
+import Image from "next/image";
 import SubscribeForm from "@/components/SubscribeForm";
 import ArticleCard from "@/components/ArticleCard";
 
@@ -57,9 +58,14 @@ export default function Home() {
       {/* Nav */}
       <nav className="border-b border-white/5 px-6 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <span className="font-extrabold text-xl tracking-tight">
-            Passive<span className="text-yellow-400">Blocks</span>
-          </span>
+          <Image
+            src="/passiveblocks_logo_cropped.png"
+            alt="PassiveBlocks"
+            width={172}
+            height={40}
+            className="h-10 w-auto"
+            priority
+          />
           <a
             href="#subscribe"
             className="text-sm bg-emerald-500 hover:bg-emerald-400 text-black font-bold px-4 py-2 rounded-lg transition-colors"
@@ -292,9 +298,13 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-white/5 px-6 py-8">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/25">
-          <span className="font-extrabold text-sm tracking-tight">
-            Passive<span className="text-yellow-400/70">Blocks</span>
-          </span>
+          <Image
+            src="/passiveblocks_logo_cropped.png"
+            alt="PassiveBlocks"
+            width={130}
+            height={30}
+            className="h-8 w-auto opacity-60"
+          />
           <span>© {new Date().getFullYear()} PassiveBlocks. All rights reserved.</span>
         </div>
       </footer>
