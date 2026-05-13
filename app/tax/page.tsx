@@ -221,8 +221,8 @@ function LoadingDots() {
 }
 
 const S = {
-  bg: '#08080f',
-  card: { background: '#0f1017', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 24 } as React.CSSProperties,
+  bg: '#111214',
+  card: { background: '#18191d', border: '1px solid #2a2b30', borderRadius: 16, padding: 24 } as React.CSSProperties,
 };
 
 // ─── Main Component ───────────────────────────────────────────────────────────
@@ -531,75 +531,63 @@ export default function TaxDashboard() {
   });
   const allChains = Array.from(allChainSet);
 
-  const hasWallet = connectedWallets.length > 0;
-  const holdingPeriods = yieldIncome?.holdingPeriods?.length ? yieldIncome.holdingPeriods : (hasWallet ? [] : HOLDING_PERIODS_DEMO);
-  const isLiveHolding = !!(yieldIncome?.holdingPeriods?.length);
-  const harvestData = yieldIncome?.harvestOpportunities?.length ? yieldIncome.harvestOpportunities : (hasWallet ? [] : HARVEST_OPPORTUNITIES_DEMO);
-  const isLiveHarvest = !!(yieldIncome?.harvestOpportunities?.length);
-  const approaching = isLiveHolding ? holdingPeriods.filter(p => !p.qualified && p.daysToThreshold <= 60).length : 0;
-
   const isLive = !!(combinedTax?.walletsIncluded && combinedTax.walletsIncluded > 0);
+
+  // Holding periods — always show demo as fallback (yield dashboard behavior)
+  const holdingPeriods = yieldIncome?.holdingPeriods?.length ? yieldIncome.holdingPeriods : HOLDING_PERIODS_DEMO;
+  const isLiveHolding = !!(yieldIncome?.holdingPeriods?.length);
+  const approaching = holdingPeriods.filter(p => !p.qualified && p.daysToThreshold <= 60).length;
+
+  // Harvest — always show demo as fallback (yield dashboard behavior)
+  const harvestData = yieldIncome?.harvestOpportunities?.length ? yieldIncome.harvestOpportunities : HARVEST_OPPORTUNITIES_DEMO;
+  const isLiveHarvest = !!(yieldIncome?.harvestOpportunities?.length);
 
   // ─────────────────────────────────────────────────────────────────────────────
 
   return (
     <div style={{ background: S.bg, minHeight: '100vh', color: '#edeef0', fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
 
-      {/* NAV */}
-      <nav style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '0 24px' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
+      {/* NAV — fixed, blur, yield dashboard style */}
+      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', background: 'rgba(17,18,20,0.85)', borderBottom: '1px solid #2a2b30' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
           <Link href="/">
             <Image src="/passiveblocks_logo_cropped.png" alt="PassiveBlocks" width={172} height={40} style={{ height: 40, width: 'auto' }} priority />
           </Link>
           <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
             {[{ label: 'Tax', href: '/tax' }, { label: 'Pricing', href: '/pricing' }].map(l => (
-              <Link key={l.label} href={l.href} style={{ color: l.label === 'Tax' ? '#edeef0' : 'rgba(255,255,255,0.4)', textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>{l.label}</Link>
+              <Link key={l.label} href={l.href} style={{ color: l.label === 'Tax' ? '#edeef0' : '#6b6c72', textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>{l.label}</Link>
             ))}
-            <Link href="/#subscribe" style={{ background: '#3b5de4', color: '#fff', textDecoration: 'none', borderRadius: 8, padding: '7px 16px', fontSize: 13, fontWeight: 700 }}>
-              Subscribe free →
-            </Link>
           </div>
         </div>
       </nav>
 
-      {/* PAGE HEADER */}
-      <div style={{ background: '#0f1017', borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '0 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 72, boxSizing: 'border-box' }}>
+      {/* PAGE HEADER — yield dashboard style */}
+      <div style={{ background: '#18191d', borderBottom: '1px solid #2a2b30', padding: '0 28px', marginTop: 64, display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 72, boxSizing: 'border-box' }}>
         <div>
           <div style={{ fontSize: 18, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 10 }}>
             🏛️ Tax Dashboard
             {isLive
-              ? <span style={{ background: '#22c55e22', color: '#22c55e', border: '1px solid #22c55e44', borderRadius: 20, padding: '2px 10px', fontSize: 11, fontWeight: 700 }}>LIVE</span>
-              : <span style={{ background: '#f9731622', color: '#f97316', border: '1px solid #f9731644', borderRadius: 20, padding: '2px 10px', fontSize: 11, fontWeight: 700 }}>DEMO</span>
+              ? <span style={{ background: '#8aad8a22', color: '#8aad8a', border: '1px solid #8aad8a44', borderRadius: 20, padding: '2px 10px', fontSize: 11, fontWeight: 700 }}>LIVE</span>
+              : <span style={{ background: '#ff931722', color: '#ff9317', border: '1px solid #ff931744', borderRadius: 20, padding: '2px 10px', fontSize: 11, fontWeight: 700 }}>DEMO</span>
             }
           </div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', marginTop: 3 }}>{c.flag} {c.name} · {c.note}</div>
+          <div style={{ fontSize: 12, color: '#6b6c72', marginTop: 3 }}>{c.flag} {c.name} · {c.note}</div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          {/* Wallet actions */}
-          {connectedWallets.length > 0 && (
-            <button onClick={scanAll} disabled={scanningAll || loadingAll}
-              style={{ background: '#22c55e22', color: '#22c55e', border: '1px solid #22c55e44', borderRadius: 8, padding: '8px 14px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
-              {scanningAll || loadingAll ? '⏳ Scanning…' : '🔍 Scan All Chains'}
-            </button>
-          )}
-          <button onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-            style={{ background: '#6483ed22', color: '#93c5fd', border: '1px solid #6483ed44', borderRadius: 8, padding: '8px 14px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
-            + Add Wallet
-          </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           {/* Country picker */}
           <div style={{ position: 'relative' }}>
             <button onClick={() => setShowPicker(v => !v)}
-              style={{ background: '#1a2744', color: '#93c5fd', border: '1px solid rgba(99,131,237,0.3)', borderRadius: 8, padding: '8px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+              style={{ background: '#1e3a5f', color: '#93c5fd', border: '1px solid #6789ed44', borderRadius: 6, padding: '7px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
               {c.flag} {c.code} <span style={{ fontSize: 10 }}>▼</span>
             </button>
             {showPicker && (
-              <div style={{ position: 'absolute', right: 0, top: '110%', background: '#0f1017', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, zIndex: 200, minWidth: 300, boxShadow: '0 8px 32px #0009', overflow: 'hidden' }}>
-                <div style={{ padding: '8px 14px', fontSize: 11, color: 'rgba(255,255,255,0.35)', borderBottom: '1px solid rgba(255,255,255,0.06)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Tax Jurisdiction</div>
+              <div style={{ position: 'absolute', right: 0, top: '110%', background: '#18191d', border: '1px solid #2a2b30', borderRadius: 10, zIndex: 200, minWidth: 300, boxShadow: '0 8px 32px #0009', overflow: 'hidden' }}>
+                <div style={{ padding: '8px 14px', fontSize: 11, color: '#6b6c72', borderBottom: '1px solid #2a2b30', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Tax Jurisdiction</div>
                 {TAX_COUNTRIES.map(tc => (
                   <div key={tc.code} onClick={() => selectCountry(tc.code)}
-                    style={{ padding: '10px 14px', cursor: 'pointer', background: tc.code === country ? 'rgba(99,131,237,0.12)' : 'transparent', borderLeft: tc.code === country ? '3px solid #6483ed' : '3px solid transparent', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    style={{ padding: '10px 14px', cursor: 'pointer', background: tc.code === country ? '#6789ed22' : 'transparent', borderLeft: tc.code === country ? '3px solid #6789ed' : '3px solid transparent', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontWeight: 600 }}>{tc.flag} {tc.name}</span>
-                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>{tc.note}</span>
+                    <span style={{ fontSize: 11, color: '#6b6c72' }}>{tc.note}</span>
                   </div>
                 ))}
               </div>
@@ -610,110 +598,18 @@ export default function TaxDashboard() {
 
       <div style={{ maxWidth: 1300, margin: '0 auto', padding: '28px 28px 80px' }}>
 
-        {/* WALLET MANAGER */}
-        <div style={{ ...S.card, marginBottom: 24 }}>
-          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 14 }}>🔗 Add Wallet</div>
-
-          {/* Primary: paste address */}
-          <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
-            <input value={newAddress} onChange={e => setNewAddress(e.target.value)}
-              placeholder="Paste any 0x wallet address (Ethereum, Base, Arbitrum…)"
-              onKeyDown={e => e.key === 'Enter' && addWalletManual()}
-              style={{ flex: 1, minWidth: 300, background: '#1a1b25', color: '#edeef0', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, padding: '10px 14px', fontSize: 14 }} />
-            <select value={newNetwork} onChange={e => setNewNetwork(e.target.value)}
-              style={{ background: '#1a1b25', color: '#edeef0', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '10px 12px', fontSize: 13, cursor: 'pointer' }}>
-              <option value="ethereum">Ethereum</option>
-              <option value="base">Base</option>
-              <option value="arbitrum">Arbitrum</option>
-              <option value="optimism">Optimism</option>
-              <option value="polygon">Polygon</option>
-              <option value="solana">Solana</option>
-            </select>
-            <button onClick={addWalletManual}
-              style={{ background: '#22c55e', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
-              Add &amp; Scan
-            </button>
-          </div>
-
-          {/* Secondary: browser wallet */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: connectedWallets.length > 0 ? 16 : 0 }}>
-            <button onClick={connectRabby}
-              style={{ background: '#6483ed22', color: '#93c5fd', border: '1px solid #6483ed44', borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
-              🦊 Connect MetaMask / Rabby
-            </button>
-            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)' }}>Requires browser extension</span>
-          </div>
-
-          {/* Wallet list */}
-          {connectedWallets.length > 0 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 4, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Connected ({connectedWallets.length})</div>
-              {connectedWallets.map((w, i) => {
-                const wTaxData = allWalletsTax.find(x => x.wallet.address.toLowerCase() === w.address.toLowerCase())?.taxData;
-                return (
-                  <div key={i} style={{ background: '#ffffff08', borderRadius: 10, padding: '12px 14px', border: '1px solid rgba(255,255,255,0.06)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: wTaxData ? 8 : 0 }}>
-                      <div>
-                        <span style={{ fontFamily: 'monospace', fontSize: 13, color: '#93c5fd' }}>{w.address.slice(0,10)}…{w.address.slice(-8)}</span>
-                        <span style={{ marginLeft: 8, fontSize: 11, color: 'rgba(255,255,255,0.35)', background: '#ffffff10', borderRadius: 4, padding: '2px 6px' }}>{w.network}</span>
-                        {w.label && w.label !== w.address.slice(0,6)+'…'+w.address.slice(-4) && (
-                          <span style={{ marginLeft: 6, fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>{w.label}</span>
-                        )}
-                      </div>
-                      <button onClick={() => removeWallet(i)}
-                        style={{ background: '#ef444415', color: '#ef4444', border: '1px solid #ef444433', borderRadius: 6, padding: '3px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
-                        Remove
-                      </button>
-                    </div>
-                    {loadingAll ? (
-                      <div style={{ fontSize: 12, color: '#6483ed' }}>⏳ Scanning…</div>
-                    ) : wTaxData ? (
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, fontSize: 12 }}>
-                        <div style={{ background: '#08080f', borderRadius: 7, padding: '8px 10px' }}>
-                          <div style={{ color: 'rgba(255,255,255,0.4)', marginBottom: 3 }}>Short-term gains</div>
-                          <div style={{ fontWeight: 700, color: '#22c55e' }}>${(wTaxData.shortTermGains || 0).toLocaleString()}</div>
-                        </div>
-                        <div style={{ background: '#08080f', borderRadius: 7, padding: '8px 10px' }}>
-                          <div style={{ color: 'rgba(255,255,255,0.4)', marginBottom: 3 }}>Long-term gains</div>
-                          <div style={{ fontWeight: 700, color: '#22c55e' }}>${(wTaxData.longTermGains || 0).toLocaleString()}</div>
-                        </div>
-                        <div style={{ background: '#08080f', borderRadius: 7, padding: '8px 10px' }}>
-                          <div style={{ color: 'rgba(255,255,255,0.4)', marginBottom: 3 }}>Staking income</div>
-                          <div style={{ fontWeight: 700, color: '#6483ed' }}>${(wTaxData.stakingIncome?.totalUsd || 0).toLocaleString()}</div>
-                        </div>
-                        <div style={{ background: '#08080f', borderRadius: 7, padding: '8px 10px' }}>
-                          <div style={{ color: 'rgba(255,255,255,0.4)', marginBottom: 3 }}>Transactions</div>
-                          <div style={{ fontWeight: 700, color: '#edeef0' }}>{(wTaxData.txCount || 0).toLocaleString()}</div>
-                        </div>
-                      </div>
-                    ) : w.network !== 'solana' ? (
-                      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>Click Scan to load tax data →</div>
-                    ) : (
-                      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>Solana — tax calculation not yet supported</div>
-                    )}
-                  </div>
-                );
-              })}
-              <button onClick={scanAll} disabled={scanningAll || loadingAll}
-                style={{ marginTop: 4, background: '#22c55e', color: '#fff', border: 'none', borderRadius: 8, padding: '11px 0', fontSize: 14, fontWeight: 700, cursor: 'pointer', width: '100%' }}>
-                {scanningAll || loadingAll ? '⏳ Scanning all chains…' : '🔍 Scan All Wallets & Chains'}
-              </button>
-            </div>
-          )}
-        </div>
-
         {/* TAX YEAR SELECTOR */}
         {connectedWallets.length > 0 && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
-            <label style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', whiteSpace: 'nowrap' }}>Tax Year:</label>
+            <label style={{ fontSize: 12, color: '#6b6c72', whiteSpace: 'nowrap' }}>Tax Year:</label>
             <select value={taxYearIdx} onChange={e => handleTaxYearChange(Number(e.target.value))}
-              style={{ background: S.bg, color: '#edeef0', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '8px 12px', fontSize: 13, cursor: 'pointer', minWidth: 160 }}>
+              style={{ background: S.bg, color: '#edeef0', border: '1px solid #2a2b30', borderRadius: 8, padding: '8px 12px', fontSize: 13, cursor: 'pointer', minWidth: 160 }}>
               {taxYears.map((y, i) => (
                 <option key={i} value={i}>{y.label}{i === 0 ? ' (current)' : ''}</option>
               ))}
             </select>
             {taxYears[taxYearIdx] && (
-              <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>
+              <span style={{ fontSize: 12, color: '#6b6c72' }}>
                 {formatDateShort(taxYears[taxYearIdx].startTs)} – {formatDateShort(taxYears[taxYearIdx].endTs)}
               </span>
             )}
@@ -722,7 +618,7 @@ export default function TaxDashboard() {
 
         {/* STATUS BAR */}
         {connectedWallets.length > 0 && (
-          <div style={{ marginBottom: 16, padding: '8px 14px', background: taxError ? '#ef444411' : loadingTax || loadingAll ? '#6483ed11' : '#22c55e11', border: `1px solid ${taxError ? '#ef444433' : loadingTax || loadingAll ? '#6483ed33' : '#22c55e33'}`, borderRadius: 8, fontSize: 12, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <div style={{ marginBottom: 16, padding: '8px 14px', background: taxError ? '#ef444411' : loadingTax || loadingAll ? '#6789ed11' : '#8aad8a11', border: `1px solid ${taxError ? '#ef444433' : loadingTax || loadingAll ? '#6789ed33' : '#8aad8a33'}`, borderRadius: 8, fontSize: 12, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             {taxError && !loadingTax ? (
               <>
                 <span style={{ color: '#ef4444' }}>⚠️ {taxError}</span>
@@ -732,65 +628,65 @@ export default function TaxDashboard() {
                 </button>
               </>
             ) : (loadingTax || loadingAll) ? (
-              <span style={{ color: '#6483ed' }}>⏳ Fetching on-chain data…</span>
+              <span style={{ color: '#6789ed' }}>⏳ Fetching on-chain data…</span>
             ) : realTaxData ? (
-              <span style={{ color: '#22c55e' }}>
+              <span style={{ color: '#8aad8a' }}>
                 📡 {realTaxData.dataSource || 'Etherscan'} · Last fetched: {new Date(realTaxData.fetchedAt).toLocaleTimeString()}
                 {' | '}<strong>{combinedTax?.walletsIncluded ?? 1}</strong> wallet{(combinedTax?.walletsIncluded ?? 1) !== 1 ? 's' : ''}
                 {' · '}<strong>{(combinedTax?.totalTxCount ?? realTaxData.txCount ?? 0).toLocaleString()}</strong> txns
               </span>
             ) : (
-              <span style={{ color: '#f97316' }}>⚠️ Demo mode — connect a wallet to see real data</span>
+              <span style={{ color: '#ff9317' }}>⚠️ Demo mode — connect a wallet to see real data</span>
             )}
           </div>
         )}
 
         {/* SECTION 1 — COMBINED TAX SUMMARY (multi-wallet) */}
         {connectedWallets.length > 0 && (
-          <div style={{ marginBottom: 24, borderRadius: 18, overflow: 'hidden', border: '1px solid rgba(99,131,237,0.2)' }}>
-            <div style={{ background: 'linear-gradient(135deg, #1a2744 0%, #221540 100%)', padding: '16px 24px', borderBottom: '1px solid rgba(99,131,237,0.15)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ marginBottom: 24, borderRadius: 18, overflow: 'hidden', border: '1px solid #6789ed33' }}>
+            <div style={{ background: 'linear-gradient(135deg, #1a2744 0%, #221540 100%)', padding: '16px 24px', borderBottom: '1px solid #6789ed22', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <div style={{ fontSize: 15, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 10 }}>
                   💼 Combined Tax Summary
                   {loadingAll
-                    ? <span style={{ background: '#6483ed22', color: '#6483ed', border: '1px solid #6483ed44', borderRadius: 20, padding: '2px 10px', fontSize: 11, fontWeight: 700 }}>LOADING</span>
+                    ? <span style={{ background: '#6789ed22', color: '#6789ed', border: '1px solid #6789ed44', borderRadius: 20, padding: '2px 10px', fontSize: 11, fontWeight: 700 }}>LOADING</span>
                     : combinedTax?.walletsIncluded
-                    ? <span style={{ background: '#22c55e22', color: '#22c55e', border: '1px solid #22c55e44', borderRadius: 20, padding: '2px 10px', fontSize: 11, fontWeight: 700 }}>LIVE</span>
+                    ? <span style={{ background: '#8aad8a22', color: '#8aad8a', border: '1px solid #8aad8a44', borderRadius: 20, padding: '2px 10px', fontSize: 11, fontWeight: 700 }}>LIVE</span>
                     : null}
                 </div>
                 <div style={{ fontSize: 12, color: '#93c5fd', marginTop: 2 }}>All wallets · All chains · {taxYears[taxYearIdx]?.label}</div>
               </div>
               {combinedTax && (
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', textAlign: 'right' }}>
+                <div style={{ fontSize: 12, color: '#6b6c72', textAlign: 'right' }}>
                   <div>{combinedTax.walletsIncluded} wallet{combinedTax.walletsIncluded !== 1 ? 's' : ''} · {combinedTax.totalTxCount.toLocaleString()} txns</div>
-                  {allChains.length > 0 && <div style={{ color: '#6483ed', marginTop: 2 }}>{allChains.map(ch => ch.charAt(0).toUpperCase() + ch.slice(1)).join(', ')}</div>}
+                  {allChains.length > 0 && <div style={{ color: '#6789ed', marginTop: 2 }}>{allChains.map(ch => ch.charAt(0).toUpperCase() + ch.slice(1)).join(', ')}</div>}
                 </div>
               )}
             </div>
-            <div style={{ background: '#0c0d12', padding: 24 }}>
+            <div style={{ background: '#16171b', padding: 24 }}>
               {loadingAll ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#6483ed', padding: '20px 0' }}>
-                  <span style={{ display: 'inline-block', width: 16, height: 16, border: '2px solid #6483ed44', borderTopColor: '#6483ed', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#6789ed', padding: '20px 0' }}>
+                  <span style={{ display: 'inline-block', width: 16, height: 16, border: '2px solid #6789ed44', borderTopColor: '#6789ed', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
                   Fetching all wallets<LoadingDots />
                 </div>
               ) : combinedTax ? (
                 <>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 14 }}>
                     {[
-                      { icon: '📈', label: 'Total Capital Gains', value: `$${Math.abs(combinedTax.totalGains).toLocaleString()}`, color: combinedTax.totalGains >= 0 ? '#22c55e' : '#ef4444', sub: `Short: $${combinedTax.shortTermGains.toLocaleString()} · Long: $${combinedTax.longTermGains.toLocaleString()}` },
-                      { icon: '💰', label: 'Total Income', value: `$${((combinedTax.stakingIncomeUsd || 0) + yieldIncomeUsd).toLocaleString()}`, color: '#6483ed', sub: `Staking: $${combinedTax.stakingIncomeUsd.toLocaleString()} · Yield: $${yieldIncomeUsd.toLocaleString()}` },
-                      { icon: '🏛️', label: 'Est. Tax Due', value: c.taxFree ? 'Tax-free' : `$${combinedEstTax.toLocaleString()} ${c.currency}`, color: c.taxFree ? '#22c55e' : '#ef4444', sub: c.taxFree ? c.note : `@ ${(c.rate * 100).toFixed(0)}% effective rate` },
+                      { icon: '📈', label: 'Total Capital Gains', value: `$${Math.abs(combinedTax.totalGains).toLocaleString()}`, color: combinedTax.totalGains >= 0 ? '#8aad8a' : '#ef4444', sub: `Short: $${combinedTax.shortTermGains.toLocaleString()} · Long: $${combinedTax.longTermGains.toLocaleString()}` },
+                      { icon: '💰', label: 'Total Income', value: `$${((combinedTax.stakingIncomeUsd || 0) + yieldIncomeUsd).toLocaleString()}`, color: '#6789ed', sub: `Staking: $${combinedTax.stakingIncomeUsd.toLocaleString()} · Yield: $${yieldIncomeUsd.toLocaleString()}` },
+                      { icon: '🏛️', label: 'Est. Tax Due', value: c.taxFree ? 'Tax-free' : `$${combinedEstTax.toLocaleString()} ${c.currency}`, color: c.taxFree ? '#8aad8a' : '#ef4444', sub: c.taxFree ? c.note : `@ ${(c.rate * 100).toFixed(0)}% effective rate` },
                     ].map((stat, i) => (
-                      <div key={i} style={{ background: '#0f1017', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '20px 22px' }}>
-                        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>{stat.icon} {stat.label}</div>
+                      <div key={i} style={{ background: '#18191d', border: '1px solid #2a2b30', borderRadius: 14, padding: '20px 22px' }}>
+                        <div style={{ fontSize: 11, color: '#6b6c72', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>{stat.icon} {stat.label}</div>
                         <div style={{ fontSize: 28, fontWeight: 900, color: stat.color, lineHeight: 1 }}>{stat.value}</div>
-                        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginTop: 8 }}>{stat.sub}</div>
+                        <div style={{ fontSize: 12, color: '#6b6c72', marginTop: 8 }}>{stat.sub}</div>
                       </div>
                     ))}
                   </div>
                 </>
               ) : (
-                <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13, padding: '20px 0' }}>No wallet data loaded.</div>
+                <div style={{ color: '#6b6c72', fontSize: 13, padding: '20px 0' }}>No wallet data loaded.</div>
               )}
             </div>
           </div>
@@ -799,9 +695,9 @@ export default function TaxDashboard() {
         {/* SECTION 2 — PER-WALLET ACCORDION */}
         {evmWallets.length > 0 && (
           <div style={{ ...S.card, marginBottom: 24, padding: 0, overflow: 'hidden' }}>
-            <div style={{ padding: '16px 24px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ padding: '16px 24px', borderBottom: '1px solid #2a2b30', display: 'flex', alignItems: 'center', gap: 10 }}>
               <span style={{ fontSize: 15, fontWeight: 800 }}>📊 Per-Wallet Breakdown</span>
-              <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>{evmWallets.length} wallet{evmWallets.length !== 1 ? 's' : ''}</span>
+              <span style={{ fontSize: 12, color: '#6b6c72' }}>{evmWallets.length} wallet{evmWallets.length !== 1 ? 's' : ''}</span>
             </div>
             {(allWalletsTax.length > 0 ? allWalletsTax : evmWallets.map(w => ({ wallet: w, taxData: null, taxError: null }))).map(({ wallet, taxData, taxError: wErr }, evmIdx) => {
               const isExpanded = expandedWalletIdxs.has(evmIdx);
@@ -809,26 +705,26 @@ export default function TaxDashboard() {
               const isSelected = globalIdx === selectedWalletIdx;
               const walletEstTax = calcTax(taxData, c, 0);
               return (
-                <div key={evmIdx} style={{ borderBottom: evmIdx < evmWallets.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
+                <div key={evmIdx} style={{ borderBottom: evmIdx < evmWallets.length - 1 ? '1px solid #1e1f23' : 'none' }}>
                   <div onClick={() => toggleWalletRow(evmIdx)}
-                    style={{ padding: '14px 24px', cursor: 'pointer', background: isSelected ? 'rgba(99,131,237,0.06)' : 'transparent', display: 'flex', alignItems: 'center', gap: 12, userSelect: 'none' }}>
-                    <span style={{ fontSize: 14, color: '#6483ed', width: 16, flexShrink: 0 }}>{isExpanded ? '▼' : '▶'}</span>
+                    style={{ padding: '14px 24px', cursor: 'pointer', background: isSelected ? '#6789ed0a' : 'transparent', display: 'flex', alignItems: 'center', gap: 12, userSelect: 'none' }}>
+                    <span style={{ fontSize: 14, color: '#6789ed', width: 16, flexShrink: 0 }}>{isExpanded ? '▼' : '▶'}</span>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                         <span style={{ fontSize: 13, fontWeight: 700, fontFamily: 'monospace', color: '#edeef0' }}>
                           {wallet.address.slice(0, 10)}…{wallet.address.slice(-8)}
                         </span>
-                        {wallet.label && <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>({wallet.label})</span>}
+                        {wallet.label && <span style={{ fontSize: 12, color: '#6b6c72' }}>({wallet.label})</span>}
                       </div>
                       {!isExpanded && (
-                        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginTop: 4, display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-                          {loadingAll ? <span style={{ color: '#6483ed' }}>⏳ Fetching…</span>
+                        <div style={{ fontSize: 12, color: '#6b6c72', marginTop: 4, display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                          {loadingAll ? <span style={{ color: '#6789ed' }}>⏳ Fetching…</span>
                             : taxData ? (
                               <>
-                                <span>Short: <strong style={{ color: '#22c55e' }}>${(taxData.shortTermGains || 0).toLocaleString()}</strong></span>
-                                <span>Long: <strong style={{ color: '#22c55e' }}>${(taxData.longTermGains || 0).toLocaleString()}</strong></span>
-                                <span>Est. tax: <strong style={{ color: c.taxFree ? '#22c55e' : '#ef4444' }}>{c.taxFree ? 'Free' : `$${walletEstTax.toLocaleString()}`}</strong></span>
-                                <span style={{ color: 'rgba(255,255,255,0.3)' }}>{(taxData.txCount || 0).toLocaleString()} txns</span>
+                                <span>Short: <strong style={{ color: '#8aad8a' }}>${(taxData.shortTermGains || 0).toLocaleString()}</strong></span>
+                                <span>Long: <strong style={{ color: '#8aad8a' }}>${(taxData.longTermGains || 0).toLocaleString()}</strong></span>
+                                <span>Est. tax: <strong style={{ color: c.taxFree ? '#8aad8a' : '#ef4444' }}>{c.taxFree ? 'Free' : `$${walletEstTax.toLocaleString()}`}</strong></span>
+                                <span style={{ color: '#6b6c72' }}>{(taxData.txCount || 0).toLocaleString()} txns</span>
                               </>
                             ) : wErr ? <span style={{ color: '#ef4444' }}>⚠️ {wErr}</span>
                             : null}
@@ -836,21 +732,21 @@ export default function TaxDashboard() {
                       )}
                     </div>
                     {isSelected && (
-                      <span style={{ background: '#6483ed22', color: '#6483ed', border: '1px solid #6483ed33', borderRadius: 6, padding: '2px 8px', fontSize: 10, fontWeight: 700, flexShrink: 0 }}>SELECTED</span>
+                      <span style={{ background: '#6789ed22', color: '#6789ed', border: '1px solid #6789ed33', borderRadius: 6, padding: '2px 8px', fontSize: 10, fontWeight: 700, flexShrink: 0 }}>SELECTED</span>
                     )}
                   </div>
                   {isExpanded && taxData && (
-                    <div style={{ padding: '0 24px 20px', background: S.bg }}>
+                    <div style={{ padding: '0 24px 20px', background: '#111214' }}>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginTop: 16 }}>
                         {[
-                          { label: 'Capital Gains', value: `$${(taxData.totalGains || 0).toLocaleString()}`, sub: `Short: $${taxData.shortTermGains.toLocaleString()} · Long: $${taxData.longTermGains.toLocaleString()}`, color: '#22c55e' },
-                          { label: 'Staking Income', value: `$${(taxData.stakingIncome?.totalUsd || 0).toLocaleString()}`, sub: `${(taxData.txCount || 0).toLocaleString()} txns`, color: '#6483ed' },
-                          { label: 'Est. Tax Due', value: c.taxFree ? 'Tax-free' : `$${walletEstTax.toLocaleString()} ${c.currency}`, sub: c.taxFree ? c.note : `@ ${(c.rate * 100).toFixed(0)}% rate`, color: c.taxFree ? '#22c55e' : '#ef4444' },
+                          { label: 'Capital Gains', value: `$${(taxData.totalGains || 0).toLocaleString()}`, sub: `Short: $${taxData.shortTermGains.toLocaleString()} · Long: $${taxData.longTermGains.toLocaleString()}`, color: '#8aad8a' },
+                          { label: 'Staking Income', value: `$${(taxData.stakingIncome?.totalUsd || 0).toLocaleString()}`, sub: `${(taxData.txCount || 0).toLocaleString()} txns`, color: '#6789ed' },
+                          { label: 'Est. Tax Due', value: c.taxFree ? 'Tax-free' : `$${walletEstTax.toLocaleString()} ${c.currency}`, sub: c.taxFree ? c.note : `@ ${(c.rate * 100).toFixed(0)}% rate`, color: c.taxFree ? '#8aad8a' : '#ef4444' },
                         ].map((stat, i) => (
-                          <div key={i} style={{ background: '#0f1017', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: 16 }}>
-                            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: 6 }}>{stat.label}</div>
+                          <div key={i} style={{ background: '#18191d', border: '1px solid #2a2b30', borderRadius: 12, padding: 16 }}>
+                            <div style={{ fontSize: 11, color: '#6b6c72', textTransform: 'uppercase', marginBottom: 6 }}>{stat.label}</div>
                             <div style={{ fontSize: 22, fontWeight: 900, color: stat.color }}>{stat.value}</div>
-                            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginTop: 6 }}>{stat.sub}</div>
+                            <div style={{ fontSize: 12, color: '#6b6c72', marginTop: 6 }}>{stat.sub}</div>
                           </div>
                         ))}
                       </div>
@@ -865,24 +761,116 @@ export default function TaxDashboard() {
         {/* TOP STATS */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}>
           {[
-            { icon: '📈', label: 'Total Capital Gains', value: loadingTax ? '⏳' : `$${capitalGains.toLocaleString()} ${c.currency}`, sub: realTaxData ? `Short: $${shortTermGains.toLocaleString()} · Long: $${longTermGains.toLocaleString()} · ${realTaxData.txCount} txns` : 'Short + long term · Demo', color: '#22c55e' },
-            { icon: '💰', label: 'Total Crypto Income', value: loadingTax ? '⏳' : `$${totalIncome.toLocaleString()} ${c.currency}`, sub: `Staking: $${stakingIncomeUsd.toLocaleString()} · Yield: $${yieldIncomeUsd.toLocaleString()}`, color: '#6483ed' },
-            { icon: '🏛️', label: 'Estimated Tax Due', value: loadingTax ? '⏳' : c.taxFree ? 'Tax-free' : `$${estTax.toLocaleString()} ${c.currency}`, sub: c.taxFree ? 'Tax-free jurisdiction ✅' : `@ ${(c.rate * 100).toFixed(1)}% effective rate`, color: c.taxFree ? '#22c55e' : '#ef4444' },
+            { icon: '📈', label: 'Total Capital Gains', value: loadingTax ? '⏳' : `$${capitalGains.toLocaleString()} ${c.currency}`, sub: realTaxData ? `Short: $${shortTermGains.toLocaleString()} · Long: $${longTermGains.toLocaleString()} · ${realTaxData.txCount} txns` : 'Short + long term · Demo', color: '#8aad8a' },
+            { icon: '💰', label: 'Total Crypto Income', value: loadingTax ? '⏳' : `$${totalIncome.toLocaleString()} ${c.currency}`, sub: `Staking: $${stakingIncomeUsd.toLocaleString()} · Yield: $${yieldIncomeUsd.toLocaleString()}`, color: '#6789ed' },
+            { icon: '🏛️', label: 'Estimated Tax Due', value: loadingTax ? '⏳' : c.taxFree ? 'Tax-free' : `$${estTax.toLocaleString()} ${c.currency}`, sub: c.taxFree ? 'Tax-free jurisdiction ✅' : `@ ${(c.rate * 100).toFixed(1)}% effective rate`, color: c.taxFree ? '#8aad8a' : '#ef4444' },
           ].map((stat, i) => (
             <div key={i} style={{ ...S.card, display: 'flex', alignItems: 'center', gap: 18 }}>
               <div style={{ fontSize: 32 }}>{stat.icon}</div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{stat.label}</div>
+                <div style={{ fontSize: 11, color: '#6b6c72', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{stat.label}</div>
                 <div style={{ fontSize: 24, fontWeight: 900, color: stat.color, lineHeight: 1 }}>{stat.value}</div>
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginTop: 5 }}>{stat.sub}</div>
+                <div style={{ fontSize: 12, color: '#6b6c72', marginTop: 5 }}>{stat.sub}</div>
               </div>
               <div style={{ marginLeft: 'auto', flexShrink: 0 }}>
                 {realTaxData
-                  ? <span style={{ background: '#22c55e22', color: '#22c55e', border: '1px solid #22c55e44', borderRadius: 20, padding: '2px 8px', fontSize: 10, fontWeight: 700 }}>LIVE</span>
-                  : <span style={{ background: '#f9731622', color: '#f97316', border: '1px solid #f9731644', borderRadius: 20, padding: '2px 8px', fontSize: 10, fontWeight: 700 }}>DEMO</span>}
+                  ? <span style={{ background: '#8aad8a22', color: '#8aad8a', border: '1px solid #8aad8a44', borderRadius: 20, padding: '2px 8px', fontSize: 10, fontWeight: 700 }}>LIVE</span>
+                  : <span style={{ background: '#ff931722', color: '#ff9317', border: '1px solid #ff931744', borderRadius: 20, padding: '2px 8px', fontSize: 10, fontWeight: 700 }}>DEMO</span>}
               </div>
             </div>
           ))}
+        </div>
+
+        {/* CONNECTED ACCOUNTS — wallet manager section */}
+        <div style={{ ...S.card, marginBottom: 24 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#edeef0', marginBottom: 16 }}>🔗 Connected Accounts</div>
+
+          {/* Add wallet form */}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
+            <input value={newAddress} onChange={e => setNewAddress(e.target.value)}
+              placeholder="Paste any 0x wallet address (Ethereum, Base, Arbitrum…)"
+              onKeyDown={e => e.key === 'Enter' && addWalletManual()}
+              style={{ flex: 1, minWidth: 300, background: '#111214', color: '#edeef0', border: '1px solid #2a2b30', borderRadius: 8, padding: '10px 14px', fontSize: 14 }} />
+            <select value={newNetwork} onChange={e => setNewNetwork(e.target.value)}
+              style={{ background: '#111214', color: '#edeef0', border: '1px solid #2a2b30', borderRadius: 8, padding: '10px 12px', fontSize: 13, cursor: 'pointer' }}>
+              <option value="ethereum">Ethereum</option>
+              <option value="base">Base</option>
+              <option value="arbitrum">Arbitrum</option>
+              <option value="optimism">Optimism</option>
+              <option value="polygon">Polygon</option>
+              <option value="solana">Solana</option>
+            </select>
+            <button onClick={addWalletManual}
+              style={{ background: '#8aad8a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
+              Add &amp; Scan
+            </button>
+          </div>
+
+          {/* MetaMask / Rabby connect */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: connectedWallets.length > 0 ? 16 : 0 }}>
+            <button onClick={connectRabby}
+              style={{ background: '#6789ed22', color: '#93c5fd', border: '1px solid #6789ed44', borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+              🦊 Connect MetaMask / Rabby
+            </button>
+            <span style={{ fontSize: 12, color: '#6b6c72' }}>Requires browser extension</span>
+          </div>
+
+          {/* Wallet list */}
+          {connectedWallets.length > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ fontSize: 12, color: '#6b6c72', marginBottom: 4, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Connected ({connectedWallets.length})</div>
+              {connectedWallets.map((w, i) => {
+                const wTaxData = allWalletsTax.find(x => x.wallet.address.toLowerCase() === w.address.toLowerCase())?.taxData;
+                return (
+                  <div key={i} style={{ background: '#111214', borderRadius: 10, padding: '12px 14px', border: '1px solid #2a2b30' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: wTaxData ? 8 : 0 }}>
+                      <div>
+                        <span style={{ fontFamily: 'monospace', fontSize: 13, color: '#93c5fd' }}>{w.address.slice(0,10)}…{w.address.slice(-8)}</span>
+                        <span style={{ marginLeft: 8, fontSize: 11, color: '#6b6c72', background: '#2a2b30', borderRadius: 4, padding: '2px 6px' }}>{w.network}</span>
+                        {w.label && w.label !== w.address.slice(0,6)+'…'+w.address.slice(-4) && (
+                          <span style={{ marginLeft: 6, fontSize: 11, color: '#6b6c72' }}>{w.label}</span>
+                        )}
+                      </div>
+                      <button onClick={() => removeWallet(i)}
+                        style={{ background: '#ef444415', color: '#ef4444', border: '1px solid #ef444433', borderRadius: 6, padding: '3px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
+                        Remove
+                      </button>
+                    </div>
+                    {loadingAll ? (
+                      <div style={{ fontSize: 12, color: '#6789ed' }}>⏳ Scanning…</div>
+                    ) : wTaxData ? (
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, fontSize: 12 }}>
+                        <div style={{ background: S.bg, borderRadius: 7, padding: '8px 10px' }}>
+                          <div style={{ color: '#6b6c72', marginBottom: 3 }}>Short-term gains</div>
+                          <div style={{ fontWeight: 700, color: '#8aad8a' }}>${(wTaxData.shortTermGains || 0).toLocaleString()}</div>
+                        </div>
+                        <div style={{ background: S.bg, borderRadius: 7, padding: '8px 10px' }}>
+                          <div style={{ color: '#6b6c72', marginBottom: 3 }}>Long-term gains</div>
+                          <div style={{ fontWeight: 700, color: '#8aad8a' }}>${(wTaxData.longTermGains || 0).toLocaleString()}</div>
+                        </div>
+                        <div style={{ background: S.bg, borderRadius: 7, padding: '8px 10px' }}>
+                          <div style={{ color: '#6b6c72', marginBottom: 3 }}>Staking income</div>
+                          <div style={{ fontWeight: 700, color: '#6789ed' }}>${(wTaxData.stakingIncome?.totalUsd || 0).toLocaleString()}</div>
+                        </div>
+                        <div style={{ background: S.bg, borderRadius: 7, padding: '8px 10px' }}>
+                          <div style={{ color: '#6b6c72', marginBottom: 3 }}>Transactions</div>
+                          <div style={{ fontWeight: 700, color: '#edeef0' }}>{(wTaxData.txCount || 0).toLocaleString()}</div>
+                        </div>
+                      </div>
+                    ) : w.network !== 'solana' ? (
+                      <div style={{ fontSize: 12, color: '#6b6c72' }}>Click Scan to load tax data →</div>
+                    ) : (
+                      <div style={{ fontSize: 12, color: '#6b6c72' }}>Solana — tax calculation not yet supported</div>
+                    )}
+                  </div>
+                );
+              })}
+              <button onClick={scanAll} disabled={scanningAll || loadingAll}
+                style={{ marginTop: 4, background: '#8aad8a', color: '#fff', border: 'none', borderRadius: 8, padding: '11px 0', fontSize: 14, fontWeight: 700, cursor: 'pointer', width: '100%' }}>
+                {scanningAll || loadingAll ? '⏳ Scanning all chains…' : '🔍 Scan All Wallets & Chains'}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* TRANSACTION HISTORY */}
@@ -891,7 +879,7 @@ export default function TaxDashboard() {
             <div>
               <span style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>📋 Transaction History</span>
               {realTaxData?.transactions?.length ? (
-                <span style={{ marginLeft: 10, fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>
+                <span style={{ marginLeft: 10, fontSize: 11, color: '#6b6c72' }}>
                   {showAllTime ? 'All time' : taxYears[taxYearIdx]?.label} · {realTaxData.transactions.length} transactions
                 </span>
               ) : null}
@@ -904,13 +892,13 @@ export default function TaxDashboard() {
                     setShowAllTime(next);
                     if (selectedWallet) fetchTaxSummary(selectedWallet, taxYears[taxYearIdx], next);
                   }}
-                  style={{ background: showAllTime ? '#6483ed22' : 'rgba(255,255,255,0.05)', color: showAllTime ? '#6483ed' : 'rgba(255,255,255,0.5)', border: `1px solid ${showAllTime ? '#6483ed55' : 'rgba(255,255,255,0.1)'}`, borderRadius: 7, padding: '5px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                  style={{ background: showAllTime ? '#6789ed22' : '#2a2b30', color: showAllTime ? '#6789ed' : '#6b6c72', border: `1px solid ${showAllTime ? '#6789ed55' : '#2a2b30'}`, borderRadius: 7, padding: '5px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
                   {showAllTime ? '📅 All time' : '🔍 Show all time'}
                 </button>
               )}
               {connectedWallets.length > 0 && selectedWallet && selectedWallet.network !== 'solana' && (
                 <button onClick={() => fetchTaxSummary(selectedWallet, taxYears[taxYearIdx])} disabled={loadingTax}
-                  style={{ background: '#6483ed22', color: '#6483ed', border: '1px solid #6483ed33', borderRadius: 7, padding: '5px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer', opacity: loadingTax ? 0.5 : 1 }}>
+                  style={{ background: '#6789ed22', color: '#6789ed', border: '1px solid #6789ed33', borderRadius: 7, padding: '5px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer', opacity: loadingTax ? 0.5 : 1 }}>
                   🔄 Refresh
                 </button>
               )}
@@ -920,7 +908,7 @@ export default function TaxDashboard() {
             <thead>
               <tr>
                 {['Date', 'Type', 'Asset', 'Amount', 'From', 'To', 'Chain'].map(h => (
-                  <th key={h} style={{ textAlign: 'left', color: 'rgba(255,255,255,0.35)', padding: '8px 10px', borderBottom: '1px solid rgba(255,255,255,0.07)', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
+                  <th key={h} style={{ textAlign: 'left', color: '#6b6c72', padding: '8px 10px', borderBottom: '1px solid #2a2b30', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
                     {h}
                   </th>
                 ))}
@@ -929,38 +917,38 @@ export default function TaxDashboard() {
             <tbody>
               {loadingTax ? (
                 <tr>
-                  <td colSpan={7} style={{ textAlign: 'center', padding: '32px 20px', color: '#6483ed' }}>
+                  <td colSpan={7} style={{ textAlign: 'center', padding: '32px 20px', color: '#6789ed' }}>
                     <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ display: 'inline-block', width: 14, height: 14, border: '2px solid #6483ed44', borderTopColor: '#6483ed', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                      <span style={{ display: 'inline-block', width: 14, height: 14, border: '2px solid #6789ed44', borderTopColor: '#6789ed', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
                       Loading transactions<LoadingDots />
                     </div>
                   </td>
                 </tr>
               ) : realTaxData?.transactions?.length ? (
                 realTaxData.transactions.map((tx, i) => (
-                  <tr key={i} style={{ background: tx.isStakingReward ? '#22c55e08' : 'transparent', borderLeft: tx.isStakingReward ? '3px solid #22c55e' : '3px solid transparent' }}>
+                  <tr key={i} style={{ background: tx.isStakingReward ? '#8aad8a08' : 'transparent', borderLeft: tx.isStakingReward ? '3px solid #8aad8a' : '3px solid transparent' }}>
                     <td style={{ padding: '7px 10px', color: '#edeef0', whiteSpace: 'nowrap' }}>
                       {tx.date ? new Date(tx.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
                     </td>
                     <td style={{ padding: '7px 10px' }}>
-                      <span style={{ background: tx.isStakingReward ? '#22c55e22' : tx.type === 'ETH Received' ? '#6483ed22' : 'rgba(255,255,255,0.07)', color: tx.isStakingReward ? '#22c55e' : tx.type === 'ETH Received' ? '#6483ed' : 'rgba(255,255,255,0.5)', borderRadius: 5, padding: '2px 7px', fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' }}>
+                      <span style={{ background: tx.isStakingReward ? '#8aad8a22' : tx.type === 'ETH Received' ? '#6789ed22' : '#2a2b30', color: tx.isStakingReward ? '#8aad8a' : tx.type === 'ETH Received' ? '#6789ed' : '#6b6c72', borderRadius: 5, padding: '2px 7px', fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' }}>
                         {tx.type}
                       </span>
                     </td>
                     <td style={{ padding: '7px 10px', fontWeight: 600 }}>{tx.asset}</td>
                     <td style={{ padding: '7px 10px', fontFamily: 'monospace' }}>{tx.amount}</td>
-                    <td style={{ padding: '7px 10px', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace', fontSize: 11 }}>
+                    <td style={{ padding: '7px 10px', color: '#6b6c72', fontFamily: 'monospace', fontSize: 11 }}>
                       {tx.from ? tx.from.slice(0, 6) + '…' + tx.from.slice(-4) : '—'}
                     </td>
-                    <td style={{ padding: '7px 10px', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace', fontSize: 11 }}>
+                    <td style={{ padding: '7px 10px', color: '#6b6c72', fontFamily: 'monospace', fontSize: 11 }}>
                       {tx.to ? tx.to.slice(0, 6) + '…' + tx.to.slice(-4) : '—'}
                     </td>
-                    <td style={{ padding: '7px 10px', color: 'rgba(255,255,255,0.35)', fontSize: 11 }}>{tx.chain || 'eth'}</td>
+                    <td style={{ padding: '7px 10px', color: '#6b6c72', fontSize: 11 }}>{tx.chain || 'eth'}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} style={{ textAlign: 'center', padding: '48px 20px', color: 'rgba(255,255,255,0.35)' }}>
+                  <td colSpan={7} style={{ textAlign: 'center', padding: '48px 20px', color: '#6b6c72' }}>
                     <div style={{ fontSize: 32, marginBottom: 12 }}>🔗</div>
                     {realTaxData ? (
                       <>
@@ -970,7 +958,7 @@ export default function TaxDashboard() {
                     ) : (
                       <>
                         <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 8, color: '#edeef0' }}>No wallet connected</div>
-                        <div style={{ fontSize: 13 }}>Connect a wallet on the <Link href="/tax/calculator" style={{ color: '#6483ed' }}>Tax Calculator</Link> page to see your transactions</div>
+                        <div style={{ fontSize: 13 }}>Connect a wallet above to see your transactions</div>
                       </>
                     )}
                   </td>
@@ -985,18 +973,18 @@ export default function TaxDashboard() {
           {/* Tax Breakdown */}
           <div style={{ ...S.card }}>
             <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>📊 Tax Breakdown</div>
-            {combinedTax && <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginBottom: 16 }}>Combined across all wallets & chains</div>}
+            {combinedTax && <div style={{ fontSize: 11, color: '#6b6c72', marginBottom: 16 }}>Combined across all wallets & chains</div>}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 20 }}>
               {[
-                { label: 'Short-term gains', val: `+$${displayShortTerm.toLocaleString()}`, color: '#22c55e', sub: null },
+                { label: 'Short-term gains', val: `+$${displayShortTerm.toLocaleString()}`, color: '#8aad8a', sub: null },
                 {
                   label: `Long-term gains (${c.cgtDiscount ? (c.cgtDiscount * 100).toFixed(0) + '% discount' : c.longTermExempt ? 'exempt >12mo' : c.cgtInclusion ? (c.cgtInclusion * 100).toFixed(0) + '% inclusion' : c.ltcgRate ? (c.ltcgRate * 100).toFixed(0) + '% LTCG' : 'full rate'})`,
                   val: `+$${displayLongTerm.toLocaleString()}`,
-                  color: '#22c55e',
+                  color: '#8aad8a',
                   sub: c.cgtDiscount ? `→ $${Math.round(displayLongTerm * (1 - c.cgtDiscount)).toLocaleString()} taxable` : c.longTermExempt ? '→ $0 taxable (exempt)' : null,
                 },
-                { label: 'Staking income', val: `+$${displayStaking.toLocaleString()}`, color: '#6483ed', sub: null },
-                { label: 'Yield income (DeFi positions)', val: `+$${yieldIncomeUsd.toLocaleString()}`, color: '#6483ed', sub: yieldIncome?.positionCount ? `${yieldIncome.positionCount} active positions` : null },
+                { label: 'Staking income', val: `+$${displayStaking.toLocaleString()}`, color: '#6789ed', sub: null },
+                { label: 'Yield income (DeFi positions)', val: `+$${yieldIncomeUsd.toLocaleString()}`, color: '#6789ed', sub: yieldIncome?.positionCount ? `${yieldIncome.positionCount} active positions` : null },
                 {
                   label: `Gas fees paid (${(c.code === 'AU' || c.code === 'US' || c.code === 'GB') ? 'deductible ✅' : 'not deductible'})`,
                   val: loadingGas ? '⏳' : gasData ? `-$${gasDeductionUsd.toFixed(2)}` : '-$0.00',
@@ -1004,201 +992,137 @@ export default function TaxDashboard() {
                   sub: gasData ? `${(gasData.totalGasEth || 0).toFixed(6)} ETH across Base + Arb + Eth` : 'Fetching…',
                 },
               ].map((row, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: S.bg, borderRadius: 8, marginBottom: 2 }}>
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#111214', borderRadius: 8, marginBottom: 2 }}>
                   <div>
                     <div style={{ fontSize: 13 }}>{row.label}</div>
-                    {row.sub && <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>{row.sub}</div>}
+                    {row.sub && <div style={{ fontSize: 11, color: '#6b6c72', marginTop: 2 }}>{row.sub}</div>}
                   </div>
                   <span style={{ fontWeight: 700, color: row.color, fontSize: 14 }}>{row.val}</span>
                 </div>
               ))}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: '#6483ed11', border: '1px solid #6483ed33', borderRadius: 8, marginTop: 4 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: '#6789ed11', border: '1px solid #6789ed33', borderRadius: 8, marginTop: 4 }}>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 700 }}>Net Taxable Amount</div>
-                  {combinedTax && <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>All wallets combined</div>}
+                  {combinedTax && <div style={{ fontSize: 11, color: '#6b6c72', marginTop: 2 }}>All wallets combined</div>}
                 </div>
-                <span style={{ fontSize: 18, fontWeight: 900, color: c.taxFree ? '#22c55e' : '#6483ed' }}>
+                <span style={{ fontSize: 18, fontWeight: 900, color: c.taxFree ? '#8aad8a' : '#6789ed' }}>
                   {c.taxFree ? `$0 (tax-free ✅)` : `$${Math.round(displayNetTaxable).toLocaleString()} ${c.currency}`}
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: '#ef444411', border: '1px solid #ef444433', borderRadius: 8, marginTop: 4 }}>
                 <div style={{ fontSize: 14, fontWeight: 700 }}>Estimated Tax Due</div>
-                <span style={{ fontSize: 18, fontWeight: 900, color: c.taxFree ? '#22c55e' : '#ef4444' }}>
+                <span style={{ fontSize: 18, fontWeight: 900, color: c.taxFree ? '#8aad8a' : '#ef4444' }}>
                   {c.taxFree ? 'Tax-free ✅' : `$${displayEstTax.toLocaleString()} ${c.currency}`}
                 </span>
               </div>
             </div>
-            <div style={{ fontSize: 11, color: realTaxData ? '#22c55e88' : '#f9731677' }}>
+            <div style={{ fontSize: 11, color: realTaxData ? '#8aad8a88' : '#ff931766' }}>
               {realTaxData
                 ? `✅ Live data from your connected wallet via Etherscan. Last updated: ${new Date(realTaxData.fetchedAt).toLocaleString()}.`
                 : '⚠️ Demo figures only — not financial or tax advice. Consult a qualified tax professional.'}
             </div>
           </div>
 
-          {/* Tax-Loss Harvesting */}
+          {/* Tax-Loss Harvesting — always show (demo as fallback) */}
           <div style={{ ...S.card }}>
             <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
               🌿 Tax-Loss Harvesting
               {isLiveHarvest
-                ? <span style={{ fontSize: 10, color: '#22c55e', fontWeight: 600, textTransform: 'none' }}>LIVE</span>
-                : <span style={{ fontSize: 10, color: '#f97316', fontWeight: 600, textTransform: 'none' }}>ILLUSTRATIVE</span>}
+                ? <span style={{ fontSize: 10, color: '#8aad8a', fontWeight: 600, textTransform: 'none' }}>LIVE</span>
+                : <span style={{ fontSize: 10, color: '#ff9317', fontWeight: 600, textTransform: 'none' }}>ILLUSTRATIVE</span>}
             </div>
-            {harvestData.length > 0 && (
-              <div style={{ background: '#22c55e22', border: '1px solid #22c55e33', borderRadius: 8, padding: '10px 14px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span style={{ fontSize: 18 }}>🔍</span>
-                <span style={{ fontSize: 13, color: '#22c55e', fontWeight: 600 }}>
-                  {harvestData.length} {isLiveHarvest ? 'opportunities found' : 'illustrative opportunities'}
-                </span>
-              </div>
-            )}
-            {connectedWallets.length === 0 ? (
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-                <thead>
-                  <tr>
-                    {['Asset', 'Position', 'Unrealised Loss', 'Recommendation'].map(h => (
-                      <th key={h} style={{ textAlign: 'left', color: 'rgba(255,255,255,0.35)', padding: '8px 10px', borderBottom: '1px solid rgba(255,255,255,0.07)', fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {harvestData.map((opp, i) => (
-                    <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                      <td style={{ padding: '10px', fontWeight: 700 }}>{opp.asset}</td>
-                      <td style={{ padding: '10px', color: '#edeef0' }}>{opp.position}</td>
-                      <td style={{ padding: '10px', color: '#ef4444', fontWeight: 700 }}>${opp.unrealisedLoss}</td>
-                      <td style={{ padding: '10px', color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>{opp.recommendation}</td>
-                    </tr>
+            <div style={{ background: '#8aad8a22', border: '1px solid #8aad8a33', borderRadius: 8, padding: '10px 14px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 18 }}>🔍</span>
+              <span style={{ fontSize: 13, color: '#8aad8a', fontWeight: 600 }}>
+                {harvestData.length} {isLiveHarvest ? 'opportunities found' : 'illustrative opportunities'}
+              </span>
+            </div>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+              <thead>
+                <tr>
+                  {['Asset', 'Position', 'Unrealised Loss', 'Recommendation'].map(h => (
+                    <th key={h} style={{ textAlign: 'left', color: '#6b6c72', padding: '8px 10px', borderBottom: '1px solid #2a2b30', fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
                   ))}
-                </tbody>
-              </table>
-            ) : harvestData.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '28px 0', color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>
-                <div style={{ fontSize: 28, marginBottom: 8 }}>✅</div>
-                <div>No tax-loss harvesting opportunities found for your connected wallet</div>
-              </div>
-            ) : (
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-                <thead>
-                  <tr>
-                    {['Asset', 'Position', 'Unrealised Loss', 'Recommendation'].map(h => (
-                      <th key={h} style={{ textAlign: 'left', color: 'rgba(255,255,255,0.35)', padding: '8px 10px', borderBottom: '1px solid rgba(255,255,255,0.07)', fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
-                    ))}
+                </tr>
+              </thead>
+              <tbody>
+                {harvestData.map((opp, i) => (
+                  <tr key={i} style={{ borderBottom: '1px solid #18191d' }}>
+                    <td style={{ padding: '10px', fontWeight: 700 }}>{opp.asset}</td>
+                    <td style={{ padding: '10px', color: '#edeef0' }}>{opp.position}</td>
+                    <td style={{ padding: '10px', color: '#ef4444', fontWeight: 700 }}>${opp.unrealisedLoss}</td>
+                    <td style={{ padding: '10px', color: '#6b6c72', fontSize: 11 }}>{opp.recommendation}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {harvestData.map((opp, i) => (
-                    <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                      <td style={{ padding: '10px', fontWeight: 700 }}>{opp.asset}</td>
-                      <td style={{ padding: '10px', color: '#edeef0' }}>{opp.position}</td>
-                      <td style={{ padding: '10px', color: '#ef4444', fontWeight: 700 }}>${opp.unrealisedLoss}</td>
-                      <td style={{ padding: '10px', color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>{opp.recommendation}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+                ))}
+              </tbody>
+            </table>
             {harvestData.length > 0 && (
-              <div style={{ marginTop: 12, background: '#22c55e11', border: '1px solid #22c55e22', borderRadius: 8, padding: '10px 14px', fontSize: 12, color: '#22c55e' }}>
+              <div style={{ marginTop: 12, background: '#8aad8a11', border: '1px solid #8aad8a22', borderRadius: 8, padding: '10px 14px', fontSize: 12, color: '#8aad8a' }}>
                 💡 Total potential savings: <strong>${harvestData.reduce((s, o) => s + Math.abs(o.unrealisedLoss), 0).toFixed(2)}</strong>{!isLiveHarvest ? ' (illustrative)' : ''}
               </div>
             )}
           </div>
         </div>
 
-        {/* HOLDING PERIOD TRACKER */}
+        {/* HOLDING PERIOD TRACKER — always show (demo as fallback) */}
         <div style={{ ...S.card, marginBottom: 24 }}>
           <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
             ⏰ Holding Period Tracker
             {isLiveHolding
-              ? <span style={{ fontSize: 10, color: '#22c55e', fontWeight: 600, textTransform: 'none' }}>● LIVE</span>
-              : <span style={{ fontSize: 10, color: '#f97316', fontWeight: 600, textTransform: 'none' }}>DEMO</span>}
+              ? <span style={{ fontSize: 10, color: '#8aad8a', fontWeight: 600, textTransform: 'none' }}>● LIVE</span>
+              : <span style={{ fontSize: 10, color: '#ff9317', fontWeight: 600, textTransform: 'none' }}>DEMO</span>}
           </div>
-          {holdingPeriods.length === 0 && hasWallet ? (
-            <div style={{ textAlign: 'center', padding: '28px 0', color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>
-              <div style={{ fontSize: 28, marginBottom: 8 }}>⏳</div>
-              <div>Holding period data unavailable — requires Alchemy API for on-chain position lookup</div>
-            </div>
-          ) : holdingPeriods.length === 0 ? null : (
-          <>
-          <div style={{ background: isLiveHolding && approaching > 0 ? '#f9731622' : '#22c55e22', border: `1px solid ${isLiveHolding && approaching > 0 ? '#f9731633' : '#22c55e33'}`, borderRadius: 8, padding: '10px 14px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: 18 }}>{isLiveHolding && approaching > 0 ? '⚠️' : '✅'}</span>
-            <span style={{ fontSize: 13, color: isLiveHolding && approaching > 0 ? '#f97316' : '#22c55e', fontWeight: 600 }}>
-              {isLiveHolding && approaching > 0 ? `${approaching} positions approaching 12-month CGT threshold` : isLiveHolding ? 'All positions within CGT threshold' : 'Illustrative holding periods — connect wallet for live data'}
+          <div style={{ background: approaching > 0 ? '#ff931722' : '#8aad8a22', border: `1px solid ${approaching > 0 ? '#ff931733' : '#8aad8a33'}`, borderRadius: 8, padding: '10px 14px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontSize: 18 }}>{approaching > 0 ? '⚠️' : '✅'}</span>
+            <span style={{ fontSize: 13, color: approaching > 0 ? '#ff9317' : '#8aad8a', fontWeight: 600 }}>
+              {approaching > 0 ? `${approaching} positions approaching 12-month CGT threshold` : isLiveHolding ? 'All positions within CGT threshold' : 'Illustrative holding periods — connect wallet for live data'}
             </span>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             {holdingPeriods.map((p, i) => (
-              <div key={i} style={{ background: S.bg, borderRadius: 10, padding: '14px 16px', border: p.qualified ? '1px solid #22c55e44' : p.daysToThreshold <= 30 ? '1px solid #ef444444' : '1px solid #f9731644' }}>
+              <div key={i} style={{ background: '#111214', borderRadius: 10, padding: '14px 16px', border: p.qualified ? '1px solid #8aad8a44' : p.daysToThreshold <= 30 ? '1px solid #ef444444' : '1px solid #ff931744' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                   <div style={{ fontSize: 14, fontWeight: 700 }}>{p.asset}</div>
                   {p.qualified
-                    ? <span style={{ background: '#22c55e22', color: '#22c55e', borderRadius: 6, padding: '2px 8px', fontSize: 11, fontWeight: 700 }}>✅ Qualified</span>
+                    ? <span style={{ background: '#8aad8a22', color: '#8aad8a', borderRadius: 6, padding: '2px 8px', fontSize: 11, fontWeight: 700 }}>✅ Qualified</span>
                     : p.daysToThreshold <= 30
                     ? <span style={{ background: '#ef444422', color: '#ef4444', borderRadius: 6, padding: '2px 8px', fontSize: 11, fontWeight: 700 }}>🔥 {p.daysToThreshold}d left</span>
-                    : <span style={{ background: '#f9731622', color: '#f97316', borderRadius: 6, padding: '2px 8px', fontSize: 11, fontWeight: 700 }}>⚠️ {p.daysToThreshold}d left</span>}
+                    : <span style={{ background: '#ff931722', color: '#ff9317', borderRadius: 6, padding: '2px 8px', fontSize: 11, fontWeight: 700 }}>⚠️ {p.daysToThreshold}d left</span>}
                 </div>
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>Acquired: {p.acquiredDate} · {p.daysHeld.toFixed(0)} days held</div>
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 8 }}>Position: <span style={{ color: '#edeef0', fontWeight: 600 }}>{p.value}</span></div>
-                {!p.qualified && p.potentialSaving && (
-                  <div style={{ fontSize: 11, color: '#22c55e', background: '#22c55e11', borderRadius: 6, padding: '6px 10px' }}>
-                    💰 Hold to qualify → est. CGT saving: <strong>{p.potentialSaving}</strong>
+                <div style={{ fontSize: 12, color: '#6b6c72', marginBottom: 4 }}>Acquired: {p.acquiredDate} · {p.daysHeld.toFixed(0)} days held</div>
+                <div style={{ fontSize: 12, color: '#6b6c72', marginBottom: 8 }}>Position value: <span style={{ color: '#edeef0', fontWeight: 600 }}>{p.value}</span></div>
+                {!p.qualified && (
+                  <div style={{ fontSize: 11, color: '#8aad8a', background: '#8aad8a11', borderRadius: 6, padding: '6px 10px' }}>
+                    💰 Hold to qualify → est. CGT saving: <strong>{p.potentialSaving || 'N/A'}</strong>
                   </div>
                 )}
                 {p.qualified && (
-                  <div style={{ fontSize: 11, color: '#22c55e' }}>
+                  <div style={{ fontSize: 11, color: '#8aad8a' }}>
                     ✅ CGT discount applies — {c.cgtDiscount ? `${(c.cgtDiscount * 100).toFixed(0)}% discount` : c.longTermExempt ? 'fully exempt' : 'check jurisdiction rules'}
                   </div>
                 )}
                 {p.demo && (
-                  <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', marginTop: 6 }}>Demo position</div>
+                  <div style={{ fontSize: 10, color: '#6b6c72', marginTop: 6 }}>Demo position</div>
                 )}
               </div>
             ))}
           </div>
-          </>
-          )}
         </div>
 
-        {/* YIELD INCOME FROM POSITIONS */}
-        {(yieldIncome || true) && (
-          <div style={{ ...S.card, marginBottom: 24 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-              📊 PassiveBlocks Yield Income
-              {yieldIncome ? <span style={{ fontSize: 10, color: '#22c55e', fontWeight: 600, textTransform: 'none' }}>● LIVE</span> : null}
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 16 }}>
-              {[
-                { label: 'Total Earned (YTD)', value: `$${(yieldIncome?.totalEarnedUsd || 0).toFixed(2)}`, color: '#22c55e' },
-                { label: 'Daily Rate', value: `$${(yieldIncome?.dailyRateUsd || 0.11).toFixed(4)}/day`, color: '#6483ed' },
-                { label: 'Active Positions', value: String(yieldIncome?.positionCount || 2), color: '#f97316' },
-              ].map((stat, i) => (
-                <div key={i} style={{ background: S.bg, border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '16px 20px' }}>
-                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: 6 }}>{stat.label}</div>
-                  <div style={{ fontSize: 22, fontWeight: 900, color: stat.color }}>{stat.value}</div>
-                </div>
-              ))}
-            </div>
-            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', background: '#6483ed11', border: '1px solid #6483ed22', borderRadius: 8, padding: '10px 14px' }}>
-              ℹ️ Yield income from Fluid Base (~5.19% APY) + Fluid Arbitrum (~4.63% APY). Treated as ordinary income in most jurisdictions.
-              {!yieldIncome && ' Live data loading…'}
-            </div>
-          </div>
-        )}
-
         {/* FOOTER DISCLAIMER */}
-        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.2)', textAlign: 'center', padding: '20px 0' }}>
+        <div style={{ fontSize: 12, color: '#6b6c72', textAlign: 'center', padding: '20px 0' }}>
           Tax estimates only — not financial or tax advice. Consult a qualified accountant for your specific situation.
         </div>
 
       </div>
 
       {/* Footer */}
-      <footer style={{ borderTop: '1px solid rgba(255,255,255,0.05)', padding: '32px 24px' }}>
+      <footer style={{ borderTop: '1px solid #2a2b30', padding: '32px 24px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Link href="/">
             <Image src="/passiveblocks_logo_cropped.png" alt="PassiveBlocks" width={130} height={30} style={{ height: 32, width: 'auto', opacity: 0.4 }} />
           </Link>
-          <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.2)' }}>© {new Date().getFullYear()} PassiveBlocks</span>
+          <span style={{ fontSize: 13, color: '#6b6c72' }}>© {new Date().getFullYear()} PassiveBlocks</span>
         </div>
       </footer>
 
