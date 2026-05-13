@@ -1,14 +1,18 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type TradeType = "buy" | "sell" | "yield" | "fee";
+type TradeType = "buy" | "sell" | "yield" | "fee" | "trade" | "airdrop" | "gift_received" | "lost_stolen" | "fork";
+
+type AccountingMethod = "FIFO" | "LIFO" | "HIFO";
 
 type Network = "ethereum" | "base" | "arbitrum" | "optimism" | "polygon" | "solana";
+
+type CsvSource = "binance" | "coinbase" | "kraken" | "generic";
 
 interface Wallet {
   id: string;
@@ -37,6 +41,12 @@ interface MatchedGain {
   isLongTerm: boolean;
   daysHeld: number;
   buyDate: string;
+}
+
+interface CsvPreview {
+  source: CsvSource;
+  parsed: Trade[];
+  rawRows: string[][];
 }
 
 // ─── Country rules ────────────────────────────────────────────────────────────
@@ -88,15 +98,34 @@ function calcEstimatedTax(country: Country, shortGains: number, longGains: numbe
   return Math.max(0, Math.round(capitalTax + incomeTax));
 }
 
-// ─── FIFO gain calculator ─────────────────────────────────────────────────────
+// ─── Accounting method gain calculator ───────────────────────────────────────
 
-function calcGains(trades: Trade[], longTermMonths: number): MatchedGain[] {
+function calcGains(trades: Trade[], longTermMonths: number, method: AccountingMethod = "FIFO"): MatchedGain[] {
   const buyQueues: Record<string, { date: string; qty: number; price: number }[]> = {};
   const gains: MatchedGain[] = [];
 
   const sorted = [...trades].sort((a, b) => a.date.localeCompare(b.date));
 
+  // Normalise trades: airdrop/fork/gift_received = buy at market price; lost_stolen = sell at $0; trade = sell outgoing + buy incoming
+  const normalised: Trade[] = [];
   for (const t of sorted) {
+    if (t.type === "buy" || t.type === "airdrop" || t.type === "fork" || t.type === "gift_received") {
+      normalised.push({ ...t, type: "buy" });
+    } else if (t.type === "sell" || t.type === "fee") {
+      normalised.push({ ...t, type: "sell" });
+    } else if (t.type === "lost_stolen") {
+      normalised.push({ ...t, type: "sell", priceUsd: 0 });
+    } else if (t.type === "trade") {
+      // treat the whole trade as a sell of the given asset (outgoing at market)
+      normalised.push({ ...t, type: "sell" });
+    } else if (t.type === "yield") {
+      // yield is income, not a disposal — skip for CGT (handled separately)
+    } else {
+      normalised.push(t);
+    }
+  }
+
+  for (const t of normalised) {
     if (t.type === "buy") {
       if (!buyQueues[t.asset]) buyQueues[t.asset] = [];
       buyQueues[t.asset].push({ date: t.date, qty: t.quantity, price: t.priceUsd });
@@ -104,6 +133,17 @@ function calcGains(trades: Trade[], longTermMonths: number): MatchedGain[] {
     if (t.type === "sell") {
       let remaining = t.quantity;
       const queue = buyQueues[t.asset] || [];
+
+      // Sort queue per method before matching
+      if (method === "LIFO") {
+        queue.sort((a, b) => b.date.localeCompare(a.date));
+      } else if (method === "HIFO") {
+        queue.sort((a, b) => b.price - a.price);
+      } else {
+        // FIFO: already sorted by date ascending
+        queue.sort((a, b) => a.date.localeCompare(b.date));
+      }
+
       while (remaining > 0 && queue.length > 0) {
         const lot = queue[0];
         const matched = Math.min(remaining, lot.qty);
@@ -133,6 +173,175 @@ function calcGains(trades: Trade[], longTermMonths: number): MatchedGain[] {
   return gains;
 }
 
+// ─── Financial year helpers ───────────────────────────────────────────────────
+
+type TaxYear =
+  | "all"
+  | "fy2024-25"
+  | "fy2023-24"
+  | "fy2022-23"
+  | "cal2024"
+  | "cal2023";
+
+interface YearRange {
+  start: string;
+  end: string;
+  label: string;
+}
+
+const TAX_YEAR_RANGES: Record<TaxYear, YearRange> = {
+  "all":       { start: "0000-01-01", end: "9999-12-31", label: "All time" },
+  "fy2024-25": { start: "2024-07-01", end: "2025-06-30", label: "FY 2024-25 (Jul 24 – Jun 25)" },
+  "fy2023-24": { start: "2023-07-01", end: "2024-06-30", label: "FY 2023-24 (Jul 23 – Jun 24)" },
+  "fy2022-23": { start: "2022-07-01", end: "2023-06-30", label: "FY 2022-23 (Jul 22 – Jun 23)" },
+  "cal2024":   { start: "2024-01-01", end: "2024-12-31", label: "Calendar 2024" },
+  "cal2023":   { start: "2023-01-01", end: "2023-12-31", label: "Calendar 2023" },
+};
+
+function filterTradesByYear(trades: Trade[], year: TaxYear): Trade[] {
+  if (year === "all") return trades;
+  const { start, end } = TAX_YEAR_RANGES[year];
+  return trades.filter((t) => t.date >= start && t.date <= end);
+}
+
+// ─── CSV parsers ──────────────────────────────────────────────────────────────
+
+function stripBOM(text: string): string {
+  return text.charCodeAt(0) === 0xfeff ? text.slice(1) : text;
+}
+
+function parseCSVLine(line: string): string[] {
+  const fields: string[] = [];
+  let current = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (line[i + 1] === '"') { current += '"'; i++; }
+        else inQuotes = false;
+      } else {
+        current += ch;
+      }
+    } else {
+      if (ch === '"') { inQuotes = true; }
+      else if (ch === ",") { fields.push(current); current = ""; }
+      else { current += ch; }
+    }
+  }
+  fields.push(current);
+  return fields;
+}
+
+function parseCSV(text: string): string[][] {
+  const clean = stripBOM(text).replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  return clean.split("\n").filter((l) => l.trim()).map(parseCSVLine);
+}
+
+function tradeHash(t: Omit<Trade, "id">): string {
+  return `${t.date}|${t.type}|${t.asset}|${t.quantity.toFixed(8)}`;
+}
+
+function parseBinanceCSV(rows: string[][]): Trade[] {
+  // Date(UTC),Pair,Side,Price,Executed,Amount,Fee
+  const trades: Trade[] = [];
+  for (const row of rows.slice(1)) {
+    if (row.length < 7) continue;
+    const [dateRaw, , side, priceRaw, executedRaw] = row;
+    if (!dateRaw || !side) continue;
+    // date: "2024-01-15 10:23:45"
+    const date = dateRaw.trim().slice(0, 10);
+    const type: TradeType = side.trim().toUpperCase() === "BUY" ? "buy" : "sell";
+    // executed: "0.5 ETH"
+    const execParts = executedRaw.trim().split(" ");
+    const qty = parseFloat(execParts[0]) || 0;
+    const asset = (execParts[1] || "").toUpperCase();
+    const priceUsd = parseFloat(priceRaw) || 0;
+    if (!asset || qty <= 0) continue;
+    const t: Omit<Trade, "id"> = { date, type, asset, quantity: qty, priceUsd, notes: "Binance import" };
+    trades.push({ ...t, id: tradeHash(t) });
+  }
+  return trades;
+}
+
+function parseCoinbaseCSV(rows: string[][]): Trade[] {
+  // Timestamp,Transaction Type,Asset,Quantity Transacted,Spot Price Currency,Spot Price at Transaction,...
+  const trades: Trade[] = [];
+  for (const row of rows.slice(1)) {
+    if (row.length < 6) continue;
+    const [tsRaw, txType, asset, qtyRaw, , priceRaw] = row;
+    if (!tsRaw || !txType) continue;
+    const date = tsRaw.trim().slice(0, 10).replace("T", " ").slice(0, 10);
+    const qty = parseFloat(qtyRaw) || 0;
+    const priceUsd = parseFloat(priceRaw) || 0;
+    const sym = asset.trim().toUpperCase();
+    if (!sym || qty <= 0) continue;
+
+    let type: TradeType;
+    const txNorm = txType.trim().toLowerCase();
+    if (txNorm === "buy") type = "buy";
+    else if (txNorm === "sell") type = "sell";
+    else if (txNorm === "receive") type = "buy";
+    else if (txNorm === "send") type = "sell";
+    else if (txNorm === "rewards income" || txNorm === "staking income") type = "yield";
+    else if (txNorm === "convert") type = "trade";
+    else continue; // skip unknowns
+
+    const t: Omit<Trade, "id"> = { date, type, asset: sym, quantity: qty, priceUsd, notes: "Coinbase import" };
+    trades.push({ ...t, id: tradeHash(t) });
+  }
+  return trades;
+}
+
+function parseKrakenCSV(rows: string[][]): Trade[] {
+  // txid,refid,time,type,subtype,aclass,asset,amount,fee,balance
+  const trades: Trade[] = [];
+  for (const row of rows.slice(1)) {
+    if (row.length < 9) continue;
+    const [, , timeRaw, typeRaw, , , assetRaw, amountRaw] = row;
+    if (!timeRaw || !typeRaw) continue;
+    const date = timeRaw.trim().slice(0, 10);
+    const amount = parseFloat(amountRaw) || 0;
+    if (amount === 0) continue;
+
+    // Strip Kraken's .S / X / Z prefix/suffix quirks
+    const sym = assetRaw.trim().replace(/^X/, "").replace(/^Z/, "").toUpperCase();
+    if (!sym) continue;
+
+    let type: TradeType;
+    const txNorm = typeRaw.trim().toLowerCase();
+    if (txNorm === "trade") type = amount > 0 ? "buy" : "sell";
+    else if (txNorm === "deposit") type = "buy";
+    else if (txNorm === "withdrawal") type = "sell";
+    else if (txNorm === "staking" || txNorm === "earn") type = "yield";
+    else continue;
+
+    const t: Omit<Trade, "id"> = { date, type, asset: sym, quantity: Math.abs(amount), priceUsd: 0, notes: "Kraken import" };
+    trades.push({ ...t, id: tradeHash(t) });
+  }
+  return trades;
+}
+
+function parseGenericCSV(rows: string[][]): Trade[] {
+  // date,type,asset,quantity,price_usd,notes
+  const trades: Trade[] = [];
+  for (const row of rows.slice(1)) {
+    if (row.length < 5) continue;
+    const [dateRaw, typeRaw, assetRaw, qtyRaw, priceRaw, notesRaw] = row;
+    const date = dateRaw.trim().slice(0, 10);
+    const type = (typeRaw.trim().toLowerCase()) as TradeType;
+    const validTypes: TradeType[] = ["buy", "sell", "trade", "yield", "airdrop", "gift_received", "lost_stolen", "fee", "fork"];
+    if (!validTypes.includes(type)) continue;
+    const qty = parseFloat(qtyRaw) || 0;
+    const priceUsd = parseFloat(priceRaw) || 0;
+    const asset = assetRaw.trim().toUpperCase();
+    if (!asset || qty <= 0) continue;
+    const t: Omit<Trade, "id"> = { date, type, asset, quantity: qty, priceUsd, notes: notesRaw?.trim() || "Generic import" };
+    trades.push({ ...t, id: tradeHash(t) });
+  }
+  return trades;
+}
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function fmt(n: number, decimals = 2): string {
@@ -147,7 +356,7 @@ const EXAMPLE_TRADES: Trade[] = [];
 
 // ─── CSV export ───────────────────────────────────────────────────────────────
 
-function exportCSV(gains: MatchedGain[], yieldTotal: number, country: Country) {
+function exportCSV(gains: MatchedGain[], yieldTotal: number, country: Country, method: AccountingMethod) {
   const rows = [
     ["Asset", "Buy Date", "Sell Date", "Days Held", "Classification", "Qty", "Cost Basis (USD)", "Proceeds (USD)", "Gain/Loss (USD)"],
     ...gains.map((g) => [
@@ -158,6 +367,7 @@ function exportCSV(gains: MatchedGain[], yieldTotal: number, country: Country) {
     [],
     ["Yield Income (USD)", fmt(yieldTotal)],
     ["Country", country.name],
+    ["Accounting Method", method],
     ["Short-term gains", fmt(gains.filter(g => !g.isLongTerm).reduce((s, g) => s + g.gain, 0))],
     ["Long-term gains", fmt(gains.filter(g => g.isLongTerm).reduce((s, g) => s + g.gain, 0))],
     ["Tax note", `${country.note} — this is an estimate only, not financial advice`],
@@ -168,7 +378,7 @@ function exportCSV(gains: MatchedGain[], yieldTotal: number, country: Country) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `passiveblocks-tax-${country.code}-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.download = `passiveblocks-tax-${country.code}-${method}-${new Date().toISOString().slice(0, 10)}.csv`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -188,12 +398,27 @@ const NETWORKS: { code: Network; label: string; icon: string; evm: boolean }[] =
 
 const BLANK_WALLET: Omit<Wallet, "id"> = { address: "", network: "ethereum", label: "" };
 
+const CSV_SOURCES: { id: CsvSource; label: string; hint: string }[] = [
+  { id: "binance",  label: "Binance",  hint: "Trade History export — Date(UTC), Pair, Side, Price, Executed, Amount, Fee" },
+  { id: "coinbase", label: "Coinbase", hint: "Transaction History — Timestamp, Transaction Type, Asset, Quantity…" },
+  { id: "kraken",   label: "Kraken",   hint: "Ledgers export — txid, refid, time, type, subtype, aclass, asset, amount, fee, balance" },
+  { id: "generic",  label: "Generic",  hint: "Our template — date, type, asset, quantity, price_usd, notes" },
+];
+
 export default function TaxCalculatorPage() {
   const [trades, setTrades] = useState<Trade[]>(EXAMPLE_TRADES);
   const [countryCode, setCountryCode] = useState<CountryCode>("AU");
+  const [accountingMethod, setAccountingMethod] = useState<AccountingMethod>("FIFO");
+  const [taxYear, setTaxYear] = useState<TaxYear>("all");
   const [form, setForm] = useState<Omit<Trade, "id">>(BLANK_TRADE);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
+
+  // CSV import state
+  const [csvTab, setCsvTab] = useState<CsvSource>("binance");
+  const [csvPreview, setCsvPreview] = useState<CsvPreview | null>(null);
+  const [csvImportMsg, setCsvImportMsg] = useState<string | null>(null);
+  const csvInputRef = useRef<HTMLInputElement>(null);
 
   // Wallet state
   const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -230,6 +455,13 @@ export default function TaxCalculatorPage() {
     document.addEventListener("mousedown", close);
     return () => document.removeEventListener("mousedown", close);
   }, [showPhantomPicker]);
+
+  // Auto-reset LIFO/HIFO to FIFO when AU is selected (ATO requirement)
+  useEffect(() => {
+    if (countryCode === "AU" && accountingMethod !== "FIFO") {
+      setAccountingMethod("FIFO");
+    }
+  }, [countryCode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function detectWallets() {
     if (typeof window === "undefined") return;
@@ -362,7 +594,30 @@ export default function TaxCalculatorPage() {
     let totalFresh = 0;
     let errorMsg: string | null = null;
     for (const net of NETWORKS) {
-      if (net.code === "solana") continue; // EVM scan only
+      if (net.code === "solana") {
+        // Solana: call API with the address directly
+        const solWallet = wallets.find((x) => x.address === address && x.network === "solana");
+        if (!solWallet) continue;
+        setImportingId(solWallet.id);
+        try {
+          const res = await fetch(`/api/wallet-import?address=${address}&network=solana`);
+          const data = await res.json();
+          if (data.error) {
+            if (!errorMsg) errorMsg = data.error;
+          } else {
+            const incoming = data.trades as Trade[];
+            setTrades((prev) => {
+              const existingIds = new Set(prev.map((t) => t.id));
+              const fresh = incoming.filter((t) => !existingIds.has(t.id));
+              totalFresh += fresh.length;
+              return [...prev, ...fresh];
+            });
+          }
+        } catch (e) {
+          if (!errorMsg) errorMsg = String(e);
+        }
+        continue;
+      }
       const w = wallets.find((x) => x.address === address && x.network === net.code);
       if (!w) continue;
       setImportingId(w.id);
@@ -388,7 +643,6 @@ export default function TaxCalculatorPage() {
     const statusMsg = errorMsg
       ? `Error: ${errorMsg}`
       : `Imported ${totalFresh} new trades across all chains`;
-    // Store the message keyed by address so grouped card can display it
     setImportMsg((m) => ({ ...m, [address]: statusMsg }));
   }
 
@@ -452,14 +706,63 @@ export default function TaxCalculatorPage() {
     }
   }
 
+  // ─── CSV import handlers ──────────────────────────────────────────────────
+
+  function handleCsvFile(file: File) {
+    setCsvPreview(null);
+    setCsvImportMsg(null);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const text = ev.target?.result as string;
+      const rows = parseCSV(text);
+      if (rows.length < 2) { setCsvImportMsg("File appears empty or unreadable."); return; }
+
+      let parsed: Trade[] = [];
+      if (csvTab === "binance")  parsed = parseBinanceCSV(rows);
+      else if (csvTab === "coinbase") parsed = parseCoinbaseCSV(rows);
+      else if (csvTab === "kraken")   parsed = parseKrakenCSV(rows);
+      else                             parsed = parseGenericCSV(rows);
+
+      if (parsed.length === 0) { setCsvImportMsg("No recognised transactions found. Check the format matches the selected exchange."); return; }
+      setCsvPreview({ source: csvTab, parsed, rawRows: rows });
+    };
+    reader.readAsText(file);
+  }
+
+  function confirmCsvImport() {
+    if (!csvPreview) return;
+    const existingHashes = new Set(trades.map((t) => t.id));
+    const fresh = csvPreview.parsed.filter((t) => !existingHashes.has(t.id));
+    const dupes = csvPreview.parsed.length - fresh.length;
+    setTrades((prev) => [...prev, ...fresh]);
+    setCsvImportMsg(`Imported ${fresh.length} new trades${dupes > 0 ? ` (${dupes} duplicate${dupes > 1 ? "s" : ""} skipped)` : ""}.`);
+    setCsvPreview(null);
+    if (csvInputRef.current) csvInputRef.current.value = "";
+  }
+
+  function cancelCsvPreview() {
+    setCsvPreview(null);
+    if (csvInputRef.current) csvInputRef.current.value = "";
+  }
+
+  // ─── Computed values ──────────────────────────────────────────────────────
+
   const country = getCountry(countryCode);
 
-  const gains = useMemo(() => calcGains(trades, country.longTermMonths), [trades, countryCode]);
+  const filteredTrades = useMemo(
+    () => filterTradesByYear(trades, taxYear),
+    [trades, taxYear]
+  );
+
+  const gains = useMemo(
+    () => calcGains(filteredTrades, country.longTermMonths, accountingMethod),
+    [filteredTrades, countryCode, accountingMethod] // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   const shortGains = gains.filter((g) => !g.isLongTerm).reduce((s, g) => s + g.gain, 0);
   const longGains  = gains.filter((g) => g.isLongTerm).reduce((s, g) => s + g.gain, 0);
   const totalGains = shortGains + longGains;
-  const yieldTotal = trades.filter((t) => t.type === "yield").reduce((s, t) => s + t.quantity * t.priceUsd, 0);
+  const yieldTotal = filteredTrades.filter((t) => t.type === "yield" || t.type === "airdrop" || t.type === "fork").reduce((s, t) => s + t.quantity * t.priceUsd, 0);
   const estimatedTax = calcEstimatedTax(country, shortGains, longGains, yieldTotal);
 
   function saveForm() {
@@ -499,8 +802,37 @@ export default function TaxCalculatorPage() {
     { id: "walletconnect",icon: "📡", name: "WalletConnect",   desc: "Mobile & Desktop",  action: null,             install: null,                                        soon: true  },
   ];
 
-  const tradeTypeLabel: Record<TradeType, string> = { buy: "Buy", sell: "Sell", yield: "Yield / Staking", fee: "Fee" };
-  const tradeTypeColor: Record<TradeType, string> = { buy: "text-blue-400", sell: "text-green-400", yield: "text-yellow-400", fee: "text-red-400" };
+  const tradeTypeLabel: Record<TradeType, string> = {
+    buy: "Buy", sell: "Sell", yield: "Yield / Staking", fee: "Fee",
+    trade: "Trade / Swap", airdrop: "Airdrop", gift_received: "Gift Received",
+    lost_stolen: "Lost / Stolen", fork: "Hard Fork",
+  };
+  const tradeTypeColor: Record<TradeType, string> = {
+    buy: "text-blue-400", sell: "text-green-400", yield: "text-yellow-400", fee: "text-red-400",
+    trade: "text-purple-400", airdrop: "text-teal-400", gift_received: "text-pink-400",
+    lost_stolen: "text-red-500", fork: "text-orange-400",
+  };
+
+  const yearLabel = TAX_YEAR_RANGES[taxYear].label;
+
+  // Tax year options — FY labels for AU, calendar for others
+  const isAU = countryCode === "AU";
+  const taxYearOptions: { value: TaxYear; label: string }[] = [
+    { value: "all",       label: "All time" },
+    ...(isAU
+      ? [
+          { value: "fy2024-25" as TaxYear, label: "FY 2024-25" },
+          { value: "fy2023-24" as TaxYear, label: "FY 2023-24" },
+          { value: "fy2022-23" as TaxYear, label: "FY 2022-23" },
+        ]
+      : [
+          { value: "cal2024" as TaxYear, label: "Calendar 2024" },
+          { value: "cal2023" as TaxYear, label: "Calendar 2023" },
+        ]),
+  ];
+
+  // Remove wallet is referenced but unused in this component directly
+  void removeWallet;
 
   return (
     <div className="min-h-screen bg-[#08080f] text-white">
@@ -522,12 +854,12 @@ export default function TaxCalculatorPage() {
           <p className="text-xs font-bold tracking-widest uppercase text-blue-400 mb-3">DeFi Tax Calculator</p>
           <h1 className="text-4xl font-extrabold mb-3">Estimate your crypto tax</h1>
           <p className="text-white/50 text-lg max-w-2xl">
-            Manual trade entry. FIFO matching. Multi-country rules. Export to CSV.
+            CSV import from Binance, Coinbase, Kraken. FIFO / LIFO / HIFO. Multi-country rules. Export to CSV.
             <span className="ml-2 text-xs text-white/30">Estimate only — not financial advice.</span>
           </p>
         </div>
 
-        {/* Country + disclaimer */}
+        {/* Country + accounting method + tax year row */}
         <div className="flex flex-wrap items-center gap-4 mb-8">
           <div className="flex items-center gap-2">
             <span className="text-sm text-white/40">Country:</span>
@@ -543,9 +875,143 @@ export default function TaxCalculatorPage() {
               ))}
             </select>
           </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-white/40">Method:</span>
+            <div className="relative group">
+              <select
+                value={accountingMethod}
+                onChange={(e) => setAccountingMethod(e.target.value as AccountingMethod)}
+                className="bg-white/[0.06] border border-white/[0.12] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400/50"
+              >
+                <option value="FIFO">FIFO</option>
+                <option value="LIFO">LIFO</option>
+                <option value="HIFO">HIFO</option>
+              </select>
+              {countryCode === "AU" && (
+                <div className="absolute bottom-full left-0 mb-2 w-64 bg-[#1a1a2e] border border-yellow-500/30 text-yellow-300 text-xs rounded-lg px-3 py-2 hidden group-hover:block z-50 pointer-events-none">
+                  Note: ATO requires FIFO for Australian CGT. LIFO/HIFO are available for reference only.
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-white/40">Tax year:</span>
+            <select
+              value={taxYear}
+              onChange={(e) => setTaxYear(e.target.value as TaxYear)}
+              className="bg-white/[0.06] border border-white/[0.12] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400/50"
+            >
+              {taxYearOptions.map((o) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
+          </div>
+
           <span className="text-xs text-white/30 bg-white/[0.03] border border-white/[0.07] px-3 py-1.5 rounded-full">
             {country.note}
           </span>
+        </div>
+
+        {/* ── CSV IMPORT ────────────────────────────────────────────────────── */}
+        <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6 mb-6">
+          <p className="text-xs font-bold tracking-widest uppercase text-white/60 mb-1">Import CSV</p>
+          <p className="text-xs text-white/30 mb-4">Import trade history directly from your exchange. Duplicates are automatically skipped.</p>
+
+          {/* Tabs */}
+          <div className="flex gap-1 mb-5 bg-white/[0.03] rounded-xl p-1 w-fit">
+            {CSV_SOURCES.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => { setCsvTab(s.id); setCsvPreview(null); setCsvImportMsg(null); if (csvInputRef.current) csvInputRef.current.value = ""; }}
+                className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${csvTab === s.id ? "bg-blue-600 text-white" : "text-white/40 hover:text-white/70"}`}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Hint */}
+          <p className="text-xs text-white/30 mb-4 font-mono bg-white/[0.02] px-3 py-2 rounded-lg border border-white/[0.06]">
+            {CSV_SOURCES.find((s) => s.id === csvTab)?.hint}
+          </p>
+
+          {/* Generic template download */}
+          {csvTab === "generic" && (
+            <div className="mb-4">
+              <button
+                onClick={() => {
+                  const header = "date,type,asset,quantity,price_usd,notes\n";
+                  const example = "2024-01-15,buy,ETH,1.5,2850.00,Purchased on exchange\n2024-06-01,sell,ETH,0.5,3200.00,Sold for profit\n2024-03-10,yield,SOL,5.2,180.00,Staking reward\n";
+                  const blob = new Blob([header + example], { type: "text/csv" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a"); a.href = url; a.download = "passiveblocks-generic-template.csv"; a.click(); URL.revokeObjectURL(url);
+                }}
+                className="text-xs text-blue-400 hover:text-blue-300 transition-colors border border-blue-400/20 px-3 py-1.5 rounded-lg"
+              >
+                Download template CSV
+              </button>
+            </div>
+          )}
+
+          {/* File input */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <input
+              ref={csvInputRef}
+              type="file"
+              accept=".csv"
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) handleCsvFile(f); }}
+              className="block text-sm text-white/50 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 file:cursor-pointer cursor-pointer"
+            />
+          </div>
+
+          {/* Preview */}
+          {csvPreview && (
+            <div className="mt-4 bg-white/[0.02] border border-white/[0.1] rounded-xl p-4">
+              <p className="text-sm font-semibold text-white/80 mb-2">
+                Found {csvPreview.parsed.length} transaction{csvPreview.parsed.length !== 1 ? "s" : ""} — preview (first 3):
+              </p>
+              <div className="overflow-x-auto mb-4">
+                <table className="text-xs w-full">
+                  <thead>
+                    <tr className="text-white/30 text-left">
+                      <th className="pr-3 pb-1">Date</th>
+                      <th className="pr-3 pb-1">Type</th>
+                      <th className="pr-3 pb-1">Asset</th>
+                      <th className="pr-3 pb-1 text-right">Qty</th>
+                      <th className="pr-3 pb-1 text-right">Price (USD)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {csvPreview.parsed.slice(0, 3).map((t, i) => (
+                      <tr key={i} className="text-white/60">
+                        <td className="pr-3 py-0.5 font-mono">{t.date}</td>
+                        <td className={`pr-3 py-0.5 font-semibold ${tradeTypeColor[t.type]}`}>{tradeTypeLabel[t.type]}</td>
+                        <td className="pr-3 py-0.5 font-bold">{t.asset}</td>
+                        <td className="pr-3 py-0.5 text-right">{fmt(t.quantity, 4)}</td>
+                        <td className="pr-3 py-0.5 text-right">{t.priceUsd > 0 ? `$${fmt(t.priceUsd)}` : "—"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="flex gap-3">
+                <button onClick={confirmCsvImport} className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-5 py-2 rounded-lg text-sm transition-colors">
+                  Import {csvPreview.parsed.length} trade{csvPreview.parsed.length !== 1 ? "s" : ""}
+                </button>
+                <button onClick={cancelCsvPreview} className="border border-white/20 hover:border-white/40 px-5 py-2 rounded-lg text-sm transition-colors">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
+          {csvImportMsg && (
+            <div className={`mt-3 flex items-center gap-2 text-sm px-4 py-2.5 rounded-xl ${csvImportMsg.includes("No recognised") || csvImportMsg.includes("empty") ? "bg-red-500/10 border border-red-500/30 text-red-400" : "bg-blue-500/10 border border-blue-500/30 text-blue-400"}`}>
+              {csvImportMsg.includes("Imported") ? "✓" : "⚠"} {csvImportMsg}
+            </div>
+          )}
         </div>
 
         {/* Wallets */}
@@ -765,11 +1231,16 @@ export default function TaxCalculatorPage() {
         </div>
 
         {/* Summary cards */}
+        <div className="mb-3">
+          {taxYear !== "all" && (
+            <p className="text-xs text-white/30 mb-3">Showing {yearLabel} · {filteredTrades.length} of {trades.length} trades</p>
+          )}
+        </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
           {[
             { label: "Short-term gains", value: `$${fmt(shortGains)}`, sub: "< 12 months", color: shortGains >= 0 ? "text-white" : "text-red-400" },
             { label: "Long-term gains",  value: `$${fmt(longGains)}`,  sub: "> 12 months (discounted)", color: longGains >= 0 ? "text-white" : "text-red-400" },
-            { label: "Yield income",     value: `$${fmt(yieldTotal)}`, sub: "Staking / lending", color: "text-yellow-400" },
+            { label: "Yield / Airdrop income", value: `$${fmt(yieldTotal)}`, sub: "Staking / lending / drops", color: "text-yellow-400" },
             { label: "Est. tax",         value: (country as { taxFree?: boolean }).taxFree ? "None" : `$${fmt(estimatedTax)}`, sub: country.currency, color: (country as { taxFree?: boolean }).taxFree ? "text-green-400" : "text-blue-400" },
           ].map((card) => (
             <div key={card.label} className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-5">
@@ -782,10 +1253,10 @@ export default function TaxCalculatorPage() {
 
         {/* Trade list + actions */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-lg font-bold">Trade log</h2>
+          <h2 className="text-lg font-bold">Trade log <span className="text-xs font-normal text-white/30">{trades.length} trade{trades.length !== 1 ? "s" : ""} total</span></h2>
           <div className="flex gap-2">
             <button
-              onClick={() => exportCSV(gains, yieldTotal, country)}
+              onClick={() => exportCSV(gains, yieldTotal, country, accountingMethod)}
               className="text-sm border border-white/20 hover:border-white/40 px-4 py-2 rounded-lg transition-colors"
             >
               Export CSV
@@ -821,7 +1292,12 @@ export default function TaxCalculatorPage() {
                   className="w-full bg-white/[0.06] border border-white/[0.12] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400/50">
                   <option value="buy">Buy</option>
                   <option value="sell">Sell</option>
+                  <option value="trade">Trade / Swap</option>
                   <option value="yield">Yield / Staking</option>
+                  <option value="airdrop">Airdrop</option>
+                  <option value="gift_received">Gift Received</option>
+                  <option value="lost_stolen">Lost / Stolen</option>
+                  <option value="fork">Hard Fork</option>
                   <option value="fee">Fee</option>
                 </select>
               </div>
@@ -864,7 +1340,7 @@ export default function TaxCalculatorPage() {
             <div className="text-center py-16 text-white/50">
               <div className="text-4xl mb-3">📋</div>
               <p className="mb-1 font-semibold">No trades yet.</p>
-              <p className="text-xs text-white/40">Connect a wallet and click <strong className="text-white/60">Scan All Chains</strong> to auto-import, or add trades manually above.</p>
+              <p className="text-xs text-white/40">Import a CSV above, connect a wallet and scan, or add trades manually.</p>
             </div>
           ) : (
             <table className="w-full text-sm">
@@ -906,7 +1382,10 @@ export default function TaxCalculatorPage() {
         {/* Gains breakdown */}
         {gains.length > 0 && (
           <div className="mb-10">
-            <h2 className="text-lg font-bold mb-4">Gain / loss breakdown <span className="text-xs font-normal text-white/30 ml-2">FIFO method</span></h2>
+            <h2 className="text-lg font-bold mb-4">
+              Gain / loss breakdown
+              <span className="text-xs font-normal text-white/30 ml-2">{accountingMethod} method{taxYear !== "all" ? ` · ${yearLabel}` : ""}</span>
+            </h2>
             <div className="bg-white/[0.02] border border-white/[0.07] rounded-2xl overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
@@ -965,7 +1444,7 @@ export default function TaxCalculatorPage() {
                 {[
                   ["Short-term gains", `$${fmt(shortGains)}`, shortGains >= 0 ? "text-white" : "text-red-400"],
                   ["Long-term gains",  `$${fmt(longGains)}`,  longGains  >= 0 ? "text-white" : "text-red-400"],
-                  ["Yield / staking income", `$${fmt(yieldTotal)}`, "text-yellow-400"],
+                  ["Yield / staking / airdrop income", `$${fmt(yieldTotal)}`, "text-yellow-400"],
                   ["Total taxable gains", `$${fmt(totalGains + yieldTotal)}`, "text-white font-bold"],
                 ].map(([label, value, cls]) => (
                   <div key={String(label)} className="flex justify-between items-center border-b border-white/[0.05] pb-2">
@@ -978,6 +1457,7 @@ export default function TaxCalculatorPage() {
                 <div className="text-xs text-white/40 mb-2 uppercase tracking-widest">Estimated tax ({country.currency})</div>
                 <div className="text-4xl font-extrabold text-blue-400">${fmt(estimatedTax)}</div>
                 <div className="text-xs text-white/30 mt-2">{country.note}</div>
+                <div className="text-xs text-white/20 mt-1">{accountingMethod} · {yearLabel}</div>
               </div>
             </div>
           )}
@@ -989,7 +1469,7 @@ export default function TaxCalculatorPage() {
         {/* Export + CTA */}
         <div className="flex flex-col sm:flex-row items-center gap-4 justify-between">
           <button
-            onClick={() => exportCSV(gains, yieldTotal, country)}
+            onClick={() => exportCSV(gains, yieldTotal, country, accountingMethod)}
             className="w-full sm:w-auto bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.12] text-white font-semibold px-6 py-3 rounded-xl text-sm transition-colors"
           >
             Export to CSV
