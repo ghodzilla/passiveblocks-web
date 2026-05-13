@@ -646,28 +646,6 @@ export default function TaxCalculatorPage() {
     setImportMsg((m) => ({ ...m, [address]: statusMsg }));
   }
 
-  async function importWallet(w: Wallet) {
-    setImportingId(w.id);
-    setImportMsg((m) => ({ ...m, [w.id]: "Fetching transactions…" }));
-    try {
-      const res = await fetch(`/api/wallet-import?address=${w.address}&network=${w.network}`);
-      const data = await res.json();
-      if (data.error) {
-        setImportMsg((m) => ({ ...m, [w.id]: `Error: ${data.error}` }));
-      } else {
-        const incoming = data.trades as Trade[];
-        const existingIds = new Set(trades.map((t) => t.id));
-        const fresh = incoming.filter((t) => !existingIds.has(t.id));
-        setTrades((prev) => [...prev, ...fresh]);
-        setImportMsg((m) => ({ ...m, [w.id]: `Imported ${fresh.length} trades (${incoming.length - fresh.length} already present)` }));
-      }
-    } catch (e) {
-      setImportMsg((m) => ({ ...m, [w.id]: `Failed: ${String(e)}` }));
-    } finally {
-      setImportingId(null);
-    }
-  }
-
   async function scanAllWallets() {
     const evmNetworks = NETWORKS.filter((n) => n.evm);
     const uniqueAddresses = Array.from(new Set(wallets.filter((w) => w.network !== "solana").map((w) => w.address)));

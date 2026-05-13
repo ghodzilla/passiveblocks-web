@@ -95,7 +95,6 @@ export default function LearnPage() {
         <h2 className="text-xl font-bold mb-6 text-white/80">Recently added</h2>
         <div className="flex flex-col gap-4">
           {recentArticles.map((article) => {
-            const cat = LEARN_CATEGORIES.find((c) => c.id === article.category);
             return (
               <Link
                 key={article.slug}
