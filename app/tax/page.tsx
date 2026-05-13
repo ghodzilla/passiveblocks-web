@@ -255,7 +255,6 @@ export default function TaxDashboard() {
   const [showAllTime, setShowAllTime] = useState(false);
 
   // Wallet management
-  const [showAddWallet, setShowAddWallet] = useState(false);
   const [newAddress, setNewAddress] = useState('');
   const [newNetwork, setNewNetwork] = useState('ethereum');
   const [scanningAll, setScanningAll] = useState(false);
@@ -385,7 +384,6 @@ export default function TaxDashboard() {
     setConnectedWallets(updated);
     localStorage.setItem('pb_wallets', JSON.stringify(updated));
     setNewAddress('');
-    setShowAddWallet(false);
     if (network !== 'solana') {
       fetchTaxSummary(wallet, taxYears[taxYearIdx]);
       fetchAllWalletsTax(updated, taxYears[taxYearIdx]);
@@ -554,7 +552,7 @@ export default function TaxDashboard() {
             <Image src="/passiveblocks_logo_cropped.png" alt="PassiveBlocks" width={172} height={40} style={{ height: 40, width: 'auto' }} priority />
           </Link>
           <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
-            {[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Tax', href: '/tax' }, { label: 'Pricing', href: '/pricing' }].map(l => (
+            {[{ label: 'Tax', href: '/tax' }, { label: 'Pricing', href: '/pricing' }].map(l => (
               <Link key={l.label} href={l.href} style={{ color: l.label === 'Tax' ? '#edeef0' : 'rgba(255,255,255,0.4)', textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>{l.label}</Link>
             ))}
             <Link href="/#subscribe" style={{ background: '#3b5de4', color: '#fff', textDecoration: 'none', borderRadius: 8, padding: '7px 16px', fontSize: 13, fontWeight: 700 }}>
@@ -584,7 +582,7 @@ export default function TaxDashboard() {
               {scanningAll || loadingAll ? '⏳ Scanning…' : '🔍 Scan All Chains'}
             </button>
           )}
-          <button onClick={() => setShowAddWallet(v => !v)}
+          <button onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             style={{ background: '#6483ed22', color: '#93c5fd', border: '1px solid #6483ed44', borderRadius: 8, padding: '8px 14px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
             + Add Wallet
           </button>
@@ -614,69 +612,92 @@ export default function TaxDashboard() {
 
         {/* WALLET MANAGER */}
         <div style={{ ...S.card, marginBottom: 24 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: connectedWallets.length > 0 || showAddWallet ? 16 : 0 }}>
-            <div style={{ fontWeight: 700, fontSize: 14 }}>🔗 Connected Wallets</div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button onClick={connectRabby}
-                style={{ background: '#6483ed', color: '#fff', border: 'none', borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
-                Connect Rabby / MetaMask
-              </button>
-              <button onClick={() => setShowAddWallet(v => !v)}
-                style={{ background: '#ffffff15', color: '#edeef0', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
-                {showAddWallet ? 'Cancel' : 'Paste Address'}
-              </button>
-            </div>
+          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 14 }}>🔗 Add Wallet</div>
+
+          {/* Primary: paste address */}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
+            <input value={newAddress} onChange={e => setNewAddress(e.target.value)}
+              placeholder="Paste any 0x wallet address (Ethereum, Base, Arbitrum…)"
+              onKeyDown={e => e.key === 'Enter' && addWalletManual()}
+              style={{ flex: 1, minWidth: 300, background: '#1a1b25', color: '#edeef0', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, padding: '10px 14px', fontSize: 14 }} />
+            <select value={newNetwork} onChange={e => setNewNetwork(e.target.value)}
+              style={{ background: '#1a1b25', color: '#edeef0', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '10px 12px', fontSize: 13, cursor: 'pointer' }}>
+              <option value="ethereum">Ethereum</option>
+              <option value="base">Base</option>
+              <option value="arbitrum">Arbitrum</option>
+              <option value="optimism">Optimism</option>
+              <option value="polygon">Polygon</option>
+              <option value="solana">Solana</option>
+            </select>
+            <button onClick={addWalletManual}
+              style={{ background: '#22c55e', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
+              Add &amp; Scan
+            </button>
           </div>
 
-          {/* Add wallet form */}
-          {showAddWallet && (
-            <div style={{ display: 'flex', gap: 8, marginBottom: connectedWallets.length > 0 ? 12 : 0, flexWrap: 'wrap' }}>
-              <input value={newAddress} onChange={e => setNewAddress(e.target.value)}
-                placeholder="0x… or Solana address"
-                onKeyDown={e => e.key === 'Enter' && addWalletManual()}
-                style={{ flex: 1, minWidth: 260, background: '#1a1b25', color: '#edeef0', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '8px 12px', fontSize: 13 }} />
-              <select value={newNetwork} onChange={e => setNewNetwork(e.target.value)}
-                style={{ background: '#1a1b25', color: '#edeef0', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '8px 10px', fontSize: 13, cursor: 'pointer' }}>
-                <option value="ethereum">Ethereum</option>
-                <option value="base">Base</option>
-                <option value="arbitrum">Arbitrum</option>
-                <option value="optimism">Optimism</option>
-                <option value="polygon">Polygon</option>
-                <option value="solana">Solana</option>
-              </select>
-              <button onClick={addWalletManual}
-                style={{ background: '#22c55e', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
-                Add
-              </button>
-            </div>
-          )}
+          {/* Secondary: browser wallet */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: connectedWallets.length > 0 ? 16 : 0 }}>
+            <button onClick={connectRabby}
+              style={{ background: '#6483ed22', color: '#93c5fd', border: '1px solid #6483ed44', borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+              🦊 Connect MetaMask / Rabby
+            </button>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)' }}>Requires browser extension</span>
+          </div>
 
           {/* Wallet list */}
-          {connectedWallets.length > 0 ? (
+          {connectedWallets.length > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {connectedWallets.map((w, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff08', borderRadius: 10, padding: '10px 14px' }}>
-                  <div>
-                    <span style={{ fontFamily: 'monospace', fontSize: 13, color: '#93c5fd' }}>{w.address.slice(0,8)}…{w.address.slice(-6)}</span>
-                    <span style={{ marginLeft: 10, fontSize: 11, color: 'rgba(255,255,255,0.35)', background: '#ffffff10', borderRadius: 4, padding: '2px 6px' }}>{w.network}</span>
-                    {w.label && w.label !== w.address.slice(0,6)+'…'+w.address.slice(-4) && (
-                      <span style={{ marginLeft: 6, fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>{w.label}</span>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 4, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Connected ({connectedWallets.length})</div>
+              {connectedWallets.map((w, i) => {
+                const wTaxData = allWalletsTax.find(x => x.wallet.address.toLowerCase() === w.address.toLowerCase())?.taxData;
+                return (
+                  <div key={i} style={{ background: '#ffffff08', borderRadius: 10, padding: '12px 14px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: wTaxData ? 8 : 0 }}>
+                      <div>
+                        <span style={{ fontFamily: 'monospace', fontSize: 13, color: '#93c5fd' }}>{w.address.slice(0,10)}…{w.address.slice(-8)}</span>
+                        <span style={{ marginLeft: 8, fontSize: 11, color: 'rgba(255,255,255,0.35)', background: '#ffffff10', borderRadius: 4, padding: '2px 6px' }}>{w.network}</span>
+                        {w.label && w.label !== w.address.slice(0,6)+'…'+w.address.slice(-4) && (
+                          <span style={{ marginLeft: 6, fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>{w.label}</span>
+                        )}
+                      </div>
+                      <button onClick={() => removeWallet(i)}
+                        style={{ background: '#ef444415', color: '#ef4444', border: '1px solid #ef444433', borderRadius: 6, padding: '3px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
+                        Remove
+                      </button>
+                    </div>
+                    {loadingAll ? (
+                      <div style={{ fontSize: 12, color: '#6483ed' }}>⏳ Scanning…</div>
+                    ) : wTaxData ? (
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, fontSize: 12 }}>
+                        <div style={{ background: '#08080f', borderRadius: 7, padding: '8px 10px' }}>
+                          <div style={{ color: 'rgba(255,255,255,0.4)', marginBottom: 3 }}>Short-term gains</div>
+                          <div style={{ fontWeight: 700, color: '#22c55e' }}>${(wTaxData.shortTermGains || 0).toLocaleString()}</div>
+                        </div>
+                        <div style={{ background: '#08080f', borderRadius: 7, padding: '8px 10px' }}>
+                          <div style={{ color: 'rgba(255,255,255,0.4)', marginBottom: 3 }}>Long-term gains</div>
+                          <div style={{ fontWeight: 700, color: '#22c55e' }}>${(wTaxData.longTermGains || 0).toLocaleString()}</div>
+                        </div>
+                        <div style={{ background: '#08080f', borderRadius: 7, padding: '8px 10px' }}>
+                          <div style={{ color: 'rgba(255,255,255,0.4)', marginBottom: 3 }}>Staking income</div>
+                          <div style={{ fontWeight: 700, color: '#6483ed' }}>${(wTaxData.stakingIncome?.totalUsd || 0).toLocaleString()}</div>
+                        </div>
+                        <div style={{ background: '#08080f', borderRadius: 7, padding: '8px 10px' }}>
+                          <div style={{ color: 'rgba(255,255,255,0.4)', marginBottom: 3 }}>Transactions</div>
+                          <div style={{ fontWeight: 700, color: '#edeef0' }}>{(wTaxData.txCount || 0).toLocaleString()}</div>
+                        </div>
+                      </div>
+                    ) : w.network !== 'solana' ? (
+                      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>Click Scan to load tax data →</div>
+                    ) : (
+                      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>Solana — tax calculation not yet supported</div>
                     )}
                   </div>
-                  <button onClick={() => removeWallet(i)}
-                    style={{ background: '#ef444415', color: '#ef4444', border: '1px solid #ef444433', borderRadius: 6, padding: '3px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
-                    Remove
-                  </button>
-                </div>
-              ))}
+                );
+              })}
               <button onClick={scanAll} disabled={scanningAll || loadingAll}
-                style={{ marginTop: 4, background: '#22c55e', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 0', fontSize: 14, fontWeight: 700, cursor: 'pointer', width: '100%' }}>
-                {scanningAll || loadingAll ? '⏳ Scanning all chains…' : '🔍 Scan All Chains'}
+                style={{ marginTop: 4, background: '#22c55e', color: '#fff', border: 'none', borderRadius: 8, padding: '11px 0', fontSize: 14, fontWeight: 700, cursor: 'pointer', width: '100%' }}>
+                {scanningAll || loadingAll ? '⏳ Scanning all chains…' : '🔍 Scan All Wallets & Chains'}
               </button>
-            </div>
-          ) : !showAddWallet && (
-            <div style={{ textAlign: 'center', padding: '20px 0', color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>
-              Connect your wallet or paste an address to see live tax data. Demo figures shown below.
             </div>
           )}
         </div>
