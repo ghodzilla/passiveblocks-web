@@ -202,6 +202,8 @@ export default function TaxCalculatorPage() {
   const [importMsg, setImportMsg] = useState<Record<string, string>>({});
   const [connecting, setConnecting] = useState(false);
   const [scanningAll, setScanningAll] = useState(false);
+  const [scanMsg, setScanMsg] = useState<string | null>(null);
+  const [scanError, setScanError] = useState<string | null>(null);
   const [installed, setInstalled] = useState<Record<string, boolean>>({
     metamask: false, rabby: false, phantom: false,
     coinbase: false, rainbow: false, trust: false,
@@ -331,12 +333,19 @@ export default function TaxCalculatorPage() {
   }
 
   function addWallet() {
-    const addr = walletForm.address.trim().toLowerCase();
-    if (!/^0x[0-9a-f]{40}$/.test(addr)) { alert("Enter a valid EVM address (0x...)"); return; }
-    if (wallets.find((w) => w.address === addr && w.network === walletForm.network)) {
+    const raw = walletForm.address.trim();
+    const isEVM = /^0x[0-9a-fA-F]{40}$/.test(raw);
+    const isSolana = !raw.startsWith("0x") && /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(raw);
+    if (!isEVM && !isSolana) {
+      alert("Enter a valid EVM address (0x…) or Solana base58 address.");
+      return;
+    }
+    const addr = isEVM ? raw.toLowerCase() : raw;
+    const network: Network = isSolana ? "solana" : walletForm.network;
+    if (wallets.find((w) => w.address === addr && w.network === network)) {
       alert("This address + network is already added."); return;
     }
-    const w: Wallet = { ...walletForm, address: addr, id: uid() };
+    const w: Wallet = { ...walletForm, address: addr, network, id: uid() };
     saveWallets([...wallets, w]);
     setWalletForm(BLANK_WALLET);
   }
@@ -345,17 +354,24 @@ export default function TaxCalculatorPage() {
     saveWallets(wallets.filter((w) => w.id !== id));
   }
 
+  function removeWalletByAddress(address: string) {
+    saveWallets(wallets.filter((w) => w.address !== address));
+  }
+
   async function importAllChains(address: string) {
-    const newMsg: Record<string, string> = {};
     let totalFresh = 0;
+    let errorMsg: string | null = null;
     for (const net of NETWORKS) {
+      if (net.code === "solana") continue; // EVM scan only
       const w = wallets.find((x) => x.address === address && x.network === net.code);
       if (!w) continue;
       setImportingId(w.id);
       try {
         const res = await fetch(`/api/wallet-import?address=${address}&network=${net.code}`);
         const data = await res.json();
-        if (!data.error) {
+        if (data.error) {
+          if (!errorMsg) errorMsg = data.error;
+        } else {
           const incoming = data.trades as Trade[];
           setTrades((prev) => {
             const existingIds = new Set(prev.map((t) => t.id));
@@ -364,12 +380,16 @@ export default function TaxCalculatorPage() {
             return [...prev, ...fresh];
           });
         }
-      } catch {}
+      } catch (e) {
+        if (!errorMsg) errorMsg = String(e);
+      }
     }
     setImportingId(null);
-    const allIds = wallets.filter((w) => w.address === address).map((w) => w.id);
-    allIds.forEach((id) => { newMsg[id] = `Imported ${totalFresh} trades across all chains`; });
-    setImportMsg((m) => ({ ...m, ...newMsg }));
+    const statusMsg = errorMsg
+      ? `Error: ${errorMsg}`
+      : `Imported ${totalFresh} new trades across all chains`;
+    // Store the message keyed by address so grouped card can display it
+    setImportMsg((m) => ({ ...m, [address]: statusMsg }));
   }
 
   async function importWallet(w: Wallet) {
@@ -397,15 +417,22 @@ export default function TaxCalculatorPage() {
   async function scanAllWallets() {
     const evmNetworks = NETWORKS.filter((n) => n.evm);
     const uniqueAddresses = Array.from(new Set(wallets.filter((w) => w.network !== "solana").map((w) => w.address)));
-    if (!uniqueAddresses.length) { alert("No EVM wallets connected."); return; }
+    if (!uniqueAddresses.length) { setScanError("No EVM wallets connected."); return; }
     setScanningAll(true);
+    setScanError(null);
+    setScanMsg(null);
     let grandTotal = 0;
+    let keyMissing = false;
     for (const addr of uniqueAddresses) {
       for (const net of evmNetworks) {
         try {
           const res = await fetch(`/api/wallet-import?address=${addr}&network=${net.code}`);
           const data = await res.json();
-          if (!data.error) {
+          if (data.error) {
+            if (String(data.error).toLowerCase().includes("not configured")) {
+              keyMissing = true;
+            }
+          } else {
             const incoming = data.trades as Trade[];
             setTrades((prev) => {
               const existingIds = new Set(prev.map((t) => t.id));
@@ -418,7 +445,11 @@ export default function TaxCalculatorPage() {
       }
     }
     setScanningAll(false);
-    alert(`Scan complete — imported ${grandTotal} new trades across ${uniqueAddresses.length} wallet${uniqueAddresses.length > 1 ? "s" : ""} and all chains.`);
+    if (keyMissing) {
+      setScanError("Scan requires an Etherscan API key — contact support.");
+    } else {
+      setScanMsg(`Scan complete — ${grandTotal} new trade${grandTotal !== 1 ? "s" : ""} imported across ${uniqueAddresses.length} wallet${uniqueAddresses.length > 1 ? "s" : ""} and all chains.`);
+    }
   }
 
   const country = getCountry(countryCode);
@@ -649,67 +680,86 @@ export default function TaxCalculatorPage() {
 
           {/* ── Scan All Chains button ────────────────────────────────────── */}
           {wallets.length > 0 && (
-            <div className="flex justify-between items-center mb-3">
-              <p className="text-xs text-white/30">
-                {wallets.length} wallet entry{wallets.length > 1 ? "s" : ""} · {Array.from(new Set(wallets.map(w => w.address))).length} address{Array.from(new Set(wallets.map(w => w.address))).length > 1 ? "es" : ""}
-              </p>
-              <button
-                onClick={scanAllWallets}
-                disabled={scanningAll || !!importingId}
-                className="flex items-center gap-2 text-sm bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-400 font-bold px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
-              >
-                {scanningAll ? <><span className="animate-spin inline-block">↻</span> Scanning…</> : "🔍 Scan All Chains"}
-              </button>
-            </div>
+            <>
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-xs text-white/30">
+                  {Array.from(new Set(wallets.map(w => w.address))).length} address{Array.from(new Set(wallets.map(w => w.address))).length > 1 ? "es" : ""} · {wallets.length} chain entr{wallets.length > 1 ? "ies" : "y"}
+                </p>
+                <button
+                  onClick={scanAllWallets}
+                  disabled={scanningAll || !!importingId}
+                  className="flex items-center gap-2 text-sm bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-400 font-bold px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {scanningAll ? <><span className="animate-spin inline-block">↻</span> Scanning…</> : "🔍 Scan All Chains"}
+                </button>
+              </div>
+              {scanError && (
+                <div className="mb-3 flex items-center gap-2 bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-semibold px-4 py-2.5 rounded-xl">
+                  ⚠️ {scanError}
+                </div>
+              )}
+              {scanMsg && !scanError && (
+                <div className="mb-3 flex items-center gap-2 bg-blue-500/10 border border-blue-500/30 text-blue-400 text-sm px-4 py-2.5 rounded-xl">
+                  ✓ {scanMsg}
+                </div>
+              )}
+            </>
           )}
 
-          {/* ── Connected wallet list ──────────────────────────────────────── */}
+          {/* ── Connected wallet list — grouped by address ─────────────────── */}
           {wallets.length === 0 ? (
             <div className="bg-white/[0.02] border border-white/[0.07] rounded-2xl px-5 py-14 text-center">
               <div className="text-4xl mb-3">📭</div>
               <p className="font-semibold text-white/50 mb-1">No wallets connected yet</p>
-              <p className="text-sm text-white/25">Connect a wallet above or paste an address manually.</p>
+              <p className="text-sm text-white/40">Connect a wallet above or paste an address manually.</p>
             </div>
           ) : (
             <div className="space-y-3">
-              {wallets.map((w) => (
-                <div key={w.id} className="bg-white/[0.02] border border-white/[0.07] hover:border-white/[0.12] rounded-2xl px-5 py-4 flex flex-wrap items-center justify-between gap-3 transition-colors">
-                  <div>
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-xs font-bold text-white/40 uppercase tracking-widest">{w.network}</span>
-                      {w.label && <span className="text-xs text-white/60">{w.label}</span>}
+              {Array.from(new Set(wallets.map((w) => w.address))).map((addr) => {
+                const entries = wallets.filter((w) => w.address === addr);
+                const label = entries[0]?.label || "";
+                const networks = entries.map((e) => e.network);
+                const isImporting = entries.some((e) => importingId === e.id);
+                const addrMsg = importMsg[addr];
+                return (
+                  <div key={addr} className="bg-white/[0.02] border border-white/[0.07] hover:border-white/[0.12] rounded-2xl px-5 py-4 flex flex-wrap items-center justify-between gap-3 transition-colors">
+                    <div>
+                      {label && (
+                        <p className="text-xs text-white/50 font-semibold mb-0.5">{label}</p>
+                      )}
+                      <span className="font-mono text-sm text-white/70">{addr.slice(0, 10)}…{addr.slice(-8)}</span>
+                      {/* Chain pills */}
+                      <div className="flex flex-wrap gap-1.5 mt-2">
+                        {NETWORKS.filter((n) => networks.includes(n.code)).map((n) => (
+                          <span key={n.code} className="flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.1] text-white/50">
+                            {n.icon} {n.label}
+                          </span>
+                        ))}
+                      </div>
+                      {addrMsg && (
+                        <p className={`text-xs mt-1.5 ${addrMsg.startsWith("Error") || addrMsg.startsWith("Failed") ? "text-red-400" : "text-blue-400"}`}>
+                          {addrMsg}
+                        </p>
+                      )}
                     </div>
-                    <span className="font-mono text-sm text-white/70">{w.address.slice(0, 10)}…{w.address.slice(-8)}</span>
-                    {importMsg[w.id] && (
-                      <p className={`text-xs mt-1 ${importMsg[w.id].startsWith("Error") || importMsg[w.id].startsWith("Failed") ? "text-red-400" : "text-blue-400"}`}>
-                        {importMsg[w.id]}
-                      </p>
-                    )}
+                    <div className="flex gap-2 flex-wrap">
+                      <button
+                        onClick={() => importAllChains(addr)}
+                        disabled={!!importingId}
+                        className="text-sm bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold px-4 py-2 rounded-lg transition-colors"
+                      >
+                        {isImporting ? "Importing…" : "Scan All Chains"}
+                      </button>
+                      <button
+                        onClick={() => removeWalletByAddress(addr)}
+                        className="text-sm border border-red-500/30 text-red-400 hover:border-red-500/60 px-3 py-2 rounded-lg transition-colors"
+                      >
+                        Remove
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex gap-2 flex-wrap">
-                    <button
-                      onClick={() => importAllChains(w.address)}
-                      disabled={!!importingId}
-                      className="text-sm bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold px-4 py-2 rounded-lg transition-colors"
-                    >
-                      {importingId ? "Importing…" : "All chains"}
-                    </button>
-                    <button
-                      onClick={() => importWallet(w)}
-                      disabled={!!importingId}
-                      className="text-sm bg-white/[0.06] hover:bg-white/[0.1] disabled:opacity-50 border border-white/[0.12] px-4 py-2 rounded-lg transition-colors"
-                    >
-                      {importingId === w.id ? "Importing…" : "This chain"}
-                    </button>
-                    <button
-                      onClick={() => removeWallet(w.id)}
-                      className="text-sm border border-red-500/30 text-red-400 hover:border-red-500/60 px-3 py-2 rounded-lg transition-colors"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -811,10 +861,10 @@ export default function TaxCalculatorPage() {
         {/* Trade table */}
         <div className="bg-white/[0.02] border border-white/[0.07] rounded-2xl overflow-hidden mb-10">
           {trades.length === 0 ? (
-            <div className="text-center py-16 text-white/30">
+            <div className="text-center py-16 text-white/50">
               <div className="text-4xl mb-3">📋</div>
-              <p className="mb-1">No trades yet.</p>
-              <p className="text-xs text-white/20">Connect a wallet and click <strong className="text-white/30">Scan All Chains</strong> to auto-import, or add trades manually above.</p>
+              <p className="mb-1 font-semibold">No trades yet.</p>
+              <p className="text-xs text-white/40">Connect a wallet and click <strong className="text-white/60">Scan All Chains</strong> to auto-import, or add trades manually above.</p>
             </div>
           ) : (
             <table className="w-full text-sm">
