@@ -533,11 +533,12 @@ export default function TaxDashboard() {
   });
   const allChains = Array.from(allChainSet);
 
-  const holdingPeriods = yieldIncome?.holdingPeriods?.length ? yieldIncome.holdingPeriods : HOLDING_PERIODS_DEMO;
+  const hasWallet = connectedWallets.length > 0;
+  const holdingPeriods = yieldIncome?.holdingPeriods?.length ? yieldIncome.holdingPeriods : (hasWallet ? [] : HOLDING_PERIODS_DEMO);
   const isLiveHolding = !!(yieldIncome?.holdingPeriods?.length);
-  const harvestData = yieldIncome?.harvestOpportunities?.length ? yieldIncome.harvestOpportunities : HARVEST_OPPORTUNITIES_DEMO;
+  const harvestData = yieldIncome?.harvestOpportunities?.length ? yieldIncome.harvestOpportunities : (hasWallet ? [] : HARVEST_OPPORTUNITIES_DEMO);
   const isLiveHarvest = !!(yieldIncome?.harvestOpportunities?.length);
-  const approaching = holdingPeriods.filter(p => !p.qualified && p.daysToThreshold <= 60).length;
+  const approaching = isLiveHolding ? holdingPeriods.filter(p => !p.qualified && p.daysToThreshold <= 60).length : 0;
 
   const isLive = !!(combinedTax?.walletsIncluded && combinedTax.walletsIncluded > 0);
 
@@ -1021,16 +1022,38 @@ export default function TaxDashboard() {
                 ? <span style={{ fontSize: 10, color: '#22c55e', fontWeight: 600, textTransform: 'none' }}>LIVE</span>
                 : <span style={{ fontSize: 10, color: '#f97316', fontWeight: 600, textTransform: 'none' }}>ILLUSTRATIVE</span>}
             </div>
-            <div style={{ background: '#22c55e22', border: '1px solid #22c55e33', borderRadius: 8, padding: '10px 14px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 18 }}>🔍</span>
-              <span style={{ fontSize: 13, color: '#22c55e', fontWeight: 600 }}>
-                {harvestData.length} {isLiveHarvest ? 'opportunities found' : 'illustrative opportunities'}
-              </span>
-            </div>
+            {harvestData.length > 0 && (
+              <div style={{ background: '#22c55e22', border: '1px solid #22c55e33', borderRadius: 8, padding: '10px 14px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontSize: 18 }}>🔍</span>
+                <span style={{ fontSize: 13, color: '#22c55e', fontWeight: 600 }}>
+                  {harvestData.length} {isLiveHarvest ? 'opportunities found' : 'illustrative opportunities'}
+                </span>
+              </div>
+            )}
             {connectedWallets.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '20px 0', color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>
-                <div style={{ fontSize: 24, marginBottom: 8 }}>🔗</div>
-                Connect a wallet to see real harvesting opportunities
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                <thead>
+                  <tr>
+                    {['Asset', 'Position', 'Unrealised Loss', 'Recommendation'].map(h => (
+                      <th key={h} style={{ textAlign: 'left', color: 'rgba(255,255,255,0.35)', padding: '8px 10px', borderBottom: '1px solid rgba(255,255,255,0.07)', fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {harvestData.map((opp, i) => (
+                    <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                      <td style={{ padding: '10px', fontWeight: 700 }}>{opp.asset}</td>
+                      <td style={{ padding: '10px', color: '#edeef0' }}>{opp.position}</td>
+                      <td style={{ padding: '10px', color: '#ef4444', fontWeight: 700 }}>${opp.unrealisedLoss}</td>
+                      <td style={{ padding: '10px', color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>{opp.recommendation}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : harvestData.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '28px 0', color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>
+                <div style={{ fontSize: 28, marginBottom: 8 }}>✅</div>
+                <div>No tax-loss harvesting opportunities found for your connected wallet</div>
               </div>
             ) : (
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
@@ -1053,9 +1076,11 @@ export default function TaxDashboard() {
                 </tbody>
               </table>
             )}
-            <div style={{ marginTop: 12, background: '#22c55e11', border: '1px solid #22c55e22', borderRadius: 8, padding: '10px 14px', fontSize: 12, color: '#22c55e' }}>
-              💡 Total potential savings: <strong>${harvestData.reduce((s, o) => s + Math.abs(o.unrealisedLoss), 0).toFixed(2)}</strong>{!isLiveHarvest ? ' (illustrative)' : ''}
-            </div>
+            {harvestData.length > 0 && (
+              <div style={{ marginTop: 12, background: '#22c55e11', border: '1px solid #22c55e22', borderRadius: 8, padding: '10px 14px', fontSize: 12, color: '#22c55e' }}>
+                💡 Total potential savings: <strong>${harvestData.reduce((s, o) => s + Math.abs(o.unrealisedLoss), 0).toFixed(2)}</strong>{!isLiveHarvest ? ' (illustrative)' : ''}
+              </div>
+            )}
           </div>
         </div>
 
@@ -1067,10 +1092,17 @@ export default function TaxDashboard() {
               ? <span style={{ fontSize: 10, color: '#22c55e', fontWeight: 600, textTransform: 'none' }}>● LIVE</span>
               : <span style={{ fontSize: 10, color: '#f97316', fontWeight: 600, textTransform: 'none' }}>DEMO</span>}
           </div>
-          <div style={{ background: approaching > 0 ? '#f9731622' : '#22c55e22', border: `1px solid ${approaching > 0 ? '#f9731633' : '#22c55e33'}`, borderRadius: 8, padding: '10px 14px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: 18 }}>{approaching > 0 ? '⚠️' : '✅'}</span>
-            <span style={{ fontSize: 13, color: approaching > 0 ? '#f97316' : '#22c55e', fontWeight: 600 }}>
-              {approaching > 0 ? `${approaching} positions approaching 12-month CGT threshold` : 'All positions within CGT threshold'}
+          {holdingPeriods.length === 0 && hasWallet ? (
+            <div style={{ textAlign: 'center', padding: '28px 0', color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>
+              <div style={{ fontSize: 28, marginBottom: 8 }}>⏳</div>
+              <div>Holding period data unavailable — requires Alchemy API for on-chain position lookup</div>
+            </div>
+          ) : holdingPeriods.length === 0 ? null : (
+          <>
+          <div style={{ background: isLiveHolding && approaching > 0 ? '#f9731622' : '#22c55e22', border: `1px solid ${isLiveHolding && approaching > 0 ? '#f9731633' : '#22c55e33'}`, borderRadius: 8, padding: '10px 14px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontSize: 18 }}>{isLiveHolding && approaching > 0 ? '⚠️' : '✅'}</span>
+            <span style={{ fontSize: 13, color: isLiveHolding && approaching > 0 ? '#f97316' : '#22c55e', fontWeight: 600 }}>
+              {isLiveHolding && approaching > 0 ? `${approaching} positions approaching 12-month CGT threshold` : isLiveHolding ? 'All positions within CGT threshold' : 'Illustrative holding periods — connect wallet for live data'}
             </span>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
@@ -1102,6 +1134,8 @@ export default function TaxDashboard() {
               </div>
             ))}
           </div>
+          </>
+          )}
         </div>
 
         {/* YIELD INCOME FROM POSITIONS */}
