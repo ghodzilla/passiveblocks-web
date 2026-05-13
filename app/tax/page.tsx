@@ -254,6 +254,12 @@ export default function TaxDashboard() {
   // Transaction history toggle
   const [showAllTime, setShowAllTime] = useState(false);
 
+  // Wallet management
+  const [showAddWallet, setShowAddWallet] = useState(false);
+  const [newAddress, setNewAddress] = useState('');
+  const [newNetwork, setNewNetwork] = useState('ethereum');
+  const [scanningAll, setScanningAll] = useState(false);
+
   // ── Fetch helpers ──────────────────────────────────────────────────────────
 
   const fetchTaxSummary = useCallback((wallet: ConnectedWallet, yearEntry: TaxYear, allTime = false) => {
@@ -365,6 +371,79 @@ export default function TaxDashboard() {
       .then((d: YieldIncome & { error?: string }) => { if (!d.error) setYieldIncome(d); })
       .catch(() => {});
   }, [fetchTaxSummary, fetchAllWalletsTax]);
+
+  // ── Wallet management ──────────────────────────────────────────────────────
+
+  function addWalletManual() {
+    const addr = newAddress.trim();
+    if (!addr) return;
+    const isSolana = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(addr) && !addr.startsWith('0x');
+    const network = isSolana ? 'solana' : newNetwork;
+    const wallet: ConnectedWallet = { address: addr, network, label: addr.slice(0,6)+'…'+addr.slice(-4) };
+    if (connectedWallets.some(w => w.address.toLowerCase() === addr.toLowerCase())) return;
+    const updated = [...connectedWallets, wallet];
+    setConnectedWallets(updated);
+    localStorage.setItem('pb_wallets', JSON.stringify(updated));
+    setNewAddress('');
+    setShowAddWallet(false);
+    if (network !== 'solana') {
+      fetchTaxSummary(wallet, taxYears[taxYearIdx]);
+      fetchAllWalletsTax(updated, taxYears[taxYearIdx]);
+    }
+  }
+
+  async function connectRabby() {
+    if (typeof window === 'undefined' || !(window as unknown as Record<string,unknown>).ethereum) {
+      alert('No browser wallet detected. Install MetaMask or Rabby.');
+      return;
+    }
+    try {
+      const eth = (window as unknown as { ethereum: { request: (a: {method:string}) => Promise<string[]> } }).ethereum;
+      const accounts = await eth.request({ method: 'eth_requestAccounts' });
+      const addr = accounts[0];
+      if (!addr) return;
+      if (connectedWallets.some(w => w.address.toLowerCase() === addr.toLowerCase())) return;
+      const wallet: ConnectedWallet = { address: addr, network: 'ethereum', label: 'Rabby/MetaMask', chains: { activeChains: ['ethereum', 'base', 'arbitrum', 'optimism', 'polygon'] } };
+      const updated = [...connectedWallets, wallet];
+      setConnectedWallets(updated);
+      localStorage.setItem('pb_wallets', JSON.stringify(updated));
+      fetchTaxSummary(wallet, taxYears[taxYearIdx]);
+      fetchAllWalletsTax(updated, taxYears[taxYearIdx]);
+      const evmAddr = addr;
+      setLoadingGas(true);
+      fetch(`/api/wallet/gas?address=${evmAddr}&year=${new Date().getFullYear()}`)
+        .then(r => r.json())
+        .then((d: GasData & { error?: string }) => { if (!d.error) setGasData(d); setLoadingGas(false); })
+        .catch(() => setLoadingGas(false));
+    } catch {
+      alert('Wallet connection cancelled.');
+    }
+  }
+
+  function removeWallet(idx: number) {
+    const updated = connectedWallets.filter((_, i) => i !== idx);
+    setConnectedWallets(updated);
+    localStorage.setItem('pb_wallets', JSON.stringify(updated));
+    if (updated.length === 0) { setRealTaxData(null); setCombinedTax(null); setAllWalletsTax([]); }
+    else { fetchAllWalletsTax(updated, taxYears[taxYearIdx]); }
+  }
+
+  function scanAll() {
+    if (connectedWallets.length === 0) return;
+    setScanningAll(true);
+    fetchAllWalletsTax(connectedWallets, taxYears[taxYearIdx]);
+    const wallet = connectedWallets[selectedWalletIdx];
+    if (wallet && wallet.network !== 'solana') fetchTaxSummary(wallet, taxYears[taxYearIdx]);
+    const evmAddr = connectedWallets.find(w => w.network !== 'solana')?.address;
+    if (evmAddr) {
+      setLoadingGas(true);
+      fetch(`/api/wallet/gas?address=${evmAddr}&year=${new Date().getFullYear()}`)
+        .then(r => r.json())
+        .then((d: GasData & { error?: string }) => { if (!d.error) setGasData(d); setLoadingGas(false); })
+        .catch(() => setLoadingGas(false));
+    }
+    setTimeout(() => setScanningAll(false), 3000);
+  }
 
   // ── Event handlers ─────────────────────────────────────────────────────────
 
@@ -497,6 +576,17 @@ export default function TaxDashboard() {
           <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', marginTop: 3 }}>{c.flag} {c.name} · {c.note}</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {/* Wallet actions */}
+          {connectedWallets.length > 0 && (
+            <button onClick={scanAll} disabled={scanningAll || loadingAll}
+              style={{ background: '#22c55e22', color: '#22c55e', border: '1px solid #22c55e44', borderRadius: 8, padding: '8px 14px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+              {scanningAll || loadingAll ? '⏳ Scanning…' : '🔍 Scan All Chains'}
+            </button>
+          )}
+          <button onClick={() => setShowAddWallet(v => !v)}
+            style={{ background: '#6483ed22', color: '#93c5fd', border: '1px solid #6483ed44', borderRadius: 8, padding: '8px 14px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+            + Add Wallet
+          </button>
           {/* Country picker */}
           <div style={{ position: 'relative' }}>
             <button onClick={() => setShowPicker(v => !v)}
@@ -521,20 +611,74 @@ export default function TaxDashboard() {
 
       <div style={{ maxWidth: 1300, margin: '0 auto', padding: '28px 28px 80px' }}>
 
-        {/* CONNECT WALLET CTA (no wallets) */}
-        {connectedWallets.length === 0 && (
-          <div style={{ ...S.card, marginBottom: 24, textAlign: 'center', padding: 40 }}>
-            <div style={{ fontSize: 36, marginBottom: 12 }}>🔗</div>
-            <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>Connect a wallet to see live tax data</div>
-            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 20 }}>
-              Go to the full <Link href="/tax/calculator" style={{ color: '#6483ed' }}>Tax Calculator</Link> to connect MetaMask, Rabby, or paste an address manually.
-              Showing demo figures below.
-            </div>
-            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)', background: '#f9731611', border: '1px solid #f9731633', borderRadius: 8, padding: '8px 14px', display: 'inline-block' }}>
-              ⚠️ Demo mode — figures below are illustrative only
+        {/* WALLET MANAGER */}
+        <div style={{ ...S.card, marginBottom: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: connectedWallets.length > 0 || showAddWallet ? 16 : 0 }}>
+            <div style={{ fontWeight: 700, fontSize: 14 }}>🔗 Connected Wallets</div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={connectRabby}
+                style={{ background: '#6483ed', color: '#fff', border: 'none', borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+                Connect Rabby / MetaMask
+              </button>
+              <button onClick={() => setShowAddWallet(v => !v)}
+                style={{ background: '#ffffff15', color: '#edeef0', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                {showAddWallet ? 'Cancel' : 'Paste Address'}
+              </button>
             </div>
           </div>
-        )}
+
+          {/* Add wallet form */}
+          {showAddWallet && (
+            <div style={{ display: 'flex', gap: 8, marginBottom: connectedWallets.length > 0 ? 12 : 0, flexWrap: 'wrap' }}>
+              <input value={newAddress} onChange={e => setNewAddress(e.target.value)}
+                placeholder="0x… or Solana address"
+                onKeyDown={e => e.key === 'Enter' && addWalletManual()}
+                style={{ flex: 1, minWidth: 260, background: '#1a1b25', color: '#edeef0', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '8px 12px', fontSize: 13 }} />
+              <select value={newNetwork} onChange={e => setNewNetwork(e.target.value)}
+                style={{ background: '#1a1b25', color: '#edeef0', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '8px 10px', fontSize: 13, cursor: 'pointer' }}>
+                <option value="ethereum">Ethereum</option>
+                <option value="base">Base</option>
+                <option value="arbitrum">Arbitrum</option>
+                <option value="optimism">Optimism</option>
+                <option value="polygon">Polygon</option>
+                <option value="solana">Solana</option>
+              </select>
+              <button onClick={addWalletManual}
+                style={{ background: '#22c55e', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+                Add
+              </button>
+            </div>
+          )}
+
+          {/* Wallet list */}
+          {connectedWallets.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {connectedWallets.map((w, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff08', borderRadius: 10, padding: '10px 14px' }}>
+                  <div>
+                    <span style={{ fontFamily: 'monospace', fontSize: 13, color: '#93c5fd' }}>{w.address.slice(0,8)}…{w.address.slice(-6)}</span>
+                    <span style={{ marginLeft: 10, fontSize: 11, color: 'rgba(255,255,255,0.35)', background: '#ffffff10', borderRadius: 4, padding: '2px 6px' }}>{w.network}</span>
+                    {w.label && w.label !== w.address.slice(0,6)+'…'+w.address.slice(-4) && (
+                      <span style={{ marginLeft: 6, fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>{w.label}</span>
+                    )}
+                  </div>
+                  <button onClick={() => removeWallet(i)}
+                    style={{ background: '#ef444415', color: '#ef4444', border: '1px solid #ef444433', borderRadius: 6, padding: '3px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
+                    Remove
+                  </button>
+                </div>
+              ))}
+              <button onClick={scanAll} disabled={scanningAll || loadingAll}
+                style={{ marginTop: 4, background: '#22c55e', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 0', fontSize: 14, fontWeight: 700, cursor: 'pointer', width: '100%' }}>
+                {scanningAll || loadingAll ? '⏳ Scanning all chains…' : '🔍 Scan All Chains'}
+              </button>
+            </div>
+          ) : !showAddWallet && (
+            <div style={{ textAlign: 'center', padding: '20px 0', color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>
+              Connect your wallet or paste an address to see live tax data. Demo figures shown below.
+            </div>
+          )}
+        </div>
 
         {/* TAX YEAR SELECTOR */}
         {connectedWallets.length > 0 && (
