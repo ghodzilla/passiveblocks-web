@@ -222,6 +222,7 @@ const S = {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function TaxDashboard() {
+  const [authStatus, setAuthStatus] = useState<{ loggedIn: boolean; plan: string; email?: string } | null>(null);
   const [country, setCountry] = useState<string>('AU');
   const [showPicker, setShowPicker] = useState(false);
   const [connectedWallets, setConnectedWallets] = useState<ConnectedWallet[]>([]);
@@ -350,6 +351,15 @@ export default function TaxDashboard() {
       setCombinedTax(combined);
       setLoadingAll(false);
     });
+  }, []);
+
+  // ── Auth status ────────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    fetch('/api/auth/status')
+      .then(r => r.json())
+      .then((d: { loggedIn: boolean; plan: string; email?: string }) => setAuthStatus(d))
+      .catch(() => setAuthStatus({ loggedIn: false, plan: 'free' }));
   }, []);
 
   // ── Init ───────────────────────────────────────────────────────────────────
@@ -705,6 +715,25 @@ export default function TaxDashboard() {
   return (
     <div style={{ background: S.bg, minHeight: '100vh', color: '#edeef0', fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
 
+      {/* Paywall overlay — shown when logged in but not premium */}
+      {authStatus && authStatus.loggedIn && authStatus.plan !== 'premium' && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(8,8,15,0.92)', backdropFilter: 'blur(8px)' }}>
+          <div style={{ background: '#111214', border: '1px solid #6789ed44', borderRadius: 20, padding: '48px 40px', maxWidth: 440, width: '90%', textAlign: 'center' }}>
+            <div style={{ fontSize: 40, marginBottom: 16 }}>🔒</div>
+            <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 10 }}>Premium Feature</h2>
+            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.55)', marginBottom: 28, lineHeight: 1.6 }}>
+              The crypto tax calculator requires a PassiveBlocks Premium subscription. Track capital gains, income, gas deductions, and export your tax report.
+            </p>
+            <a href="/pricing" style={{ display: 'block', background: '#2563eb', color: '#fff', borderRadius: 10, padding: '14px 0', fontSize: 15, fontWeight: 700, textDecoration: 'none', marginBottom: 12 }}>
+              Upgrade to Premium — $19/mo
+            </a>
+            <a href="/account" style={{ fontSize: 13, color: '#6b6c72', textDecoration: 'none' }}>
+              View your account
+            </a>
+          </div>
+        </div>
+      )}
+
       {/* NAV — fixed, blur, yield dashboard style */}
       <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', background: 'rgba(17,18,20,0.85)', borderBottom: '1px solid #2a2b30' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
@@ -715,6 +744,9 @@ export default function TaxDashboard() {
             {[{ label: 'Tax', href: '/tax' }, { label: 'Pricing', href: '/pricing' }].map(l => (
               <Link key={l.label} href={l.href} style={{ color: l.label === 'Tax' ? '#edeef0' : '#6b6c72', textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>{l.label}</Link>
             ))}
+            {authStatus?.loggedIn && (
+              <Link href="/account" style={{ fontSize: 13, color: '#6b6c72', textDecoration: 'none' }}>Account</Link>
+            )}
           </div>
         </div>
       </nav>

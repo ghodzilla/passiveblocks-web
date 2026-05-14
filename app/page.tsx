@@ -74,14 +74,18 @@ export default function Home() {
             <Link href="/learn" className="hover:text-white transition-colors">Learn</Link>
             <Link href="/newsletter" className="hover:text-white transition-colors">Archive</Link>
             <Link href="/tax" className="hover:text-white transition-colors">Tax Calculator</Link>
+            <Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link>
             <Link href="/about" className="hover:text-white transition-colors">About</Link>
           </div>
-          <Link
-            href="#subscribe"
-            className="text-sm bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2 rounded-lg transition-colors"
-          >
-            Subscribe free →
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link href="/login" className="text-sm text-white/50 hover:text-white transition-colors">Sign in</Link>
+            <Link
+              href="#subscribe"
+              className="text-sm bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2 rounded-lg transition-colors"
+            >
+              Subscribe free →
+            </Link>
+          </div>
         </div>
       </nav>
 
