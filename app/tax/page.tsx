@@ -1299,6 +1299,18 @@ export default function TaxDashboard() {
 
       </div>
 
+      {/* Newsletter CTA */}
+      <div style={{ borderTop: '1px solid #2a2b30', background: '#0d1117', padding: '32px 24px', textAlign: 'center' }}>
+        <div style={{ maxWidth: 480, margin: '0 auto' }}>
+          <div style={{ fontSize: 20, marginBottom: 8 }}>📬</div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: '#f0f0f5', marginBottom: 6 }}>Get the weekly yield newsletter</div>
+          <div style={{ fontSize: 13, color: '#6b6c72', marginBottom: 16 }}>Top DeFi yields, protocol signals, and what we&apos;re watching — every Friday.</div>
+          <Link href="/#subscribe" style={{ display: 'inline-block', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 700, padding: '10px 24px', borderRadius: 8, textDecoration: 'none' }}>
+            Subscribe free →
+          </Link>
+        </div>
+      </div>
+
       {/* Footer */}
       <footer style={{ borderTop: '1px solid #2a2b30', padding: '32px 24px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
