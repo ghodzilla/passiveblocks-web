@@ -268,14 +268,21 @@ export default function TaxDashboard() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const eth = (window as any).ethereum;
+    const w = window as Window & {
+      ethereum?: { isMetaMask?: boolean; isRabby?: boolean; isCoinbaseWallet?: boolean; isRainbow?: boolean; isTrust?: boolean };
+      coinbaseWalletExtension?: unknown;
+      phantom?: { ethereum?: unknown; solana?: unknown };
+      solana?: { isPhantom?: boolean };
+      trustwallet?: unknown;
+    };
+    const eth = w.ethereum;
     const detected: Record<string, boolean> = {
       metamask: !!(eth?.isMetaMask && !eth?.isRabby && !eth?.isCoinbaseWallet),
       rabby: !!eth?.isRabby,
-      coinbase: !!(eth?.isCoinbaseWallet || (window as any).coinbaseWalletExtension),
-      phantom: !!((window as any).phantom?.ethereum || (window as any).phantom?.solana || (window as any).solana?.isPhantom),
+      coinbase: !!(eth?.isCoinbaseWallet || w.coinbaseWalletExtension),
+      phantom: !!(w.phantom?.ethereum || w.phantom?.solana || w.solana?.isPhantom),
       rainbow: !!eth?.isRainbow,
-      trust: !!(eth?.isTrust || (window as any).trustwallet),
+      trust: !!(eth?.isTrust || w.trustwallet),
     };
     setDetectedWallets(detected);
   }, []);
