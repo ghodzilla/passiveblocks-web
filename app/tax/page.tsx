@@ -174,11 +174,6 @@ const TAX_COUNTRIES: Country[] = [
 const DEMO = { shortTermGains: 1850, longTermGains: 2430, yieldIncome: 1920, gasDeductions: 180 };
 
 
-const HOLDING_PERIODS_DEMO: HoldingPeriod[] = [
-  { asset: 'wstETH',     acquiredDate: '2024-05-03', daysHeld: 322, daysToThreshold: 43,  value: '$8,400', potentialSaving: '$1,260', qualified: false, demo: true },
-  { asset: 'USDC/ETH LP',acquiredDate: '2024-04-18', daysHeld: 337, daysToThreshold: 28,  value: '$5,200', potentialSaving: '$780',   qualified: false, demo: true },
-  { asset: 'cbETH',      acquiredDate: '2024-03-10', daysHeld: 376, daysToThreshold: 0,   value: '$3,100', potentialSaving: null,     qualified: true,  demo: true },
-];
 
 function calcTax(
   taxData: { shortTermGains: number; longTermGains: number; stakingIncome?: { totalUsd: number } } | null,
@@ -664,8 +659,8 @@ export default function TaxDashboard() {
   const isLive = !!(combinedTax?.walletsIncluded && combinedTax.walletsIncluded > 0);
 
   // Holding periods — always show demo as fallback (yield dashboard behavior)
-  const holdingPeriods = yieldIncome?.holdingPeriods?.length ? yieldIncome.holdingPeriods : HOLDING_PERIODS_DEMO;
-  const isLiveHolding = !!(yieldIncome?.holdingPeriods?.length);
+  const holdingPeriods = yieldIncome?.holdingPeriods || [];
+  const isLiveHolding = holdingPeriods.length > 0;
   const approaching = holdingPeriods.filter(p => !p.qualified && p.daysToThreshold <= 60).length;
 
   // Harvest — always show demo as fallback (yield dashboard behavior)
@@ -1249,12 +1244,20 @@ export default function TaxDashboard() {
             Holding Period Tracker
             {isLiveHolding
               ? <span style={{ fontSize: 10, color: '#8aad8a', fontWeight: 600, textTransform: 'none' }}>● LIVE</span>
-              : <span style={{ fontSize: 10, color: '#ff9317', fontWeight: 600, textTransform: 'none' }}>DEMO</span>}
+              : null}
           </div>
+          {!isLiveHolding ? (
+            <div style={{ textAlign: 'center', padding: '24px 0', color: '#6b6c72', fontSize: 13 }}>
+              {connectedWallets.length === 0
+                ? 'Connect a wallet and scan to track CGT holding periods.'
+                : 'No DeFi positions detected in your connected wallets.'}
+            </div>
+          ) : (
+          <>
           <div style={{ background: approaching > 0 ? '#ff931722' : '#8aad8a22', border: `1px solid ${approaching > 0 ? '#ff931733' : '#8aad8a33'}`, borderRadius: 8, padding: '10px 14px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ fontSize: 18 }}>{approaching > 0 ? '⚠️' : '✅'}</span>
             <span style={{ fontSize: 13, color: approaching > 0 ? '#ff9317' : '#8aad8a', fontWeight: 600 }}>
-              {approaching > 0 ? `${approaching} positions approaching 12-month CGT threshold` : isLiveHolding ? 'All positions within CGT threshold' : 'Illustrative holding periods — connect wallet for live data'}
+              {approaching > 0 ? `${approaching} positions approaching 12-month CGT threshold` : 'All positions within CGT threshold'}
             </span>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -1280,12 +1283,11 @@ export default function TaxDashboard() {
                     ✅ CGT discount applies — {c.cgtDiscount ? `${(c.cgtDiscount * 100).toFixed(0)}% discount` : c.longTermExempt ? 'fully exempt' : 'check jurisdiction rules'}
                   </div>
                 )}
-                {p.demo && (
-                  <div style={{ fontSize: 10, color: '#6b6c72', marginTop: 6 }}>Demo position</div>
-                )}
               </div>
             ))}
           </div>
+          </>
+          )}
         </div>
 
         {/* FOOTER DISCLAIMER */}
