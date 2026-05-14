@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient, createServiceClient } from '@/lib/supabase-server';
-import { stripe } from '@/lib/stripe';
+import { getStripe } from '@/lib/stripe';
 
 export const runtime = 'nodejs';
 
@@ -21,7 +21,7 @@ export async function POST() {
 
   let customerId = sub?.stripe_customer_id;
   if (!customerId) {
-    const customer = await stripe.customers.create({ email: user.email, metadata: { user_id: user.id } });
+    const customer = await getStripe().customers.create({ email: user.email, metadata: { user_id: user.id } });
     customerId = customer.id;
     await service.from('subscribers').upsert({
       user_id: user.id,
@@ -33,7 +33,7 @@ export async function POST() {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://passiveblocks.io';
 
-  const session = await stripe.checkout.sessions.create({
+  const session = await getStripe().checkout.sessions.create({
     customer: customerId,
     payment_method_types: ['card'],
     line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
