@@ -259,6 +259,23 @@ export default function TaxDashboard() {
   const [newNetwork, setNewNetwork] = useState('ethereum');
   const [scanningAll, setScanningAll] = useState(false);
 
+  // Wallet picker auto-detection
+  const [detectedWallets, setDetectedWallets] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const eth = (window as any).ethereum;
+    const detected: Record<string, boolean> = {
+      metamask: !!(eth?.isMetaMask && !eth?.isRabby && !eth?.isCoinbaseWallet),
+      rabby: !!eth?.isRabby,
+      coinbase: !!(eth?.isCoinbaseWallet || (window as any).coinbaseWalletExtension),
+      phantom: !!((window as any).phantom?.ethereum || (window as any).phantom?.solana || (window as any).solana?.isPhantom),
+      rainbow: !!eth?.isRainbow,
+      trust: !!(eth?.isTrust || (window as any).trustwallet),
+    };
+    setDetectedWallets(detected);
+  }, []);
+
   // ── Fetch helpers ──────────────────────────────────────────────────────────
 
   const fetchTaxSummary = useCallback((wallet: ConnectedWallet, yearEntry: TaxYear, allTime = false) => {
@@ -796,16 +813,58 @@ export default function TaxDashboard() {
             </button>
           </div>
 
-          {/* MetaMask / Rabby connect */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: connectedWallets.length > 0 ? 20 : 0 }}>
-            <button onClick={connectRabby}
-              style={{ background: '#6789ed22', color: '#93c5fd', border: '1px solid #6789ed44', borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer', transition: 'background 0.15s' }}
-              onMouseEnter={e => (e.currentTarget.style.background = '#6789ed33')}
-              onMouseLeave={e => (e.currentTarget.style.background = '#6789ed22')}>
-              🦊 Connect MetaMask / Rabby
-            </button>
-            <span style={{ fontSize: 12, color: '#6b6c72' }}>Requires browser extension</span>
-          </div>
+          {/* Multi-wallet picker */}
+          {(() => {
+            const WALLETS = [
+              { id: 'metamask', name: 'MetaMask',       emoji: '🦊', installUrl: 'https://metamask.io/download/' },
+              { id: 'rabby',    name: 'Rabby',           emoji: '🐰', installUrl: 'https://rabby.io/' },
+              { id: 'coinbase', name: 'Coinbase Wallet', emoji: '🔵', installUrl: 'https://www.coinbase.com/wallet' },
+              { id: 'phantom',  name: 'Phantom',         emoji: '👻', installUrl: 'https://phantom.app/' },
+              { id: 'rainbow',  name: 'Rainbow',         emoji: '🌈', installUrl: 'https://rainbow.me/' },
+              { id: 'trust',    name: 'Trust Wallet',    emoji: '🛡️', installUrl: 'https://trustwallet.com/' },
+            ];
+            return (
+              <div style={{ marginBottom: connectedWallets.length > 0 ? 20 : 16 }}>
+                <div style={{ fontSize: 11, color: '#6b6c72', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Connect Browser Wallet</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+                  {WALLETS.map(w => {
+                    const isDetected = !!detectedWallets[w.id];
+                    return (
+                      <div
+                        key={w.id}
+                        onClick={() => {
+                          if (isDetected) {
+                            connectRabby();
+                          } else {
+                            window.open(w.installUrl, '_blank', 'noopener');
+                          }
+                        }}
+                        onMouseEnter={e => (e.currentTarget.style.borderColor = '#6789ed44')}
+                        onMouseLeave={e => (e.currentTarget.style.borderColor = '#2a2b30')}
+                        style={{ background: '#111214', border: '1px solid #2a2b30', borderRadius: 10, padding: '12px 10px', textAlign: 'center', cursor: 'pointer', transition: 'border-color 0.15s', userSelect: 'none' }}
+                      >
+                        <div style={{ fontSize: 24, marginBottom: 6 }}>{w.emoji}</div>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: '#edeef0', marginBottom: 4 }}>{w.name}</div>
+                        {isDetected ? (
+                          <div style={{ fontSize: 11, color: '#8aad8a', fontWeight: 600 }}>● Detected</div>
+                        ) : (
+                          <a
+                            href={w.installUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={e => e.stopPropagation()}
+                            style={{ fontSize: 11, color: '#6b6c72', textDecoration: 'none' }}
+                          >
+                            Install →
+                          </a>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Wallet list */}
           {connectedWallets.length > 0 && (
