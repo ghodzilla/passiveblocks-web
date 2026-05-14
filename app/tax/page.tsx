@@ -422,13 +422,46 @@ export default function TaxDashboard() {
     }
   }
 
-  async function connectEVM(walletName: string, installUrl: string) {
+  async function connectEVM(walletId: string, walletName: string, installUrl: string) {
+    type EthProvider = { request: (a: { method: string }) => Promise<string[]>; isMetaMask?: boolean; isRabby?: boolean; isCoinbaseWallet?: boolean; isRainbow?: boolean; isTrust?: boolean; providers?: EthProvider[] };
     type WalletWindow = Window & {
-      ethereum?: { request: (a: { method: string }) => Promise<string[]>; isMetaMask?: boolean; isRabby?: boolean };
+      ethereum?: EthProvider;
+      coinbaseWalletExtension?: { request: (a: { method: string }) => Promise<string[]> };
       phantom?: { ethereum?: { request: (a: { method: string }) => Promise<string[]> } };
+      trustwallet?: { request: (a: { method: string }) => Promise<string[]> };
     };
     const w = window as WalletWindow;
-    const provider = w.ethereum || w.phantom?.ethereum;
+    const eth = w.ethereum;
+
+    let provider: { request: (a: { method: string }) => Promise<string[]> } | undefined;
+    switch (walletId) {
+      case 'phantom':
+        provider = w.phantom?.ethereum;
+        break;
+      case 'coinbase':
+        provider = w.coinbaseWalletExtension
+          ?? eth?.providers?.find(p => p.isCoinbaseWallet)
+          ?? (eth?.isCoinbaseWallet ? eth : undefined);
+        break;
+      case 'rabby':
+        provider = eth?.providers?.find(p => p.isRabby)
+          ?? (eth?.isRabby ? eth : undefined);
+        break;
+      case 'rainbow':
+        provider = eth?.providers?.find(p => p.isRainbow)
+          ?? (eth?.isRainbow ? eth : undefined);
+        break;
+      case 'trust':
+        provider = w.trustwallet
+          ?? eth?.providers?.find(p => p.isTrust)
+          ?? (eth?.isTrust ? eth : undefined);
+        break;
+      default: // metamask + fallback
+        provider = eth?.providers?.find(p => p.isMetaMask && !p.isRabby && !p.isCoinbaseWallet)
+          ?? (eth?.isMetaMask ? eth : undefined)
+          ?? eth;
+    }
+
     if (!provider) {
       window.open(installUrl, '_blank', 'noopener');
       return;
@@ -938,7 +971,7 @@ export default function TaxDashboard() {
                     return (
                       <div
                         key={w.id}
-                        onClick={() => connectEVM(w.name, w.installUrl)}
+                        onClick={() => connectEVM(w.id, w.name, w.installUrl)}
                         onMouseEnter={e => (e.currentTarget.style.borderColor = isDetected ? '#8aad8a66' : '#6789ed44')}
                         onMouseLeave={e => (e.currentTarget.style.borderColor = isDetected ? '#8aad8a33' : '#2a2b30')}
                         style={{ background: '#111214', border: `1px solid ${isDetected ? '#8aad8a33' : '#2a2b30'}`, borderRadius: 10, padding: '12px 10px', textAlign: 'center', cursor: 'pointer', transition: 'border-color 0.15s', userSelect: 'none' }}

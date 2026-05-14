@@ -305,6 +305,7 @@ export async function GET(request: Request) {
     let stakingEthUsd = 0;
 
     const costBasisQueue: Array<{ ethAmount: number; costBasisUsd: number; timestamp: number }> = [];
+    const txEnrichment = new Map<EthTx | TokenTx, { priceUsd: number; valueUsd: number; costBasis: number; gainLoss: number }>();
 
     for (const tx of ethTxsWithValue) {
       const ethValue = tx.value;
@@ -315,12 +316,15 @@ export async function GET(request: Request) {
         const costBasisUsd = ethValue * historicalPrice;
         if (tx.isStakingReward) stakingEthUsd += costBasisUsd;
         costBasisQueue.push({ ethAmount: ethValue, costBasisUsd, timestamp: tx.timestamp });
+        txEnrichment.set(tx, { priceUsd: historicalPrice, valueUsd: costBasisUsd, costBasis: costBasisUsd, gainLoss: 0 });
       }
 
       if (tx.from?.toLowerCase() === addrLower) {
         // Sent — realise gains via FIFO
         const salePrice = historicalPrice;
         let remaining = ethValue;
+        let txCostBasis = 0;
+        let txGain = 0;
 
         while (remaining > 0 && costBasisQueue.length > 0) {
           const lot = costBasisQueue[0];
@@ -344,9 +348,13 @@ export async function GET(request: Request) {
 
           const lotSaleValue = lotEthUsed * salePrice;
           const gain = lotSaleValue - lotCostUsed;
+          txCostBasis += lotCostUsed;
+          txGain += gain;
           if (heldDays >= 365) longTermGains += gain;
           else shortTermGains += gain;
         }
+
+        txEnrichment.set(tx, { priceUsd: salePrice, valueUsd: ethValue * salePrice, costBasis: txCostBasis, gainLoss: txGain });
       }
     }
 
@@ -374,11 +382,14 @@ export async function GET(request: Request) {
 
         if (tx.to?.toLowerCase() === addrLower) {
           tokenQueue.push({ amount, costBasisUsd: amount * historicalPrice, timestamp: tx.timestamp });
+          txEnrichment.set(tx, { priceUsd: historicalPrice, valueUsd: amount * historicalPrice, costBasis: amount * historicalPrice, gainLoss: 0 });
         }
 
         if (tx.from?.toLowerCase() === addrLower) {
           let remaining = amount;
           const salePrice = historicalPrice;
+          let txCostBasis = 0;
+          let txGain = 0;
 
           while (remaining > 0 && tokenQueue.length > 0) {
             const lot = tokenQueue[0];
@@ -402,9 +413,13 @@ export async function GET(request: Request) {
 
             const lotSaleValue = lotAmountUsed * salePrice;
             const gain = lotSaleValue - lotCostUsed;
+            txCostBasis += lotCostUsed;
+            txGain += gain;
             if (heldDays >= 365) tokenLongTermGains += gain;
             else tokenShortTermGains += gain;
           }
+
+          txEnrichment.set(tx, { priceUsd: salePrice, valueUsd: amount * salePrice, costBasis: txCostBasis, gainLoss: txGain });
         }
       }
     }
@@ -416,20 +431,27 @@ export async function GET(request: Request) {
       .filter(tx => tx.timestamp > 0)
       .sort((a, b) => b.timestamp - a.timestamp)
       .slice(0, 200)
-      .map(tx => ({
-        hash: (tx as EthTx).hash || null,
-        date: new Date(tx.timestamp * 1000).toISOString(),
-        type: (tx as EthTx).isStakingReward ? 'Staking Reward'
-          : (tx as TokenTx).asset && (tx as TokenTx).asset !== 'ETH' ? 'Token Transfer'
-          : tx.type === 'in' ? 'ETH Received'
-          : 'ETH Sent',
-        asset: (tx as TokenTx).asset || 'ETH',
-        amount: parseFloat(((tx as EthTx).value ?? (tx as TokenTx).value ?? 0).toFixed(6)),
-        from: tx.from || '',
-        to: tx.to || '',
-        isStakingReward: (tx as EthTx).isStakingReward || false,
-        chain: tx.chain || 'ethereum',
-      }));
+      .map(tx => {
+        const enriched = txEnrichment.get(tx);
+        return {
+          hash: (tx as EthTx).hash || null,
+          date: new Date(tx.timestamp * 1000).toISOString(),
+          type: (tx as EthTx).isStakingReward ? 'Staking Reward'
+            : (tx as TokenTx).asset && (tx as TokenTx).asset !== 'ETH' ? 'Token Transfer'
+            : tx.type === 'in' ? 'ETH Received'
+            : 'ETH Sent',
+          asset: (tx as TokenTx).asset || 'ETH',
+          amount: parseFloat(((tx as EthTx).value ?? (tx as TokenTx).value ?? 0).toFixed(6)),
+          from: tx.from || '',
+          to: tx.to || '',
+          isStakingReward: (tx as EthTx).isStakingReward || false,
+          chain: tx.chain || 'ethereum',
+          priceUsd: enriched ? parseFloat(enriched.priceUsd.toFixed(2)) : null,
+          valueUsd: enriched ? parseFloat(enriched.valueUsd.toFixed(2)) : null,
+          costBasis: enriched ? parseFloat(enriched.costBasis.toFixed(2)) : null,
+          gainLoss: enriched ? parseFloat(enriched.gainLoss.toFixed(2)) : null,
+        };
+      });
 
     return NextResponse.json({
       address,
