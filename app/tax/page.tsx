@@ -173,11 +173,6 @@ const TAX_COUNTRIES: Country[] = [
 
 const DEMO = { shortTermGains: 1850, longTermGains: 2430, yieldIncome: 1920, gasDeductions: 180 };
 
-const HARVEST_OPPORTUNITIES_DEMO: HarvestOpp[] = [
-  { asset: 'ETH/USDC LP', unrealisedLoss: -340, position: '$4,200', recommendation: 'Consider harvesting to offset gains', demo: true },
-  { asset: 'ARB',         unrealisedLoss: -210, position: '$1,850', recommendation: 'Short-term loss available', demo: true },
-  { asset: 'MATIC',       unrealisedLoss: -155, position: '$920',   recommendation: 'Small loss - harvest if near year-end', demo: true },
-];
 
 const HOLDING_PERIODS_DEMO: HoldingPeriod[] = [
   { asset: 'wstETH',     acquiredDate: '2024-05-03', daysHeld: 322, daysToThreshold: 43,  value: '$8,400', potentialSaving: '$1,260', qualified: false, demo: true },
@@ -674,8 +669,8 @@ export default function TaxDashboard() {
   const approaching = holdingPeriods.filter(p => !p.qualified && p.daysToThreshold <= 60).length;
 
   // Harvest — always show demo as fallback (yield dashboard behavior)
-  const harvestData = yieldIncome?.harvestOpportunities?.length ? yieldIncome.harvestOpportunities : HARVEST_OPPORTUNITIES_DEMO;
-  const isLiveHarvest = !!(yieldIncome?.harvestOpportunities?.length);
+  const harvestData = yieldIncome?.harvestOpportunities || [];
+  const isLiveHarvest = harvestData.length > 0;
 
   // ─────────────────────────────────────────────────────────────────────────────
 
@@ -1209,34 +1204,40 @@ export default function TaxDashboard() {
                 ? <span style={{ fontSize: 10, color: '#8aad8a', fontWeight: 600, textTransform: 'none' }}>LIVE</span>
                 : <span style={{ fontSize: 10, color: '#ff9317', fontWeight: 600, textTransform: 'none' }}>ILLUSTRATIVE</span>}
             </div>
-            <div style={{ background: '#8aad8a22', border: '1px solid #8aad8a33', borderRadius: 8, padding: '10px 14px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 18 }}>🔍</span>
-              <span style={{ fontSize: 13, color: '#8aad8a', fontWeight: 600 }}>
-                {harvestData.length} {isLiveHarvest ? 'opportunities found' : 'illustrative opportunities'}
-              </span>
-            </div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr>
-                  {['Asset', 'Position', 'Unrealised Loss', 'Recommendation'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', color: '#6b6c72', padding: '8px 10px', borderBottom: '1px solid #2a2b30', fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {harvestData.map((opp, i) => (
-                  <tr key={i} style={{ borderBottom: '1px solid #18191d' }}>
-                    <td style={{ padding: '10px', fontWeight: 700 }}>{opp.asset}</td>
-                    <td style={{ padding: '10px', color: '#edeef0' }}>{opp.position}</td>
-                    <td style={{ padding: '10px', color: '#ef4444', fontWeight: 700 }}>${opp.unrealisedLoss}</td>
-                    <td style={{ padding: '10px', color: '#6b6c72', fontSize: 11 }}>{opp.recommendation}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {harvestData.length > 0 && (
-              <div style={{ marginTop: 12, background: '#8aad8a11', border: '1px solid #8aad8a22', borderRadius: 8, padding: '10px 14px', fontSize: 12, color: '#8aad8a' }}>
-                💡 Total potential savings: <strong>${harvestData.reduce((s, o) => s + Math.abs(o.unrealisedLoss), 0).toFixed(2)}</strong>{!isLiveHarvest ? ' (illustrative)' : ''}
+            {isLiveHarvest ? (
+              <>
+                <div style={{ background: '#8aad8a22', border: '1px solid #8aad8a33', borderRadius: 8, padding: '10px 14px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: 18 }}>🔍</span>
+                  <span style={{ fontSize: 13, color: '#8aad8a', fontWeight: 600 }}>{harvestData.length} opportunities found</span>
+                </div>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                  <thead>
+                    <tr>
+                      {['Asset', 'Position', 'Unrealised Loss', 'Recommendation'].map(h => (
+                        <th key={h} style={{ textAlign: 'left', color: '#6b6c72', padding: '8px 10px', borderBottom: '1px solid #2a2b30', fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {harvestData.map((opp, i) => (
+                      <tr key={i} style={{ borderBottom: '1px solid #18191d' }}>
+                        <td style={{ padding: '10px', fontWeight: 700 }}>{opp.asset}</td>
+                        <td style={{ padding: '10px', color: '#edeef0' }}>{opp.position}</td>
+                        <td style={{ padding: '10px', color: '#ef4444', fontWeight: 700 }}>${opp.unrealisedLoss}</td>
+                        <td style={{ padding: '10px', color: '#6b6c72', fontSize: 11 }}>{opp.recommendation}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div style={{ marginTop: 12, background: '#8aad8a11', border: '1px solid #8aad8a22', borderRadius: 8, padding: '10px 14px', fontSize: 12, color: '#8aad8a' }}>
+                  💡 Total potential savings: <strong>${harvestData.reduce((s, o) => s + Math.abs(o.unrealisedLoss), 0).toFixed(2)}</strong>
+                </div>
+              </>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '24px 0', color: '#6b6c72', fontSize: 13 }}>
+                {connectedWallets.length === 0
+                  ? 'Connect a wallet and scan to identify loss harvesting opportunities.'
+                  : 'No unrealised losses found in your current positions — nothing to harvest right now.'}
               </div>
             )}
           </div>

@@ -6,10 +6,11 @@ export const runtime = 'nodejs';
 // Returns total gas spent (USD) for a wallet across Base + Arbitrum for a given tax year.
 // Gas fees are deductible as cost basis additions in AU, US, and UK.
 
-const ETHERSCAN_CHAINS: Record<string, string> = {
-  base:     'https://api.basescan.org/api',
-  arbitrum: 'https://api.arbiscan.io/api',
-  ethereum: 'https://api.etherscan.io/api',
+const ETHERSCAN_V2_URL = 'https://api.etherscan.io/v2/api';
+const CHAIN_IDS: Record<string, number> = {
+  base:     8453,
+  arbitrum: 42161,
+  ethereum: 1,
 };
 
 async function getEthPrice(): Promise<number> {
@@ -34,21 +35,26 @@ interface EtherscanTx {
 }
 
 async function getGasSpentEtherscan(
-  chainUrl: string,
+  chain: string,
   address: string,
   apiKey: string,
   startTs: number,
   endTs: number,
   ethPrice: number,
-): Promise<{ gasEth: number; gasUsd: number }> {
+): Promise<{ gasEth: number; gasUsd: number; apiError?: string }> {
+  const chainId = CHAIN_IDS[chain];
+  if (!chainId) return { gasEth: 0, gasUsd: 0 };
   try {
     const res = await fetch(
-      `${chainUrl}?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc&apikey=${apiKey}`,
+      `${ETHERSCAN_V2_URL}?chainid=${chainId}&module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc&apikey=${apiKey}`,
       { signal: AbortSignal.timeout(10000) }
     );
     if (!res.ok) return { gasEth: 0, gasUsd: 0 };
-    const data = await res.json() as { result: EtherscanTx[] };
-    const txs = Array.isArray(data.result) ? data.result : [];
+    const data = await res.json() as { status: string; message: string; result: unknown };
+    if (data.status === '0' && data.message === 'NOTOK') {
+      return { gasEth: 0, gasUsd: 0, apiError: String(data.result).slice(0, 100) };
+    }
+    const txs = Array.isArray(data.result) ? data.result as EtherscanTx[] : [];
 
     let totalGasWei = BigInt(0);
     for (const tx of txs) {
@@ -81,6 +87,10 @@ export async function GET(request: Request) {
 
   const apiKey = process.env.ETHERSCAN_API_KEY || '';
 
+  if (!apiKey) {
+    return NextResponse.json({ error: 'ETHERSCAN_API_KEY not configured' }, { status: 503 });
+  }
+
   // Tax year timestamps (calendar year — adjust for FY if needed)
   const startTs = Math.floor(new Date(`${year}-01-01T00:00:00Z`).getTime() / 1000);
   const endTs   = Math.floor(new Date(`${year}-12-31T23:59:59Z`).getTime() / 1000);
@@ -90,8 +100,7 @@ export async function GET(request: Request) {
   const chains = ['base', 'arbitrum', 'ethereum'];
   const results = await Promise.all(
     chains.map(async (chain) => {
-      const url = ETHERSCAN_CHAINS[chain];
-      const { gasEth, gasUsd } = await getGasSpentEtherscan(url, address, apiKey, startTs, endTs, ethPrice);
+      const { gasEth, gasUsd } = await getGasSpentEtherscan(chain, address, apiKey, startTs, endTs, ethPrice);
       return { chain, gasEth, gasUsd };
     })
   );

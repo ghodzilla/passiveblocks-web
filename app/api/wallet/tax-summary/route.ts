@@ -3,13 +3,14 @@ import { readFileSync, writeFileSync, existsSync } from 'fs';
 
 export const runtime = 'nodejs';
 
-// ─── Etherscan API endpoints per chain ────────────────────────────────────────
-const ETHERSCAN_ENDPOINTS: Record<string, string> = {
-  ethereum: 'https://api.etherscan.io/api',
-  base:     'https://api.basescan.org/api',
-  arbitrum: 'https://api.arbiscan.io/api',
-  optimism: 'https://api-optimistic.etherscan.io/api',
-  polygon:  'https://api.polygonscan.com/api',
+// ─── Etherscan V2 API (single endpoint, chainid param) ───────────────────────
+const ETHERSCAN_V2_URL = 'https://api.etherscan.io/v2/api';
+const CHAIN_IDS: Record<string, number> = {
+  ethereum: 1,
+  base:     8453,
+  arbitrum: 42161,
+  optimism: 10,
+  polygon:  137,
 };
 
 // DeFiLlama coin IDs for major tokens
@@ -135,16 +136,20 @@ interface TokenTx {
   chain: string;
 }
 
+type EtherscanResponse = { status: string; message: string; result: unknown };
+
 async function fetchEtherscanChain(
   chain: string,
   address: string,
   apiKey: string,
-): Promise<{ ethTxs: EthTx[]; tokenTxs: TokenTx[] }> {
-  const endpoint = ETHERSCAN_ENDPOINTS[chain];
-  if (!endpoint) return { ethTxs: [], tokenTxs: [] };
+): Promise<{ ethTxs: EthTx[]; tokenTxs: TokenTx[]; apiError?: string }> {
+  const chainId = CHAIN_IDS[chain];
+  if (!chainId) return { ethTxs: [], tokenTxs: [] };
+
+  if (!apiKey) return { ethTxs: [], tokenTxs: [], apiError: 'ETHERSCAN_API_KEY not configured' };
 
   const addrLower = address.toLowerCase();
-  const base = `${endpoint}?apikey=${apiKey}&address=${address}&startblock=0&endblock=99999999&sort=asc`;
+  const base = `${ETHERSCAN_V2_URL}?chainid=${chainId}&apikey=${apiKey}&address=${address}&startblock=0&endblock=99999999&sort=asc`;
 
   const [txRes, tokenRes] = await Promise.allSettled([
     fetch(`${base}&module=account&action=txlist`, { signal: AbortSignal.timeout(10000) }),
@@ -153,42 +158,47 @@ async function fetchEtherscanChain(
 
   const ethTxs: EthTx[] = [];
   const tokenTxs: TokenTx[] = [];
+  let apiError: string | undefined;
 
   if (txRes.status === 'fulfilled' && txRes.value.ok) {
-    const data = await txRes.value.json() as { result: Array<{ isError: string; timeStamp: string; value: string; from: string; to: string; hash: string }> };
-    const rawTxs = Array.isArray(data.result) ? data.result : [];
-    for (const tx of rawTxs) {
-      if (tx.isError === '1') continue;
-      ethTxs.push({
-        timestamp: parseInt(tx.timeStamp),
-        value: parseFloat(tx.value) / 1e18,
-        from: tx.from,
-        to: tx.to,
-        type: tx.to?.toLowerCase() === addrLower ? 'in' : 'out',
-        isStakingReward: false,
-        chain,
-        hash: tx.hash,
-      });
+    const data = await txRes.value.json() as EtherscanResponse;
+    if (data.status === '0' && data.message === 'NOTOK') {
+      apiError = String(data.result).slice(0, 120);
+    } else if (Array.isArray(data.result)) {
+      for (const tx of data.result as Array<{ isError: string; timeStamp: string; value: string; from: string; to: string; hash: string }>) {
+        if (tx.isError === '1') continue;
+        ethTxs.push({
+          timestamp: parseInt(tx.timeStamp),
+          value: parseFloat(tx.value) / 1e18,
+          from: tx.from,
+          to: tx.to,
+          type: tx.to?.toLowerCase() === addrLower ? 'in' : 'out',
+          isStakingReward: false,
+          chain,
+          hash: tx.hash,
+        });
+      }
     }
   }
 
   if (tokenRes.status === 'fulfilled' && tokenRes.value.ok) {
-    const data = await tokenRes.value.json() as { result: Array<{ timeStamp: string; value: string; tokenSymbol: string; from: string; to: string; tokenDecimal: string }> };
-    const rawTokens = Array.isArray(data.result) ? data.result : [];
-    for (const t of rawTokens) {
-      tokenTxs.push({
-        timestamp: parseInt(t.timeStamp),
-        value: parseFloat(t.value) / Math.pow(10, parseInt(t.tokenDecimal) || 18),
-        asset: t.tokenSymbol || '',
-        from: t.from,
-        to: t.to,
-        type: t.to?.toLowerCase() === addrLower ? 'in' : 'out',
-        chain,
-      });
+    const data = await tokenRes.value.json() as EtherscanResponse;
+    if (Array.isArray(data.result)) {
+      for (const t of data.result as Array<{ timeStamp: string; value: string; tokenSymbol: string; from: string; to: string; tokenDecimal: string }>) {
+        tokenTxs.push({
+          timestamp: parseInt(t.timeStamp),
+          value: parseFloat(t.value) / Math.pow(10, parseInt(t.tokenDecimal) || 18),
+          asset: t.tokenSymbol || '',
+          from: t.from,
+          to: t.to,
+          type: t.to?.toLowerCase() === addrLower ? 'in' : 'out',
+          chain,
+        });
+      }
     }
   }
 
-  return { ethTxs, tokenTxs };
+  return { ethTxs, tokenTxs, apiError };
 }
 
 // ─── GET handler ──────────────────────────────────────────────────────────────
@@ -200,7 +210,7 @@ export async function GET(request: Request) {
   const endTs = parseInt(searchParams.get('endTs') || String(Math.floor(Date.now() / 1000)));
   const chainsParam = searchParams.get('chains');
   const chainsToScan = chainsParam
-    ? chainsParam.split(',').map(c => c.trim()).filter(c => ETHERSCAN_ENDPOINTS[c]).slice(0, 3)
+    ? chainsParam.split(',').map(c => c.trim()).filter(c => CHAIN_IDS[c]).slice(0, 3)
     : ['ethereum'];
 
   if (!address) return NextResponse.json({ error: 'address required' }, { status: 400 });
@@ -211,6 +221,12 @@ export async function GET(request: Request) {
   const apiKey = process.env.ETHERSCAN_API_KEY || '';
   const addrLower = address.toLowerCase();
 
+  if (!apiKey) {
+    return NextResponse.json({
+      error: 'Etherscan API key not configured. Set ETHERSCAN_API_KEY in Vercel environment variables.',
+    }, { status: 503 });
+  }
+
   try {
     // 1. Fetch all chains in parallel
     const chainResults = await Promise.allSettled(
@@ -220,16 +236,22 @@ export async function GET(request: Request) {
     let allEthTxs: EthTx[] = [];
     let allTokenTxs: TokenTx[] = [];
     const txsPerChain: Record<string, number> = {};
+    const apiErrors: string[] = [];
 
     for (let i = 0; i < chainResults.length; i++) {
       const result = chainResults[i];
       const chainName = chainsToScan[i];
       if (result.status === 'fulfilled') {
-        const { ethTxs, tokenTxs } = result.value;
+        const { ethTxs, tokenTxs, apiError } = result.value;
+        if (apiError) apiErrors.push(`${chainName}: ${apiError}`);
         txsPerChain[chainName] = ethTxs.length + tokenTxs.length;
         allEthTxs.push(...ethTxs);
         allTokenTxs.push(...tokenTxs);
       }
+    }
+
+    if (apiErrors.length > 0 && allEthTxs.length === 0 && allTokenTxs.length === 0) {
+      return NextResponse.json({ error: `Etherscan API error: ${apiErrors[0]}` }, { status: 502 });
     }
 
     allEthTxs.sort((a, b) => a.timestamp - b.timestamp);
