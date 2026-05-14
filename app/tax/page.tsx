@@ -338,6 +338,15 @@ export default function TaxDashboard() {
     const stored = localStorage.getItem('pb_wallets') || localStorage.getItem('pb_tax_wallets');
     let walletList: ConnectedWallet[] = [];
     if (stored) { try { walletList = JSON.parse(stored); } catch {} }
+    // Deduplicate by address (case-insensitive) — self-heal localStorage duplicates
+    const seen = new Set<string>();
+    walletList = walletList.filter(w => {
+      const key = w.address.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    localStorage.setItem('pb_wallets', JSON.stringify(walletList));
     setConnectedWallets(walletList);
 
     const saved = localStorage.getItem('tax_country');
@@ -641,62 +650,12 @@ export default function TaxDashboard() {
           </div>
         )}
 
-        {/* SECTION 1 — COMBINED TAX SUMMARY (multi-wallet) */}
-        {connectedWallets.length > 0 && (
-          <div style={{ marginBottom: 24, borderRadius: 18, overflow: 'hidden', border: '1px solid #6789ed33' }}>
-            <div style={{ background: 'linear-gradient(135deg, #1a2744 0%, #221540 100%)', padding: '16px 24px', borderBottom: '1px solid #6789ed22', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <div style={{ fontSize: 15, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 10 }}>
-                  💼 Combined Tax Summary
-                  {loadingAll
-                    ? <span style={{ background: '#6789ed22', color: '#6789ed', border: '1px solid #6789ed44', borderRadius: 20, padding: '2px 10px', fontSize: 11, fontWeight: 700 }}>LOADING</span>
-                    : combinedTax?.walletsIncluded
-                    ? <span style={{ background: '#8aad8a22', color: '#8aad8a', border: '1px solid #8aad8a44', borderRadius: 20, padding: '2px 10px', fontSize: 11, fontWeight: 700 }}>LIVE</span>
-                    : null}
-                </div>
-                <div style={{ fontSize: 12, color: '#93c5fd', marginTop: 2 }}>All wallets · All chains · {taxYears[taxYearIdx]?.label}</div>
-              </div>
-              {combinedTax && (
-                <div style={{ fontSize: 12, color: '#6b6c72', textAlign: 'right' }}>
-                  <div>{combinedTax.walletsIncluded} wallet{combinedTax.walletsIncluded !== 1 ? 's' : ''} · {combinedTax.totalTxCount.toLocaleString()} txns</div>
-                  {allChains.length > 0 && <div style={{ color: '#6789ed', marginTop: 2 }}>{allChains.map(ch => ch.charAt(0).toUpperCase() + ch.slice(1)).join(', ')}</div>}
-                </div>
-              )}
-            </div>
-            <div style={{ background: '#16171b', padding: 24 }}>
-              {loadingAll ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#6789ed', padding: '20px 0' }}>
-                  <span style={{ display: 'inline-block', width: 16, height: 16, border: '2px solid #6789ed44', borderTopColor: '#6789ed', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-                  Fetching all wallets<LoadingDots />
-                </div>
-              ) : combinedTax ? (
-                <>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 14 }}>
-                    {[
-                      { icon: '📈', label: 'Total Capital Gains', value: `$${Math.abs(combinedTax.totalGains).toLocaleString()}`, color: combinedTax.totalGains >= 0 ? '#8aad8a' : '#ef4444', sub: `Short: $${combinedTax.shortTermGains.toLocaleString()} · Long: $${combinedTax.longTermGains.toLocaleString()}` },
-                      { icon: '💰', label: 'Total Income', value: `$${((combinedTax.stakingIncomeUsd || 0) + yieldIncomeUsd).toLocaleString()}`, color: '#6789ed', sub: `Staking: $${combinedTax.stakingIncomeUsd.toLocaleString()} · Yield: $${yieldIncomeUsd.toLocaleString()}` },
-                      { icon: '🏛️', label: 'Est. Tax Due', value: c.taxFree ? 'Tax-free' : `$${combinedEstTax.toLocaleString()} ${c.currency}`, color: c.taxFree ? '#8aad8a' : '#ef4444', sub: c.taxFree ? c.note : `@ ${(c.rate * 100).toFixed(0)}% effective rate` },
-                    ].map((stat, i) => (
-                      <div key={i} style={{ background: '#18191d', border: '1px solid #2a2b30', borderRadius: 14, padding: '20px 22px' }}>
-                        <div style={{ fontSize: 11, color: '#6b6c72', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>{stat.icon} {stat.label}</div>
-                        <div style={{ fontSize: 28, fontWeight: 900, color: stat.color, lineHeight: 1 }}>{stat.value}</div>
-                        <div style={{ fontSize: 12, color: '#6b6c72', marginTop: 8 }}>{stat.sub}</div>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <div style={{ color: '#6b6c72', fontSize: 13, padding: '20px 0' }}>No wallet data loaded.</div>
-              )}
-            </div>
-          </div>
-        )}
 
         {/* SECTION 2 — PER-WALLET ACCORDION */}
         {evmWallets.length > 0 && (
-          <div style={{ ...S.card, marginBottom: 24, padding: 0, overflow: 'hidden' }}>
+          <div style={{ background: 'linear-gradient(135deg, #18191d 0%, #1a1e24 100%)', border: '1px solid #2a2b30', borderRadius: 16, marginBottom: 24, padding: 0, overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.3)' }}>
             <div style={{ padding: '16px 24px', borderBottom: '1px solid #2a2b30', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 15, fontWeight: 800 }}>📊 Per-Wallet Breakdown</span>
+              <span style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6b6c72', borderLeft: '4px solid #8aad8a', paddingLeft: 10 }}>Per-Wallet Breakdown</span>
               <span style={{ fontSize: 12, color: '#6b6c72' }}>{evmWallets.length} wallet{evmWallets.length !== 1 ? 's' : ''}</span>
             </div>
             {(allWalletsTax.length > 0 ? allWalletsTax : evmWallets.map(w => ({ wallet: w, taxData: null, taxError: null }))).map(({ wallet, taxData, taxError: wErr }, evmIdx) => {
@@ -758,41 +717,77 @@ export default function TaxDashboard() {
           </div>
         )}
 
-        {/* TOP STATS */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}>
+        {/* HERO STAT CARDS */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 28 }}>
           {[
-            { icon: '📈', label: 'Total Capital Gains', value: loadingTax ? '⏳' : `$${capitalGains.toLocaleString()} ${c.currency}`, sub: realTaxData ? `Short: $${shortTermGains.toLocaleString()} · Long: $${longTermGains.toLocaleString()} · ${realTaxData.txCount} txns` : 'Short + long term · Demo', color: '#8aad8a' },
-            { icon: '💰', label: 'Total Crypto Income', value: loadingTax ? '⏳' : `$${totalIncome.toLocaleString()} ${c.currency}`, sub: `Staking: $${stakingIncomeUsd.toLocaleString()} · Yield: $${yieldIncomeUsd.toLocaleString()}`, color: '#6789ed' },
-            { icon: '🏛️', label: 'Estimated Tax Due', value: loadingTax ? '⏳' : c.taxFree ? 'Tax-free' : `$${estTax.toLocaleString()} ${c.currency}`, sub: c.taxFree ? 'Tax-free jurisdiction ✅' : `@ ${(c.rate * 100).toFixed(1)}% effective rate`, color: c.taxFree ? '#8aad8a' : '#ef4444' },
+            {
+              label: 'Total Capital Gains',
+              value: loadingTax ? '—' : `$${(combinedTax ? combinedTax.totalGains : capitalGains).toLocaleString()}`,
+              currency: c.currency,
+              sub: combinedTax
+                ? `Short: $${combinedTax.shortTermGains.toLocaleString()} · Long: $${combinedTax.longTermGains.toLocaleString()}`
+                : realTaxData ? `Short: $${shortTermGains.toLocaleString()} · Long: $${longTermGains.toLocaleString()}` : 'Short + long term · Demo',
+              color: '#8aad8a',
+              accent: '#8aad8a',
+            },
+            {
+              label: 'Total Crypto Income',
+              value: loadingTax ? '—' : `$${((combinedTax ? combinedTax.stakingIncomeUsd : stakingIncomeUsd) + yieldIncomeUsd).toLocaleString()}`,
+              currency: c.currency,
+              sub: `Staking: $${(combinedTax ? combinedTax.stakingIncomeUsd : stakingIncomeUsd).toLocaleString()} · Yield: $${yieldIncomeUsd.toLocaleString()}`,
+              color: '#6789ed',
+              accent: '#6789ed',
+            },
+            {
+              label: 'Est. Tax Due',
+              value: loadingTax ? '—' : c.taxFree ? 'Tax-free' : `$${(combinedTax ? combinedEstTax : estTax).toLocaleString()}`,
+              currency: c.taxFree ? '' : c.currency,
+              sub: c.taxFree ? 'Tax-free jurisdiction ✅' : `@ ${(c.rate * 100).toFixed(1)}% effective rate`,
+              color: c.taxFree ? '#8aad8a' : '#ff9317',
+              accent: c.taxFree ? '#8aad8a' : '#ff9317',
+            },
           ].map((stat, i) => (
-            <div key={i} style={{ ...S.card, display: 'flex', alignItems: 'center', gap: 18 }}>
-              <div style={{ fontSize: 32 }}>{stat.icon}</div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 11, color: '#6b6c72', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{stat.label}</div>
-                <div style={{ fontSize: 24, fontWeight: 900, color: stat.color, lineHeight: 1 }}>{stat.value}</div>
-                <div style={{ fontSize: 12, color: '#6b6c72', marginTop: 5 }}>{stat.sub}</div>
+            <div key={i} style={{
+              background: 'linear-gradient(135deg, #18191d 0%, #1a1e24 100%)',
+              border: '1px solid #2a2b30',
+              borderLeft: `4px solid ${stat.accent}`,
+              borderRadius: 16,
+              padding: 24,
+              minHeight: 120,
+              boxShadow: '0 2px 12px rgba(0,0,0,0.3)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}>
+              <div style={{ fontSize: 11, color: '#6b6c72', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>{stat.label}</div>
+              <div>
+                <div style={{ fontSize: 38, fontWeight: 900, color: stat.color, lineHeight: 1.1, marginTop: 8 }}>
+                  {stat.value}
+                  {stat.currency && !loadingTax && <span style={{ fontSize: 16, fontWeight: 600, marginLeft: 6, color: stat.color, opacity: 0.7 }}>{stat.currency}</span>}
+                </div>
+                <div style={{ fontSize: 12, color: '#6b6c72', marginTop: 8 }}>{stat.sub}</div>
               </div>
-              <div style={{ marginLeft: 'auto', flexShrink: 0 }}>
-                {realTaxData
-                  ? <span style={{ background: '#8aad8a22', color: '#8aad8a', border: '1px solid #8aad8a44', borderRadius: 20, padding: '2px 8px', fontSize: 10, fontWeight: 700 }}>LIVE</span>
-                  : <span style={{ background: '#ff931722', color: '#ff9317', border: '1px solid #ff931744', borderRadius: 20, padding: '2px 8px', fontSize: 10, fontWeight: 700 }}>DEMO</span>}
+              <div style={{ marginTop: 12 }}>
+                {(combinedTax?.walletsIncluded || realTaxData)
+                  ? <span style={{ background: `${stat.accent}22`, color: stat.accent, border: `1px solid ${stat.accent}44`, borderRadius: 20, padding: '2px 10px', fontSize: 10, fontWeight: 700 }}>LIVE</span>
+                  : <span style={{ background: '#ff931722', color: '#ff9317', border: '1px solid #ff931744', borderRadius: 20, padding: '2px 10px', fontSize: 10, fontWeight: 700 }}>DEMO</span>}
               </div>
             </div>
           ))}
         </div>
 
         {/* CONNECTED ACCOUNTS — wallet manager section */}
-        <div style={{ ...S.card, marginBottom: 24 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#edeef0', marginBottom: 16 }}>🔗 Connected Accounts</div>
+        <div style={{ background: 'linear-gradient(135deg, #18191d 0%, #1a1e24 100%)', border: '1px solid #2a2b30', borderRadius: 16, padding: 24, marginBottom: 24, boxShadow: '0 2px 12px rgba(0,0,0,0.3)' }}>
+          <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6b6c72', marginBottom: 16, borderLeft: '4px solid #6789ed', paddingLeft: 10 }}>Connected Accounts</div>
 
           {/* Add wallet form */}
           <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
             <input value={newAddress} onChange={e => setNewAddress(e.target.value)}
               placeholder="Paste any 0x wallet address (Ethereum, Base, Arbitrum…)"
               onKeyDown={e => e.key === 'Enter' && addWalletManual()}
-              style={{ flex: 1, minWidth: 300, background: '#111214', color: '#edeef0', border: '1px solid #2a2b30', borderRadius: 8, padding: '10px 14px', fontSize: 14 }} />
+              style={{ flex: 1, minWidth: 300, background: '#111214', color: '#edeef0', border: '1px solid #2a2b30', borderRadius: 8, padding: '10px 14px', fontSize: 14, outline: 'none' }} />
             <select value={newNetwork} onChange={e => setNewNetwork(e.target.value)}
-              style={{ background: '#111214', color: '#edeef0', border: '1px solid #2a2b30', borderRadius: 8, padding: '10px 12px', fontSize: 13, cursor: 'pointer' }}>
+              style={{ background: '#111214', color: '#edeef0', border: '1px solid #2a2b30', borderRadius: 8, padding: '10px 12px', fontSize: 13, cursor: 'pointer', outline: 'none' }}>
               <option value="ethereum">Ethereum</option>
               <option value="base">Base</option>
               <option value="arbitrum">Arbitrum</option>
@@ -801,15 +796,19 @@ export default function TaxDashboard() {
               <option value="solana">Solana</option>
             </select>
             <button onClick={addWalletManual}
-              style={{ background: '#8aad8a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
+              style={{ background: '#8aad8a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 700, cursor: 'pointer', transition: 'opacity 0.15s' }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
               Add &amp; Scan
             </button>
           </div>
 
           {/* MetaMask / Rabby connect */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: connectedWallets.length > 0 ? 16 : 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: connectedWallets.length > 0 ? 20 : 0 }}>
             <button onClick={connectRabby}
-              style={{ background: '#6789ed22', color: '#93c5fd', border: '1px solid #6789ed44', borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+              style={{ background: '#6789ed22', color: '#93c5fd', border: '1px solid #6789ed44', borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer', transition: 'background 0.15s' }}
+              onMouseEnter={e => (e.currentTarget.style.background = '#6789ed33')}
+              onMouseLeave={e => (e.currentTarget.style.background = '#6789ed22')}>
               🦊 Connect MetaMask / Rabby
             </button>
             <span style={{ fontSize: 12, color: '#6b6c72' }}>Requires browser extension</span>
@@ -817,56 +816,73 @@ export default function TaxDashboard() {
 
           {/* Wallet list */}
           {connectedWallets.length > 0 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <div style={{ fontSize: 12, color: '#6b6c72', marginBottom: 4, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Connected ({connectedWallets.length})</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ fontSize: 11, color: '#6b6c72', marginBottom: 2, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                Connected ({connectedWallets.length})
+              </div>
               {connectedWallets.map((w, i) => {
                 const wTaxData = allWalletsTax.find(x => x.wallet.address.toLowerCase() === w.address.toLowerCase())?.taxData;
+                // Avatar color based on address hash
+                const avatarColors = ['#6789ed', '#8aad8a', '#ff9317', '#a78bfa', '#f472b6', '#34d399'];
+                const avatarBg = avatarColors[(parseInt(w.address.slice(2, 4) || '0', 16)) % avatarColors.length];
+                const avatarText = w.address.slice(2, 4).toUpperCase();
+                const shortAddr = `${w.address.slice(0, 6)}…${w.address.slice(-4)}`;
                 return (
-                  <div key={i} style={{ background: '#111214', borderRadius: 10, padding: '12px 14px', border: '1px solid #2a2b30' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: wTaxData ? 8 : 0 }}>
-                      <div>
-                        <span style={{ fontFamily: 'monospace', fontSize: 13, color: '#93c5fd' }}>{w.address.slice(0,10)}…{w.address.slice(-8)}</span>
-                        <span style={{ marginLeft: 8, fontSize: 11, color: '#6b6c72', background: '#2a2b30', borderRadius: 4, padding: '2px 6px' }}>{w.network}</span>
-                        {w.label && w.label !== w.address.slice(0,6)+'…'+w.address.slice(-4) && (
-                          <span style={{ marginLeft: 6, fontSize: 11, color: '#6b6c72' }}>{w.label}</span>
-                        )}
+                  <div key={i} style={{ background: '#111214', borderRadius: 12, padding: '14px 16px', border: '1px solid #2a2b30', boxShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: wTaxData ? 14 : 0 }}>
+                      {/* Avatar circle */}
+                      <div style={{ width: 36, height: 36, borderRadius: '50%', background: `${avatarBg}33`, border: `2px solid ${avatarBg}66`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, color: avatarBg, flexShrink: 0, fontFamily: 'monospace' }}>
+                        {avatarText}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                          <span style={{ fontFamily: 'monospace', fontSize: 14, color: '#edeef0', fontWeight: 600 }}>{shortAddr}</span>
+                          <span style={{ fontSize: 10, color: '#6b6c72', background: '#2a2b30', borderRadius: 4, padding: '2px 7px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{w.network}</span>
+                          {w.label && w.label !== w.address.slice(0,6)+'…'+w.address.slice(-4) && (
+                            <span style={{ fontSize: 11, color: '#6b6c72' }}>{w.label}</span>
+                          )}
+                        </div>
                       </div>
                       <button onClick={() => removeWallet(i)}
-                        style={{ background: '#ef444415', color: '#ef4444', border: '1px solid #ef444433', borderRadius: 6, padding: '3px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
+                        style={{ background: 'transparent', color: '#6b6c72', border: '1px solid #2a2b30', borderRadius: 6, padding: '4px 10px', fontSize: 11, fontWeight: 600, cursor: 'pointer', flexShrink: 0, transition: 'all 0.15s' }}
+                        onMouseEnter={e => { e.currentTarget.style.background = '#ef444415'; e.currentTarget.style.color = '#ef4444'; e.currentTarget.style.borderColor = '#ef444433'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#6b6c72'; e.currentTarget.style.borderColor = '#2a2b30'; }}>
                         Remove
                       </button>
                     </div>
                     {loadingAll ? (
-                      <div style={{ fontSize: 12, color: '#6789ed' }}>⏳ Scanning…</div>
+                      <div style={{ fontSize: 12, color: '#6789ed', paddingLeft: 48 }}>⏳ Scanning…</div>
                     ) : wTaxData ? (
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, fontSize: 12 }}>
-                        <div style={{ background: S.bg, borderRadius: 7, padding: '8px 10px' }}>
-                          <div style={{ color: '#6b6c72', marginBottom: 3 }}>Short-term gains</div>
+                      <div style={{ borderTop: '1px solid #2a2b3044', paddingTop: 12, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, fontSize: 12 }}>
+                        <div style={{ background: S.bg, borderRadius: 8, padding: '10px 12px' }}>
+                          <div style={{ color: '#6b6c72', marginBottom: 4, fontSize: 11 }}>Short-term</div>
                           <div style={{ fontWeight: 700, color: '#8aad8a' }}>${(wTaxData.shortTermGains || 0).toLocaleString()}</div>
                         </div>
-                        <div style={{ background: S.bg, borderRadius: 7, padding: '8px 10px' }}>
-                          <div style={{ color: '#6b6c72', marginBottom: 3 }}>Long-term gains</div>
+                        <div style={{ background: S.bg, borderRadius: 8, padding: '10px 12px' }}>
+                          <div style={{ color: '#6b6c72', marginBottom: 4, fontSize: 11 }}>Long-term</div>
                           <div style={{ fontWeight: 700, color: '#8aad8a' }}>${(wTaxData.longTermGains || 0).toLocaleString()}</div>
                         </div>
-                        <div style={{ background: S.bg, borderRadius: 7, padding: '8px 10px' }}>
-                          <div style={{ color: '#6b6c72', marginBottom: 3 }}>Staking income</div>
+                        <div style={{ background: S.bg, borderRadius: 8, padding: '10px 12px' }}>
+                          <div style={{ color: '#6b6c72', marginBottom: 4, fontSize: 11 }}>Staking</div>
                           <div style={{ fontWeight: 700, color: '#6789ed' }}>${(wTaxData.stakingIncome?.totalUsd || 0).toLocaleString()}</div>
                         </div>
-                        <div style={{ background: S.bg, borderRadius: 7, padding: '8px 10px' }}>
-                          <div style={{ color: '#6b6c72', marginBottom: 3 }}>Transactions</div>
+                        <div style={{ background: S.bg, borderRadius: 8, padding: '10px 12px' }}>
+                          <div style={{ color: '#6b6c72', marginBottom: 4, fontSize: 11 }}>Txns</div>
                           <div style={{ fontWeight: 700, color: '#edeef0' }}>{(wTaxData.txCount || 0).toLocaleString()}</div>
                         </div>
                       </div>
                     ) : w.network !== 'solana' ? (
-                      <div style={{ fontSize: 12, color: '#6b6c72' }}>Click Scan to load tax data →</div>
+                      <div style={{ fontSize: 12, color: '#6b6c72', paddingLeft: 48 }}>Click Scan to load tax data →</div>
                     ) : (
-                      <div style={{ fontSize: 12, color: '#6b6c72' }}>Solana — tax calculation not yet supported</div>
+                      <div style={{ fontSize: 12, color: '#6b6c72', paddingLeft: 48 }}>Solana — tax calculation not yet supported</div>
                     )}
                   </div>
                 );
               })}
               <button onClick={scanAll} disabled={scanningAll || loadingAll}
-                style={{ marginTop: 4, background: '#8aad8a', color: '#fff', border: 'none', borderRadius: 8, padding: '11px 0', fontSize: 14, fontWeight: 700, cursor: 'pointer', width: '100%' }}>
+                style={{ marginTop: 4, background: '#8aad8a', color: '#fff', border: 'none', borderRadius: 8, padding: '11px 0', fontSize: 14, fontWeight: 700, cursor: 'pointer', width: '100%', opacity: (scanningAll || loadingAll) ? 0.6 : 1, transition: 'opacity 0.15s' }}
+                onMouseEnter={e => { if (!scanningAll && !loadingAll) e.currentTarget.style.opacity = '0.85'; }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = (scanningAll || loadingAll) ? '0.6' : '1'; }}>
                 {scanningAll || loadingAll ? '⏳ Scanning all chains…' : '🔍 Scan All Wallets & Chains'}
               </button>
             </div>
@@ -874,10 +890,10 @@ export default function TaxDashboard() {
         </div>
 
         {/* TRANSACTION HISTORY */}
-        <div style={{ ...S.card, marginBottom: 24, overflowX: 'auto' }}>
+        <div style={{ background: 'linear-gradient(135deg, #18191d 0%, #1a1e24 100%)', border: '1px solid #2a2b30', borderRadius: 16, padding: 24, marginBottom: 24, overflowX: 'auto', boxShadow: '0 2px 12px rgba(0,0,0,0.3)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <div>
-              <span style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>📋 Transaction History</span>
+              <span style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6b6c72', borderLeft: '4px solid #6789ed', paddingLeft: 10 }}>Transaction History</span>
               {realTaxData?.transactions?.length ? (
                 <span style={{ marginLeft: 10, fontSize: 11, color: '#6b6c72' }}>
                   {showAllTime ? 'All time' : taxYears[taxYearIdx]?.label} · {realTaxData.transactions.length} transactions
@@ -971,8 +987,8 @@ export default function TaxDashboard() {
         {/* TAX BREAKDOWN + HARVEST (2 col) */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 24 }}>
           {/* Tax Breakdown */}
-          <div style={{ ...S.card }}>
-            <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>📊 Tax Breakdown</div>
+          <div style={{ background: 'linear-gradient(135deg, #18191d 0%, #1a1e24 100%)', border: '1px solid #2a2b30', borderRadius: 16, padding: 24, boxShadow: '0 2px 12px rgba(0,0,0,0.3)' }}>
+            <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6b6c72', borderLeft: '4px solid #ff9317', paddingLeft: 10, marginBottom: 4 }}>Tax Breakdown</div>
             {combinedTax && <div style={{ fontSize: 11, color: '#6b6c72', marginBottom: 16 }}>Combined across all wallets & chains</div>}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 20 }}>
               {[
@@ -1024,9 +1040,9 @@ export default function TaxDashboard() {
           </div>
 
           {/* Tax-Loss Harvesting — always show (demo as fallback) */}
-          <div style={{ ...S.card }}>
-            <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-              🌿 Tax-Loss Harvesting
+          <div style={{ background: 'linear-gradient(135deg, #18191d 0%, #1a1e24 100%)', border: '1px solid #2a2b30', borderRadius: 16, padding: 24, boxShadow: '0 2px 12px rgba(0,0,0,0.3)' }}>
+            <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6b6c72', borderLeft: '4px solid #8aad8a', paddingLeft: 10, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+              Tax-Loss Harvesting
               {isLiveHarvest
                 ? <span style={{ fontSize: 10, color: '#8aad8a', fontWeight: 600, textTransform: 'none' }}>LIVE</span>
                 : <span style={{ fontSize: 10, color: '#ff9317', fontWeight: 600, textTransform: 'none' }}>ILLUSTRATIVE</span>}
@@ -1065,9 +1081,9 @@ export default function TaxDashboard() {
         </div>
 
         {/* HOLDING PERIOD TRACKER — always show (demo as fallback) */}
-        <div style={{ ...S.card, marginBottom: 24 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-            ⏰ Holding Period Tracker
+        <div style={{ background: 'linear-gradient(135deg, #18191d 0%, #1a1e24 100%)', border: '1px solid #2a2b30', borderRadius: 16, padding: 24, marginBottom: 24, boxShadow: '0 2px 12px rgba(0,0,0,0.3)' }}>
+          <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6b6c72', borderLeft: '4px solid #a78bfa', paddingLeft: 10, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+            Holding Period Tracker
             {isLiveHolding
               ? <span style={{ fontSize: 10, color: '#8aad8a', fontWeight: 600, textTransform: 'none' }}>● LIVE</span>
               : <span style={{ fontSize: 10, color: '#ff9317', fontWeight: 600, textTransform: 'none' }}>DEMO</span>}
