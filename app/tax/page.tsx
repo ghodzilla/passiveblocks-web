@@ -268,23 +268,28 @@ export default function TaxDashboard() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const w = window as Window & {
-      ethereum?: { isMetaMask?: boolean; isRabby?: boolean; isCoinbaseWallet?: boolean; isRainbow?: boolean; isTrust?: boolean };
-      coinbaseWalletExtension?: unknown;
-      phantom?: { ethereum?: unknown; solana?: unknown };
-      solana?: { isPhantom?: boolean };
-      trustwallet?: unknown;
+    // Delay to let browser extension content scripts inject into window
+    const detect = () => {
+      const w = window as Window & {
+        ethereum?: { isMetaMask?: boolean; isRabby?: boolean; isCoinbaseWallet?: boolean; isRainbow?: boolean; isTrust?: boolean };
+        coinbaseWalletExtension?: unknown;
+        phantom?: { ethereum?: unknown; solana?: unknown };
+        solana?: { isPhantom?: boolean };
+        trustwallet?: unknown;
+      };
+      const eth = w.ethereum;
+      setDetectedWallets({
+        metamask: !!(eth?.isMetaMask && !eth?.isRabby && !eth?.isCoinbaseWallet),
+        rabby: !!eth?.isRabby,
+        coinbase: !!(eth?.isCoinbaseWallet || w.coinbaseWalletExtension),
+        phantom: !!(w.phantom?.ethereum || w.phantom?.solana || w.solana?.isPhantom),
+        rainbow: !!eth?.isRainbow,
+        trust: !!(eth?.isTrust || w.trustwallet),
+      });
     };
-    const eth = w.ethereum;
-    const detected: Record<string, boolean> = {
-      metamask: !!(eth?.isMetaMask && !eth?.isRabby && !eth?.isCoinbaseWallet),
-      rabby: !!eth?.isRabby,
-      coinbase: !!(eth?.isCoinbaseWallet || w.coinbaseWalletExtension),
-      phantom: !!(w.phantom?.ethereum || w.phantom?.solana || w.solana?.isPhantom),
-      rainbow: !!eth?.isRainbow,
-      trust: !!(eth?.isTrust || w.trustwallet),
-    };
-    setDetectedWallets(detected);
+    detect();
+    const t = setTimeout(detect, 500); // re-run after extensions inject
+    return () => clearTimeout(t);
   }, []);
 
   // ── Fetch helpers ──────────────────────────────────────────────────────────
@@ -427,31 +432,35 @@ export default function TaxDashboard() {
     }
   }
 
-  async function connectRabby() {
-    if (typeof window === 'undefined' || !(window as unknown as Record<string,unknown>).ethereum) {
-      alert('No browser wallet detected. Install MetaMask or Rabby.');
+  async function connectEVM(walletName: string, installUrl: string) {
+    type WalletWindow = Window & {
+      ethereum?: { request: (a: { method: string }) => Promise<string[]>; isMetaMask?: boolean; isRabby?: boolean };
+      phantom?: { ethereum?: { request: (a: { method: string }) => Promise<string[]> } };
+    };
+    const w = window as WalletWindow;
+    const provider = w.ethereum || w.phantom?.ethereum;
+    if (!provider) {
+      window.open(installUrl, '_blank', 'noopener');
       return;
     }
     try {
-      const eth = (window as unknown as { ethereum: { request: (a: {method:string}) => Promise<string[]> } }).ethereum;
-      const accounts = await eth.request({ method: 'eth_requestAccounts' });
+      const accounts = await provider.request({ method: 'eth_requestAccounts' });
       const addr = accounts[0];
       if (!addr) return;
-      if (connectedWallets.some(w => w.address.toLowerCase() === addr.toLowerCase())) return;
-      const wallet: ConnectedWallet = { address: addr, network: 'ethereum', label: 'Rabby/MetaMask', chains: { activeChains: ['ethereum', 'base', 'arbitrum', 'optimism', 'polygon'] } };
+      if (connectedWallets.some(cw => cw.address.toLowerCase() === addr.toLowerCase())) return;
+      const wallet: ConnectedWallet = { address: addr, network: 'ethereum', label: walletName, chains: { activeChains: ['ethereum', 'base', 'arbitrum', 'optimism', 'polygon'] } };
       const updated = [...connectedWallets, wallet];
       setConnectedWallets(updated);
       localStorage.setItem('pb_wallets', JSON.stringify(updated));
       fetchTaxSummary(wallet, taxYears[taxYearIdx]);
       fetchAllWalletsTax(updated, taxYears[taxYearIdx]);
-      const evmAddr = addr;
       setLoadingGas(true);
-      fetch(`/api/wallet/gas?address=${evmAddr}&year=${new Date().getFullYear()}`)
+      fetch(`/api/wallet/gas?address=${addr}&year=${new Date().getFullYear()}`)
         .then(r => r.json())
         .then((d: GasData & { error?: string }) => { if (!d.error) setGasData(d); setLoadingGas(false); })
         .catch(() => setLoadingGas(false));
     } catch {
-      alert('Wallet connection cancelled.');
+      // user dismissed the popup — silent
     }
   }
 
@@ -939,31 +948,17 @@ export default function TaxDashboard() {
                     return (
                       <div
                         key={w.id}
-                        onClick={() => {
-                          if (isDetected) {
-                            connectRabby();
-                          } else {
-                            window.open(w.installUrl, '_blank', 'noopener');
-                          }
-                        }}
-                        onMouseEnter={e => (e.currentTarget.style.borderColor = '#6789ed44')}
-                        onMouseLeave={e => (e.currentTarget.style.borderColor = '#2a2b30')}
-                        style={{ background: '#111214', border: '1px solid #2a2b30', borderRadius: 10, padding: '12px 10px', textAlign: 'center', cursor: 'pointer', transition: 'border-color 0.15s', userSelect: 'none' }}
+                        onClick={() => connectEVM(w.name, w.installUrl)}
+                        onMouseEnter={e => (e.currentTarget.style.borderColor = isDetected ? '#8aad8a66' : '#6789ed44')}
+                        onMouseLeave={e => (e.currentTarget.style.borderColor = isDetected ? '#8aad8a33' : '#2a2b30')}
+                        style={{ background: '#111214', border: `1px solid ${isDetected ? '#8aad8a33' : '#2a2b30'}`, borderRadius: 10, padding: '12px 10px', textAlign: 'center', cursor: 'pointer', transition: 'border-color 0.15s', userSelect: 'none' }}
                       >
                         <div style={{ fontSize: 24, marginBottom: 6 }}>{w.emoji}</div>
                         <div style={{ fontSize: 12, fontWeight: 600, color: '#edeef0', marginBottom: 4 }}>{w.name}</div>
                         {isDetected ? (
                           <div style={{ fontSize: 11, color: '#8aad8a', fontWeight: 600 }}>● Detected</div>
                         ) : (
-                          <a
-                            href={w.installUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={e => e.stopPropagation()}
-                            style={{ fontSize: 11, color: '#6b6c72', textDecoration: 'none' }}
-                          >
-                            Install →
-                          </a>
+                          <div style={{ fontSize: 11, color: '#6b6c72' }}>Click to connect</div>
                         )}
                       </div>
                     );
