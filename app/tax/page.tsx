@@ -41,6 +41,10 @@ interface TxRecord {
   to: string;
   isStakingReward?: boolean;
   chain?: string;
+  priceUsd?: number;
+  valueUsd?: number;
+  costBasis?: number;
+  gainLoss?: number;
 }
 
 interface CombinedTax {
@@ -450,6 +454,102 @@ export default function TaxDashboard() {
     localStorage.setItem('pb_wallets', JSON.stringify(updated));
     if (updated.length === 0) { setRealTaxData(null); setCombinedTax(null); setAllWalletsTax([]); }
     else { fetchAllWalletsTax(updated, taxYears[taxYearIdx]); }
+  }
+
+  function exportCSV() {
+    const year = taxYears[taxYearIdx]?.label || new Date().getFullYear();
+    const walletAddrs = connectedWallets.map(w => w.address).join('; ') || 'Demo';
+    const rows: string[][] = [
+      ['PassiveBlocks Tax Report', '', '', '', '', '', '', ''],
+      ['Tax Year', String(year), '', '', '', '', '', ''],
+      ['Jurisdiction', c.name, '', '', '', '', '', ''],
+      ['Wallets', walletAddrs, '', '', '', '', '', ''],
+      ['Generated', new Date().toISOString(), '', '', '', '', '', ''],
+      [],
+      ['SUMMARY', '', '', '', '', '', '', ''],
+      ['Short-term gains', `$${displayShortTerm.toFixed(2)}`, '', '', '', '', '', ''],
+      ['Long-term gains', `$${displayLongTerm.toFixed(2)}`, '', '', '', '', '', ''],
+      ['Staking income', `$${displayStaking.toFixed(2)}`, '', '', '', '', '', ''],
+      ['Yield income', `$${yieldIncomeUsd.toFixed(2)}`, '', '', '', '', '', ''],
+      ['Gas deductions', `-$${gasDeductible.toFixed(2)}`, '', '', '', '', '', ''],
+      ['Net taxable amount', `$${displayNetTaxable.toFixed(2)}`, '', '', '', '', '', ''],
+      ['Estimated tax', `$${displayEstTax.toFixed(2)}`, '', '', '', '', '', ''],
+      [],
+      ['TRANSACTIONS', '', '', '', '', '', '', ''],
+      ['Date', 'Type', 'Asset', 'Amount', 'Price (USD)', 'Value (USD)', 'Cost Basis', 'Gain/Loss'],
+    ];
+    const txs = realTaxData?.transactions || [];
+    txs.forEach(tx => {
+      rows.push([
+        tx.date ? new Date(tx.date).toLocaleDateString() : '',
+        tx.type || '',
+        tx.asset || '',
+        tx.amount != null ? String(tx.amount) : '',
+        tx.priceUsd != null ? `$${Number(tx.priceUsd).toFixed(2)}` : '',
+        tx.valueUsd != null ? `$${Number(tx.valueUsd).toFixed(2)}` : '',
+        tx.costBasis != null ? `$${Number(tx.costBasis).toFixed(2)}` : '',
+        tx.gainLoss != null ? `$${Number(tx.gainLoss).toFixed(2)}` : '',
+      ]);
+    });
+    if (txs.length === 0) rows.push(['No transactions loaded — connect a wallet and scan first', '', '', '', '', '', '', '']);
+    const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `passiveblocks-tax-${year}.csv`; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function exportPDF() {
+    const year = taxYears[taxYearIdx]?.label || new Date().getFullYear();
+    const walletAddrs = connectedWallets.map(w => `${w.address.slice(0,8)}…${w.address.slice(-4)}`).join(', ') || 'Demo mode';
+    const txs = realTaxData?.transactions || [];
+    const txRows = txs.map(tx => `
+      <tr>
+        <td>${tx.date ? new Date(tx.date).toLocaleDateString() : '—'}</td>
+        <td>${tx.type || '—'}</td>
+        <td>${tx.asset || '—'}</td>
+        <td>${tx.amount != null ? Number(tx.amount).toFixed(4) : '—'}</td>
+        <td>${tx.valueUsd != null ? '$' + Number(tx.valueUsd).toFixed(2) : '—'}</td>
+        <td style="color:${Number(tx.gainLoss) >= 0 ? '#16a34a' : '#dc2626'}">${tx.gainLoss != null ? (Number(tx.gainLoss) >= 0 ? '+' : '') + '$' + Number(tx.gainLoss).toFixed(2) : '—'}</td>
+      </tr>`).join('');
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>PassiveBlocks Tax Report ${year}</title>
+    <style>
+      body { font-family: Arial, sans-serif; color: #111; margin: 40px; font-size: 13px; }
+      h1 { font-size: 22px; margin-bottom: 4px; } h2 { font-size: 15px; margin: 24px 0 8px; color: #333; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+      .meta { color: #555; font-size: 12px; margin-bottom: 24px; }
+      .summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+      .card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 16px; }
+      .card .label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+      .card .value { font-size: 20px; font-weight: 700; }
+      .green { color: #16a34a; } .red { color: #dc2626; } .blue { color: #2563eb; }
+      table { width: 100%; border-collapse: collapse; font-size: 12px; }
+      th { text-align: left; padding: 8px; background: #f9fafb; border-bottom: 2px solid #e5e7eb; font-weight: 600; }
+      td { padding: 7px 8px; border-bottom: 1px solid #f3f4f6; }
+      tr:hover td { background: #f9fafb; }
+      .footer { margin-top: 32px; font-size: 11px; color: #888; border-top: 1px solid #e5e7eb; padding-top: 12px; }
+      @media print { body { margin: 20px; } }
+    </style></head><body>
+    <h1>PassiveBlocks — Crypto Tax Report</h1>
+    <div class="meta">Tax Year: <strong>${year}</strong> &nbsp;·&nbsp; Jurisdiction: <strong>${c.name}</strong> &nbsp;·&nbsp; Wallets: <strong>${walletAddrs}</strong> &nbsp;·&nbsp; Generated: ${new Date().toLocaleString()}</div>
+    <h2>Summary</h2>
+    <div class="summary">
+      <div class="card"><div class="label">Short-term gains</div><div class="value ${displayShortTerm >= 0 ? 'green' : 'red'}">$${displayShortTerm.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div>
+      <div class="card"><div class="label">Long-term gains</div><div class="value ${displayLongTerm >= 0 ? 'green' : 'red'}">$${displayLongTerm.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div>
+      <div class="card"><div class="label">Staking + Yield income</div><div class="value green">$${(displayStaking + yieldIncomeUsd).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div>
+      <div class="card"><div class="label">Gas deductions</div><div class="value">-$${gasDeductible.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div>
+      <div class="card"><div class="label">Net taxable amount</div><div class="value blue">$${displayNetTaxable.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div>
+      <div class="card"><div class="label">Estimated tax (${c.name})</div><div class="value red">$${displayEstTax.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div>
+    </div>
+    <h2>Transaction History (${txs.length} transactions)</h2>
+    ${txs.length > 0 ? `<table><thead><tr><th>Date</th><th>Type</th><th>Asset</th><th>Amount</th><th>Value (USD)</th><th>Gain / Loss</th></tr></thead><tbody>${txRows}</tbody></table>` : '<p style="color:#888">No transactions loaded — connect a wallet and scan to populate.</p>'}
+    <div class="footer">Generated by PassiveBlocks &nbsp;·&nbsp; passiveblocks.io &nbsp;·&nbsp; This is not financial or tax advice. Consult a qualified accountant.</div>
+    </body></html>`;
+    const win = window.open('', '_blank');
+    if (!win) return;
+    win.document.write(html);
+    win.document.close();
+    setTimeout(() => win.print(), 500);
   }
 
   function scanAll() {
@@ -1084,7 +1184,15 @@ export default function TaxDashboard() {
                 </span>
               </div>
             </div>
-            <div style={{ fontSize: 11, color: realTaxData ? '#8aad8a88' : '#ff931766' }}>
+            <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
+              <button onClick={exportCSV} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '10px 16px', background: '#1a2a1a', border: '1px solid #8aad8a44', borderRadius: 8, color: '#8aad8a', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                ⬇ Export CSV
+              </button>
+              <button onClick={exportPDF} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '10px 16px', background: '#1a1d2a', border: '1px solid #6789ed44', borderRadius: 8, color: '#6789ed', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                🖨 Export PDF
+              </button>
+            </div>
+            <div style={{ fontSize: 11, color: realTaxData ? '#8aad8a88' : '#ff931766', marginTop: 12 }}>
               {realTaxData
                 ? `✅ Live data from your connected wallet via Etherscan. Last updated: ${new Date(realTaxData.fetchedAt).toLocaleString()}.`
                 : '⚠️ Demo figures only — not financial or tax advice. Consult a qualified tax professional.'}
