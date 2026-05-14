@@ -499,7 +499,6 @@ export default function TaxDashboard() {
   const selectedWallet = connectedWallets[selectedWalletIdx];
   const yieldIncomeUsd = yieldIncome?.totalEarnedUsd || 0;
   const stakingIncomeUsd = realTaxData?.stakingIncome?.totalUsd || 0;
-  const totalIncome = stakingIncomeUsd + yieldIncomeUsd;
   const capitalGains = realTaxData ? realTaxData.totalGains : (DEMO.shortTermGains + DEMO.longTermGains);
   const shortTermGains = realTaxData ? realTaxData.shortTermGains : DEMO.shortTermGains;
   const longTermGains  = realTaxData ? realTaxData.longTermGains  : DEMO.longTermGains;
@@ -533,12 +532,6 @@ export default function TaxDashboard() {
     else taxableGains = displayShortTerm + displayLongTerm;
     return Math.max(0, taxableGains + displayStaking + yieldIncomeUsd - gasDeductible);
   })();
-
-  const allChainSet = new Set<string>();
-  connectedWallets.forEach(w => {
-    (w.chains?.activeChains || [w.network || 'ethereum']).forEach(ch => allChainSet.add(ch));
-  });
-  const allChains = Array.from(allChainSet);
 
   const isLive = !!(combinedTax?.walletsIncluded && combinedTax.walletsIncluded > 0);
 
