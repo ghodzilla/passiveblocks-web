@@ -1,5 +1,6 @@
-// Server component — PassiveBlocks DeFi Yield Opportunity Index
-// Computed from DeFiLlama stablecoin pool data. Refreshes hourly via ISR.
+// Server component — PassiveBlocks DeFi Yield Score
+// Computed from DeFiLlama pool data across all major DeFi protocols.
+// Refreshes hourly via ISR.
 
 const TARGET_CHAINS = new Set(["Ethereum", "Arbitrum", "Base", "Solana"]);
 
@@ -21,27 +22,28 @@ async function getYieldData(): Promise<{ score: number; label: string; medianApy
     if (!res.ok) return null;
     const json: { data: Pool[] } = await res.json();
 
+    // All DeFi pools — stablecoin AND volatile — on supported chains
     const relevant = json.data.filter(
       (p) =>
-        p.stablecoin &&
         TARGET_CHAINS.has(p.chain) &&
-        p.tvlUsd >= 1_000_000 &&
+        p.tvlUsd >= 5_000_000 &&   // $5M+ TVL keeps quality pools
         p.apy > 0 &&
-        p.apy < 300
+        p.apy < 150                // cap outliers (farms/emissions noise)
     );
     if (!relevant.length) return null;
 
-    const top = relevant.sort((a, b) => b.tvlUsd - a.tvlUsd).slice(0, 25);
+    const top = relevant.sort((a, b) => b.tvlUsd - a.tvlUsd).slice(0, 40);
     const apys = top.map((p) => p.apy).sort((a, b) => a - b);
     const mid = Math.floor(apys.length / 2);
     const medianApy = apys.length % 2 ? apys[mid] : (apys[mid - 1] + apys[mid]) / 2;
 
+    // Score: calibrated for broader DeFi (including LP + lending)
     let score: number;
-    if (medianApy < 2)       score = Math.round(10 + medianApy * 7.5);
-    else if (medianApy < 4)  score = Math.round(25 + (medianApy - 2) * 12.5);
-    else if (medianApy < 6)  score = Math.round(50 + (medianApy - 4) * 10);
-    else if (medianApy < 10) score = Math.round(70 + (medianApy - 6) * 5);
-    else                     score = Math.min(98, Math.round(90 + (medianApy - 10) * 0.5));
+    if (medianApy < 3)        score = Math.round(10 + medianApy * 5);
+    else if (medianApy < 6)   score = Math.round(25 + (medianApy - 3) * 8.3);
+    else if (medianApy < 10)  score = Math.round(50 + (medianApy - 6) * 5);
+    else if (medianApy < 20)  score = Math.round(70 + (medianApy - 10) * 1.5);
+    else                      score = Math.min(98, Math.round(85 + (medianApy - 20) * 0.3));
 
     let label: string;
     if (score <= 25)      label = "Bear Yields";
@@ -107,7 +109,7 @@ export default async function DefiYieldIndex() {
   return (
     <div className="rounded-2xl border border-white/[0.07] bg-[#0d0d1a] p-5 flex flex-col">
       <div className="flex items-center justify-between mb-2">
-        <p className="text-sm font-bold text-white/60">Stablecoin Yield Score</p>
+        <p className="text-sm font-bold text-white/60">DeFi Yield Score</p>
         <span className="text-[10px] font-semibold text-white/20 bg-white/[0.05] px-2 py-0.5 rounded-full">
           {poolCount} pools · DeFiLlama
         </span>
