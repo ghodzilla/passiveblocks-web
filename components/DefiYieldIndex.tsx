@@ -120,7 +120,7 @@ export default async function DefiYieldIndex() {
           />
         ))}
         <text
-          x={cx} y={62}
+          x={cx} y={44}
           textAnchor="middle"
           fill={color}
           fontSize="11"

@@ -91,7 +91,7 @@ export default async function FearGreedWidget() {
         ))}
         {/* Classification label */}
         <text
-          x={cx} y={cx - 48}
+          x={cx} y={44}
           textAnchor="middle"
           fill={color}
           fontSize="11"
