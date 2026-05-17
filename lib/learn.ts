@@ -118,9 +118,9 @@ If the total APY is 40% but the base is 2%, you're mostly betting on a token kee
 
 If you're new to DeFi and want yield without complexity:
 
-1. Start with stablecoin lending on Aave or Fluid
+1. Start with stablecoin lending on Aave or Fluid — see [Aave vs Fluid compared](/learn/aave-vs-fluid-2026)
 2. Accept the lower APY (4–6%) in exchange for simplicity and lower risk
-3. Only move into LP positions once you understand impermanent loss
+3. Only move into LP positions once you understand impermanent loss — read [how impermanent loss works](/learn/how-impermanent-loss-works)
 4. Never put more than 10% of your position into emission-heavy pools
 
 The goal is to earn more than a savings account without taking on risks you don't understand yet.
@@ -199,6 +199,8 @@ The pairs most exposed to IL are exactly the ones with the highest advertised AP
 
 Before entering any LP position, ask: if this token moves 2x up or down, what does my IL look like? Then ask: do fees cover it?
 
+If you want yield without IL exposure, [stablecoin lending on Aave or Fluid](/learn/best-usdc-yield-strategies-2026) is the right starting point.
+
 ---
 
 *This is educational content, not financial advice.*
@@ -276,6 +278,8 @@ This is early and the risk profile is meaningfully different. You're now exposed
 
 For most investors: **Rocket Pool for decentralisation + slightly better yield, Lido if you need maximum liquidity for DeFi strategies**. EigenLayer only after you've read the slashing conditions carefully.
 
+To put staked ETH to work in a broader yield portfolio, see [how to build a $10K DeFi yield portfolio](/learn/build-10k-defi-yield-portfolio).
+
 ---
 
 *This is educational content, not financial advice.*
@@ -346,6 +350,8 @@ If you want to stack yield on top of staking (e.g. provide mSOL/USDC liquidity o
 
 Never unstake native SOL to use Marinade or Jito unless the yield difference covers at least 3x your transaction costs. On $10K positions, the ~0.5–1% difference is worth the switch. On $1K positions, be more careful about gas optimisation.
 
+To combine SOL staking with LP yield on Solana, see [how Orca works](/learn/what-is-orca-solana-dex).
+
 ---
 
 *This is educational content, not financial advice.*
@@ -415,6 +421,8 @@ For capital allocators already comfortable with DeFi lending:
 
 For new DeFi users who've never used a lending protocol: start with Aave. Get comfortable with the mechanics before moving to newer protocols.
 
+For a comparison of how these fit into a complete yield strategy, see [best USDC yield strategies 2026](/learn/best-usdc-yield-strategies-2026).
+
 ---
 
 *This is educational content, not financial advice.*
@@ -480,6 +488,8 @@ Use Fluid or Aave instead if:
 - You're uncomfortable with the complexity of range management
 
 Orca is the better yield option on SOL — but only if you're paying attention. A neglected out-of-range position earns nothing while accumulating IL.
+
+For the full picture on how Orca fits into a stablecoin and staking portfolio, see [best USDC yield strategies](/learn/best-usdc-yield-strategies-2026) and [Solana staking compared](/learn/solana-staking-marinade-jito).
 
 ---
 
@@ -550,6 +560,8 @@ No security setup protects against signing a bad transaction. Always:
 
 The hardware wallet is the last line of defence against your keys being stolen. You are the first line of defence against signing something you shouldn't.
 
+Once you have a wallet set up, read [how to configure Rabby Wallet](/learn/how-to-set-up-rabby-wallet) — it adds transaction simulation on top of your hardware wallet for maximum protection.
+
 ---
 
 *This is educational content, not financial advice.*
@@ -616,6 +628,8 @@ The simulation isn't perfect — highly complex transactions may show partial in
 ## Switching Between Addresses
 
 One of Rabby's most useful features: you can maintain multiple addresses (hardware wallet, hot wallet, test wallet) and switch between them instantly without changing network settings. For DeFi users who operate across chains, this alone saves significant friction.
+
+For guidance on what to do once your wallet is set up, see [how to build a $10K DeFi yield portfolio](/learn/build-10k-defi-yield-portfolio).
 
 ---
 
@@ -691,6 +705,8 @@ For a $20,000 USDC position seeking yield:
 - $2,000 in USDC/USDT LP on Orca or Uniswap (10%) — fee capture, minimal IL
 
 Blended APY: approximately 4.5–5.2% — comfortably better than CeFi options, with manageable risk across three independent systems.
+
+For a full deployment walkthrough including hardware wallet setup, see [how to build a $10K DeFi yield portfolio](/learn/build-10k-defi-yield-portfolio). For the Aave vs Fluid comparison in detail, read [Aave vs Fluid 2026](/learn/aave-vs-fluid-2026).
 
 ---
 
@@ -785,6 +801,8 @@ Assuming no major market disruption: $10,000 becomes approximately $10,475–$10
 
 The goal of this portfolio is: **earn a premium over CeFi without taking protocol risk you don't understand**.
 
+Once you're earning yield, read [DeFi tax in Australia](/learn/defi-tax-australia-ato) — know what you'll owe before end of financial year, not after.
+
 ---
 
 *This is educational content, not financial advice.*
@@ -864,6 +882,8 @@ DeFi yield is taxable in Australia. The ATO is not lenient on crypto. The best s
 
 The 12-month CGT discount is real and worth planning around. Ordinary income from yield cannot be avoided — it's taxed when earned.
 
+For the mechanics of tracking this: [how to use Koinly for DeFi transactions](/learn/track-defi-transactions-koinly). For the yield strategies that generate this income: [best USDC yield strategies 2026](/learn/best-usdc-yield-strategies-2026).
+
 ---
 
 *This is educational content, not tax advice. Consult a registered tax agent for your specific situation.*
@@ -938,6 +958,8 @@ Budget 2–3 hours to review and correct classifications before you run your fin
 ## The One Thing That Saves The Most Time
 
 Add your wallet addresses to Koinly the same week you start using DeFi — not after a year of transactions. Importing a clean history is trivial. Reconstructing a year of DeFi activity from memory is painful.
+
+For a full overview of what the ATO expects from DeFi investors, read [DeFi tax in Australia](/learn/defi-tax-australia-ato).
 
 ---
 

@@ -3,22 +3,22 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "PassiveBlocks — Build Wealth, Block by Block",
-  description: "Weekly DeFi yield analysis for serious capital allocators. Protocols, rates, and risk — distilled.",
+  title: "PassiveBlocks — DeFi Yield Intelligence",
+  description: "Weekly DeFi yield analysis for serious capital allocators. Best stablecoin rates, staking APY, and LP strategies — distilled.",
   icons: {
     icon: "/favicon.svg",
   },
   openGraph: {
-    title: "PassiveBlocks — Build Wealth, Block by Block",
-    description: "Weekly DeFi yield analysis for serious capital allocators. Protocols, rates, and risk — distilled.",
+    title: "PassiveBlocks — DeFi Yield Intelligence",
+    description: "Weekly DeFi yield analysis for serious capital allocators. Best stablecoin rates, staking APY, and LP strategies — distilled.",
     url: "https://passiveblocks.io",
     siteName: "PassiveBlocks",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "PassiveBlocks — Build Wealth, Block by Block",
-    description: "Weekly DeFi yield analysis for serious capital allocators.",
+    title: "PassiveBlocks — DeFi Yield Intelligence",
+    description: "Weekly DeFi yield analysis. Best stablecoin rates, staking APY, and LP strategies.",
   },
   metadataBase: new URL("https://passiveblocks.io"),
 };
