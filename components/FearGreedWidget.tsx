@@ -1,15 +1,11 @@
 // Server component — fetches live Crypto Fear & Greed Index from alternative.me
 // Refreshes every hour via Next.js ISR
 
-type FGEntry = {
-  value: string;
-  value_classification: string;
-  timestamp: string;
-};
+type FGEntry = { value: string; value_classification: string; timestamp: string };
 
 async function getFearGreed(): Promise<FGEntry[]> {
   try {
-    const res = await fetch("https://api.alternative.me/fng/?limit=8", {
+    const res = await fetch("https://api.alternative.me/fng/?limit=1", {
       next: { revalidate: 3600 },
     });
     if (!res.ok) return [];
@@ -20,86 +16,141 @@ async function getFearGreed(): Promise<FGEntry[]> {
   }
 }
 
-function getColor(value: number): { text: string; bg: string; border: string; bar: string } {
-  if (value <= 24) return { text: "text-red-400",    bg: "bg-red-950/40",    border: "border-red-500/30",   bar: "bg-red-500"    };
-  if (value <= 49) return { text: "text-orange-400", bg: "bg-orange-950/40", border: "border-orange-500/30", bar: "bg-orange-500" };
-  if (value <= 54) return { text: "text-yellow-400", bg: "bg-yellow-950/40", border: "border-yellow-500/30", bar: "bg-yellow-500" };
-  if (value <= 74) return { text: "text-emerald-400",bg: "bg-emerald-950/40",border: "border-emerald-500/30",bar: "bg-emerald-500"};
-  return               { text: "text-green-400",   bg: "bg-green-950/40",  border: "border-green-500/30",  bar: "bg-green-500"  };
+// Compute SVG point on gauge arc (math angles: 0=right, 90=up, 180=left)
+function pt(deg: number, r: number, cx: number, cy: number) {
+  const rad = (deg * Math.PI) / 180;
+  return { x: cx + r * Math.cos(rad), y: cy - r * Math.sin(rad) };
 }
 
-function dayLabel(timestamp: string, index: number): string {
-  if (index === 0) return "Today";
-  if (index === 1) return "Yesterday";
-  const d = new Date(parseInt(timestamp) * 1000);
-  return d.toLocaleDateString("en-AU", { weekday: "short" });
+// Arc segment path (decreasing angle = sweeping counterclockwise in screen space = through top)
+function arc(a1: number, a2: number, r: number, cx: number, cy: number) {
+  const p1 = pt(a1, r, cx, cy);
+  const p2 = pt(a2, r, cx, cy);
+  return `M ${p1.x.toFixed(2)} ${p1.y.toFixed(2)} A ${r} ${r} 0 0 0 ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`;
+}
+
+function zoneColor(v: number): string {
+  if (v <= 24) return "#ef4444";
+  if (v <= 49) return "#f97316";
+  if (v <= 54) return "#eab308";
+  if (v <= 74) return "#10b981";
+  return "#22c55e";
 }
 
 export default async function FearGreedWidget() {
   const data = await getFearGreed();
   if (!data.length) return null;
 
-  const current = data[0];
-  const currentVal = parseInt(current.value);
-  const colors = getColor(currentVal);
-  const history = data.slice(1, 8); // previous 7 days
+  const v = parseInt(data[0].value);
+  const label = data[0].value_classification.toUpperCase();
+  const color = zoneColor(v);
+
+  // Gauge geometry
+  const cx = 110, cy = 104, r = 82, sw = 14;
+
+  // Needle
+  const needleDeg = 180 - v * 1.8;
+  const needleRad = (needleDeg * Math.PI) / 180;
+  const nLen = r - sw / 2 - 5;
+  const nx = (cx + nLen * Math.cos(needleRad)).toFixed(2);
+  const ny = (cy - nLen * Math.sin(needleRad)).toFixed(2);
+
+  // Zones: [startAngle, endAngle, color]
+  const zones: [number, number, string][] = [
+    [180, 135, "#ef4444"],  // Extreme Fear  (0-25)
+    [135, 90,  "#f97316"],  // Fear          (25-50)
+    [90,  81,  "#eab308"],  // Neutral       (50-55)
+    [81,  45,  "#10b981"],  // Greed         (55-75)
+    [45,  0,   "#22c55e"],  // Extreme Greed (75-100)
+  ];
 
   return (
-    <div className={`rounded-2xl border ${colors.border} ${colors.bg} p-5 flex flex-col gap-4`}>
+    <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5 flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-[10px] font-bold tracking-widest uppercase text-white/30 mb-0.5">
-            Crypto Sentiment
-          </p>
-          <p className="text-sm font-bold text-white/70">Fear &amp; Greed Index</p>
-        </div>
-        <span className="text-[10px] font-semibold text-white/20 bg-white/[0.05] px-2 py-1 rounded-full">
+      <div className="flex items-center justify-between mb-1">
+        <p className="text-sm font-bold text-white/70">Fear &amp; Greed Index</p>
+        <span className="text-[10px] font-semibold text-white/20 bg-white/[0.05] px-2 py-0.5 rounded-full">
           Live · alt.me
         </span>
       </div>
 
-      {/* Big number */}
-      <div className="flex items-end gap-3">
-        <span className={`text-5xl font-extrabold tabular-nums leading-none ${colors.text}`}>
-          {currentVal}
-        </span>
-        <div className="mb-1">
-          <span className={`text-base font-bold ${colors.text}`}>
-            {current.value_classification}
-          </span>
-          <p className="text-xs text-white/30">out of 100</p>
-        </div>
-      </div>
-
-      {/* Gauge bar */}
-      <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
-        <div
-          className={`h-full rounded-full transition-all ${colors.bar}`}
-          style={{ width: `${currentVal}%` }}
+      {/* Gauge SVG */}
+      <svg viewBox="0 0 220 118" width="100%" style={{ display: "block" }}>
+        {/* Track */}
+        <path
+          d={arc(180, 0, r, cx, cy)}
+          fill="none"
+          stroke="rgba(255,255,255,0.07)"
+          strokeWidth={sw}
+          strokeLinecap="butt"
         />
-      </div>
+        {/* Coloured zones */}
+        {zones.map(([a1, a2, c], i) => (
+          <path
+            key={i}
+            d={arc(a1, a2, r, cx, cy)}
+            fill="none"
+            stroke={c}
+            strokeWidth={sw}
+            strokeLinecap="butt"
+            opacity="0.9"
+          />
+        ))}
+        {/* Classification label */}
+        <text
+          x={cx}
+          y={56}
+          textAnchor="middle"
+          fill={color}
+          fontSize="12"
+          fontWeight="700"
+          fontFamily="system-ui,sans-serif"
+          letterSpacing="0.08em"
+        >
+          {label}
+        </text>
+        {/* Value */}
+        <text
+          x={cx}
+          y={84}
+          textAnchor="middle"
+          fill="white"
+          fontSize="32"
+          fontWeight="800"
+          fontFamily="system-ui,sans-serif"
+        >
+          {v}
+        </text>
+        {/* /100 */}
+        <text
+          x={cx}
+          y={97}
+          textAnchor="middle"
+          fill="rgba(255,255,255,0.25)"
+          fontSize="9"
+          fontFamily="system-ui,sans-serif"
+        >
+          out of 100
+        </text>
+        {/* Needle */}
+        <line
+          x1={cx} y1={cy}
+          x2={nx} y2={ny}
+          stroke="white"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          opacity="0.9"
+        />
+        {/* Needle pivot */}
+        <circle cx={cx} cy={cy} r="4.5" fill="white" opacity="0.9" />
+      </svg>
 
-      {/* 7-day mini history */}
-      <div className="flex items-end gap-1.5 pt-1">
-        {history.map((entry, i) => {
-          const v = parseInt(entry.value);
-          const c = getColor(v);
-          const heightPct = Math.max(12, v);
-          return (
-            <div key={entry.timestamp} className="flex flex-col items-center gap-1 flex-1">
-              <span className={`text-[9px] font-bold ${c.text}`}>{v}</span>
-              <div
-                className={`w-full rounded-sm ${c.bar} opacity-70`}
-                style={{ height: `${heightPct * 0.32}px` }}
-                title={`${dayLabel(entry.timestamp, i + 1)}: ${v} — ${entry.value_classification}`}
-              />
-              <span className="text-[8px] text-white/20 text-center leading-tight">
-                {dayLabel(entry.timestamp, i + 1)}
-              </span>
-            </div>
-          );
-        })}
+      {/* Legend */}
+      <div className="flex justify-between text-[8px] text-white/25 font-medium px-1 -mt-2">
+        <span className="text-left leading-tight">Extreme<br />Fear</span>
+        <span className="text-center">Fear</span>
+        <span className="text-center">Greed</span>
+        <span className="text-right leading-tight">Extreme<br />Greed</span>
       </div>
     </div>
   );
