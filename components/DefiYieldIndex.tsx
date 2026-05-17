@@ -29,16 +29,13 @@ async function getYieldData(): Promise<{ score: number; label: string; medianApy
         p.apy > 0 &&
         p.apy < 300
     );
-
     if (!relevant.length) return null;
 
-    // Sort by TVL, take top 25
     const top = relevant.sort((a, b) => b.tvlUsd - a.tvlUsd).slice(0, 25);
     const apys = top.map((p) => p.apy).sort((a, b) => a - b);
     const mid = Math.floor(apys.length / 2);
     const medianApy = apys.length % 2 ? apys[mid] : (apys[mid - 1] + apys[mid]) / 2;
 
-    // Score based on median stablecoin APY across top TVL pools
     let score: number;
     if (medianApy < 2)       score = Math.round(10 + medianApy * 7.5);
     else if (medianApy < 4)  score = Math.round(25 + (medianApy - 2) * 12.5);
@@ -48,9 +45,9 @@ async function getYieldData(): Promise<{ score: number; label: string; medianApy
 
     let label: string;
     if (score <= 25)      label = "Bear Yields";
-    else if (score <= 45) label = "Low Opportunity";
+    else if (score <= 45) label = "Low";
     else if (score <= 65) label = "Fair Yields";
-    else if (score <= 82) label = "High Opportunity";
+    else if (score <= 82) label = "High";
     else                  label = "Exceptional";
 
     return { score, label, medianApy, poolCount: relevant.length };
@@ -59,7 +56,6 @@ async function getYieldData(): Promise<{ score: number; label: string; medianApy
   }
 }
 
-// Gauge SVG helpers (identical geometry to FearGreedWidget)
 function pt(deg: number, r: number, cx: number, cy: number) {
   const rad = (deg * Math.PI) / 180;
   return { x: cx + r * Math.cos(rad), y: cy - r * Math.sin(rad) };
@@ -84,7 +80,7 @@ export default async function DefiYieldIndex() {
 
   if (!data) {
     return (
-      <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5 flex items-center justify-center min-h-[200px]">
+      <div className="rounded-2xl border border-white/[0.07] bg-[#0d0d1a] p-5 flex items-center justify-center min-h-[200px]">
         <p className="text-xs text-white/25">Yield data unavailable</p>
       </div>
     );
@@ -93,37 +89,35 @@ export default async function DefiYieldIndex() {
   const { score, label, medianApy, poolCount } = data;
   const color = scoreColor(score);
 
-  const cx = 110, cy = 104, r = 82, sw = 14;
+  const cx = 110, cy = 108, r = 84, sw = 10;
   const needleDeg = 180 - score * 1.8;
   const needleRad = (needleDeg * Math.PI) / 180;
-  const nLen = r - sw / 2 - 5;
+  const nLen = r - sw / 2 - 8;
   const nx = (cx + nLen * Math.cos(needleRad)).toFixed(2);
   const ny = (cy - nLen * Math.sin(needleRad)).toFixed(2);
 
   const zones: [number, number, string][] = [
-    [180, 135, "#ef4444"],
-    [135, 90,  "#f97316"],
-    [90,  72,  "#eab308"],
-    [72,  36,  "#10b981"],
-    [36,  0,   "#22c55e"],
+    [180, 136.5, "#ef4444"],
+    [133.5, 91.5, "#f97316"],
+    [88.5, 72,    "#eab308"],
+    [70, 36,      "#10b981"],
+    [34, 0,       "#22c55e"],
   ];
 
   return (
-    <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5 flex flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-1">
-        <p className="text-sm font-bold text-white/70">PB Yield Index</p>
+    <div className="rounded-2xl border border-white/[0.07] bg-[#0d0d1a] p-5 flex flex-col">
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-sm font-bold text-white/60">Stablecoin Yield Score</p>
         <span className="text-[10px] font-semibold text-white/20 bg-white/[0.05] px-2 py-0.5 rounded-full">
-          DeFiLlama · {poolCount} pools
+          {poolCount} pools · DeFiLlama
         </span>
       </div>
 
-      {/* Gauge SVG */}
-      <svg viewBox="0 0 220 118" width="100%" style={{ display: "block" }}>
+      <svg viewBox="0 0 220 122" width="100%" style={{ display: "block" }}>
         <path
           d={arc(180, 0, r, cx, cy)}
           fill="none"
-          stroke="rgba(255,255,255,0.07)"
+          stroke="rgba(255,255,255,0.05)"
           strokeWidth={sw}
           strokeLinecap="butt"
         />
@@ -134,53 +128,53 @@ export default async function DefiYieldIndex() {
             fill="none"
             stroke={c}
             strokeWidth={sw}
-            strokeLinecap="butt"
-            opacity="0.9"
+            strokeLinecap="round"
+            opacity="0.95"
           />
         ))}
         <text
-          x={cx} y={56}
+          x={cx} y={cy - 44}
           textAnchor="middle"
           fill={color}
-          fontSize="12"
+          fontSize="11"
           fontWeight="700"
           fontFamily="system-ui,sans-serif"
-          letterSpacing="0.08em"
+          letterSpacing="0.1em"
         >
           {label.toUpperCase()}
         </text>
         <text
-          x={cx} y={84}
+          x={cx} y={cy - 20}
           textAnchor="middle"
           fill="white"
-          fontSize="32"
+          fontSize="36"
           fontWeight="800"
           fontFamily="system-ui,sans-serif"
         >
           {score}
         </text>
         <text
-          x={cx} y={97}
+          x={cx} y={cy - 5}
           textAnchor="middle"
-          fill="rgba(255,255,255,0.25)"
+          fill="rgba(255,255,255,0.22)"
           fontSize="9"
           fontFamily="system-ui,sans-serif"
         >
           {medianApy.toFixed(2)}% median APY
         </text>
         <line
-          x1={cx} y1={cy} x2={nx} y2={ny}
-          stroke="white" strokeWidth="2.5" strokeLinecap="round" opacity="0.9"
+          x1={cx} y1={cy}
+          x2={nx} y2={ny}
+          stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.85"
         />
-        <circle cx={cx} cy={cy} r="4.5" fill="white" opacity="0.9" />
+        <circle cx={cx} cy={cy} r="4" fill="white" opacity="0.85" />
       </svg>
 
-      {/* Legend */}
-      <div className="flex justify-between text-[8px] text-white/25 font-medium px-1 -mt-2">
-        <span className="text-left leading-tight">Bear<br />Yields</span>
-        <span className="text-center">Low</span>
-        <span className="text-center">High</span>
-        <span className="text-right leading-tight">Exceptional</span>
+      <div className="flex justify-between text-[9px] text-white/20 font-medium px-1 -mt-3">
+        <span>Bear</span>
+        <span>Low</span>
+        <span>High</span>
+        <span>Exceptional</span>
       </div>
     </div>
   );
