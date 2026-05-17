@@ -3,34 +3,9 @@ import Link from "next/link";
 import SubscribeForm from "@/components/SubscribeForm";
 import ArticleCard from "@/components/ArticleCard";
 import FearGreedWidget from "@/components/FearGreedWidget";
+import DefiYieldIndex from "@/components/DefiYieldIndex";
+import CryptoNewsWidget from "@/components/CryptoNewsWidget";
 import { ARTICLES } from "@/lib/articles";
-
-const NEWS_ITEMS = [
-  {
-    source: "The Block",
-    headline: "Base hits record 10M daily transactions as Coinbase onchain momentum accelerates",
-    tag: "Base",
-    date: "May 16",
-  },
-  {
-    source: "DeFiLlama",
-    headline: "Fluid Protocol TVL crosses $2.8B after aggressive incentive campaign on Arbitrum",
-    tag: "Fluid",
-    date: "May 15",
-  },
-  {
-    source: "Coindesk",
-    headline: "Aave V3 surpasses $15B in active loans for first time since 2021 peak",
-    tag: "Aave",
-    date: "May 14",
-  },
-  {
-    source: "Blockworks",
-    headline: "Solana DEX volume outpaces Ethereum for the 6th consecutive week",
-    tag: "Solana",
-    date: "May 13",
-  },
-];
 
 const TESTIMONIALS = [
   {
@@ -250,43 +225,38 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Market intelligence — Fear & Greed + News side by side */}
+      {/* Market indices — F&G + PB Yield Index */}
       <section className="px-6 py-16 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
-          <div className="flex items-center justify-between mb-10">
+          <div className="flex items-center justify-between mb-8">
             <div>
               <p className="text-xs font-bold tracking-widest uppercase text-white/30 mb-1">
-                Market Intelligence
+                Market Indices
               </p>
-              <h2 className="text-2xl font-extrabold">This week in crypto</h2>
+              <h2 className="text-2xl font-extrabold">Sentiment &amp; Opportunity</h2>
             </div>
-            <span className="text-sm text-white/30 hidden sm:block">Updated weekly</span>
+            <span className="text-xs text-white/20 hidden sm:block">Updated hourly</span>
           </div>
-          <div className="grid lg:grid-cols-5 gap-6">
-            {/* News items */}
-            <div className="lg:col-span-3 space-y-3">
-              {NEWS_ITEMS.map((item) => (
-                <div
-                  key={item.headline}
-                  className="flex items-start gap-4 bg-white/[0.02] border border-white/[0.05] rounded-xl px-5 py-4"
-                >
-                  <span className="text-xs font-bold text-white/20 uppercase tracking-widest mt-0.5 w-14 shrink-0">
-                    {item.date}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-white/80 leading-snug">{item.headline}</p>
-                  </div>
-                  <span className="text-xs font-semibold text-white/30 bg-white/[0.05] px-2 py-0.5 rounded-full shrink-0 hidden sm:block">
-                    {item.tag}
-                  </span>
-                </div>
-              ))}
-            </div>
-            {/* Fear & Greed widget */}
-            <div className="lg:col-span-2">
-              <FearGreedWidget />
-            </div>
+          <div className="grid sm:grid-cols-2 gap-5">
+            <FearGreedWidget />
+            <DefiYieldIndex />
           </div>
+        </div>
+      </section>
+
+      {/* Live news */}
+      <section className="px-6 py-16 border-t border-white/5">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <p className="text-xs font-bold tracking-widest uppercase text-white/30 mb-1">
+                Daily News
+              </p>
+              <h2 className="text-2xl font-extrabold">Latest in crypto</h2>
+            </div>
+            <span className="text-xs text-white/20 hidden sm:block">Live · refreshed every 30 min</span>
+          </div>
+          <CryptoNewsWidget />
         </div>
       </section>
 
