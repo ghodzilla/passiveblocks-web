@@ -52,7 +52,7 @@ function pt(deg: number, r: number, cx: number, cy: number) {
 function arcPath(a1: number, a2: number, r: number, cx: number, cy: number) {
   const p1 = pt(a1, r, cx, cy);
   const p2 = pt(a2, r, cx, cy);
-  return `M ${p1.x.toFixed(2)} ${p1.y.toFixed(2)} A ${r} ${r} 0 0 0 ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`;
+  return `M ${p1.x.toFixed(2)} ${p1.y.toFixed(2)} A ${r} ${r} 0 0 1 ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`;
 }
 
 function scoreColor(score: number): string {
