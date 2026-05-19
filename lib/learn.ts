@@ -7,6 +7,8 @@ export interface LearnArticle {
   date: string;
   readTime: string;
   content: string;
+  publishedAt?: string;
+  updatedAt?: string;
 }
 
 export interface LearnCategory {
@@ -200,6 +202,107 @@ The pairs most exposed to IL are exactly the ones with the highest advertised AP
 Before entering any LP position, ask: if this token moves 2x up or down, what does my IL look like? Then ask: do fees cover it?
 
 If you want yield without IL exposure, [stablecoin lending on Aave or Fluid](/learn/best-usdc-yield-strategies-2026) is the right starting point.
+
+---
+
+*This is educational content, not financial advice.*
+    `,
+  },
+
+  {
+    slug: "impermanent-loss-explained",
+    category: "defi-basics",
+    tag: "DeFi Basics",
+    title: "Impermanent Loss, Explained With a Real Number Example",
+    excerpt:
+      "Impermanent loss is the most misunderstood concept in DeFi. Walk through a $1,000 ETH/USDC example, see the exact percentage cost at each price move, and learn the three ways to minimise it.",
+    date: "2026-05-14",
+    readTime: "6 min",
+    publishedAt: "2026-05-14",
+    updatedAt: "2026-05-14",
+    content: `
+## The one-sentence definition
+
+When you supply two assets to a liquidity pool, you end up with a different mix of those assets than you put in. If the price ratio between them moved while you were in the pool, that new mix is worth less than if you had just held both assets in your wallet.
+
+That gap is impermanent loss.
+
+It exists because of how AMMs (automated market makers) price swaps — they rebalance your share of the pool every time someone trades against it, and they don't ask your permission.
+
+## A worked example with $1,000
+
+Suppose you provide liquidity to an ETH/USDC pool. You deposit:
+
+- $500 USDC
+- $500 worth of ETH (0.25 ETH at $2,000)
+
+Total deposited: $1,000.
+
+ETH then doubles to $4,000.
+
+The pool's pricing formula automatically rebalances your share. By the time you check, you no longer hold 0.25 ETH and 500 USDC. You hold approximately:
+
+- 0.177 ETH (worth $708)
+- 707 USDC
+
+Total now: **$1,414** (rounded).
+
+But if you had just held the assets in your wallet, you would have:
+
+- 0.25 ETH × $4,000 = $1,000
+- 500 USDC = $500
+
+Total held: **$1,500**.
+
+The difference — **$86, or 5.7%** — is impermanent loss. The bigger the price move, the worse the gap gets.
+
+| ETH price change | Impermanent loss |
+|---|---|
+| +25% | 0.6% |
+| +50% | 2.0% |
+| +100% (2x) | 5.7% |
+| +300% (4x) | 20% |
+| +500% (6x) | 25.5% |
+
+The math is symmetrical — a 50% price drop produces the same 2.0% loss as a 50% rise.
+
+## Why is it called "impermanent"?
+
+Because if the price ratio returns to where you started, the loss disappears. If ETH falls back to $2,000 in our example, your position re-balances and you end up roughly back where you began — net of any fees earned during the round trip.
+
+The catch: most LPs do not wait for that return. They exit when prices have moved, which crystallises the loss.
+
+The honest framing: "impermanent" describes the math, not your behaviour. For practical purposes, treat IL as **real loss** when you exit.
+
+## When fees offset IL — and when they don't
+
+IL is only half the picture. The other half is the swap fees you earn while you are in the pool. The right question isn't "will I have IL?" — it's "do the fees exceed the IL?"
+
+This depends on three things:
+
+1. **The pair.** Stablecoin pairs (USDC/USDT) have near-zero IL because both assets track $1. Correlated pairs (CBBTC/WBTC, ETH/STETH) have minimal IL. Volatile pairs (ETH/USDC, SOL/USDC) can have meaningful IL during large moves.
+2. **The volume.** A pair with $10M/day in swap volume generates real fee income. A pair with $50K/day doesn't, no matter how good its APY looks on a dashboard.
+3. **Your range.** On concentrated liquidity AMMs (Uniswap V3, Orca, Aerodrome Slipstream), tight ranges earn more fees but require more rebalancing. Wide ranges earn less but are passive.
+
+A good rule of thumb: if a pool's stated APY is mostly from token emissions rather than real swap fees, treat that APY with suspicion. Emissions can stop overnight. Volume-driven fees are sticky.
+
+## Three ways to minimise IL
+
+**1. Use correlated pairs.** USDC/USDT, USDC/DAI, CBBTC/WBTC — assets that move together produce almost no IL by definition. The yield is lower but the trade-off is honest. We compare the lending alternative in [Stable LP vs Stable Lending](/learn/yield-strategies/stable-lp-vs-lending).
+
+**2. Use lending instead of LP.** Single-asset lending (Aave, Fluid, Kamino) has zero IL by design. You deposit one asset, you get back that asset plus interest. The rates are lower than active LP, but for most retail investors, the simplicity is worth more than the marginal yield. See [What Is DeFi Yield](/learn/defi-basics/what-is-defi-yield) for the lending vs LP breakdown.
+
+**3. Pick high-volume pairs in liquid markets.** If you do want LP exposure, pick a pair where real trading volume — not emissions — is driving the APY. ETH/USDC on a top-3 DEX during a volatile week is a different beast than a long-tail token pair with low volume. The [Best USDC Yield Strategies 2026](/learn/yield-strategies/best-usdc-yield-strategies-2026) guide ranks the current options by risk.
+
+## The PassiveBlocks rule of thumb
+
+For retail-sized portfolios ($1K to $100K), here is the order we recommend:
+
+1. **Start with lending.** Fluid or Aave on USDC. Zero IL. 4–5% APY today. Learn the wallet flow with a position that cannot surprise you.
+2. **Graduate to stable LP if you want more yield.** USDC/USDT or USDC/DAI on a high-volume DEX. ~6–8% APY, minimal IL.
+3. **Add volatile LP only with eyes open.** ETH/USDC, SOL/USDC, WBTC/WETH can pay 20–60% APY in concentrated ranges, but you are taking real IL exposure. Track your performance against the simpler alternative of just holding the underlying. If you are not beating "hold," the IL is winning.
+
+The bot we run for the newsletter holds the majority of its capital in single-asset Fluid lending for exactly this reason — when in doubt, take the yield that doesn't come with a hidden tax.
 
 ---
 
@@ -802,6 +905,229 @@ Assuming no major market disruption: $10,000 becomes approximately $10,475–$10
 The goal of this portfolio is: **earn a premium over CeFi without taking protocol risk you don't understand**.
 
 Once you're earning yield, read [DeFi tax in Australia](/learn/defi-tax-australia-ato) — know what you'll owe before end of financial year, not after.
+
+---
+
+*This is educational content, not financial advice.*
+    `,
+  },
+
+  {
+    slug: "stable-lp-vs-lending",
+    category: "yield-strategies",
+    tag: "Yield Strategies",
+    title: "Stable LP vs Stable Lending — Where to Park USDC in 2026",
+    excerpt:
+      "Stable LP pools advertise higher APY than lending — but one bad weekend can wipe out a year of swap fees. Here's the decision tree the PassiveBlocks bot uses, with the 2023 USDC depeg costed in dollars.",
+    date: "2026-05-19",
+    readTime: "7 min",
+    publishedAt: "2026-05-19",
+    updatedAt: "2026-05-19",
+    content: `
+If you have stablecoins on-chain, you have two real choices for yield: **lend them to a money market** (Aave, Fluid, Kamino) or **provide liquidity to a stable pair** (Curve, Aerodrome, Orca).
+
+Most newsletters tell you the LP option earns more. They're right on the headline rate. They're usually wrong on the after-risk return. This article is the decision tree the PassiveBlocks bot uses to pick between the two — with the numbers that matter.
+
+## The honest comparison
+
+Same amount of capital ($1,000 USDC), same time horizon (12 months), as at 2026-05-19:
+
+| Option | Headline APY | After realistic friction | Worst-month risk |
+|--------|--------------|---------------------------|-------------------|
+| Fluid USDC lending (Arbitrum) | 4.63% | ~4.55% | Protocol exploit (low) |
+| Aave USDC lending (Ethereum) | 3.80% | ~3.75% | Protocol exploit (low) |
+| Curve USDC/USDT/DAI (stable LP) | 5.20% | ~4.80% | One stable depegs 1% = -0.5% NAV |
+| Aerodrome USDC/USDT (stable LP) | 6.50% | ~5.40% | Emissions decay + depeg risk |
+| Orca USDC/USDT whirlpool | 7.10% | ~5.20% | Concentrated range = active management |
+
+The LP rows look higher. They are higher — until something moves.
+
+## What you're actually being paid for
+
+**Lending** pays you for taking *protocol risk and rate risk*. The borrower pays interest, the protocol takes a cut, you get the rest. Your USDC is always worth $1. You can withdraw whenever (subject to utilisation).
+
+**Stable LP** pays you for taking *peg risk and impermanent loss risk*. You're providing liquidity for two assets that *should* both be worth $1. As long as they trade at parity, you earn swap fees plus (often) protocol emissions. The moment one of the two stables drifts — even temporarily — the pool rebalances against you, and you've now bought the cheaper stable at the higher price.
+
+Same dollar of yield. Different reasons it shows up. Different reasons it disappears.
+
+## The 2023 USDC depeg, costed
+
+In March 2023, USDC briefly traded at $0.88 after Silicon Valley Bank exposure was revealed. It re-pegged within 72 hours.
+
+If you were lending USDC during that window:
+- You held a deposit token that was always denominated 1:1 in USDC.
+- You felt nothing in your position value. USDC re-pegged, your balance stayed identical.
+
+If you were LP'ing USDC/USDT during that window:
+- The pool rebalanced as arbitrageurs swapped out cheap USDT for cheap USDC.
+- You exited the event holding **more USDC and less USDT** — but your *dollar* value was down ~4–6%, and you'd locked in the depeg loss.
+- A full year of swap fees (5–6% APY) would have been wiped out by the single weekend.
+
+This is not a hypothetical. It happened. It will happen again to a different stablecoin. The 12-month yield gap between lending and stable LP did not survive one bad weekend.
+
+## When stable LP actually beats lending
+
+LP is the right call in two specific situations:
+
+**1. Battle-tested pairs with peg-defended stables.**
+USDC/USDT on Curve or Aerodrome, both stables backed by named issuers (Circle, Tether), with multi-year depeg-recovery history. The LP earns 1–2 percentage points more than lending in normal markets. The depeg risk is real but bounded.
+
+**2. Active concentrated liquidity, large capital.**
+Orca and Aerodrome Slipstream let you concentrate liquidity inside a narrow band ($0.998–$1.002). On $50K+, the swap fees compound to genuine yield. On $1K, you're paying gas to rebalance the range more often than the fees pay.
+
+For everyone else — sub-$50K, no time to manage ranges, no appetite for re-pricing a stable mid-week — **lending wins on a risk-adjusted basis.**
+
+## The PassiveBlocks bot's actual allocation
+
+For full transparency, here is how the bot is currently positioned (2026-05-19):
+
+- **Stablecoin lending (Fluid, Arbitrum + Base):** ~99% of stablecoin capital.
+- **Stable LPs:** 0%.
+- **Volatile LPs (WBTC/WETH range):** small allocation, separate strategy slice.
+
+The bot does not run stable LPs right now. Not because they can't earn — they can — but because at the current capital size the 0.5–1.5pp uplift over Fluid USDC doesn't clear the **depeg-risk premium** the bot prices in. At $50K+, that math changes. At $1K, it doesn't.
+
+That's the rule + receipt: the rule is "LP only when the after-risk return clears lending by 2pp+." The receipt is the allocation above.
+
+## The two-question decision tree
+
+Before you put USDC into anything, answer two questions:
+
+**1. Is the headline APY mostly fees or mostly emissions?**
+- Mostly fees → it's earnable yield, sustainable.
+- Mostly emissions → it's a marketing budget. Discount it 40–60%.
+
+DeFiLlama shows the split for most pools. If you can't find it, assume emissions until proven otherwise.
+
+**2. Does the position survive a 1% depeg of either stable for 48 hours?**
+- Lending → yes, your balance is unchanged.
+- Stable LP → no, you've eaten a 0.5–1% NAV hit on that side of the pair.
+
+If you can't accept a stable-depeg drawdown, the only correct answer is lending.
+
+## A note on hardware
+
+If your stablecoin balance is over $5,000 — whether in lending or LP — the gating risk is no longer protocol yield. It's wallet hygiene. A single phishing signature wipes a year of careful yield work.
+
+A hardware wallet (Ledger or Trezor) costs ~$120–$190 once and removes that entire category of loss.
+
+[Get a Ledger Nano X →](https://shop.ledger.com/?r=a6255ec0ba49&tracker=pb_learn_stable_lp_vs_lending) *(affiliate — we earn a commission at no cost to you)*
+
+## The takeaway
+
+Lending earns slightly less and bores you to sleep. Stable LP earns slightly more and asks you to defend two pegs at once. On portfolios under $50K, the bored option wins on after-risk return almost every year.
+
+The PassiveBlocks bot picks the boring option every cycle. That is the strategy, not a missing feature.
+
+---
+
+*This is educational content, not financial advice.*
+    `,
+  },
+  {
+    slug: "when-not-to-rebalance",
+    category: "yield-strategies",
+    tag: "Yield Strategies",
+    title: "When NOT to Rebalance — The 3% Buffer Rule",
+    excerpt:
+      "Every DeFi newsletter tells you to chase the higher yield. Most weeks, the right call is to do nothing. Here's the 3% buffer rule the PassiveBlocks bot lives by — and the math that proves chasing kills yield on small portfolios.",
+    date: "2026-05-18",
+    readTime: "6 min",
+    publishedAt: "2026-05-18",
+    updatedAt: "2026-05-18",
+    content: `
+Every DeFi newsletter tells you to chase the higher yield. Most weeks, the right call is to do nothing.
+
+This article is the rule the PassiveBlocks bot lives by: when a rebalance is worth executing, and — more often — when sitting still is the better trade.
+
+## The headline rule
+
+**Don't rebalance unless the expected gain clears gas plus a 3% buffer.**
+
+That's it. Everything else is implementation detail.
+
+The reason is arithmetic, not opinion. Every rebalance has three costs that compound:
+
+1. **Gas to exit** the current position.
+2. **Gas to enter** the new position.
+3. **Slippage and tax friction** on each swap inside the move.
+
+On a small position, those costs eat the gain before you've held the new pool for a single day. The 3% buffer is the margin of safety that says: even if the new APY drifts down a percentage point in the first week (it usually does), and even if I'm slightly wrong about the gas estimate, I'm still ahead.
+
+## A worked example on $1,000
+
+Say you're sitting in Fluid USDC at **4.6%** and a new pool advertises **7.0%** on the same asset.
+
+The headline gap looks like a 2.4 percentage point uplift — $24/year on $1,000. Attractive.
+
+Now stack the real costs:
+
+| Cost | Amount |
+|------|--------|
+| Exit Fluid (gas) | ~$2 |
+| Bridge / swap (if cross-chain) | ~$3 |
+| Enter new pool (gas) | ~$3 |
+| Slippage (0.1%) | ~$1 |
+| **Total round-trip cost** | **~$9** |
+
+A $9 cost on a $24/year uplift is a **4.6-month payback**. If the new pool's APY drops by 1.5 percentage points within the first six weeks (extremely common for new pools — see the next section), you never recover the cost.
+
+The 3% buffer rule turns this into a one-line decision: 7.0% − 4.6% = 2.4 percentage points = 2.4% absolute APY gain. **2.4% does not clear the 3% buffer. Hold.**
+
+The bot didn't think about it. It looked at the number and stayed put. That single rule is worth more than most "yield optimisation" engines.
+
+## Why new-pool APYs decay
+
+A pool advertising 7%+ on stablecoin lending today is almost certainly in one of three states:
+
+1. **Emissions-heavy.** The protocol is paying you in its own token to attract TVL. Emissions schedules taper. Within 4–8 weeks the headline number halves.
+2. **Low utilisation about to be filled.** A new pool with 30% utilisation looks great on paper, but as borrowers fill the pool, the lender share of the borrow rate kicks in, and the APY normalises down.
+3. **Low TVL about to be diluted.** A $2M pool at 7% becomes a $20M pool at 4.5% within weeks if it stays on yield-aggregator dashboards.
+
+In all three cases, the saver who jumped in chasing the headline ate the gas cost and now holds a position with the same APY they had before — minus the round-trip fees.
+
+The 3% buffer prices this in. You don't need to predict which decay path the new pool will take. You just refuse to move unless the gap is wide enough to survive any of them.
+
+## When the 3% buffer doesn't apply
+
+There are three situations where you should rebalance even if the gap is smaller:
+
+**1. The protocol you're in is breaking.** TVL dropping >20% in 24 hours. A peg event. A team announcement. None of these care about gas costs — you exit and ask questions later.
+
+**2. The position is going out of range.** For concentrated liquidity LPs (Uniswap V3, Orca, Aerodrome Slipstream), an out-of-range position earns zero fees. Rebalancing back into range pays for itself within days if the pair has real volume.
+
+**3. Tax harvesting at year-end.** If you're sitting on losses, realising them to offset gains can be worth more than the yield gap. This is jurisdiction-specific — Australian readers, see [DeFi tax in Australia](/learn/tax/defi-tax-australia-ato).
+
+Everything else: hold.
+
+## The capital-size adjustment
+
+The 3% buffer is calibrated for retail-size capital ($1K–$50K). Two adjustments scale it:
+
+- **Sub-$1,000 portfolios:** widen the buffer to **5%**. Gas costs are a higher percentage of small positions; you need more headroom.
+- **$100K+ portfolios:** narrow the buffer to **1.5%**. Gas becomes negligible relative to the position, so smaller gaps clear the threshold.
+
+The principle doesn't change. The number does.
+
+## The PassiveBlocks bot, by the numbers
+
+The bot we run for this newsletter has executed its rebalance-check loop every three hours since launch. Recent cycles:
+
+- **Checks run:** ~56 per week.
+- **Rebalances executed:** 0 in the last seven weeks.
+- **Total gas spent this period:** $0.
+
+Every cycle, the bot compares the current portfolio against the top alternatives across Fluid, Aave, Kamino, Aerodrome, Orca. Every cycle, the gap fails to clear the 3% buffer. So nothing happens.
+
+That's not the bot being lazy. That's the bot being right.
+
+The opportunity cost of *not* chasing emissions yields, the saved gas, and the avoided tax events compound silently. A year of "doing nothing" with this rule has historically beaten a year of active rebalancing on portfolios under $50K.
+
+## The takeaway
+
+If you remember one rule from this article: **the gap has to be wider than 3 percentage points and you have to clear gas, or you don't move.** Not 3% relative. Three percentage points absolute on the APY.
+
+Most weeks, that rule will tell you to sit still. That is the rule working — not failing.
 
 ---
 
