@@ -48,6 +48,8 @@ The Trezor Safe 5 (~$220 AUD) is the answer if you want to verify everything you
 
 If you value open-source transparency over polish and you mostly use EVM chains (Ethereum, Base, Arbitrum), get a Trezor.
 
+→ **[Get a Trezor Safe 5 here](https://affiliate.trezor.io/publisher/#!/offer/133)** *(affiliate)*
+
 ## The setup that actually matters
 
 Whichever device you pick, the setup is the part most people get wrong. Three rules:

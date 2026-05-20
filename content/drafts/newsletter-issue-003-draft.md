@@ -1,7 +1,7 @@
 # PassiveBlocks — Issue #3
 **Ship date:** Friday 2026-05-30
 **Style:** Lark Davis — hook, news, DeFi section, yields, bot, tool
-**Status:** Scaffold — Hook + Risk Corner cross-link in place; populate live data Thursday 2026-05-29
+**Status:** Scaffold — Hook + Deep Dive + Educational (withdrawal speed, 2026-05-21) + Risk Corner template; populate live data Thursday 2026-05-29
 
 ---
 
@@ -78,6 +78,29 @@ If any of those three fails, lending wins on risk-adjusted basis. On $1K–$50K 
 [Full math + decision tree → **Stable LP vs Stable Lending** in this week's [/learn](https://passiveblocks.io/learn/stable-lp-vs-lending) deep dive.]
 
 *[IMAGE: side-by-side card — left "Lending: $1 always = $1" / right "Stable LP: $1 = $0.94 to $1.06 during peg events" — dark bg]*
+
+---
+
+### 📘 Educational — Withdrawal Speed Is The Other Half Of APY
+
+Last week's lesson was that the headline yield depends on utilisation. This week's is the mirror image: **the headline yield also depends on how fast you can exit.**
+
+A pool paying 6% APY where you can withdraw in 12 seconds is a different product to a pool paying 6% APY where the exit takes 90 days. Same number on the leaderboard. Different financial instrument.
+
+**Four bands, in plain English:**
+
+- **Instant** (same block): Aave, Fluid, Compound, Kamino — at normal utilisation. ~12s on Ethereum, ~1s on Solana.
+- **Soft delay** (minutes to hours): same protocols when utilisation crosses ~90%. Pool doesn't have idle capital to release; you wait for repayments.
+- **Hard queue** (days to weeks): LST unstaking — stETH 1–3 days, mSOL ~5 days. Restaking protocols.
+- **Term-locked** (weeks to months): Pendle PT before maturity, fixed-term DeFi notes, locked staking.
+
+**Rule of thumb:** if a pool's APY beats the equivalent open lending rate by more than ~3 percentage points, the spread is buying you something. Most often, it's buying your liquidity — and the bill comes due the week you actually need to exit.
+
+The bot holds three positions today, all in the instant band. That isn't conservatism for its own sake — it's because the bot's 3% buffer rule for rebalances assumes the bot can *execute* a rebalance when math says it should. A position in a hard queue or term lock breaks that assumption.
+
+[Full read-off — the four bands, the LST queue worked example, the Pendle case, and the two-question decision tree to use on any new pool — in this week's [/learn](https://passiveblocks.io/learn/withdrawal-speed) deep dive.]
+
+*[IMAGE: simple four-band ladder diagram — Instant (12s) → Soft delay (hours) → Hard queue (days) → Term-locked (weeks+) — labelled examples in each band — dark bg]*
 
 ---
 
