@@ -81,6 +81,20 @@ If any of those three fails, lending wins on risk-adjusted basis. On $1K–$50K 
 
 ---
 
+### 🎯 Mind-Change Watchlist — What Would Flip Us Into Stable LPs
+
+The rule above isn't a religion. It's a math filter. Three conditions would flip the bot from "lending only" to "lending + a stable LP allocation":
+
+1. **Stable LP APY beats lending by >2 percentage points *after* netting a 1% annual depeg drawdown.** Today's 1.9pp gap is too narrow once you reserve for risk. At 3pp+ gap, the math turns.
+2. **Position size clears $50K per leg.** Below that, swap-fee yield is dominated by entry/exit gas and CGT friction. Above that, the per-leg fee revenue overtakes the fixed costs.
+3. **Both stables in the pair hold $1.00 ±0.2% for 30 consecutive days, *across* a CPI print or a major stablecoin-issuer news event.** Calm pegs in calm weather mean nothing. We want the receipt that the pair stayed pegged through a real test.
+
+Today's score: **2 of 3 conditions met** (size: ✗, peg stability: ✓, gap-after-risk: ✗). We'll publish the score every week. The day all three flip green, the bot rebalances live and we write it up the following Friday.
+
+*[IMAGE: 3-row checklist — Gap > 2pp net of risk: ✗ | Size > $50K/leg: ✗ | 30d peg stability through a stress event: ✓ — minimal/dark]*
+
+---
+
 ### 📘 Educational — Withdrawal Speed Is The Other Half Of APY
 
 Last week's lesson was that the headline yield depends on utilisation. This week's is the mirror image: **the headline yield also depends on how fast you can exit.**
