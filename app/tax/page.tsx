@@ -171,7 +171,9 @@ const TAX_COUNTRIES: Country[] = [
   { code: 'NZ', flag: '🇳🇿', name: 'New Zealand',    note: 'No CGT generally',                  rate: 0,       taxFree: true, currency: 'NZD' },
 ];
 
-const DEMO = { shortTermGains: 1850, longTermGains: 2430, yieldIncome: 1920, gasDeductions: 180 };
+// Empty-state fallback (was fabricated demo numbers, which made the tool look fake
+// on landing). Before a wallet is scanned, everything reads zero / awaiting-scan.
+const DEMO = { shortTermGains: 0, longTermGains: 0, yieldIncome: 0, gasDeductions: 0 };
 
 
 
@@ -663,7 +665,11 @@ export default function TaxDashboard() {
   const c = TAX_COUNTRIES.find(x => x.code === country) || TAX_COUNTRIES[0];
   const evmWallets = connectedWallets.filter(w => w.network !== 'solana');
   const selectedWallet = connectedWallets[selectedWalletIdx];
-  const yieldIncomeUsd = yieldIncome?.totalEarnedUsd || 0;
+  // The user's crypto income must come ONLY from their own scanned wallet
+  // (realTaxData.stakingIncome). `/api/yield/income` returns the PassiveBlocks
+  // bot's own portfolio yield (no wallet param) and must NEVER be added into a
+  // user's tax — it was inflating every user's income by the bot's ~$17.
+  const yieldIncomeUsd = 0;
   const stakingIncomeUsd = realTaxData?.stakingIncome?.totalUsd || 0;
   const capitalGains = realTaxData ? realTaxData.totalGains : (DEMO.shortTermGains + DEMO.longTermGains);
   const shortTermGains = realTaxData ? realTaxData.shortTermGains : DEMO.shortTermGains;
@@ -758,7 +764,7 @@ export default function TaxDashboard() {
             🏛️ Tax Dashboard
             {isLive
               ? <span style={{ background: '#8aad8a22', color: '#8aad8a', border: '1px solid #8aad8a44', borderRadius: 20, padding: '2px 10px', fontSize: 11, fontWeight: 700 }}>LIVE</span>
-              : <span style={{ background: '#ff931722', color: '#ff9317', border: '1px solid #ff931744', borderRadius: 20, padding: '2px 10px', fontSize: 11, fontWeight: 700 }}>DEMO</span>
+              : <span style={{ background: '#6b6c7222', color: '#9a9ba2', border: '1px solid #6b6c7244', borderRadius: 20, padding: '2px 10px', fontSize: 11, fontWeight: 700 }}>CONNECT A WALLET</span>
             }
           </div>
           <div style={{ fontSize: 12, color: '#6b6c72', marginTop: 3 }}>{c.flag} {c.name} · {c.note}</div>
@@ -951,7 +957,7 @@ export default function TaxDashboard() {
               <div style={{ marginTop: 12 }}>
                 {(combinedTax?.walletsIncluded || realTaxData)
                   ? <span style={{ background: `${stat.accent}22`, color: stat.accent, border: `1px solid ${stat.accent}44`, borderRadius: 20, padding: '2px 10px', fontSize: 10, fontWeight: 700 }}>LIVE</span>
-                  : <span style={{ background: '#ff931722', color: '#ff9317', border: '1px solid #ff931744', borderRadius: 20, padding: '2px 10px', fontSize: 10, fontWeight: 700 }}>DEMO</span>}
+                  : <span style={{ background: '#6b6c7222', color: '#9a9ba2', border: '1px solid #6b6c7244', borderRadius: 20, padding: '2px 10px', fontSize: 10, fontWeight: 700 }}>—</span>}
               </div>
             </div>
           ))}
