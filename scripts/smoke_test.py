@@ -153,16 +153,23 @@ def run_smoke_test():
     else:
         c.fail(f"HTTP {status}: {str(body)[:80]}")
 
-    # ── 7. Tax summary API — probe without address (avoids long Etherscan scan)
-    c = Check("Tax summary API (/api/wallet/tax-summary)")
+    # ── 7. Tax summary API — OUTPUT check: real Etherscan data must actually flow.
+    #    Catches the 2026-06-06 bug where it returned HTTP 200 with an Etherscan
+    #    "Missing/Invalid API Key" apiError (V2 auth needs ?apikey=, not Bearer).
+    #    A status-only check passed it; this one wouldn't.
+    c = Check("Tax summary API returns live data")
     checks.append(c)
-    status, body = http("GET", f"{FRONTEND_URL}/api/wallet/tax-summary")  # no address → 400
-    if status in (400, 503):  # 400=address required, 503=no API key — both mean endpoint is up
-        c.ok(f"HTTP {status} (endpoint reachable)")
-    elif status == 200:
-        c.ok("HTTP 200")
-    else:
+    probe = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"  # vitalik.eth — guaranteed activity
+    status, body = http("GET", f"{FRONTEND_URL}/api/wallet/tax-summary?address={probe}&chains=ethereum", timeout=50)
+    if status != 200 or not isinstance(body, dict):
         c.fail(f"HTTP {status}: {str(body)[:80]}")
+    elif body.get("apiError"):
+        c.fail(f"Etherscan apiError: {str(body['apiError'])[:80]}")
+    elif body.get("dataSource") != "etherscan":
+        c.fail(f"not live — dataSource={body.get('dataSource')}")
+    else:
+        txc = body.get("txCount") or body.get("debug", {}).get("txsPerChain", {}).get("ethereum", "?")
+        c.ok(f"live etherscan data ({txc} txs)")
 
     _report(checks, started)
     return checks
