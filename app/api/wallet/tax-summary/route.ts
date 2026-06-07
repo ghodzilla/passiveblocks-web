@@ -149,12 +149,13 @@ async function fetchEtherscanChain(
   if (!apiKey) return { ethTxs: [], tokenTxs: [], apiError: 'ETHERSCAN_API_KEY not configured' };
 
   const addrLower = address.toLowerCase();
-  const base = `${ETHERSCAN_V2_URL}?chainid=${chainId}&module=account&address=${address}&startblock=0&endblock=99999999&sort=asc`;
-  const headers = { 'Authorization': `Bearer ${apiKey}` };
+  // Etherscan V2 authenticates via the `apikey` query param, NOT a Bearer header.
+  // (A Bearer header is silently ignored → Etherscan returns "Missing/Invalid API Key".)
+  const base = `${ETHERSCAN_V2_URL}?chainid=${chainId}&module=account&address=${address}&startblock=0&endblock=99999999&sort=asc&apikey=${apiKey}`;
 
   const [txRes, tokenRes] = await Promise.allSettled([
-    fetch(`${base}&action=txlist`, { headers, signal: AbortSignal.timeout(10000) }),
-    fetch(`${base}&action=tokentx`, { headers, signal: AbortSignal.timeout(10000) }),
+    fetch(`${base}&action=txlist`, { signal: AbortSignal.timeout(10000) }),
+    fetch(`${base}&action=tokentx`, { signal: AbortSignal.timeout(10000) }),
   ]);
 
   const ethTxs: EthTx[] = [];

@@ -46,8 +46,9 @@ async function getGasSpentEtherscan(
   if (!chainId) return { gasEth: 0, gasUsd: 0 };
   try {
     const res = await fetch(
-      `${ETHERSCAN_V2_URL}?chainid=${chainId}&module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc`,
-      { headers: { 'Authorization': `Bearer ${apiKey}` }, signal: AbortSignal.timeout(10000) }
+      // Etherscan V2 auth is the `apikey` query param, not a Bearer header.
+      `${ETHERSCAN_V2_URL}?chainid=${chainId}&module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc&apikey=${apiKey}`,
+      { signal: AbortSignal.timeout(10000) }
     );
     if (!res.ok) return { gasEth: 0, gasUsd: 0 };
     const data = await res.json() as { status: string; message: string; result: unknown };
