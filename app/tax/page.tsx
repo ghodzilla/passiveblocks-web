@@ -832,7 +832,7 @@ export default function TaxDashboard() {
                 {' · '}<strong>{(combinedTax?.totalTxCount ?? realTaxData.txCount ?? 0).toLocaleString()}</strong> txns
               </span>
             ) : (
-              <span style={{ color: '#ff9317' }}>⚠️ Demo mode — connect a wallet to see real data</span>
+              <span style={{ color: '#9a9ba2' }}>Connect a wallet above to calculate your crypto tax</span>
             )}
           </div>
         )}
@@ -913,7 +913,7 @@ export default function TaxDashboard() {
               currency: c.currency,
               sub: combinedTax
                 ? `Short: $${combinedTax.shortTermGains.toLocaleString()} · Long: $${combinedTax.longTermGains.toLocaleString()}`
-                : realTaxData ? `Short: $${shortTermGains.toLocaleString()} · Long: $${longTermGains.toLocaleString()}` : 'Short + long term · Demo',
+                : realTaxData ? `Short: $${shortTermGains.toLocaleString()} · Long: $${longTermGains.toLocaleString()}` : 'Short + long term',
               color: '#8aad8a',
               accent: '#8aad8a',
             },
@@ -1258,7 +1258,7 @@ export default function TaxDashboard() {
             <div style={{ fontSize: 11, color: realTaxData ? '#8aad8a88' : '#ff931766', marginTop: 12 }}>
               {realTaxData
                 ? `✅ Live data from your connected wallet via Etherscan. Last updated: ${new Date(realTaxData.fetchedAt).toLocaleString()}.`
-                : '⚠️ Demo figures only — not financial or tax advice. Consult a qualified tax professional.'}
+                : 'Connect a wallet to calculate your position. Not financial or tax advice — consult a qualified tax professional.'}
             </div>
           </div>
 
