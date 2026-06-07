@@ -101,7 +101,7 @@ export default async function DefiYieldIndex() {
         </span>
       </div>
 
-      <svg viewBox="0 0 220 110" width="100%" style={{ display: "block" }}>
+      <svg viewBox="0 -10 220 120" width="100%" style={{ display: "block" }}>
         <path
           d={arcPath(180, 0, r, cx, cy)}
           fill="none"
@@ -119,8 +119,9 @@ export default async function DefiYieldIndex() {
             strokeLinecap="butt"
           />
         ))}
+        {/* Classification label — above the arc (apex at cy-r=26), not over it */}
         <text
-          x={cx} y={44}
+          x={cx} y={8}
           textAnchor="middle"
           fill={color}
           fontSize="11"

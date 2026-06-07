@@ -69,7 +69,7 @@ export default async function FearGreedWidget() {
         </span>
       </div>
 
-      <svg viewBox="0 0 220 110" width="100%" style={{ display: "block" }}>
+      <svg viewBox="0 -10 220 120" width="100%" style={{ display: "block" }}>
         {/* Track */}
         <path
           d={arcPath(180, 0, r, cx, cy)}
@@ -89,9 +89,9 @@ export default async function FearGreedWidget() {
             strokeLinecap="butt"
           />
         ))}
-        {/* Classification label */}
+        {/* Classification label — sits ABOVE the arc (apex at cy-r=26), not over it */}
         <text
-          x={cx} y={44}
+          x={cx} y={8}
           textAnchor="middle"
           fill={color}
           fontSize="11"
