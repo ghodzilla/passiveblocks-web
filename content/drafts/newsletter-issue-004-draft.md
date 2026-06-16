@@ -56,11 +56,15 @@ Not a pick — an anchor. If a centralised exchange pays you 2.8% on idle USDC, 
 
 **The quarter in one line: 700+ checks, 0 rebalances, $0 in gas.**
 
-[TODO 2026-06-17: tighten the "cost of chasing" comparison.]
+The interesting part isn't that it held — it's *what it turned down*. The screen runs the same way every time a pool flashes a higher number:
 
-The interesting part isn't that it held — it's *what it turned down*. Several times this quarter a pool quoted a rate two to four points above what we hold. Each time the bot ran the same screen: was the extra yield real (swap fees / borrower demand), or emissions and high utilisation that vanish the moment someone exits? Each time the honest answer was "not enough to clear the cost of moving."
+1. **Is the extra yield real?** Swap fees and borrower demand are durable. Emissions and 95%+ utilisation are not — they evaporate the moment one big lender exits. Most "beat-our-rate" pools failed here first.
+2. **Does the gap survive the haircut?** Knock the quoted rate down for reserve factor and the true lender APY is usually a point or more below the headline. A 9% pool quietly becomes ~7%.
+3. **Does the *net* gap clear the cost of moving?** This is the one nobody runs.
 
-Moving isn't free. A rebalance on a small position eats gas on both legs, and for anyone holding in Australia, every swap is a CGT event. Add it up and a 2-point "upgrade" on a four-figure position can take months to pay back its own friction. So the bot stayed put — and that decision compounded quietly at ~5% with zero leakage.
+Step 3 is where almost every "upgrade" died this quarter. Picture the closest call: a pool quoting ~3 points over what the bot holds. After the reserve-factor haircut the real edge was closer to 1.5 points. On a four-figure position that's roughly $15–$30 a year of extra yield — against gas on both legs *and*, for an Australian holder, a realised CGT event on every swap. Payback on the move: months. One emission cut or a multi-day exit queue mid-quarter and it never pays back at all.
+
+So the bot did the unglamorous thing and stayed put. The headline number it skipped was always bigger. The number that actually lands in the wallet — after friction, after tax, after exit risk — was not. That's the whole job: not finding the highest rate, but finding the highest rate *you keep*.
 
 ---
 
@@ -100,3 +104,4 @@ The bot's best move all quarter was the one it didn't make. Boring compounds.
 - Tool = Ledger (alternates from Issue #3 Trezor). Tracker pb_newsletter_issue4.
 - TODOs for next runs: tighten Bot Diary chasing comparison (06-17); finalise Educational worked example numbers (06-18); Risk Corner optional add; verify Coinbase anchor still ~2.8% at send.
 - Public rules respected: no wallet addresses, no live-trade timing, no Aerodrome loss reference.
+- ⚠️ **SEND-BLOCKER (2026-06-17): present-tense "we hold real capital here" + Bot Diary "compounded at ~5%" claims must be re-verified before send.** execution-state.json flagged `_zeroSharesDetected` on BOTH Fluid positions (Base + Arbitrum) at 2026-06-16T17:00 — vaultShares "0", balanceUSD 0. Either the positions were withdrawn/moved, or this is a balance-reader bug (gas was 0 on Arbitrum, RPC may have failed). Until reconciled on-chain, do NOT ship the present-tense holding language. Bot Diary as written is framed historically (the quarter's behaviour) and is safe; the Top Picks "we hold real capital here" line is the exposed claim. Trust > cleverness — flagged to Pritesh in CMO Telegram 2026-06-17.
