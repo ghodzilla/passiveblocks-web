@@ -1,7 +1,7 @@
 # PassiveBlocks — Issue #4
 **Ship date:** Friday (blocked on Beehiiv PB pub setup)
 **Style:** smart-friend — hook, our-data sections, DeFi explainer, yields, bot, tool
-**Status:** IN PROGRESS — started 2026-06-16. Our-data-only per Issue #2 lesson (no unverifiable external market sections). Opening + Top Picks drafted; Bot Diary / Educational / Tool scaffolded.
+**Status:** CONTENT-COMPLETE (5/5) 2026-06-18 — our-data-only per Issue #2 lesson. All sections final: hook, Top Picks, Bot Diary, Educational (opportunity-cost worked example), Tool. **NOT cleared to ship** — two blockers: (1) Beehiiv PB pub not provisioned (no send path); (2) SEND-BLOCKER: `_zeroSharesDetected` on both Fluid positions must be reconciled on-chain before any present-tense "we hold" language ships (see CMO NOTES).
 
 ---
 
@@ -70,15 +70,16 @@ So the bot did the unglamorous thing and stayed put. The headline number it skip
 
 ### 📚 The concept: opportunity cost cuts both ways
 
-[TODO 2026-06-18: finalise worked example, ~200 words.]
+Everyone frames missed yield as a loss — "you could've made 9% over there." Almost nobody prices the other side: the *cost of going to get it.* Both are opportunity costs. Only one shows up on a leaderboard.
 
-Everyone frames missed yield as a loss — "you could've made 9% over there." Fewer people price the *cost of going to get it.*
+Worked example. $10,000, one year, two versions of you:
 
-Worked example, $10,000 for one year:
-- **Stay:** 5.19% on Fluid Base = **$519**, zero gas, zero tax events.
-- **Chase:** jump to a pool quoting 9%. But it adjusts to ~7% after reserve factor, and you make ~6 hops over the year chasing the next rate. Say $8 gas per hop ($48), plus you've now realised six taxable events. Best case you net ~$650 before tax admin; one bad emission collapse or a few days stuck in an exit queue and you're behind the boring 5.19%.
+- **Stay:** park it at a steady 5.19% USDC lending rate. That's **$519**. Zero gas. Zero taxable events. One position to watch.
+- **Chase:** chase the 9% pool flashing across the dashboards. First, it isn't 9% — knock it down for reserve factor and the real lender rate is closer to **~7%** ($700). Now subtract the cost of getting there and staying there: rates move, so call it 6 hops over the year at ~$8 gas each = **$48**. And if you're an Australian holder, each of those 6 swaps is a **realised CGT event** — tax owed on every move, plus the admin of tracking them.
 
-The lesson: a higher *quoted* APY is a gross number. Subtract friction, tax, and exit risk and the "boring" position often wins on what actually lands in your wallet. The four numbers that decide it → /learn/four-numbers-defi-yield.
+Best case, you net maybe **$650** before tax — about $130 ahead. But that "best case" assumes nothing breaks. One emission collapse, or three days stuck in an exit queue when you wanted out, and the chaser finishes *behind* the $519 you'd have earned doing nothing.
+
+The lesson: a quoted APY is a **gross** number. Subtract friction, tax, and exit risk and the boring position often wins on what actually lands in your wallet. The four numbers that decide it → **/learn/four-numbers-defi-yield**.
 
 ---
 
