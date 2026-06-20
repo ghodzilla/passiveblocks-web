@@ -2,9 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import SubscribeForm from "@/components/SubscribeForm";
 import ArticleCard from "@/components/ArticleCard";
-import FearGreedWidget from "@/components/FearGreedWidget";
-import DefiYieldIndex from "@/components/DefiYieldIndex";
-import CryptoNewsWidget from "@/components/CryptoNewsWidget";
 import { ARTICLES } from "@/lib/articles";
 
 export default function Home() {
@@ -12,7 +9,7 @@ export default function Home() {
     <div className="min-h-screen bg-[#08080f] text-white">
       {/* Top banner */}
       <div className="bg-blue-600 text-white text-center text-sm font-semibold py-2 px-4">
-        New issue every Monday — free forever. Premium signals from $19/mo.
+        New issue every Monday — free forever.
       </div>
 
       {/* Nav */}
@@ -31,12 +28,9 @@ export default function Home() {
           <div className="hidden sm:flex items-center gap-6 text-sm text-white/50">
             <Link href="/learn" className="hover:text-white transition-colors">Learn</Link>
             <Link href="/newsletter" className="hover:text-white transition-colors">Archive</Link>
-            <Link href="/tax" className="hover:text-white transition-colors">Tax Calculator</Link>
-            <Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link>
             <Link href="/about" className="hover:text-white transition-colors">About</Link>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/login" className="text-sm text-white/50 hover:text-white transition-colors">Sign in</Link>
             <Link
               href="#subscribe"
               className="text-sm bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2 rounded-lg transition-colors"
@@ -119,41 +113,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Market indices — F&G + PB Yield Index */}
-      <section className="px-6 py-16 border-t border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <p className="text-xs font-bold tracking-widest uppercase text-white/30 mb-1">
-                Market Indices
-              </p>
-              <h2 className="text-2xl font-extrabold">Sentiment &amp; Opportunity</h2>
-            </div>
-            <span className="text-xs text-white/20 hidden sm:block">Updated hourly</span>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-5">
-            <FearGreedWidget />
-            <DefiYieldIndex />
-          </div>
-        </div>
-      </section>
-
-      {/* Live news */}
-      <section className="px-6 py-16 border-t border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <p className="text-xs font-bold tracking-widest uppercase text-white/30 mb-1">
-                Daily News
-              </p>
-              <h2 className="text-2xl font-extrabold">Latest in crypto</h2>
-            </div>
-            <span className="text-xs text-white/20 hidden sm:block">Live · refreshed every 30 min</span>
-          </div>
-          <CryptoNewsWidget />
-        </div>
-      </section>
-
       {/* About the operator */}
       <section className="px-6 py-16 border-t border-white/5 bg-white/[0.015]">
         <div className="max-w-5xl mx-auto">
@@ -229,7 +188,7 @@ export default function Home() {
             Every Monday in your inbox.
           </h2>
           <p className="text-white/50 mb-8 text-lg">
-            Free forever. Upgrade when you&apos;re ready. No spam — ever.
+            Free forever. No spam — ever.
           </p>
           <SubscribeForm />
           <p className="text-sm text-white/25 mt-4">

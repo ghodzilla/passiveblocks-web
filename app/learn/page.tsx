@@ -36,9 +36,6 @@ export default function LearnPage() {
             <Link href="/newsletter" className="hover:text-white transition-colors">
               Archive
             </Link>
-            <Link href="/tax" className="hover:text-white transition-colors">
-              Tax Calculator
-            </Link>
             <Link href="/about" className="hover:text-white transition-colors">
               About
             </Link>
