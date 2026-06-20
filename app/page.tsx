@@ -7,49 +7,6 @@ import DefiYieldIndex from "@/components/DefiYieldIndex";
 import CryptoNewsWidget from "@/components/CryptoNewsWidget";
 import { ARTICLES } from "@/lib/articles";
 
-const TESTIMONIALS = [
-  {
-    name: "Alex M.",
-    handle: "@alex_defi",
-    text: "The Fluid vs Aave breakdown saved me hours of research. Found a 12% APY opportunity I would have missed completely.",
-  },
-  {
-    name: "Sam K.",
-    handle: "@samkrypto",
-    text: "Every newsletter I actually open on the day it arrives. The risk section alone is worth it — nobody else is tracking correlation shifts in real time.",
-  },
-  {
-    name: "Jordan L.",
-    handle: "@jl_yield",
-    text: "Finally, DeFi content that isn't shilling. Just clear numbers, clear risk, clear opportunities. Subscribed after the first issue.",
-  },
-];
-
-const LIVE_POSITIONS = [
-  {
-    protocol: "Fluid",
-    chain: "Arbitrum",
-    asset: "USDC",
-    apy: "4.63%",
-    deployed: "$803",
-    type: "Lending",
-    color: "text-emerald-400",
-    bg: "bg-emerald-950/30",
-    border: "border-emerald-500/20",
-  },
-  {
-    protocol: "Fluid",
-    chain: "Base",
-    asset: "USDC",
-    apy: "5.19%",
-    deployed: "$66",
-    type: "Lending",
-    color: "text-blue-400",
-    bg: "bg-blue-950/30",
-    border: "border-blue-500/20",
-  },
-];
-
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#08080f] text-white">
@@ -110,70 +67,7 @@ export default function Home() {
 
           {/* Social proof */}
           <p className="text-sm text-white/30 mt-4">
-            Join 500+ readers. No spam. Unsubscribe anytime.
-          </p>
-        </div>
-      </section>
-
-      {/* Stats bar */}
-      <section className="border-y border-white/5 bg-white/[0.02] px-6 py-8">
-        <div className="max-w-3xl mx-auto grid grid-cols-4 gap-4 text-center">
-          {[
-            { value: "20+", label: "Protocols scanned" },
-            { value: "$869", label: "Live deployed" },
-            { value: "3", label: "Chains monitored" },
-            { value: "$19/mo", label: "Premium signals" },
-          ].map((s) => (
-            <div key={s.label}>
-              <div className="text-2xl sm:text-3xl font-extrabold text-blue-400">
-                {s.value}
-              </div>
-              <div className="text-xs sm:text-sm text-white/40 mt-1">{s.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Live positions — transparency section */}
-      <section className="px-6 py-14 border-b border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <p className="text-xs font-bold tracking-widest uppercase text-white/30 mb-1">
-                Skin in the Game
-              </p>
-              <h2 className="text-2xl font-extrabold">Live positions</h2>
-            </div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 bg-emerald-950/40 border border-emerald-500/20 px-3 py-1.5 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Real capital · Monitor only
-            </div>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-4 mb-6">
-            {LIVE_POSITIONS.map((p) => (
-              <div key={`${p.protocol}-${p.chain}`} className={`rounded-2xl border ${p.border} ${p.bg} p-5`}>
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`text-sm font-extrabold ${p.color}`}>{p.protocol}</span>
-                      <span className="text-xs text-white/30 bg-white/[0.06] px-2 py-0.5 rounded-full">{p.chain}</span>
-                    </div>
-                    <p className="text-xs text-white/40">{p.type} · {p.asset}</p>
-                  </div>
-                  <div className="text-right">
-                    <div className={`text-2xl font-extrabold tabular-nums ${p.color}`}>{p.apy}</div>
-                    <p className="text-xs text-white/30">APY</p>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between text-xs text-white/40 pt-3 border-t border-white/[0.06]">
-                  <span>Deployed</span>
-                  <span className="font-bold text-white/60">{p.deployed}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-          <p className="text-xs text-white/25 text-center">
-            Positions updated weekly. Executor paused — monitoring only while we refine entry signals.
+            No spam. Unsubscribe anytime.
           </p>
         </div>
       </section>
@@ -290,7 +184,7 @@ export default function Home() {
                 { label: "Risk framework", value: "Correlation + TVL + peg" },
                 { label: "Capital preserved", value: "Rule #1 above all else" },
                 { label: "Conflicts of interest", value: "None. Zero affiliates." },
-                { label: "Transparency", value: "Live positions published" },
+                { label: "Transparency", value: "Every decision logged" },
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between py-3 border-b border-white/[0.06]">
                   <span className="text-sm text-white/40">{row.label}</span>
@@ -298,104 +192,6 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Free vs Premium */}
-      <section className="px-6 py-16 border-t border-white/5">
-        <div className="max-w-3xl mx-auto">
-          <p className="text-xs font-bold tracking-widest uppercase text-white/30 text-center mb-4">
-            Pricing
-          </p>
-          <h2 className="text-3xl font-extrabold text-center mb-12">
-            Start free. Go deeper when you&apos;re ready.
-          </h2>
-          <div className="grid sm:grid-cols-2 gap-6">
-            <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6">
-              <div className="text-xs font-bold text-white/40 uppercase tracking-widest mb-1">
-                Free
-              </div>
-              <div className="text-3xl font-extrabold mb-6">$0</div>
-              <ul className="space-y-3 text-sm">
-                {[
-                  "Weekly yield scan",
-                  "Protocol deep dives",
-                  "Risk framework articles",
-                  "AI Operator's Log",
-                  "Market commentary",
-                ].map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-white/70">
-                    <span className="text-blue-400 font-bold">✓</span> {f}
-                  </li>
-                ))}
-              </ul>
-              <a
-                href="#subscribe"
-                className="block mt-8 text-center border border-white/20 hover:border-white/40 rounded-xl py-3 text-sm font-bold transition-colors"
-              >
-                Subscribe free
-              </a>
-            </div>
-            <div className="bg-blue-950/40 border border-blue-400/30 rounded-2xl p-6 relative">
-              <div className="absolute -top-3 right-5 bg-blue-500 text-white text-xs font-extrabold px-3 py-1 rounded-full">
-                PREMIUM
-              </div>
-              <div className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-1">
-                Premium
-              </div>
-              <div className="text-3xl font-extrabold mb-6">
-                $19<span className="text-lg font-normal text-white/40">/mo</span>
-              </div>
-              <ul className="space-y-3 text-sm">
-                {[
-                  "Everything in Free",
-                  "Specific entry & exit signals",
-                  "Portfolio allocation models",
-                  "Protocol risk scores",
-                  "Live position alerts",
-                  "Priority reader Q&A",
-                ].map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-white/80">
-                    <span className="text-blue-400 font-bold">✓</span> {f}
-                  </li>
-                ))}
-              </ul>
-              <a
-                href="#subscribe"
-                className="block mt-8 text-center bg-blue-600 hover:bg-blue-500 text-white rounded-xl py-3 text-sm font-extrabold transition-colors"
-              >
-                Start with free →
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="px-6 py-16 border-t border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <p className="text-xs font-bold tracking-widest uppercase text-white/30 text-center mb-4">
-            Reader love
-          </p>
-          <h2 className="text-3xl font-extrabold text-center mb-12">
-            Don&apos;t take our word for it
-          </h2>
-          <div className="grid sm:grid-cols-3 gap-6">
-            {TESTIMONIALS.map((t) => (
-              <div
-                key={t.name}
-                className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6"
-              >
-                <p className="text-sm text-white/70 leading-relaxed mb-4">
-                  &ldquo;{t.text}&rdquo;
-                </p>
-                <div>
-                  <div className="font-bold text-sm">{t.name}</div>
-                  <div className="text-xs text-white/30">{t.handle}</div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -437,7 +233,7 @@ export default function Home() {
           </p>
           <SubscribeForm />
           <p className="text-sm text-white/25 mt-4">
-            500+ readers. Unsubscribe anytime.
+            Unsubscribe anytime.
           </p>
         </div>
       </section>
