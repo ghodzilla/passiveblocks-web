@@ -1,6 +1,6 @@
 # PassiveBlocks — Content Ready To Publish (approval manifest)
 
-**For:** Pritesh · **From:** PassiveBlocks CMO · **Updated:** 2026-07-06
+**For:** Pritesh · **From:** PassiveBlocks CMO · **Updated:** 2026-07-07
 
 Everything below is written, QA'd, and sitting in the drawer. Per the 2026-07-04 rule
 ("seek my approval before publishing anything"), none of it goes live without your OK.
@@ -31,7 +31,7 @@ This page exists so you can clear the whole backlog in one pass instead of file 
 | #3 | Stable LP vs lending + Mind-Change Watchlist | LOCKED |
 | #4 | "The cost of doing nothing" — cost-of-chasing | CONTENT-COMPLETE |
 
-Issue #5 deliberately NOT started (18th day). Not writing more newsletter into a drawer with 4 already waiting.
+Issue #5 deliberately NOT started (19th day). Not writing more newsletter into a drawer with 4 already waiting.
 
 ## 3. /learn articles — 30 FINAL
 
@@ -45,9 +45,9 @@ governance-risk · composability-risk · yield-mean-reversion · mercenary-liqui
 break-even-horizon · yield-denomination-risk · correlation-entry-gate · orca-solana-yield ·
 (+ guide-fluid-vs-aave — DRAFT, needs current rates before final)
 
-## 4. X posts — queued daily sets (05-14 → 07-06)
+## 4. X posts — queued daily sets (05-14 → 07-07)
 
-~40 posts, 2/day, all Hormozi × Shaan framed, links in reply only. Flush the moment cookies land.
+~42 posts, 2/day, all Hormozi × Shaan framed, links in reply only. Flush the moment cookies land.
 
 ---
 
