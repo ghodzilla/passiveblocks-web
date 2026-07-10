@@ -1,14 +1,15 @@
 # PassiveBlocks — Content Ready To Publish (approval manifest)
 
-**For:** Pritesh · **From:** PassiveBlocks CMO · **Updated:** 2026-07-10
+**For:** Pritesh · **From:** PassiveBlocks CMO · **Updated:** 2026-07-11
 
 Everything below is written, QA'd, and sitting in the drawer. Per the 2026-07-04 rule
 ("seek my approval before publishing anything"), none of it goes live without your OK.
 This page exists so you can clear the whole backlog in one pass instead of file by file.
 
-**One decision unblocks all of it.** Reply with any mix of:
-- `learn: all` (or list slugs) → I publish the /learn drafts to passiveblocks.io
-- `newsletter: yes` → I mirror Estait's Vercel send path for PB (dodges the Cloudflare/Resend block), OR you provision the Beehiiv PB pub
+**These are THREE independent locks, not one.** Cheapest win first — the /learn drawer needs
+nothing but a yes (no Beehiiv, no cookies, no on-chain check). Reply with any mix:
+- `learn: all` (or list slugs) → **cheapest, highest-leverage.** 29 SEO articles go live on passiveblocks.io (Vercel — I control the deploy). Zero external dependency. This alone starts the organic funnel.
+- `newsletter: yes` → I mirror Estait's Vercel send path for PB (dodges the Cloudflare/Resend block), OR you provision the Beehiiv PB pub. NOTE: still gated on the zero-shares data flag below for any "we hold $X" line.
 - `x: cookies` → paste auth_token + ct0 from your laptop and I flush the queued posts
 
 ---
@@ -19,7 +20,7 @@ This page exists so you can clear the whole backlog in one pass instead of file 
 |---------|--------|-------|
 | **No publish approval** | 2026-07-04 rule — I hold everything for your sign-off | You |
 | **Beehiiv PB pub never created** | `BEEHIIV_PUB_ID_PB` unset. 4 finished newsletters can't send. Alt: mirror Estait's Vercel API send route | You / me |
-| **Zero-shares data-integrity flag** | execution-state shows `vaultShares: 0` on BOTH Fluid positions, re-detected daily 22+ days (latest 2026-07-09T17:00). Blocks any present-tense "we hold $X" claim in newsletters. Needs a real on-chain check (Base + Arbiscan) — likely a balance-reader bug (Arb gas reads 0.000000) but unconfirmed | me, needs your nod to spend time |
+| **Zero-shares data-integrity flag** | execution-state shows `vaultShares: 0` on BOTH Fluid positions, re-detected daily 23+ days (latest 2026-07-10T17:00). Blocks any present-tense "we hold $X" claim in newsletters. Needs a real on-chain check (Base + Arbiscan) — likely a balance-reader bug (Arb gas reads 0.000000) but unconfirmed | me, needs your nod to spend time |
 | **X API depleted** | Standalone posting needs browser cookies from your laptop | You |
 
 ## 2. Newsletters (4 issues, content-complete)
@@ -31,7 +32,7 @@ This page exists so you can clear the whole backlog in one pass instead of file 
 | #3 | Stable LP vs lending + Mind-Change Watchlist | LOCKED |
 | #4 | "The cost of doing nothing" — cost-of-chasing | CONTENT-COMPLETE |
 
-Issue #5 deliberately NOT started (22nd day). Not writing more newsletter into a drawer with 4 already waiting.
+Issue #5 deliberately NOT started (23rd day). Not writing more newsletter into a drawer with 4 already waiting.
 
 ## 3. /learn articles — 30 FINAL
 
@@ -45,9 +46,9 @@ governance-risk · composability-risk · yield-mean-reversion · mercenary-liqui
 break-even-horizon · yield-denomination-risk · correlation-entry-gate · orca-solana-yield ·
 (+ guide-fluid-vs-aave — DRAFT, needs current rates before final)
 
-## 4. X posts — queued daily sets (05-14 → 07-10)
+## 4. X posts — queued daily sets (05-14 → 07-11)
 
-~48 posts, 2/day, all Hormozi × Shaan framed, links in reply only. Flush the moment cookies land.
+~50 posts, 2/day, all Hormozi × Shaan framed, links in reply only. Flush the moment cookies land.
 
 ---
 
