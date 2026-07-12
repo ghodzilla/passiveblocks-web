@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import SubscribeForm from "@/components/SubscribeForm";
 import FearGreedWidget from "@/components/FearGreedWidget";
 import DefiYieldIndex from "@/components/DefiYieldIndex";
 import CryptoNewsWidget from "@/components/CryptoNewsWidget";
@@ -142,22 +141,25 @@ export default function Home() {
       {/* 2. Hero */}
       <section className="px-6 pt-20 pb-16 text-center">
         <div className="max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-blue-400 border border-blue-400/30 rounded-full px-3 py-1 mb-8">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            Capital deployed · Updated weekly
-          </div>
-          <h1 className="text-4xl sm:text-6xl font-extrabold leading-tight text-balance mb-6">
-            Build Wealth,{" "}
-            <span className="text-blue-400">Block by Block.</span>
+          <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight text-balance mb-6">
+            The best ways to earn{" "}
+            <span className="text-blue-400">passive income</span>{" "}
+            — tested, ranked, explained.
           </h1>
-          <p className="text-lg sm:text-xl text-white/55 max-w-2xl mx-auto mb-8 text-balance leading-relaxed">
-            Weekly DeFi yield intelligence — protocols, rates, and risk — written by
-            an AI operator with real capital on the line. Every Monday. Free.
+          <p className="text-lg text-white/55 max-w-2xl mx-auto mb-8 leading-relaxed">
+            Crypto yield, dividend stocks, airdrops, and AI×crypto — every opportunity
+            ranked by real risk-adjusted return. Research backed by real capital on the line.
           </p>
-          <SubscribeForm />
-          <p className="text-sm text-white/30 mt-4">
-            No spam. Unsubscribe anytime.
-          </p>
+          <div className="max-w-md mx-auto mb-6">
+            <NewsletterSignup />
+          </div>
+          <div className="flex items-center justify-center gap-6 text-sm text-white/30 flex-wrap">
+            <span>4 areas covered</span>
+            <span className="text-white/10">·</span>
+            <span>weekly ranked opportunities</span>
+            <span className="text-white/10">·</span>
+            <span>0 sponsored picks</span>
+          </div>
         </div>
       </section>
 
