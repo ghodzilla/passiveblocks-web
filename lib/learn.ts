@@ -55,6 +55,30 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
     description: "AU-focused tax guidance on DeFi income and CGT",
     icon: "📋",
   },
+  {
+    id: "crypto-yield",
+    label: "Crypto Yield",
+    description: "On-chain yield from DeFi lending and liquidity provisioning",
+    icon: "💰",
+  },
+  {
+    id: "stocks",
+    label: "Dividend & Income Stocks",
+    description: "Covered-call ETFs and dividend aristocrats for steady cash flow",
+    icon: "📊",
+  },
+  {
+    id: "airdrops",
+    label: "Airdrops",
+    description: "Points farming, protocol participation, and early-mover rewards",
+    icon: "🪂",
+  },
+  {
+    id: "ai-crypto",
+    label: "AI×Crypto",
+    description: "Staking and node rewards on AI infrastructure tokens",
+    icon: "🤖",
+  },
 ];
 
 export const LEARN_ARTICLES: LearnArticle[] = [
