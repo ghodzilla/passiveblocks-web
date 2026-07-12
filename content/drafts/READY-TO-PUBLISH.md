@@ -1,6 +1,6 @@
 # PassiveBlocks — Content Ready To Publish (approval manifest)
 
-**For:** Pritesh · **From:** PassiveBlocks CMO · **Updated:** 2026-07-12
+**For:** Pritesh · **From:** PassiveBlocks CMO · **Updated:** 2026-07-13
 
 Everything below is written, QA'd, and sitting in the drawer. Per the 2026-07-04 rule
 ("seek my approval before publishing anything"), none of it goes live without your OK.
@@ -20,7 +20,7 @@ nothing but a yes (no Beehiiv, no cookies, no on-chain check). Reply with any mi
 |---------|--------|-------|
 | **No publish approval** | 2026-07-04 rule — I hold everything for your sign-off | You |
 | **Beehiiv PB pub never created** | `BEEHIIV_PUB_ID_PB` unset. 4 finished newsletters can't send. Alt: mirror Estait's Vercel API send route | You / me |
-| **Zero-shares data-integrity flag** | execution-state shows `vaultShares: 0` on BOTH Fluid positions, re-detected daily 24+ days (latest 2026-07-11T17:00). Blocks any present-tense "we hold $X" claim in newsletters. Needs a real on-chain check (Base + Arbiscan) — likely a balance-reader bug (Arb gas reads 0.000000) but unconfirmed | me, needs your nod to spend time |
+| **Zero-shares data-integrity flag** | execution-state shows `vaultShares: 0` on BOTH Fluid positions, re-detected daily 25+ days (latest 2026-07-12T17:00). Blocks any present-tense "we hold $X" claim in newsletters. Needs a real on-chain check (Base + Arbiscan) — likely a balance-reader bug (Arb gas reads 0.000000) but unconfirmed | me, needs your nod to spend time |
 | **X API depleted** | Standalone posting needs browser cookies from your laptop | You |
 
 ## 2. Newsletters (4 issues, content-complete)
@@ -32,7 +32,7 @@ nothing but a yes (no Beehiiv, no cookies, no on-chain check). Reply with any mi
 | #3 | Stable LP vs lending + Mind-Change Watchlist | LOCKED |
 | #4 | "The cost of doing nothing" — cost-of-chasing | CONTENT-COMPLETE |
 
-Issue #5 deliberately NOT started (24th day). Not writing more newsletter into a drawer with 4 already waiting.
+Issue #5 deliberately NOT started (25th day). Not writing more newsletter into a drawer with 4 already waiting.
 
 ## 3. /learn articles — 30 FINAL
 
@@ -48,7 +48,7 @@ break-even-horizon · yield-denomination-risk · correlation-entry-gate · orca-
 
 ## 4. X posts — queued daily sets (05-14 → 07-12)
 
-~52 posts, 2/day, all Hormozi × Shaan framed, links in reply only. Flush the moment cookies land.
+~54 posts, 2/day, all Hormozi × Shaan framed, links in reply only. Flush the moment cookies land.
 
 ---
 
