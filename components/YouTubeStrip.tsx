@@ -21,14 +21,13 @@ export function YouTubeStrip() {
             <div key={i} className="bg-white/[0.03] border border-white/[0.07] rounded-2xl overflow-hidden">
               <div className="aspect-video bg-white/[0.05] flex items-center justify-center">
                 <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
-                  <svg className="w-5 h-5 text-white/40 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-white/30 ml-1" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z" />
                   </svg>
                 </div>
               </div>
               <div className="p-4">
-                <div className="h-3 bg-white/10 rounded w-3/4 mb-2" />
-                <div className="h-2 bg-white/5 rounded w-1/2" />
+                <p className="text-xs font-semibold text-white/25 uppercase tracking-widest">Coming soon</p>
               </div>
             </div>
           ))}

@@ -25,8 +25,8 @@ export function PledgeList() {
           <h2 className="text-2xl font-extrabold text-white">How we earn your trust</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {pledges.map((p, i) => (
-            <div key={i} className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6">
+          {pledges.map((p) => (
+            <div key={p.title} className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6">
               <div className="text-blue-400 text-xl mb-3">{p.icon}</div>
               <h3 className="font-bold text-white mb-2 text-sm">{p.title}</h3>
               <p className="text-white/50 text-xs leading-relaxed">{p.desc}</p>

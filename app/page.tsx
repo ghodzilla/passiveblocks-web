@@ -13,7 +13,6 @@ const pillars = [
   {
     name: "Crypto Yield",
     slug: "crypto-yield",
-    accent: "#1c6b47",
     yieldRange: "4–20% APY",
     oneLiner:
       "Earn on-chain from lending and LP fees across Aave, Fluid, Orca, and Aerodrome.",
@@ -24,7 +23,6 @@ const pillars = [
   {
     name: "Dividend & Income Stocks",
     slug: "stocks",
-    accent: "#b7791f",
     yieldRange: "3–14% yield",
     oneLiner:
       "Covered-call ETFs and dividend aristocrats for cash flow outside crypto.",
@@ -34,8 +32,7 @@ const pillars = [
   {
     name: "Airdrops",
     slug: "airdrops",
-    accent: "#6d4aa8",
-    yieldRange: "TBD",
+    yieldRange: "Variable",
     oneLiner:
       "Points farming, protocol participation, and early-mover rewards.",
     bestFor:
@@ -45,7 +42,6 @@ const pillars = [
   {
     name: "AI×Crypto",
     slug: "ai-crypto",
-    accent: "#4338ca",
     yieldRange: "~9–30% APY",
     oneLiner:
       "Staking, node rewards, and yield on AI infrastructure tokens like TAO and FET.",
@@ -60,7 +56,7 @@ const yieldRows = [
     rank: 1,
     name: "USDC Lending on Aave (Base)",
     pillar: "Crypto Yield",
-    pillarAccent: "#1c6b47",
+    pillarSlug: "crypto-yield" as const,
     yield: "8.2% APY",
     riskLabel: "Low" as const,
   },
@@ -68,7 +64,7 @@ const yieldRows = [
     rank: 2,
     name: "SPYI (NEOS S&P 500 Income ETF)",
     pillar: "Dividend",
-    pillarAccent: "#b7791f",
+    pillarSlug: "stocks" as const,
     yield: "11.4% yield",
     riskLabel: "Med" as const,
   },
@@ -76,7 +72,7 @@ const yieldRows = [
     rank: 3,
     name: "SOL/USDC LP on Orca",
     pillar: "Crypto Yield",
-    pillarAccent: "#1c6b47",
+    pillarSlug: "crypto-yield" as const,
     yield: "18.7% APY",
     riskLabel: "Med" as const,
   },
@@ -84,15 +80,15 @@ const yieldRows = [
     rank: 4,
     name: "Layer Zero Points Farming",
     pillar: "Airdrops",
-    pillarAccent: "#6d4aa8",
-    yield: "TBD",
+    pillarSlug: "airdrops" as const,
+    yield: "Variable",
     riskLabel: "High" as const,
   },
   {
     rank: 5,
     name: "Bittensor (TAO) Staking",
     pillar: "AI×Crypto",
-    pillarAccent: "#4338ca",
+    pillarSlug: "ai-crypto" as const,
     yield: "~9% APY",
     riskLabel: "High" as const,
   },
@@ -192,6 +188,9 @@ export default function Home() {
             <h2 className="text-2xl font-extrabold text-white">
               This week&apos;s best, ranked
             </h2>
+            <p className="text-xs text-white/30 mt-2">
+              Illustrative selection — live risk-adjusted rankings arrive with our yields data (Phase 3).
+            </p>
           </div>
           <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6">
             <RankedYieldsTable rows={yieldRows} />

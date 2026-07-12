@@ -1,8 +1,11 @@
+import { PillarBadge } from './PillarBadge'
+import { PILLARS, PillarSlug } from '@/lib/pillars'
+
 interface YieldRow {
   rank: number
   name: string
   pillar: string
-  pillarAccent: string
+  pillarSlug: PillarSlug
   yield: string
   riskLabel: 'Low' | 'Med' | 'High'
 }
@@ -31,26 +34,28 @@ export function RankedYieldsTable({ rows }: RankedYieldsTableProps) {
           </tr>
         </thead>
         <tbody>
-          {rows.map((row) => (
-            <tr key={row.rank} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
-              <td className="py-4 pr-4 text-white/30 font-mono text-xs">{row.rank}</td>
-              <td className="py-4 pr-4 font-semibold text-white/90">{row.name}</td>
-              <td className="py-4 pr-4">
-                <span
-                  className="text-xs font-bold uppercase tracking-widest rounded-full px-2 py-0.5 border"
-                  style={{ color: row.pillarAccent, borderColor: `${row.pillarAccent}4d` }}
-                >
-                  {row.pillar}
-                </span>
-              </td>
-              <td className="py-4 pr-4 text-right font-bold text-white/90">{row.yield}</td>
-              <td className="py-4 text-right">
-                <span className={`text-xs font-bold uppercase tracking-widest rounded-full px-2 py-0.5 border ${riskColors[row.riskLabel]}`}>
-                  {row.riskLabel}
-                </span>
-              </td>
-            </tr>
-          ))}
+          {rows.map((row) => {
+            const pillar = PILLARS[row.pillarSlug]
+            return (
+              <tr key={row.rank} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
+                <td className="py-4 pr-4 text-white/30 font-mono text-xs">{row.rank}</td>
+                <td className="py-4 pr-4 font-semibold text-white/90">{row.name}</td>
+                <td className="py-4 pr-4">
+                  <PillarBadge
+                    name={row.pillar}
+                    textClass={pillar.textClass}
+                    borderClass={pillar.borderClass}
+                  />
+                </td>
+                <td className="py-4 pr-4 text-right font-bold text-white/90">{row.yield}</td>
+                <td className="py-4 text-right">
+                  <span className={`text-xs font-bold uppercase tracking-widest rounded-full px-2 py-0.5 border ${riskColors[row.riskLabel]}`}>
+                    {row.riskLabel}
+                  </span>
+                </td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </div>
