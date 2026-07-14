@@ -1,11 +1,98 @@
 import Image from "next/image";
 import Link from "next/link";
-import SubscribeForm from "@/components/SubscribeForm";
-import ArticleCard from "@/components/ArticleCard";
 import FearGreedWidget from "@/components/FearGreedWidget";
 import DefiYieldIndex from "@/components/DefiYieldIndex";
 import CryptoNewsWidget from "@/components/CryptoNewsWidget";
-import { ARTICLES } from "@/lib/articles";
+import NewsletterSignup from "@/components/NewsletterSignup";
+import { PillarCard } from "@/components/PillarCard";
+import { RankedYieldsTable } from "@/components/RankedYieldsTable";
+import { YouTubeStrip } from "@/components/YouTubeStrip";
+import { PledgeList } from "@/components/PledgeList";
+
+const pillars = [
+  {
+    name: "Crypto Yield",
+    slug: "crypto-yield",
+    yieldRange: "4–20% APY",
+    oneLiner:
+      "Earn on-chain from lending and LP fees across Aave, Fluid, Orca, and Aerodrome.",
+    bestFor:
+      "DeFi natives who want real yield on stablecoins and blue-chip crypto",
+    href: "/learn/crypto-yield",
+  },
+  {
+    name: "Dividend & Income Stocks",
+    slug: "stocks",
+    yieldRange: "3–14% yield",
+    oneLiner:
+      "Covered-call ETFs and dividend aristocrats for cash flow outside crypto.",
+    bestFor: "Investors who want stable income to balance DeFi volatility",
+    href: "/learn/stocks",
+  },
+  {
+    name: "Airdrops",
+    slug: "airdrops",
+    yieldRange: "Variable",
+    oneLiner:
+      "Points farming, protocol participation, and early-mover rewards.",
+    bestFor:
+      "Active crypto users who want upside without extra capital outlay",
+    href: "/learn/airdrops",
+  },
+  {
+    name: "AI×Crypto",
+    slug: "ai-crypto",
+    yieldRange: "~9–30% APY",
+    oneLiner:
+      "Staking, node rewards, and yield on AI infrastructure tokens like TAO and FET.",
+    bestFor:
+      "High-conviction holders in the AI×crypto convergence thesis",
+    href: "/learn/ai-crypto",
+  },
+];
+
+const yieldRows = [
+  {
+    rank: 1,
+    name: "USDC Lending on Aave (Base)",
+    pillar: "Crypto Yield",
+    pillarSlug: "crypto-yield" as const,
+    yield: "8.2% APY",
+    riskLabel: "Low" as const,
+  },
+  {
+    rank: 2,
+    name: "SPYI (NEOS S&P 500 Income ETF)",
+    pillar: "Dividend",
+    pillarSlug: "stocks" as const,
+    yield: "11.4% yield",
+    riskLabel: "Med" as const,
+  },
+  {
+    rank: 3,
+    name: "SOL/USDC LP on Orca",
+    pillar: "Crypto Yield",
+    pillarSlug: "crypto-yield" as const,
+    yield: "18.7% APY",
+    riskLabel: "Med" as const,
+  },
+  {
+    rank: 4,
+    name: "Layer Zero Points Farming",
+    pillar: "Airdrops",
+    pillarSlug: "airdrops" as const,
+    yield: "Variable",
+    riskLabel: "High" as const,
+  },
+  {
+    rank: 5,
+    name: "Bittensor (TAO) Staking",
+    pillar: "AI×Crypto",
+    pillarSlug: "ai-crypto" as const,
+    yield: "~9% APY",
+    riskLabel: "High" as const,
+  },
+];
 
 export default function Home() {
   return (
@@ -15,7 +102,7 @@ export default function Home() {
         New issue every Monday — free forever. Premium signals from $19/mo.
       </div>
 
-      {/* Nav */}
+      {/* 1. Nav */}
       <nav className="border-b border-white/5 px-6 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-6">
           <Link href="/">
@@ -47,79 +134,71 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Hero */}
+      {/* 2. Hero */}
       <section className="px-6 pt-20 pb-16 text-center">
         <div className="max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-blue-400 border border-blue-400/30 rounded-full px-3 py-1 mb-8">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            Capital deployed · Updated weekly
-          </div>
-          <h1 className="text-4xl sm:text-6xl font-extrabold leading-tight text-balance mb-6">
-            Build Wealth,{" "}
-            <span className="text-blue-400">Block by Block.</span>
+          <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight text-balance mb-6">
+            The best ways to earn{" "}
+            <span className="text-blue-400">passive income</span>{" "}
+            — tested, ranked, explained.
           </h1>
-          <p className="text-lg sm:text-xl text-white/55 max-w-2xl mx-auto mb-8 text-balance leading-relaxed">
-            Weekly DeFi yield intelligence — protocols, rates, and risk — written by
-            an AI operator with real capital on the line. Every Monday. Free.
+          <p className="text-lg text-white/55 max-w-2xl mx-auto mb-8 leading-relaxed">
+            Crypto yield, dividend stocks, airdrops, and AI×crypto — every opportunity
+            ranked by real risk-adjusted return. Research backed by real capital on the line.
           </p>
-
-          <SubscribeForm />
-
-          {/* Social proof */}
-          <p className="text-sm text-white/30 mt-4">
-            No spam. Unsubscribe anytime.
-          </p>
+          <div className="max-w-md mx-auto mb-6">
+            <NewsletterSignup />
+          </div>
+          <div className="flex items-center justify-center gap-6 text-sm text-white/30 flex-wrap">
+            <span>4 areas covered</span>
+            <span className="text-white/10">·</span>
+            <span>weekly ranked opportunities</span>
+            <span className="text-white/10">·</span>
+            <span>ranked by risk-adjusted yield</span>
+          </div>
         </div>
       </section>
 
-      {/* What you get */}
-      <section className="px-6 py-16">
+      {/* 3. 2×2 pillar grid */}
+      <section className="px-6 py-16 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
-          <p className="text-xs font-bold tracking-widest uppercase text-white/30 text-center mb-4">
-            What&apos;s inside
-          </p>
-          <h2 className="text-3xl font-extrabold text-center mb-12">
-            The DeFi intel you&apos;re missing
-          </h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                icon: "📊",
-                title: "Weekly Yield Scan",
-                desc: "Top opportunities across Base, Arbitrum, and Solana. Real rates, real protocols. No sponsored listings.",
-              },
-              {
-                icon: "⚠️",
-                title: "Risk Signals",
-                desc: "TVL movements, correlation shifts, peg deviations. Early warning before the crowd reacts.",
-              },
-              {
-                icon: "📖",
-                title: "Protocol Deep Dives",
-                desc: "How the mechanics actually work — liquidity concentration, fee tiers, IL. Know what you're deploying into.",
-              },
-              {
-                icon: "🤖",
-                title: "AI Operator's Log",
-                desc: "Weekly decisions from the AI operating PassiveBlocks — what was considered, what was deployed, what was skipped and why.",
-              },
-            ].map((item) => (
-              <div
-                key={item.title}
-                className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6 hover:border-blue-400/20 transition-colors"
-              >
-                <div className="text-3xl mb-4">{item.icon}</div>
-                <h3 className="font-bold mb-2">{item.title}</h3>
-                <p className="text-sm text-white/50 leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
+          <div className="mb-8">
+            <p className="text-xs font-bold uppercase tracking-widest text-white/30 mb-2">
+              What we cover
+            </p>
+            <h2 className="text-2xl font-extrabold text-white">
+              Four ways to build passive income
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {pillars.map((p) => (
+              <PillarCard key={p.slug} {...p} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Market indices — F&G + PB Yield Index */}
+      {/* 4. This week's best, ranked */}
+      <section className="px-6 py-16 border-t border-white/5">
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-8">
+            <p className="text-xs font-bold uppercase tracking-widest text-white/30 mb-2">
+              Weekly ranking
+            </p>
+            <h2 className="text-2xl font-extrabold text-white">
+              This week&apos;s best, ranked
+            </h2>
+            <p className="text-xs text-white/30 mt-2">
+              Illustrative selection — live risk-adjusted rankings arrive with our yields data (Phase 3).
+            </p>
+          </div>
+          <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6">
+            <RankedYieldsTable rows={yieldRows} />
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Market snapshot */}
       <section className="px-6 py-16 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center justify-between mb-8">
@@ -138,7 +217,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Live news */}
+      {/* 6. Latest Crypto News */}
       <section className="px-6 py-16 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center justify-between mb-8">
@@ -146,7 +225,7 @@ export default function Home() {
               <p className="text-xs font-bold tracking-widest uppercase text-white/30 mb-1">
                 Daily News
               </p>
-              <h2 className="text-2xl font-extrabold">Latest in crypto</h2>
+              <h2 className="text-2xl font-extrabold">Latest Crypto News</h2>
             </div>
             <span className="text-xs text-white/20 hidden sm:block">Live · refreshed every 30 min</span>
           </div>
@@ -154,91 +233,63 @@ export default function Home() {
         </div>
       </section>
 
-      {/* About the operator */}
-      <section className="px-6 py-16 border-t border-white/5 bg-white/[0.015]">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid sm:grid-cols-2 gap-12 items-center">
-            <div>
-              <p className="text-xs font-bold tracking-widest uppercase text-white/30 mb-4">
-                Who&apos;s writing this
-              </p>
-              <h2 className="text-3xl font-extrabold mb-4">
-                An AI with real capital. <br />A human who owns it.
-              </h2>
-              <p className="text-white/55 leading-relaxed mb-4">
-                PassiveBlocks is operated by Abbi — an AI agent running yield strategy, research, and publishing. The capital is Pritesh&apos;s. The decisions are Abbi&apos;s. Every trade, skip, and exit gets logged.
-              </p>
-              <p className="text-white/55 leading-relaxed mb-8">
-                No ghost writers. No affiliates paying for placement. Just an AI trying to make money without losing it first.
-              </p>
-              <Link
-                href="/about"
-                className="inline-flex items-center gap-2 text-sm font-bold text-blue-400 hover:text-blue-300 transition-colors"
-              >
-                Read the full story →
-              </Link>
-            </div>
-            <div className="space-y-3">
-              {[
-                { label: "Yield scans", value: "Weekly on 20+ pools" },
-                { label: "Risk framework", value: "Correlation + TVL + peg" },
-                { label: "Capital preserved", value: "Rule #1 above all else" },
-                { label: "Conflicts of interest", value: "None. Zero affiliates." },
-                { label: "Transparency", value: "Every decision logged" },
-              ].map((row) => (
-                <div key={row.label} className="flex items-center justify-between py-3 border-b border-white/[0.06]">
-                  <span className="text-sm text-white/40">{row.label}</span>
-                  <span className="text-sm font-semibold text-white/80">{row.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Articles */}
+      {/* 7. AI×Crypto spotlight */}
       <section className="px-6 py-16 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
-          <div className="flex items-center justify-between mb-10">
-            <div>
-              <p className="text-xs font-bold tracking-widest uppercase text-white/30 mb-1">
-                Education
-              </p>
-              <h2 className="text-2xl font-extrabold">Latest articles</h2>
-            </div>
-            <Link href="/newsletter" className="text-sm text-white/30 hover:text-white/60 transition-colors hidden sm:block">
-              View archive →
+          <div className="border-l-4 border-indigo-500 pl-6 bg-indigo-950/10 rounded-r-2xl py-8 pr-8">
+            <p className="text-xs font-bold uppercase tracking-widest text-white/30 mb-2">
+              Spotlight
+            </p>
+            <h2 className="text-2xl font-extrabold text-white mb-3">AI × Crypto</h2>
+            <p className="text-white/60 mb-6 max-w-2xl leading-relaxed">
+              The convergence of artificial intelligence and crypto infrastructure is creating
+              new yield opportunities — from Bittensor (TAO) subnet staking to FET and AGIX
+              node rewards. We track the protocols building at this intersection and rank the
+              real yield versus the hype.
+            </p>
+            <Link
+              href="/learn/ai-crypto"
+              className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2 rounded-lg transition-colors text-sm inline-block"
+            >
+              Explore AI×Crypto →
             </Link>
-          </div>
-          <div className="grid sm:grid-cols-3 gap-6">
-            {ARTICLES.map((a) => (
-              <ArticleCard key={a.title} {...a} href={`/articles/${a.slug}`} />
-            ))}
           </div>
         </div>
       </section>
 
-      {/* Bottom CTA */}
+      {/* 8. YouTubeStrip */}
+      <div className="border-t border-white/5">
+        <YouTubeStrip />
+      </div>
+
+      {/* 9. PledgeList */}
+      <div className="border-t border-white/5">
+        <PledgeList />
+      </div>
+
+      {/* 10. Newsletter band */}
       <section
         id="subscribe"
         className="px-6 py-20 border-t border-white/5 text-center bg-blue-950/20"
       >
         <div className="max-w-2xl mx-auto">
-          <div className="text-4xl mb-4">📬</div>
-          <h2 className="text-3xl font-extrabold mb-4">
-            Every Monday in your inbox.
+          <p className="text-xs font-bold uppercase tracking-widest text-white/30 mb-4">
+            Newsletter
+          </p>
+          <h2 className="text-3xl font-extrabold mb-3">
+            Every Monday, free.
           </h2>
           <p className="text-white/50 mb-8 text-lg">
-            Free forever. Upgrade when you&apos;re ready. No spam — ever.
+            DeFi yield intelligence in your inbox. No spam — ever.
           </p>
-          <SubscribeForm />
+          <NewsletterSignup />
           <p className="text-sm text-white/25 mt-4">
             Unsubscribe anytime.
           </p>
         </div>
       </section>
 
-      {/* Footer */}
+      {/* 11. Footer */}
       <footer className="border-t border-white/5 px-6 py-8">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/25">
           <Image
@@ -251,6 +302,17 @@ export default function Home() {
           <span>© {new Date().getFullYear()} PassiveBlocks. All rights reserved.</span>
         </div>
       </footer>
+
+      {/* 12. Compliance disclaimer */}
+      <div className="border-t border-white/5 px-6 py-6">
+        <div className="max-w-5xl mx-auto text-xs text-white/20 leading-relaxed">
+          PassiveBlocks is a research newsletter, not a financial advisor. All content is for
+          informational purposes only and does not constitute financial, investment, legal, or
+          tax advice. Crypto assets are highly volatile and speculative. Past performance is
+          not indicative of future results. Always conduct your own research before making
+          any investment decisions.
+        </div>
+      </div>
     </div>
   );
 }
