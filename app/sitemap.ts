@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getAllLearnArticles } from "@/lib/learn";
-import { LEARN_CATEGORIES } from "@/lib/learn";
+import { getAllLearnArticles, LEARN_CATEGORIES } from "@/lib/learn";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://www.passiveblocks.io";
@@ -13,6 +12,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
     { url: `${baseUrl}/tax`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
     { url: `${baseUrl}/pricing`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
+    { url: `${baseUrl}/privacy`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.3 },
+    { url: `${baseUrl}/terms`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.3 },
+    { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
   ];
 
   const categoryRoutes: MetadataRoute.Sitemap = LEARN_CATEGORIES.map((cat) => ({
@@ -31,10 +33,3 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [...staticRoutes, ...categoryRoutes, ...articleRoutes];
 }
-
-// Add privacy, terms, contact
-const legalRoutes = [
-  { url: `${baseUrl}/privacy`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.3 },
-  { url: `${baseUrl}/terms`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.3 },
-  { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.4 },
-];
