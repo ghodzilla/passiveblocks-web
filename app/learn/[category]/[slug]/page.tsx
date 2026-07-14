@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  LEARN_ARTICLES,
+  getAllLearnArticles,
   getLearnArticle,
   getLearnCategory,
   getArticlesByCategory,
@@ -43,7 +43,7 @@ function articleDates(article: LearnArticle): { published: string; modified: str
 }
 
 export async function generateStaticParams() {
-  return LEARN_ARTICLES.map((a) => ({
+  return getAllLearnArticles().map((a) => ({
     category: a.category,
     slug: a.slug,
   }));
@@ -361,6 +361,29 @@ export default function LearnArticlePage({
         <div className="prose-custom space-y-5 text-white/75 leading-relaxed text-[1.05rem]">
           {renderContent(article.content)}
         </div>
+
+        {/* Sources */}
+        {article.sources && article.sources.length > 0 && (
+          <div className="mt-10 pt-8 border-t border-white/10">
+            <h2 className="text-xs font-bold tracking-widest uppercase text-white/40 mb-4">
+              Sources
+            </h2>
+            <ul className="space-y-2">
+              {article.sources.map((src, i) => (
+                <li key={i}>
+                  <a
+                    href={src.url}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    className="text-blue-400 underline underline-offset-2 hover:text-blue-300 text-sm"
+                  >
+                    {src.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* More in category */}
         {relatedArticles.length > 0 && (
