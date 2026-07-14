@@ -6,8 +6,8 @@ const pledges = [
   },
   {
     icon: '◆',
-    title: 'Zero affiliate/sponsored picks',
-    desc: 'Our rankings are never influenced by affiliate commissions or paid placements.',
+    title: 'Ranked by the numbers',
+    desc: 'We rank by risk-adjusted yield, not by who pays us. Any affiliate links are clearly disclosed and kept out of the rankings.',
   },
   {
     icon: '◆',

@@ -154,7 +154,7 @@ export default function Home() {
             <span className="text-white/10">·</span>
             <span>weekly ranked opportunities</span>
             <span className="text-white/10">·</span>
-            <span>0 sponsored picks</span>
+            <span>ranked by risk-adjusted yield</span>
           </div>
         </div>
       </section>
