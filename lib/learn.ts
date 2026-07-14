@@ -9,6 +9,7 @@ export interface LearnArticle {
   content: string;
   publishedAt?: string;
   updatedAt?: string;
+  sources?: Array<{ label: string; url: string }>;
 }
 
 export interface LearnCategory {
@@ -1318,8 +1319,32 @@ For a full overview of what the ATO expects from DeFi investors, read [DeFi tax 
   },
 ];
 
+/**
+ * Returns all articles: hardcoded LEARN_ARTICLES merged with file-based content.
+ * File-based articles win on slug collision (newer content overrides).
+ * Safe to call from server components only (uses fs via content-articles.ts).
+ */
+export function getAllLearnArticles(): LearnArticle[] {
+  // Dynamic require keeps fs out of the client bundle when this module is
+  // tree-shaken at build time. The try/catch is a safety net for edge cases.
+  let fileBased: LearnArticle[] = [];
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const mod = require('./content-articles') as { getFileBasedArticles: () => LearnArticle[] };
+    fileBased = mod.getFileBasedArticles();
+  } catch {
+    // Not on server or gray-matter not available — fall back gracefully
+  }
+
+  if (fileBased.length === 0) return [...LEARN_ARTICLES];
+
+  const fileBasedSlugs = new Set(fileBased.map((a) => a.slug));
+  const hardcoded = LEARN_ARTICLES.filter((a) => !fileBasedSlugs.has(a.slug));
+  return [...hardcoded, ...fileBased];
+}
+
 export function getLearnArticle(slug: string): LearnArticle | undefined {
-  return LEARN_ARTICLES.find((a) => a.slug === slug);
+  return getAllLearnArticles().find((a) => a.slug === slug);
 }
 
 export function getLearnCategory(id: string): LearnCategory | undefined {
@@ -1327,5 +1352,5 @@ export function getLearnCategory(id: string): LearnCategory | undefined {
 }
 
 export function getArticlesByCategory(categoryId: string): LearnArticle[] {
-  return LEARN_ARTICLES.filter((a) => a.category === categoryId);
+  return getAllLearnArticles().filter((a) => a.category === categoryId);
 }
