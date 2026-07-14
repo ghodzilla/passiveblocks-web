@@ -254,6 +254,16 @@ export default function LearnArticlePage({
   const canonical = `${SITE_URL}/learn/${article.category}/${article.slug}`;
   const { published, modified } = articleDates(article);
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Learn", item: `${SITE_URL}/learn` },
+      { "@type": "ListItem", position: 2, name: cat?.label ?? params.category, item: `${SITE_URL}/learn/${params.category}` },
+      { "@type": "ListItem", position: 3, name: article.title },
+    ],
+  };
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -283,6 +293,11 @@ export default function LearnArticlePage({
 
   return (
     <div className="min-h-screen bg-[#08080f] text-white">
+      {/* JSON-LD BreadcrumbList schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       {/* JSON-LD Article schema */}
       <script
         type="application/ld+json"

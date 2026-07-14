@@ -21,6 +21,21 @@ export const metadata: Metadata = {
     description: "Weekly DeFi yield analysis. Best stablecoin rates, staking APY, and LP strategies.",
   },
   metadataBase: new URL("https://passiveblocks.io"),
+  verification: {
+    google: "TODO_ADD_YOUR_GSC_VERIFICATION_CODE",
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "PassiveBlocks",
+  url: "https://passiveblocks.io",
+  logo: "https://www.passiveblocks.io/passiveblocks_logo.png",
+  description: "Weekly passive income analysis across crypto, stocks, and AI. No hype, no sponsored garbage.",
+  sameAs: [
+    "https://twitter.com/passiveblocks",
+  ],
 };
 
 export default function RootLayout({
@@ -30,6 +45,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="antialiased">{children}<Analytics /></body>
     </html>
   );
