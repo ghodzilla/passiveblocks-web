@@ -127,7 +127,6 @@ export default function LearnCategoryPage({
           {pillarStyle ? (
             <h1
               className="text-3xl sm:text-4xl font-extrabold mb-3"
-              style={{ color: pillarStyle.accent === "#1c6b47" ? undefined : undefined }}
             >
               <span className={pillarStyle.textClass}>{cat.label}</span>
             </h1>

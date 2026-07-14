@@ -10,7 +10,7 @@ sources:
   - label: "Base — Getting started on Base"
     url: "https://docs.base.org"
   - label: "ATO — Tax treatment of crypto assets including airdrops"
-    url: "https://www.ato.gov.au/individuals-and-families/investments-and-assets/crypto-asset-investments/crypto-asset-investments-tax"
+    url: "https://www.ato.gov.au/individuals-and-families/investments-and-assets/crypto-asset-investments"
   - label: "IRS — Virtual currency guidance"
     url: "https://www.irs.gov/businesses/small-businesses-self-employed/virtual-currencies"
 ---
@@ -41,7 +41,7 @@ Layer 2 chains (Arbitrum, Base, Optimism, zkSync) dramatically reduced this prob
 
 A swap on Arbitrum costs roughly $0.02–0.10. Providing liquidity costs similar. Multiple protocol interactions per day for months can still come to under $10 in total gas. That changes the economics of broad-coverage farming entirely.
 
-When Arbitrum launched its token in March 2023, users who had done as few as 3–4 transactions on the network received allocations worth $1,000–5,000+. The gas cost of those transactions was under $1.
+When Arbitrum launched its token in March 2023, eligibility required meeting at least 3 of 6 criteria — covering transaction count, value bridged, time span of activity, contracts interacted with, and liquidity provision. The minimum allocation was 625 ARB. Payouts ranged widely depending on how many criteria a wallet met; wallets with minimal or low-value activity were excluded or received smaller allocations. The gas cost of qualifying transactions was under $1 — the constraint was sustained genuine usage, not gas cost.
 
 Since then, most protocols choosing to launch on L2s have used similar distribution models. The practical conclusion: L2 farming has a much better cost-to-opportunity ratio than mainnet farming for most retail participants.
 

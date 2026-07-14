@@ -6,9 +6,9 @@ date: "2026-07-14"
 readTime: "6 min"
 sources:
   - label: "Bittensor — Official documentation"
-    url: "https://docs.bittensor.com"
+    url: "https://docs.learnbittensor.org"
   - label: "Bittensor — Staking and delegation guide"
-    url: "https://docs.bittensor.com/staking-and-delegation/"
+    url: "https://docs.learnbittensor.org/staking-and-delegation/delegation"
   - label: "CoinGecko — TAO token data"
     url: "https://www.coingecko.com/en/coins/bittensor"
 ---
@@ -35,15 +35,17 @@ The process:
 
 Delegated TAO remains in your custody via the delegation mechanism — you're not transferring TAO to the validator, you're signal-voting your stake weight to them.
 
+**Important: the Dynamic TAO (dTAO) upgrade.** Since February 2025, Bittensor has operated under a new staking model called Dynamic TAO (dTAO). Under dTAO, stakers allocate stake into specific subnets rather than delegating to validators network-wide. In return, they receive subnet-specific "alpha" tokens — each subnet has its own token that can be converted back to TAO based on its exchange rate. This adds a layer of risk that did not exist under the original model: your returns now depend not just on the network's overall performance, but on the specific subnet you've staked into and that subnet's alpha-token exchange rate. Subnet selection matters, and a poorly-performing subnet can significantly reduce effective yield even if the broader network is healthy. The delegation mechanics and tooling are documented at docs.learnbittensor.org.
+
 ---
 
 ## The yield mechanics
 
 TAO staking yields are denominated in TAO. When you delegate stake, you receive TAO emissions — not USD.
 
-This is where "passive income" gets complicated. If TAO is worth $400 and you earn 2 TAO per month from staking $10,000 worth of TAO, your nominal monthly income is 2 × $400 = $800 — an appealing 9.6% monthly annualised rate.
+This is where "passive income" gets complicated. Illustrative example: if TAO is worth $400 and you stake $10,000 (roughly 25 TAO), a typical historical yield of ~15% APY would return roughly 0.3 TAO per month — worth around $120 at that price. That's approximately 15% annualised. (Actual yields vary by validator and network conditions — treat this as illustrative, not a forecast.)
 
-If TAO then drops to $150 — which early-stage cryptocurrency tokens do — your 2 TAO per month is now worth $300. Your capital is also worth $3,750 instead of $10,000.
+If TAO then drops to $150 — which early-stage cryptocurrency tokens do — your 0.3 TAO per month is now worth $45. Your capital is also worth roughly $3,750 instead of $10,000.
 
 The staking emissions didn't change. The purchasing power of those emissions changed dramatically.
 
@@ -93,7 +95,7 @@ Bittensor staking is a coherent yield mechanism on a working network. If you bel
 
 It is not reliable USD-denominated passive income. The distinction matters for how you account for it in your financial planning.
 
-If you're evaluating Bittensor as an income source to cover real expenses: factor in that the USD value of your emissions can change by 50–70% in a quarter, and size accordingly. The official Bittensor documentation (linked below) is the best starting point for understanding the delegation process before committing capital.
+If you're evaluating Bittensor as an income source to cover real expenses: factor in that the USD value of your emissions can change by 50–70% in a quarter, and size accordingly. The official Bittensor documentation at docs.learnbittensor.org (linked below) is the best starting point for understanding the delegation process before committing capital.
 
 ---
 

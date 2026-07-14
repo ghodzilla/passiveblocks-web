@@ -38,6 +38,8 @@ export function getFileBasedArticles(): LearnArticle[] {
       const raw = fs.readFileSync(fullPath, 'utf-8')
       const { data, content } = matter(raw)
 
+      if (!data.title) continue
+
       const category: string = (data.pillar as string) ?? entry
       const tag: string = PILLAR_TAGS[category] ?? category
 

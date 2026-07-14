@@ -8,7 +8,7 @@ sources:
   - label: "Uniswap — UNI governance token announcement (Sep 2020)"
     url: "https://uniswap.org/blog/uni"
   - label: "Arbitrum — ARB airdrop criteria and announcement (Mar 2023)"
-    url: "https://arbitrum.foundation/airdrop"
+    url: "https://docs.arbitrum.foundation/airdrop-eligibility-distribution"
   - label: "Optimism — OP token distribution overview"
     url: "https://community.optimism.io/docs/governance/allocations/"
 ---
@@ -25,11 +25,11 @@ Understanding what protocols actually measure helps you focus effort on activiti
 
 ### Uniswap (UNI) — September 2020
 
-Uniswap's 2020 airdrop is the most studied because it was the first major retroactive distribution. Every wallet that had completed at least one swap on Uniswap before the snapshot received 400 UNI tokens.
+Uniswap's 2020 airdrop is the most studied because it was the first major retroactive distribution. Every wallet that had any interaction with Uniswap — swaps, liquidity provision, even failed transactions — before the September 2020 snapshot received 400 UNI tokens.
 
-The eligibility criteria were binary: one swap, and you qualified. That simplicity was by design — Uniswap wanted to reward the widest possible user base.
+The eligibility criteria were binary: any interaction before the snapshot date, and you qualified. That simplicity was by design — Uniswap wanted to reward the widest possible user base.
 
-The lesson that everyone drew: even minimal genuine interaction counted. A single early swap was enough. Wallets that interacted with Uniswap but only after the launch of competing protocols (suggesting they were farming the space, not Uniswap specifically) often received no token.
+The lesson that everyone drew: even minimal genuine interaction counted. The only hard gate was the snapshot date — wallets that used Uniswap before September 2020 qualified regardless of which other protocols they used. Wallets that hadn't interacted before the snapshot received nothing, regardless of subsequent activity.
 
 ### Arbitrum (ARB) — March 2023
 

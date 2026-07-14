@@ -29,7 +29,7 @@ This is why you should treat any specific rate figure in an article — includin
 
 ## Where the 6–8% range comes from today
 
-As of mid-2026, stablecoin lending on major DeFi protocols typically ranges from roughly 4–8%, depending on the protocol and current market conditions. The upper end of that range is available, but not everywhere and not always.
+As of mid-2026, stablecoin lending on major DeFi protocols typically ranges from roughly 6–8% in active markets, dropping toward 4% in quieter periods when borrowing demand falls. The 6–8% range is achievable on established protocols but is not guaranteed — rates are set by utilisation, not a fixed schedule.
 
 ### Aave V3
 
