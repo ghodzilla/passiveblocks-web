@@ -1,25 +1,7 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function PricingPage() {
-  const [loading, setLoading] = useState(false);
-
-  async function handleUpgrade() {
-    setLoading(true);
-    const res = await fetch("/api/stripe/checkout", { method: "POST" });
-    const data = await res.json() as { url?: string; error?: string };
-    if (data.url) {
-      window.location.href = data.url;
-    } else if (data.error === "Not authenticated") {
-      window.location.href = "/login?next=/pricing";
-    } else {
-      setLoading(false);
-    }
-  }
-
   return (
     <div style={{ minHeight: "100vh", background: "#08080f", color: "#edeef0" }}>
       {/* Nav */}
@@ -37,14 +19,14 @@ export default function PricingPage() {
 
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "80px 24px", textAlign: "center" }}>
         <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#6789ed", marginBottom: 16 }}>
-          Premium Access
+          Pricing
         </div>
         <h1 style={{ fontSize: 40, fontWeight: 900, lineHeight: 1.1, marginBottom: 16 }}>
-          Serious yield intelligence,<br />
-          <span style={{ color: "#6789ed" }}>for serious capital.</span>
+          Start free.<br />
+          <span style={{ color: "#6789ed" }}>Premium is coming.</span>
         </h1>
         <p style={{ fontSize: 16, color: "rgba(255,255,255,0.5)", maxWidth: 520, margin: "0 auto 56px", lineHeight: 1.6 }}>
-          Get the full PassiveBlocks toolkit — premium signals, crypto tax calculator, and weekly DeFi analysis from someone actually deploying capital.
+          The weekly newsletter, DeFi yield analysis and our crypto tax calculator — all free. A premium tier built around the tax toolkit is on the way. Join the free list and you&apos;ll hear first.
         </p>
 
         {/* Plans */}
@@ -68,10 +50,10 @@ export default function PricingPage() {
 
           {/* Premium */}
           <div style={{ background: "linear-gradient(135deg, #1a1e2e 0%, #111624 100%)", border: "1px solid #6789ed44", borderRadius: 16, padding: "32px 24px", textAlign: "left", position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", top: 12, right: 12, background: "#6789ed", color: "#fff", fontSize: 10, fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", borderRadius: 20, padding: "3px 10px" }}>Popular</div>
+            <div style={{ position: "absolute", top: 12, right: 12, background: "#6789ed", color: "#fff", fontSize: 10, fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", borderRadius: 20, padding: "3px 10px" }}>Coming soon</div>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#6789ed", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Premium</div>
-            <div style={{ fontSize: 36, fontWeight: 900, marginBottom: 4 }}>$19</div>
-            <div style={{ fontSize: 13, color: "#6b6c72", marginBottom: 24 }}>per month</div>
+            <div style={{ fontSize: 28, fontWeight: 900, marginBottom: 4 }}>Coming soon</div>
+            <div style={{ fontSize: 13, color: "#6b6c72", marginBottom: 24 }}>tax-toolkit tier — pricing TBA</div>
             <ul style={{ listStyle: "none", padding: 0, margin: "0 0 28px", display: "flex", flexDirection: "column", gap: 10 }}>
               {[
                 "Everything in Free",
@@ -79,7 +61,6 @@ export default function PricingPage() {
                 "Capital gains & income tracking",
                 "Gas fee deduction report",
                 "CSV & PDF tax exports",
-                "Premium weekly signals",
                 "Priority support",
               ].map(f => (
                 <li key={f} style={{ fontSize: 13, color: "rgba(255,255,255,0.8)", display: "flex", alignItems: "center", gap: 8 }}>
@@ -87,18 +68,17 @@ export default function PricingPage() {
                 </li>
               ))}
             </ul>
-            <button
-              onClick={handleUpgrade}
-              disabled={loading}
-              style={{ width: "100%", background: "#2563eb", color: "#fff", border: "none", borderRadius: 8, padding: "13px 0", fontSize: 14, fontWeight: 700, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
+            <Link
+              href="/#subscribe"
+              style={{ display: "block", textAlign: "center", width: "100%", boxSizing: "border-box", background: "#2563eb", color: "#fff", borderRadius: 8, padding: "13px 0", fontSize: 14, fontWeight: 700, textDecoration: "none" }}
             >
-              {loading ? "Redirecting…" : "Get Premium — $19/mo"}
-            </button>
+              Join the free list — hear first
+            </Link>
           </div>
         </div>
 
         <p style={{ fontSize: 12, color: "#6b6c72" }}>
-          Cancel anytime. No contracts. Billed monthly via Stripe.
+          Free to start, no card required. When Premium launches, the free list hears first.
         </p>
       </div>
     </div>
