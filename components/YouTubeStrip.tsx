@@ -1,3 +1,13 @@
+import Image from "next/image";
+
+const VIDEOS = [
+  {
+    id: "sg_aDUnJsX8",
+    title: "DeFAI Explained: How AI Agents Automate Passive Income",
+    thumb: "/youtube-defai-thumb.jpg",
+  },
+];
+
 export function YouTubeStrip() {
   return (
     <section className="py-16 px-6">
@@ -17,8 +27,39 @@ export function YouTubeStrip() {
           </a>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white/[0.03] border border-white/[0.07] rounded-2xl overflow-hidden">
+          {VIDEOS.map((video) => (
+            <a
+              key={video.id}
+              href={`https://youtube.com/watch?v=${video.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/[0.03] border border-white/[0.07] rounded-2xl overflow-hidden hover:border-blue-400/20 transition-colors group"
+            >
+              <div className="aspect-video bg-white/[0.05] relative">
+                <Image
+                  src={video.thumb}
+                  alt={video.title}
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div className="p-4">
+                <p className="text-sm font-semibold text-white/80 group-hover:text-white transition-colors line-clamp-2">
+                  {video.title}
+                </p>
+              </div>
+            </a>
+          ))}
+          {/* Coming soon cards for remaining slots */}
+          {Array.from({ length: Math.max(0, 3 - VIDEOS.length) }).map((_, i) => (
+            <div key={`soon-${i}`} className="bg-white/[0.03] border border-white/[0.07] rounded-2xl overflow-hidden">
               <div className="aspect-video bg-white/[0.05] flex items-center justify-center">
                 <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
                   <svg className="w-5 h-5 text-white/30 ml-1" fill="currentColor" viewBox="0 0 24 24">
@@ -44,5 +85,5 @@ export function YouTubeStrip() {
         </div>
       </div>
     </section>
-  )
+  );
 }
