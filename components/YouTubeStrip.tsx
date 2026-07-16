@@ -2,6 +2,11 @@ import Image from "next/image";
 
 const VIDEOS = [
   {
+    id: "gPYUjgR0nqI",
+    title: "A Beginner's Guide to Buying Cryptocurrency (and Making Money)",
+    thumb: "/youtube-beginners-thumb.jpg",
+  },
+  {
     id: "sg_aDUnJsX8",
     title: "DeFAI Explained: How AI Agents Automate Passive Income",
     thumb: "/youtube-defai-thumb.jpg",
