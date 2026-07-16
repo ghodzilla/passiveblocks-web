@@ -75,6 +75,12 @@ export const LEARN_CATEGORIES: LearnCategory[] = [
     icon: "🪂",
   },
   {
+  {
+    id: "weekly-briefing",
+    label: "Weekly Briefing",
+    description: "Every Monday: macro, crypto yield, dividend stocks, and AI infrastructure — one curated read",
+    icon: "📬",
+  },
     id: "ai-crypto",
     label: "AI×Crypto",
     description: "Staking and node rewards on AI infrastructure tokens",

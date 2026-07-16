@@ -1,23 +1,3 @@
----
-title: "Passive Income Weekly #2: CPI Relief, DeFi Yield Rankings, AI Infrastructure Reality Check"
-pillar: "stocks"
-excerpt: "June CPI cooled, risk assets exhaled. But the real story: the widening gap between businesses printing cash (TSMC record margins, sold-out HBM) and narratives printing activity. Plus: Aave Stable Vaults vs Morpho, SCHD vs JEPQ math, and why neocloud vendor financing is a warning."
-date: "2026-07-16"
-readTime: "12 min"
-tag: "Weekly Briefing"
-sources:
-  - label: "June CPI cools to 3.5% — Yahoo Finance"
-    url: "https://finance.yahoo.com/markets/stocks/articles/stock-market-news-july-15-111400318.html"
-  - label: "Visa, Mastercard, Ripple join x402 — CoinDesk"
-    url: "https://www.coindesk.com/tech/2026/07/15/visa-mastercard-and-ripple-join-the-standard-letting-ai-agents-pay-in-stablecoins"
-  - label: "Aave Stable Vaults — Crypto Briefing"
-    url: "https://cryptobriefing.com/aave-stable-vaults-stablecoin-yield/"
-  - label: "TSMC Q2 profit up 77% — TradingKey"
-    url: "https://www.tradingkey.com/analysis/stocks/us-stocks/262033904-tsmc-q2-profit-77-percent-record-hightradingkey"
-  - label: "Neocloud vendor financing — Forbes"
-    url: "https://www.forbes.com/sites/janakirammsv/2026/07/03/why-the-neocloud-gold-rush-is-now-vendor-financed/"
----
-
 # Passive Blocks Weekly — Passive Income × Growth
 
 **Week of Jul 10 – Jul 16, 2026** · *Building durable income and long-term wealth across every rail.*

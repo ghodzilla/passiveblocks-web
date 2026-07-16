@@ -20,6 +20,11 @@ export const PILLARS = {
     textClass: 'text-violet-400',
     borderClass: 'border-violet-400/30',
   },
+'weekly-briefing': {
+    accent: '#0ea5e9',
+    textClass: 'text-sky-400',
+    borderClass: 'border-sky-400/30',
+  },
   'ai-crypto': {
     accent: '#4338ca',
     textClass: 'text-indigo-400',
