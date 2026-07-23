@@ -35,3 +35,38 @@ The second threshold is who pays. On July 1 the government flipped a switch it h
 *This is analysis and general information — not financial advice. Always do your own research.*
 
 **— Passive Blocks**
+
+## Lilly: the leader everyone already owns
+
+[Lilly posted Q2](https://ir.lilly.com/news-releases/news-release-details/lilly-reports-second-quarter-2026-financial-results-and) results that broke both ways. Revenue hit $14.8 billion — up 27% year over year — driven by Mounjaro leading the diabetes label, Zepbound doubling, and Foundayo adding its first full quarter. The GLP-1 portfolio alone crossed $7 billion in quarterly revenue for the first time, and the oral pill Foundayo — one quarter in — is already at a $3.2 billion annualized run rate. Management raised full-year guidance with both hands: revenue now guided to $58–61 billion, non-GAAP EPS to $26.80–28.80.
+
+That is a business firing on every cylinder. The problem is the price. LLY trades near $930 with a forward P/E above 40 — a multiple that assumes the oral pill ramp, the Zepbound label expansions, the Alzheimer's pipeline, and the next-gen oral amylin all land roughly on schedule. Anything that suggests the landing gets softer than expected hits hard. The August 19 analyst day is the next real catalyst, and the market will be listening for three things: Foundayo's trajectory with the self-pay market now established, how the Bridge program's $50 copay translates into volume, and whether the manufacturing build-out — Lilly has committed over $23 billion to U.S. API and fill-finish facilities since 2022 — is on schedule. The thesis is intact. The multiple is not cheap. Size with that in mind.
+
+## Novo Nordisk: the fallen king, now cheaper than it's been
+
+[NOVO.B](https://www.novonordisk.com/investors/financial-results.html) is the mirror image — and that's where this gets interesting. The stock is still down roughly 45% from its mid-2024 peak. The CagriSema phase 3 readout in December 2024 — a perfectly good 22.7% weight loss that the market had decided needed to be 25%+ — triggered a rout that hasn't fully recovered. Then supply constraints on Wegovy injections bled market share to Lilly while the oral transition was underway.
+
+But the same Bridge program that validates LLY's oral pill also opens a massive new segment for Novo. Oral Wegovy doubling forecasts changes the supply story. And the valuation has reset to something much closer to reasonable: forward P/E in the mid-teens, yield above 2% for a company growing revenue in the high teens. This is the part of the obesity trade where the expectations gap works in your favor — a "failed" blockbuster isn't a failed business when it's priced like an incumbent, not a growth darling.
+
+## Structure Therapeutics: the clinical-stage lottery ticket
+
+[Structure's GSBR-1290](https://www.structuretx.com/pipeline/) is the riskiest name on this map by a country mile — a phase 2 oral small-molecule GLP-1 that could be three years behind Lilly's Foundayo or could be the best-in-class oral nobody owns yet. Phase 2b data is expected in the second half of 2026. The bull case: oral-only, differentiated pharmacokinetics, a market that's so big the #3 player can still be a multi-billion-dollar drug. The bear case: clinical trials fail roughly half the time at this stage, and you're paying for an option, not a business. Structure is a minority position with a zero-or-moonshot return profile — treat it exactly that way.
+
+## The toll-collectors: manufacturing and the weight-loss economy
+
+The most under-owned part of the obesity trade might not be the drug companies at all. Every GLP-1 prescription creates downstream demand for compounding pharmacies, device makers, telemedicine platforms, and active pharmaceutical ingredient suppliers. Novo Holdings' $16.5 billion acquisition of Catalent — the biggest CDMO in the fill-finish business — was a direct bet on manufacturing as the bottleneck. Lonza, Thermo Fisher, and Samsung Biologics are the contract manufacturers sitting behind every major label expansion. The pick-and-shovel play in obesity isn't a coin — it's a CDMO.
+
+And then there's the second-order economy: the companies whose demand shrinks *because* GLP-1s work. Medical-device makers for sleep apnea, insulin pump manufacturers, and dialysis providers are all staring at a structural demand shift that's just beginning. The weight-loss economy cuts both ways — own the enablers, be skeptical of what it enables you to stop buying.
+
+## Four ways to own the supercycle
+
+- **Safe — Lilly (LLY):** revenue doubling, oral pill scaling, manufacturing build-out — but priced for it all. Start small, add on any pullback toward the 200-day moving average.
+- **Value — Novo Nordisk (NOVO.B):** the expectations reset, oral Wegovy growing, Bridge program providing a new demand channel. The safest entry point in the sector at current multiples.
+- **Moonshot — Structure Therapeutics (GPCR):** phase 2 oral GLP-1. Tiny, unprofitable, and binary. Compounder-or-bust. Size accordingly.
+- **Toll-taker — Catalent / Lonza:** the CDMOs. Buy the factories that make the pills, not just the companies that sell them. Less upside per dollar, much narrower range of outcomes.
+
+---
+
+*This is analysis and education, not financial advice. GLP-1 drugs carry medical risks including gastrointestinal side effects, pancreatitis, and potential long-term unknowns. All drug pipeline projections are forward-looking and subject to clinical trial outcomes, regulatory decisions, and market dynamics. Do your own research before investing.*
+
+**— Passive Blocks**
