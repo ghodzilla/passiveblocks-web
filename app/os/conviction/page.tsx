@@ -1,7 +1,7 @@
 import { OsShell } from '@/components/os/OsShell';
 import { ScoreBar } from '@/components/os/ScoreBar';
 import { StatStrip } from '@/components/os/StatStrip';
-import { conviction, formatAsOf, formatScore } from '@/lib/os-data';
+import { conviction, formatAsOf, formatScore, formatThemeLabel } from '@/lib/os-data';
 
 export const metadata = {
   title: 'Conviction · OS',
@@ -75,7 +75,7 @@ export default function ConvictionPage() {
                       {row.tier}
                     </span>
                   </td>
-                  <td className="px-4 py-3.5 capitalize text-[var(--muted)]">{row.theme_bucket}</td>
+                  <td className="px-4 py-3.5 text-[var(--muted)]">{formatThemeLabel(row.theme_bucket)}</td>
                   <td className="px-4 py-3.5 font-mono text-xs text-foreground">{row.instrument}</td>
                   <td className="max-w-xs px-4 py-3.5 text-xs leading-relaxed text-[var(--muted)]">
                     {row.why}

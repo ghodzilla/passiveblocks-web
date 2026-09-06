@@ -1,4 +1,4 @@
-import { formatPct } from '@/lib/os-data';
+import { formatPct, formatThemeLabel } from '@/lib/os-data';
 
 export function ThemeBars({
   exposure,
@@ -16,7 +16,7 @@ export function ThemeBars({
         return (
           <div key={theme}>
             <div className="mb-1 flex items-baseline justify-between gap-3 text-sm">
-              <span className="font-medium capitalize text-foreground">{theme}</span>
+              <span className="font-medium text-foreground">{formatThemeLabel(theme)}</span>
               <span className="font-mono text-xs text-[var(--muted)]">
                 {formatPct(pct)} / {formatPct(capPct, 0)} cap
               </span>

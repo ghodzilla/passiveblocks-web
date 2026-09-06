@@ -2,7 +2,7 @@ import { OsShell } from '@/components/os/OsShell';
 import { StatStrip } from '@/components/os/StatStrip';
 import { ThemeBars } from '@/components/os/ThemeBars';
 import { WeightBar } from '@/components/os/WeightBar';
-import { formatAsOf, formatPct, formatScore, paperPortfolio, targetBook } from '@/lib/os-data';
+import { formatAsOf, formatPct, formatScore, formatThemeLabel, paperPortfolio, targetBook } from '@/lib/os-data';
 
 export const metadata = {
   title: 'Book · OS',
@@ -22,7 +22,7 @@ export default function BookPage() {
     >
       <StatStrip
         stats={[
-          { label: 'Invested', value: formatPct(targetBook.invested_pct), hint: targetBook.status },
+          { label: 'Invested', value: formatPct(targetBook.invested_pct), hint: 'Vera book-signed' },
           { label: 'Cash', value: formatPct(targetBook.cash_pct), hint: 'Reserve' },
           {
             label: 'Fills',
@@ -58,7 +58,7 @@ export default function BookPage() {
                   <tr key={p.symbol} className="hover:bg-white/[0.02]">
                     <td className="py-3.5">
                       <p className="font-semibold">{p.symbol}</p>
-                      <p className="text-[11px] capitalize text-[var(--muted)]">{p.theme_bucket}</p>
+                      <p className="text-[11px] text-[var(--muted)]">{formatThemeLabel(p.theme_bucket)}</p>
                     </td>
                     <td className="py-3.5">
                       <WeightBar pct={p.weight_pct} max={ceilings.max_single_name_pct} />

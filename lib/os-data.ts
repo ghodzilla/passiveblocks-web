@@ -118,3 +118,14 @@ export function formatDate(iso: string) {
     return iso.slice(0, 10);
   }
 }
+
+export function formatThemeLabel(theme: string) {
+  const key = theme.trim().toLowerCase();
+  const special: Record<string, string> = {
+    ai: 'AI',
+    btc: 'BTC',
+    eth: 'ETH',
+  };
+  if (special[key]) return special[key];
+  return key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}

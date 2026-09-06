@@ -3,7 +3,7 @@ import { OsCard } from '@/components/os/OsCard';
 import { ScoreBar } from '@/components/os/ScoreBar';
 import { StatStrip } from '@/components/os/StatStrip';
 import { ThemeBars } from '@/components/os/ThemeBars';
-import { conviction, formatAsOf, formatPct, paperPortfolio, targetBook } from '@/lib/os-data';
+import { conviction, formatAsOf, formatPct, paperPortfolio, targetBook, formatThemeLabel } from '@/lib/os-data';
 
 export const metadata = {
   title: 'OS · Passive Blocks',
@@ -62,7 +62,7 @@ export default function OsHomePage() {
                 <div className="min-w-0">
                   <p className="font-semibold tracking-tight">{row.symbol}</p>
                   <p className="text-xs text-[var(--muted)]">
-                    {row.instrument} · {row.theme_bucket} · {row.tier}
+                    {row.instrument} · {formatThemeLabel(row.theme_bucket)} · {row.tier}
                   </p>
                 </div>
                 <ScoreBar score={row.score} />
