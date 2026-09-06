@@ -2,7 +2,7 @@
   "as_of": "2026-09-06T23:21:46.915640+00:00",
   "mode": "show_line_signed",
   "label": "Top-100 Conviction Show (Vera line-signed tiers)",
-  "note": "Show\u2260Act. show_rows Vera line-signed 2026-09-07 (BE retracted to INSUFFICIENT). book_rows = 8 Vera Act weights (paper HOLD). Future book-eligible (not signed): SOL CAT.",
+  "note": "Show\u2260Act. show_rows Vera line-signed 2026-09-07 (BE retracted to INSUFFICIENT). book_rows = 8 Vera Act weights (paper HOLD). Future book-eligible not yet in Act book: SOL, CAT.",
   "counts": {
     "rows": 100,
     "by_decision": {
@@ -132,7 +132,7 @@
     {
       "symbol": "BE",
       "score": 70.0,
-      "tier": "Growth",
+      "tier": "Watch",
       "evidence_grade": "strong",
       "primary_theme": "power/grid",
       "jordi_layer": "power",
@@ -142,7 +142,7 @@
       "show_ok": true,
       "book_eligible": false,
       "vera_note": "Vera 2026-09-07: SIGN_GROWTH retracted \u2192 INSUFFICIENT (Sam cite audit \u2014 not Bloom Energy). See risk/signs/2026-09-07-BE-line-sign-revision.json",
-      "writeup": "BE mapped via Jordi-style theme\u2192name (power/grid / power). Corpus calls: 9 across 9 voices. Evidence grade: strong. Dry Show only \u2014 not book-signed; Vera line-sign required before Act. Latest: Jordi Visser (2026-06-21): AI tools obsolete legacy SaaS; long semis / short software..",
+      "writeup": "BE mapped via Jordi-style theme\u2192name (power/grid / power). Corpus calls: 9 across 9 voices. Evidence grade: strong. Dry Show only \u2014 not book-signed; Vera line-sign required before Act. Latest: Jordi Visser (2026-06-21): AI tools obsolete legacy SaaS; long semis / short software.. Vera retraction 2026-09-07: prior Growth sign void \u2014 coverage was not Bloom Energy.",
       "flags": [
         "cite_false_positive",
         "sam_sense_gap",
@@ -1776,5 +1776,5 @@
   "vera_signed_at": "2026-09-06T23:21:46.915640+00:00",
   "attestation": "/workspace/passiveblocks/risk/signs/2026-09-07-conviction-ledger-top100-line-sign.json",
   "revised_at": "2026-09-06T23:25:36.586739+00:00",
-  "revision_note": "BE SIGN_GROWTH retracted \u2192 INSUFFICIENT (Sam cite gap)"
+  "revision_note": "BE SIGN_GROWTH retracted \u2192 INSUFFICIENT (false-positive cite). Future book-eligible excludes names already book-signed."
 }
