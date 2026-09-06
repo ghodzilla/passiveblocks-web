@@ -3,7 +3,7 @@ import { OsCard } from '@/components/os/OsCard';
 import { ScoreBar } from '@/components/os/ScoreBar';
 import { StatStrip } from '@/components/os/StatStrip';
 import { ThemeBars } from '@/components/os/ThemeBars';
-import { conviction, formatAsOf, formatPct, paperPortfolio, targetBook, formatThemeLabel } from '@/lib/os-data';
+import { conviction, formatAsOf, formatPct, formatThemeLabel, hasSignalStatus, paperPortfolio, signalPack, targetBook } from '@/lib/os-data';
 
 export const metadata = {
   title: 'OS · Passive Blocks',
@@ -13,6 +13,7 @@ export const metadata = {
 export default function OsHomePage() {
   const top = [...conviction.rows].sort((a, b) => b.score - a.score).slice(0, 3);
   const ceilings = targetBook.risk_ceilings_ref;
+  const signalLive = hasSignalStatus(signalPack);
 
   return (
     <OsShell
@@ -115,17 +116,27 @@ export default function OsHomePage() {
           href="/os/signal"
           label="Sense"
           title="Signal inbox"
-          description="Roster and transcript ingest. Packs land here after Sam ships."
-          status="Wiring"
-          accent="neutral"
+          description="Adopted weekly pack — regime, theme calls, and recent roster hits. Sense never sizes the book."
+          status={signalLive ? 'Live' : 'Waiting'}
+          accent={signalLive ? 'ok' : 'neutral'}
+          meta={
+            signalLive
+              ? `${signalPack.recent_signals.length} signals · ${signalPack.brief.themes.length} themes`
+              : undefined
+          }
         />
         <OsCard
           href="/os/sources"
           label="Truth"
           title="Sources"
-          description="Transcript and research provenance for every score claim."
-          status="Soon"
-          accent="neutral"
+          description="Figures, URLs, and brief citations derived from the Sense pack."
+          status={signalLive ? 'Live' : 'Waiting'}
+          accent={signalLive ? 'accent' : 'neutral'}
+          meta={
+            signalLive
+              ? `${new Set(signalPack.recent_signals.map((s) => s.figure)).size} figures`
+              : undefined
+          }
         />
       </div>
     </OsShell>

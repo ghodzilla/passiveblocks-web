@@ -1,0 +1,1562 @@
+{
+  "status": {
+    "gate": "GATE_OPEN",
+    "as_of": "2026-09-06",
+    "valid_until": "2026-09-13",
+    "author_sense": "Sam Passive Blocks Signal",
+    "adopted_by": "Diego Passive Blocks",
+    "paper_book_action": "HOLD",
+    "conditions": [
+      "new Act lines need Vera book-sign + theme_regime_brief_ref",
+      "SPCX/TSLA/AI-chase remain do-not-add this week",
+      "Tom Lee 2026-09-01 transcript PARTIAL (1 call) — treat cautiously"
+    ],
+    "note": "Canonical Sense pack Decide-adopted. Focus extract 172 @ 2026-09-06. OneDrive signals.json restored (497339). Engine truth remains box-local signal-db/onedrive-cache. Paper book HOLD.",
+    "signals_json": {
+      "n_records": 172,
+      "generated": "2026-09-06"
+    }
+  },
+  "brief": {
+    "as_of": "2026-09-06",
+    "timezone": "Australia/Melbourne (AEST)",
+    "gate": "GATE_OPEN",
+    "author": "Sense (Sam)",
+    "adopted_by": "Diego Passive Blocks (Decide)",
+    "adopted_at": "2026-09-06T21:33:00+10:00",
+    "regime_one_liner": "Fiscal-dominance / hard-asset debasement regime; AI demand intact but multiple-compression mud; Hormuz/choke-point energy premium — OW hard assets + copper + crypto rails; N AI/semis; UW long nominal duration.",
+    "paper_book_action": "HOLD",
+    "paper_book_implications": {
+      "hold": [
+        "GOLD",
+        "SILVER",
+        "BTC",
+        "ETH",
+        "COPPER",
+        "TSM"
+      ],
+      "hold_no_add": [
+        "NVDA"
+      ],
+      "hold_trim_watch": [
+        "OIL"
+      ],
+      "trim": [],
+      "add_queue": [
+        "LLY",
+        "DEFENSE",
+        "LMT",
+        "RTX"
+      ],
+      "will_not_size": [
+        "POWER",
+        "SPCX",
+        "TSLA",
+        "TLT",
+        "AI BASKET",
+        "NUCLEAR"
+      ]
+    },
+    "pending": "Vera book-sign required for any new Act lines; Tom Lee 2026-09-01 PARTIAL",
+    "falsifiers": [
+      "Debasement break: durable USD strength + gold/silver trend failure / CB diversification stops",
+      "Hormuz normalization: sustained pre-war Gulf crude throughput without fiscal/inflation echo",
+      "AI demand break: hyperscaler capex/backlog collapse or memory-bottleneck relief",
+      "Liquidity kill for crypto: Howell falling-liquidity momentum dominates debasement-crypto bid",
+      "Duration vindication: Warsh delivers clean disinflation + credible long-end bid rewarding TLT"
+    ],
+    "themes": [
+      {
+        "name": "Hard-asset debasement (Gold/Silver)",
+        "stance": "OW",
+        "citation_count": 5,
+        "citations": [
+          "onedrive-cache/signals.json|Luke Gromen|2026-08-28|Some quick thoughts on gold, BTC, and \"my framework\"|https://www.youtube.com/watch?v=R1VLmuXYU3o",
+          "onedrive-cache/signals.json|Jordi Visser|2026-08-23|The AI Crypto Macro Nexus Point|https://www.youtube.com/watch?v=FoSLsvUKvws",
+          "onedrive-cache/signals.json|Jesse Day|2026-08-27|Debit Spiral About to Implode and $20k Gold is the Only Way Out|https://www.youtube.com/watch?v=YClSbElOUtI",
+          "onedrive-cache/signals.json|Rick Rule|2026-08-22|Rick Rule Evaluates 8 Mining Stocks",
+          "onedrive-cache/generational-themes-2026.md"
+        ]
+      },
+      {
+        "name": "Copper / critical minerals",
+        "stance": "OW",
+        "citation_count": 4,
+        "citations": [
+          "onedrive-cache/signals.json|Crux Investor|2026-08-28|Selkirk Copper|https://www.youtube.com/watch?v=sEyT9WPM5Bo",
+          "onedrive-cache/signals.json|Crux Investor|2026-08-31|Drill Results Pile Up|https://www.youtube.com/watch?v=HEnRn9p8c9w",
+          "onedrive-cache/signals.json|Jesse Day|2026-09-01|GOLD Just Became a Real Alternative|https://www.youtube.com/watch?v=hrG7rtIRFIQ",
+          "onedrive-cache/generational-themes-2026.md"
+        ]
+      },
+      {
+        "name": "Crypto rails / tokenization (BTC/ETH)",
+        "stance": "OW",
+        "citation_count": 5,
+        "citations": [
+          "onedrive-cache/signals.json|Luke Gromen|2026-08-28|BTC stance_change=flip",
+          "onedrive-cache/signals.json|Jordi Visser|2026-08-23|BTC/ETH/tokenization",
+          "onedrive-cache/signals.json|Jordi Visser|2026-08-30|Bessent Gets Drucked|https://www.youtube.com/watch?v=2FND8g-De8Y",
+          "onedrive-cache/signals.json|Arthur Hayes|2026-08-21|Bitcoin to $200K|https://www.youtube.com/watch?v=0b_nJ53uiA0",
+          "signal-db/transcripts/Tom-Lee/2026-09-02-fOMlh1gq33g.md|video_id=fOMlh1gq33g"
+        ]
+      },
+      {
+        "name": "AI compute / semis infrastructure",
+        "stance": "N",
+        "citation_count": 5,
+        "citations": [
+          "onedrive-cache/signals.json|Jensen Huang|2026-09-01|NVDA/HBM",
+          "onedrive-cache/signals.json|Jordi Visser|2026-08-02|hyperscalers flip bullish|https://www.youtube.com/watch?v=VVfTS50v91I",
+          "onedrive-cache/signals.json|Jordi Visser|2026-08-30|AI infra mudstorm",
+          "signal-db/transcripts/Tom-Lee/2026-09-02-fOMlh1gq33g.md|video_id=fOMlh1gq33g",
+          "onedrive-cache/generational-themes-2026.md"
+        ]
+      },
+      {
+        "name": "Long nominal duration (Treasuries/TLT)",
+        "stance": "UW",
+        "citation_count": 4,
+        "citations": [
+          "onedrive-cache/signals.json|Luke Gromen|2026-08-28|long-end bearish",
+          "onedrive-cache/signals.json|Jesse Day|2026-08-27|30Y flip bearish",
+          "onedrive-cache/signals.json|Raoul Pal|2026-08-23|Bianco panel Treasuries bearish|https://www.youtube.com/watch?v=lFpQuOEzGzc",
+          "signal-db/transcripts/Danielle-DiMartino-Booth/2026-06-11-SvQe7R6283c.md|video_id=SvQe7R6283c"
+        ]
+      }
+    ],
+    "signals_json_n": 172,
+    "signals_json_generated": "2026-09-06",
+    "brief_md": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-06.md"
+  },
+  "recent_signals": [
+    {
+      "figure": "Peter Zeihan",
+      "org": "Zeihan on Geopolitics",
+      "lane": "geopolitics/defense",
+      "date": "2026-09-04",
+      "title": "Global Shipping Comes Under Attack || Peter Zeihan",
+      "url": "https://www.youtube.com/watch?v=0hPG4-41iUo",
+      "summary": "Zeihan says Hormuz throughput is neither the admin's claimed ~9 Mbd nor Iran's near-zero — Western traffic trackers imply ~3–5 Mbd vs ~20–22 Mbd pre-war, still a multi-million-barrel shortfall and 'more than enough for an energy crisis.' US overwatch enabling Arab-side 'shadow fleet' transponder-off transfers is costly and unsustainable; no power can secure all eight global chokepoints, Bab el-Mandeb/Somali piracy is already returning — insecure seas are the new normal, while disruption remains asymmetrically easy.",
+      "themes": [
+        "Strait of Hormuz throughput",
+        "energy crisis / crude shortfall",
+        "US Navy overwatch / shadow fleet echo",
+        "global shipping chokepoints",
+        "Bab el-Mandeb / piracy",
+        "asymmetric sea-lane disruption"
+      ],
+      "calls": [
+        {
+          "asset": "Hormuz crude throughput",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Crude oil / energy crisis risk premium",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Global sea-lane security / shipping risk",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Peter Zeihan",
+      "org": "Zeihan on Geopolitics",
+      "lane": "geopolitics/defense",
+      "date": "2026-09-03",
+      "title": "China’s Real Estate System Is Failing || Peter Zeihan",
+      "url": "https://www.youtube.com/watch?v=TU7KVw9j060",
+      "summary": "After Evergrande's ex-chair got life imprisonment, Zeihan frames China's property model as a completed bust: overbuilding by 4–5x plus a 35-year demographic collapse, new construction already −75% in five years with another ~20% drop expected this year, and official inflation-adjusted home values below 2005 boom-start levels. Citizens park ~$22T in deposits earning <1% rather than stocks; he calls Chinese equities a fool's errand because subsidized credit destroys equity returns, and capital controls block the only productive exit.",
+      "themes": [
+        "China property collapse",
+        "Evergrande / local-government land finance",
+        "China demographics",
+        "Chinese equities as trap",
+        "deposit rates / capital controls"
+      ],
+      "calls": [
+        {
+          "asset": "China property / new construction",
+          "stance": "bearish"
+        },
+        {
+          "asset": "China equities",
+          "stance": "bearish"
+        },
+        {
+          "asset": "China household deposits / capital flight pressure",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "figure": "Tom Lee",
+      "org": "Fundstrat",
+      "lane": "macro/equities/crypto",
+      "date": "2026-09-02",
+      "title": "Why the Wall of Worry Points Higher in September",
+      "url": "https://www.youtube.com/watch?v=fOMlh1gq33g",
+      "summary": "Lee is contrarian bullish on September equities: inflation fears should quell around jobs/CPI/FOMC, wall-of-worry caution is buyable, and crypto's violent rebound historically leads the S&P by ~1 month. He sees near-term AI multiple expansion capped by data-center politics/churn but still expects AI ROI stocks to rebound and frames software as a durable downstream AI trade; NVDA's multiple is stuck but he argues it deserves to re-rate higher.",
+      "themes": [
+        "September seasonality / wall of worry",
+        "inflation / Fed hike odds",
+        "crypto as SPX lead",
+        "AI trade / data-center politics",
+        "software as AI downstream",
+        "NVDA multiple"
+      ],
+      "calls": [
+        {
+          "asset": "SPX / US equities",
+          "stance": "bullish"
+        },
+        {
+          "asset": "BTC / crypto complex",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Fed funds / September hike odds",
+          "stance": "bearish"
+        },
+        {
+          "asset": "AI / Mag7 equities (near-term multiples)",
+          "stance": "neutral"
+        },
+        {
+          "asset": "NVDA",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Software / AI-centric SaaS",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Jesse Day",
+      "org": "Commodity Culture",
+      "lane": "metals/mining",
+      "date": "2026-09-01",
+      "title": "GOLD Just Became a Real Alternative to the Dollar (Here’s Why): Nick Campbell",
+      "url": "https://www.youtube.com/watch?v=hrG7rtIRFIQ",
+      "summary": "Phoenix Metals CEO Nick Campbell (self-described non-gold-bug) makes a structural long-term bull case for gold on dollar-diversification and for copper on electrification, AI and supply lags, while pitching Phoenix's Greenwood BC copper-gold district. Sponsored interview.",
+      "themes": [
+        "gold as reserve alternative",
+        "dollar debasement",
+        "copper supply crunch",
+        "electrification/AI",
+        "deglobalization",
+        "junior mining (Phoenix Metals)"
+      ],
+      "calls": [
+        {
+          "asset": "Gold (XAU)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Copper (HG)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Phoenix Metals",
+          "stance": "bullish"
+        },
+        {
+          "asset": "US dollar (DXY)",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Jensen Huang",
+      "org": "NVIDIA (NVDA)",
+      "lane": "AI-stack exec",
+      "date": "2026-09-01",
+      "title": "NVIDIA's Jensen Huang On NVIDIA, MediaTek, Memory, NVIDIA Stock, Bottlenecks - NVDA Update",
+      "url": "https://www.youtube.com/watch?v=UG36zbFOojw",
+      "summary": "NVIDIA expands its MediaTek partnership with a $3.5B convertible-bond investment and MediaTek adoption of NVLink Fusion, letting custom XPUs plug into NVIDIA AI factories. Jensen frames XPUs as complementary, flags memory/HBM as the key bottleneck, and argues lower token costs drive more compute demand.",
+      "themes": [
+        "NVLink Fusion",
+        "custom silicon / XPU",
+        "MediaTek partnership",
+        "memory / HBM bottleneck",
+        "token economics",
+        "physical AI"
+      ],
+      "calls": [
+        {
+          "asset": "NVIDIA (NVDA)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "MediaTek (TWSE: 2454)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Memory / HBM makers (SK Hynix, Samsung, Micron MU)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "OpenAI / Anthropic (Frontier Labs)",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Farzad Mesbahi",
+      "org": "Farzad FM (independent)",
+      "lane": "Tesla/EV/equities",
+      "date": "2026-09-01",
+      "title": "INTERNET BREAKS w/ Elon Musk Speech at G20",
+      "url": "https://www.youtube.com/watch?v=inEO2FaU20E",
+      "summary": "Farzad shares Elon Musk's G20 remarks: AI/robotics to hugely expand the global economy, 1B+ humanoid robots within a decade, and a looming power shortfall with SpaceX already leasing AI compute from its own power plants. David Sacks argues for light-touch AI regulation and behind-the-meter data-center power; Commonwealth Fusion's CEO targets fusion on the grid in the early 2030s.",
+      "themes": [
+        "humanoid robots / Optimus",
+        "Tesla FSD",
+        "AI productivity",
+        "power shortfall",
+        "SpaceX compute",
+        "fusion energy",
+        "AI regulation"
+      ],
+      "calls": [
+        {
+          "asset": "Tesla (TSLA)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Tesla Optimus / humanoid robots",
+          "stance": "bullish"
+        },
+        {
+          "asset": "SpaceX",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Power / energy sector",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Commonwealth Fusion Systems (private)",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Tom Lee",
+      "org": "Fundstrat",
+      "lane": "macro/equities/crypto",
+      "date": "2026-09-01",
+      "title": "Why Tom Lee is Bullish on September",
+      "url": "https://www.youtube.com/watch?v=y-ylpbC8zPk",
+      "summary": "PARTIAL transcript (~19 lines): Lee tees up five contrarian reasons for September upside despite negative seasonality, noting midterm-year Septembers since 1854 have only ~40% odds of being an up month — the worst single month historically. Full rationale list not present in captured text.",
+      "themes": [
+        "September seasonality",
+        "midterm election year",
+        "contrarian equity upside"
+      ],
+      "calls": [
+        {
+          "asset": "SPX / US equities",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Crux Investor",
+      "org": "Crux Investor",
+      "lane": "uranium/mining",
+      "date": "2026-08-31",
+      "title": "Drill Results Pile Up, But Real Scarcity Is in Copper Development",
+      "url": "https://www.youtube.com/watch?v=HEnRn9p8c9w",
+      "summary": "Olive Resource Capital's Derek McPherson and Sam Pelaez note well-funded juniors delivering strong summer drill results that are met with muted share-price reactions (a possible trading opportunity), and stress a real scarcity of tier-1 copper development projects, validated by MinRes hunting a copper acquisition.",
+      "themes": [
+        "junior mining drill season",
+        "well-funded explorers",
+        "copper development scarcity",
+        "developer-to-producer arbitrage",
+        "muted share-price reactions",
+        "lab/rig bottlenecks"
+      ],
+      "calls": [
+        {
+          "asset": "Copper development projects (sector)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Gladiator Metals (Yukon copper)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Valhalla Metals (Alaska VMS)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Edge Copper (Arizona)",
+          "stance": "neutral"
+        },
+        {
+          "asset": "Junior explorers (drill-result plays)",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Peter Attia",
+      "org": "The Drive",
+      "lane": "longevity/health-science",
+      "date": "2026-08-31",
+      "title": "406 - Migraine, cluster headache, and tension headache: symptoms, causes, prevention, and treatment",
+      "url": "https://www.youtube.com/watch?v=uiNEP8A34SE",
+      "summary": "Health-science episode with a headache specialist on migraine, tension, and cluster headaches: diagnosis, triggers, hormonal drivers and treatment. No direct investment signal.",
+      "themes": [
+        "migraine",
+        "cluster headache",
+        "tension headache",
+        "estrogen/hormones",
+        "headache diagnosis",
+        "neurology"
+      ],
+      "calls": []
+    },
+    {
+      "figure": "Jordi Visser",
+      "org": "22V Research / Visser Labs",
+      "lane": "macro/AI/crypto",
+      "date": "2026-08-30",
+      "title": "Bessent Gets Drucked: Bitcoin, AI, and the New Macro Clock",
+      "url": "https://www.youtube.com/watch?v=2FND8g-De8Y",
+      "summary": "AI's enormous capital needs pressure Treasury yields, forcing the administration into fiscal dominance and capping the long end; with compute scarce and tokenization accelerating, Visser is rotating out of tired AI-infra/semis into crypto (BTC/ETH/SOL) as the source of the next 5-10 baggers.",
+      "themes": [
+        "AI-crypto-macro collision",
+        "tokenization",
+        "fiscal dominance",
+        "compute scarcity",
+        "crypto rotation",
+        "multiple compression"
+      ],
+      "calls": [
+        {
+          "asset": "Bitcoin (BTC)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Ethereum (ETH)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Solana (SOL)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Crypto/tokenization theme",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Nvidia (NVDA)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "AI infrastructure/semiconductors (thematic)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Gold",
+          "stance": "bullish"
+        },
+        {
+          "asset": "S&P 500 / public equities",
+          "stance": "bearish"
+        },
+        {
+          "asset": "US 10Y / long-end Treasuries",
+          "stance": "neutral"
+        },
+        {
+          "asset": "Palantir (PLTR)",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Raoul Pal",
+      "org": "Real Vision / Global Macro Investor",
+      "lane": "macro/crypto",
+      "date": "2026-08-30",
+      "title": "Why AI Could Trigger the Next Lithium Boom w/ Howard Klein and Matt Fernley of @RockStockChannel",
+      "url": "https://www.youtube.com/watch?v=IIsF8dmCJFY",
+      "summary": "A Real Vision guest segment (Howard Klein/Matt Fernley of RK Equity) arguing that AI compute, drone warfare and electricity affordability turn lithium/batteries into a structural US strategic need; lithium demand triples-plus over 10 years while depressed miner valuations don't reflect a stabilized ~$20k/ton price.",
+      "themes": [
+        "lithium",
+        "battery supply chain",
+        "AI power demand",
+        "critical minerals",
+        "energy dominance",
+        "mining equities"
+      ],
+      "calls": [
+        {
+          "asset": "Lithium (commodity)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Lithium mining equities (sector)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Lithium Argentina (LAR)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Levera / Piedmont Lithium (former)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Albemarle (ALB) / SQM",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Rare earths",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "figure": "Luke Gromen",
+      "org": "FFTT",
+      "lane": "macro/fiscal",
+      "date": "2026-08-28",
+      "title": "Some quick thoughts on gold, BTC, and \"my framework\"",
+      "url": "https://www.youtube.com/watch?v=R1VLmuXYU3o",
+      "summary": "In fiscal dominance, hiking or cutting both worsen the debt, so 'all roads lead to gold' — likely a US/China-aligned gold revaluation toward ~$22k as a neutral settlement asset. Notably, Gromen says the debt-debasement trade is back on and he is 'getting much more interested' in Bitcoin again after selling most of it.",
+      "themes": [
+        "gold revaluation",
+        "fiscal dominance",
+        "debt debasement",
+        "Bitcoin re-engagement",
+        "dollar weakness",
+        "yuan strength"
+      ],
+      "calls": [
+        {
+          "asset": "Gold",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Bitcoin (BTC)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "US long-term Treasuries / long-end bonds",
+          "stance": "bearish"
+        },
+        {
+          "asset": "US Dollar (USD)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Chinese yuan (CNY)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Japanese yen (JPY)",
+          "stance": "neutral"
+        },
+        {
+          "asset": "30-year TIPS",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Crux Investor",
+      "org": "Crux Investor",
+      "lane": "uranium/mining",
+      "date": "2026-08-28",
+      "title": "Selkirk Copper (TSXV:SCMI) - Doubles Mineral Resource Estimate, Minto to Restart by 2028",
+      "url": "https://www.youtube.com/watch?v=sEyT9WPM5Bo",
+      "summary": "Selkirk Copper CEO Colin Judrey outlines a disciplined restart of the past-producing Minto copper-gold-silver mine in the Yukon, having doubled the resource (+184/185% contained Cu/Au) and shed the old gold/silver stream. He frames it against a structurally tight copper market with negative TCRCs.",
+      "themes": [
+        "copper mine restart",
+        "Yukon / Minto",
+        "resource upgrade",
+        "tight copper concentrate market",
+        "negative TCRCs",
+        "First Nation ownership"
+      ],
+      "calls": [
+        {
+          "asset": "Selkirk Copper (TSXV:SCMI)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Copper (HG)",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Jesse Day",
+      "org": "Commodity Culture",
+      "lane": "metals/mining",
+      "date": "2026-08-27",
+      "title": "Debit Spiral About to Implode and $20k Gold is the Only Way Out: Matthew Piepenburg",
+      "url": "https://www.youtube.com/watch?v=YClSbElOUtI",
+      "summary": "VonGreyerz's Matthew Piepenburg argues the US is in a terminal debt spiral with no auto-bid for Treasuries, and that a gold revaluation to $15-20k is inevitable as Washington debases the dollar. He is aggressively bullish gold and silver, bearish equities and long bonds.",
+      "themes": [
+        "sovereign debt crisis",
+        "de-dollarization",
+        "gold revaluation",
+        "dollar debasement",
+        "sound money",
+        "silver"
+      ],
+      "calls": [
+        {
+          "asset": "Gold (XAU)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Silver (XAG)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "US equities S&P500/Nasdaq (SPX)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Long-dated US Treasuries (30Y)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "US dollar (DXY)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Gold & silver miners",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Private credit / private equity",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Commodities / hard assets",
+          "stance": "bullish"
+        },
+        {
+          "asset": "AI / tech stocks",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Jensen Huang",
+      "org": "NVIDIA (NVDA)",
+      "lane": "AI-stack exec",
+      "date": "2026-08-27",
+      "title": "NVIDIA's Jensen Huang After NVIDIA Earnings - NVDA Update",
+      "url": "https://www.youtube.com/watch?v=euiXJ3mWkC8",
+      "summary": "Post-earnings NVIDIA promotional interview: blowout beat with revenue and EPS more than doubling YoY, and a rare ~70% FY2028 revenue-growth guide vs ~44% consensus. Jensen dismisses circular-financing fears and XPU competition; memory prices to pressure gross margins near term.",
+      "themes": [
+        "AI compute demand",
+        "NVDA earnings",
+        "memory pricing",
+        "circular financing",
+        "physical AI",
+        "frontier labs"
+      ],
+      "calls": [
+        {
+          "asset": "NVIDIA (NVDA)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Memory makers (Micron MU / SK Hynix / Samsung)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Amazon / AWS (AMZN)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "OpenAI / Anthropic (Frontier Labs)",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Peter Attia",
+      "org": "The Drive",
+      "lane": "longevity/health-science",
+      "date": "2026-08-24",
+      "title": "Metabolic liver health: how to assess risk, catch dysfunction early, and more (AMA 88 sneak peek)",
+      "url": "https://www.youtube.com/watch?v=9FMwKc4DfSM",
+      "summary": "Health-science AMA on metabolic (MASLD/MASH) liver disease: drivers, four-stage progression, visceral fat, resistance training, alcohol and genetics. No direct investment signal.",
+      "themes": [
+        "metabolic liver disease",
+        "MASLD/MASH",
+        "insulin resistance",
+        "visceral fat",
+        "resistance training",
+        "alcohol and liver"
+      ],
+      "calls": []
+    },
+    {
+      "figure": "Jordi Visser",
+      "org": "22V Research / Visser Labs",
+      "lane": "macro/AI/crypto",
+      "date": "2026-08-23",
+      "title": "The AI Crypto Macro Nexus Point: Why Bitcoin Matters to Investors",
+      "url": "https://www.youtube.com/watch?v=FoSLsvUKvws",
+      "summary": "Visser calls Bitcoin/crypto the 'purest AI trade' now entering its adoption third wave and a hedge against AI-driven terminal-value destruction and fiat debasement, citing a tape breakout above the 200-day MA; he is most bullish on Bitcoin, Ethereum, MicroStrategy, silver and Eli Lilly while structurally bearish on the S&P and skeptical the long end can break higher.",
+      "themes": [
+        "ai-crypto-macro-nexus",
+        "bitcoin-adoption",
+        "terminal-value-destruction",
+        "tokenization",
+        "debasement-trade",
+        "fed-restructuring"
+      ],
+      "calls": [
+        {
+          "asset": "Bitcoin",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Ethereum",
+          "stance": "bullish"
+        },
+        {
+          "asset": "MicroStrategy (MSTR)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Silver",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Gold",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Eli Lilly (LLY)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "AI infrastructure / thematic (incl. Nvidia)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "S&P 500 / public equities",
+          "stance": "bearish"
+        },
+        {
+          "asset": "US long-end Treasuries / 10Y",
+          "stance": "neutral"
+        },
+        {
+          "asset": "Crypto rails / stablecoins / tokenization",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Raoul Pal",
+      "org": "Real Vision / Global Macro Investor",
+      "lane": "macro/crypto",
+      "date": "2026-08-23",
+      "title": "The Fed Just Changed the Rules for Investors with Jim Bianco & Andreas Steno",
+      "url": "https://www.youtube.com/watch?v=lFpQuOEzGzc",
+      "summary": "A Real Vision panel (Andreas Steno hosting Jim Bianco, on Raoul Pal's channel) argues the Warsh-led Fed has abandoned forward guidance and now operates as 12 independent voters, forcing investors to treat rate decisions as a high-uncertainty 'vote-telling' exercise, with inflation data displacing jobs data as the key signal.",
+      "themes": [
+        "fed-policy",
+        "forward-guidance",
+        "rate-uncertainty",
+        "inflation-vs-employment",
+        "kevin-warsh",
+        "regime-change"
+      ],
+      "calls": [
+        {
+          "asset": "Fed policy (US rates)",
+          "stance": "neutral"
+        },
+        {
+          "asset": "US Treasuries / bond yields",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Rick Rule",
+      "org": "Rule Investment Media",
+      "lane": "resources/metals",
+      "date": "2026-08-22",
+      "title": "Rick Rule Evaluates 8 Mining Stocks: What He Likes, What He Doesn't",
+      "url": "https://www.youtube.com/watch?v=-mxfxVtbqXc",
+      "summary": "Rick Rule expects the balance of 2026 to be soft for resource stocks (higher long rates, stronger USD) but is 'incredibly bullish' on a 3-5 year view: he sees the USD losing 75% of purchasing power over a decade, gold mirroring that, and an 'orgy of M&A' among under-valued juniors. He then reviews eight mining names he personally owns.",
+      "themes": [
+        "gold",
+        "silver",
+        "uranium",
+        "junior miners",
+        "USD debasement",
+        "resource M&A"
+      ],
+      "calls": [
+        {
+          "asset": "Gold",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Silver",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Uranium (commodity)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Uranium junior equities (broad)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Resource / junior mining stocks (near-term)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Junior miners (long-term value)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Banyan Gold (TSXV: BYN)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Aya Gold & Silver (TSX: AYA)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Magna Mining (TSXV: NICU)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "i-80 Gold (NYSE American: IAUX)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "First Majestic Silver (NYSE: AG)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "West Red Lake Gold (TSXV: WRLG)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Riverside Resources (TSXV: RRI)",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Farzad Mesbahi",
+      "org": "Farzad FM (independent)",
+      "lane": "Tesla/EV/equities",
+      "date": "2026-08-21",
+      "title": "SpaceX's New Product Just Collapsed the Cost of Everything",
+      "url": "https://www.youtube.com/watch?v=TnaJyLkf8Jk",
+      "summary": "Farzad argues SpaceX has effectively solved the reusable Starship heat-shield problem (per Elon), collapsing launch costs by up to 99% and unleashing a self-reinforcing flywheel across Starlink, orbital AI compute, and the broader space economy.",
+      "themes": [
+        "spacex",
+        "starship",
+        "reusable-rockets",
+        "starlink",
+        "orbital-ai-compute",
+        "launch-cost"
+      ],
+      "calls": [
+        {
+          "asset": "SpaceX (private)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Starlink",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Orbital AI compute (space-based data centers)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Broader space industry / satellite hardware",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Arthur Hayes",
+      "org": "Maelstrom / BitMEX",
+      "lane": "crypto/macro",
+      "date": "2026-08-21",
+      "title": "Bitcoin to $200K And AI Is the Next 2008 | Arthur Hayes",
+      "url": "https://www.youtube.com/watch?v=0b_nJ53uiA0",
+      "summary": "Arthur Hayes argues US fiscal dominance is forcing the Fed/Treasury into de facto yield-curve control and money printing, which he sees driving Bitcoin above $200K and Ethereum to $5-10K within a year, while framing the AI-infrastructure buildout as a 2008-style credit bubble (hyperscalers as over-leveraged real-estate developers) that ends in a major financial crisis and Fed bailout; he also pitches his new FLOP token.",
+      "themes": [
+        "yield-curve-control",
+        "bitcoin-200k",
+        "ai-credit-bubble",
+        "fiat-debasement",
+        "ethereum-long",
+        "agentic-economy-flop"
+      ],
+      "calls": [
+        {
+          "asset": "Bitcoin (BTC)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Ethereum (ETH)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "AI stocks / hyperscalers",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Gold",
+          "stance": "bullish"
+        },
+        {
+          "asset": "US Treasuries / long-end yields",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Jesse Day",
+      "org": "Commodity Culture",
+      "lane": "metals/mining",
+      "date": "2026-08-20",
+      "title": "Global BUST Into Money Printing 'Like Never Before' - Then $20k Gold, $1k Silver: David Hunter",
+      "url": "https://www.youtube.com/watch?v=JKDkHIUcPx4",
+      "summary": "Jesse Day interviews macro strategist David Hunter of Contrarian Macro Advisors, who reiterates his two-stage roadmap: a parabolic melt-up in equities to S&P 10,000 this year, followed by a deflationary 'global bust' worse than 2008 and an 80% index drawdown. He then expects central banks to print roughly $20T (Fed alone), igniting a commodity-led inflation cycle with gold at $7,000 then $20,000 and silver at $200 then $1,000.",
+      "themes": [
+        "David Hunter",
+        "blowoff top",
+        "global bust / credit crisis",
+        "money printing",
+        "precious metals targets",
+        "secular leadership rotation"
+      ],
+      "calls": [
+        {
+          "asset": "US equities (S&P 500, Nasdaq, Dow, Russell)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "US equities (post-top global bust)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Silver",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Gold",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Long-dated US Treasuries",
+          "stance": "bullish"
+        },
+        {
+          "asset": "US dollar (DXY)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Japanese yen (JPY)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Crude oil",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Financials (XLF)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Copper and old-industrial commodity producers (Caterpillar, Deere, gold/silver miners)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Private credit, private equity and commercial real estate",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Jesse Day",
+      "org": "Commodity Culture",
+      "lane": "metals/mining",
+      "date": "2026-08-19",
+      "title": "'The Growth is Incredible' - Why Phosphate and LFP Batteries Are Dominating",
+      "url": "https://www.youtube.com/watch?v=0FbORhEZQFY",
+      "summary": "Company-sourced and promotional: this is a First Phosphate-sponsored interview in which CEO John Passalacqua pitches igneous phosphate as a scarce critical mineral for LFP battery cathodes, citing a 91.1% conversion rate to purified phosphoric acid versus a small fraction for sedimentary rock. He frames the recent NASDAQ listing (PHOS), Quebec fast-track permitting status and G7 off-take letters from Danish and Italian entities as the de-risking catalysts ahead of a Q1 2027 feasibility study and 2029-30 mine start.",
+      "themes": [
+        "John Passalacqua",
+        "First Phosphate (PHOS)",
+        "LFP batteries",
+        "igneous phosphate",
+        "critical minerals reshoring",
+        "sponsored segment"
+      ],
+      "calls": [
+        {
+          "asset": "First Phosphate (PHOS)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "LFP batteries / lithium iron phosphate chemistry (theme)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Purified phosphoric acid / phosphate demand (theme)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "North American critical-minerals reshoring (theme)",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Mohamed El-Erian",
+      "org": "Allianz / Queens' College",
+      "lane": "macro (guest commentary)",
+      "date": "2026-08-19",
+      "title": "Allianz’s Mohamed El-Erian on the Treasury Department doubling the size of long-end bond buybacks",
+      "url": "https://www.youtube.com/watch?v=hLWzUoHwGx8",
+      "summary": "El-Erian characterizes the Treasury's expanded long-end bond buybacks as de facto yield-curve control ('Operation Twist'), warning it offers only short-term relief with collateral damage rather than a durable fix for the underlying funding-vs-growth tension. He views the US economy as solidly growing but vulnerable to a leverage-driven financial accident.",
+      "themes": [
+        "yield-curve-control",
+        "treasury-buybacks",
+        "long-end-yields",
+        "ai-funding-race",
+        "leverage-risk",
+        "k-shaped-economy"
+      ],
+      "calls": [
+        {
+          "asset": "Treasury long-end buybacks / yield-curve control (Operation Twist)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "US 10Y Treasury yields",
+          "stance": "bearish"
+        },
+        {
+          "asset": "US economy / growth",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "figure": "Farzad Mesbahi",
+      "org": "Farzad FM (independent)",
+      "lane": "Tesla/EV/equities",
+      "date": "2026-08-17",
+      "title": "History is About to be Made (it’s WAY bigger than you think)",
+      "url": "https://www.youtube.com/watch?v=B2cJHxVjuf4",
+      "summary": "Mesbahi argues that simultaneously collapsing costs of robotics, AI intelligence, solar-plus-battery power and autonomous logistics will reprice cheap undeveloped land by making it buildable, using a thought experiment of a 1,500-acre Wyoming parcel at ~$15,000/acre and a town of 500 people served by 2,000 robots. He frames Tesla FSD as proof that millions of fully autonomous robots already exist, and predicts a new company category that sells finished towns rather than houses.",
+      "themes": [
+        "land repricing",
+        "humanoid robots / autonomous machines",
+        "Tesla FSD and Optimus",
+        "solar plus storage",
+        "automated construction",
+        "AI cost deflation"
+      ],
+      "calls": [
+        {
+          "asset": "Cheap undeveloped US land (theme)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "TSLA (Tesla FSD and Optimus)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Humanoid robots and general-purpose robotics (theme)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Solar plus battery storage (theme)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "SpaceX / Starlink",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Automated construction / town-building companies (theme)",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Peter Attia",
+      "org": "The Drive",
+      "lane": "longevity/health-science",
+      "date": "2026-08-17",
+      "title": "404 ‒ Mental health beyond neurotransmitters: hormones in psychiatry, psychedelic therapies, & more",
+      "url": "https://www.youtube.com/watch?v=fs89fhQCfj4",
+      "summary": "Attia interviews a veteran psychiatrist who pivoted after ~35 years toward integrating endocrinology (testosterone, estrogen, thyroid/T3, lithium) into psychiatric practice, plus an extended discussion of ketamine and psychedelics for treatment-resistant depression. Purely clinical content — no investment or market commentary.",
+      "themes": [
+        "psychiatry",
+        "hormones-in-psychiatry",
+        "psychedelic-therapeutics",
+        "ketamine/treatment-resistant-depression",
+        "SSRIs",
+        "thyroid-T3-augmentation"
+      ],
+      "calls": []
+    },
+    {
+      "figure": "Jordi Visser",
+      "org": "22V Research / Visser Labs",
+      "lane": "macro/AI/crypto",
+      "date": "2026-08-16",
+      "title": "AI Is Changing Time: Those Who Can't Compete, Compute",
+      "url": "https://www.youtube.com/watch?v=VCaQNfBJLvk",
+      "summary": "Visser argues compute demand is structurally insatiable and that AI is compressing time, driving global EPS growth despite a contextually weak labor market. He is tactically green again after the May-July de-risking, favours the receivers of AI capex over frontier-model developers (flagging Google's talent drain as a multiple-compression risk), and pushes the debasement trade plus crypto/tokenization rails as the 2027 theme.",
+      "themes": [
+        "compute scarcity",
+        "AI capex",
+        "agentic economy",
+        "debasement trade",
+        "tokenization rails",
+        "weak labor market"
+      ],
+      "calls": [
+        {
+          "asset": "AI thematic portfolio (JV 10/25/100-name)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Hyperscalers / AI infrastructure (receivers of capex)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Google (GOOGL)",
+          "stance": "neutral"
+        },
+        {
+          "asset": "Gold",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Silver",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Bitcoin",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Micron (MU)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Crypto rails / stablecoins & tokenization (e.g. Figure)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Nvidia (NVDA)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "US long-end Treasuries",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Raoul Pal",
+      "org": "Real Vision / Global Macro Investor",
+      "lane": "macro/crypto",
+      "date": "2026-08-16",
+      "title": "Why the USD/JPY Could Hit 200 | Weston Nakamura & Ash Bennington",
+      "url": "https://www.youtube.com/watch?v=XFNk96CabCg",
+      "summary": "Raoul Pal does not appear in this Real Vision episode; host Ash Bennington interviews Tokyo-based guest Weston Nakamura (Across the Spread), who argues the August 2026 'joint' US-Japan yen intervention is largely theatre because the US Treasury has not actually executed in FX markets. Nakamura's view is that yen weakness is structural (Japanese household and institutional capital flight out of a large cash pile and out of JGBs), so USD/JPY 200 remains the more likely longer-term outcome.",
+      "themes": [
+        "yen intervention",
+        "USD/JPY",
+        "BOJ policy",
+        "Japan capital flight",
+        "JGB yields",
+        "US Treasury market"
+      ],
+      "calls": [
+        {
+          "asset": "USD/JPY",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Japanese yen (JPY)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Japanese government bonds (JGBs)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Long-dated US Treasuries",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Farzad Mesbahi",
+      "org": "Farzad FM (independent)",
+      "lane": "Tesla/EV/equities",
+      "date": "2026-08-13",
+      "title": "Tesla Makes The Biggest Bet In Car History",
+      "url": "https://www.youtube.com/watch?v=icQkryWczkQ",
+      "summary": "Farzad argues Tesla's FSD bet is inflecting - Q2 deliveries up ~25% YoY despite the US EV tax credit expiring and the broader US EV market falling, with ~1.48M active FSD subscriptions and a >55% FSD attach rate on new North American deliveries. He frames FSD, Robotaxi/Cyber Cab and Optimus as one compounding AI stack; note he is a dedicated Tesla-bull commentator, so framing is uniformly promotional and gives little weight to Model 3/Y concentration risk or Cybertruck weakness.",
+      "themes": [
+        "Tesla FSD",
+        "autonomy/robotaxi",
+        "EV demand post-tax-credit",
+        "Optimus/humanoids",
+        "legacy auto disruption",
+        "custom silicon"
+      ],
+      "calls": [
+        {
+          "asset": "TSLA (Tesla)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Tesla FSD / Robotaxi & Cyber Cab",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Tesla Optimus / humanoid robots",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Legacy automakers (Ford and other ICE incumbents)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "SpaceX / Tesla (Terra chip JV, possible merger)",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Jensen Huang",
+      "org": "NVIDIA (NVDA)",
+      "lane": "AI-stack exec",
+      "date": "2026-08-11",
+      "title": "NVIDIA's Jensen Huang & Partners Today On NVIDIA $500B Partnership, Micron, SK Hynix - NVDA Update",
+      "url": "https://www.youtube.com/watch?v=-C813Jlf_G8",
+      "summary": "Company-sourced and promotional: Jensen Huang appeared alongside the heads of Goldman Sachs, BlackRock, Blackstone, KKR, Apollo and Brookfield to announce financing partnerships intended to mobilise over $500B of third-party capital for NVIDIA-based AI factories, reframing compute as an investable infrastructure asset class. The compiling channel adds bullish commentary on NVDA, MU and SK Hynix plus Micron datapoints on a broad-based, data-center-acute memory shortage.",
+      "themes": [
+        "AI infrastructure financing",
+        "compute as asset class",
+        "memory/HBM shortage",
+        "supply constraints",
+        "power and nuclear buildout",
+        "AI lab profitability"
+      ],
+      "calls": [
+        {
+          "asset": "NVDA",
+          "stance": "bullish"
+        },
+        {
+          "asset": "MU",
+          "stance": "bullish"
+        },
+        {
+          "asset": "TSM",
+          "stance": "bullish"
+        },
+        {
+          "asset": "SK Hynix (000660.KS)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Brookfield (BN/BAM)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Blackstone (BX)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Apollo (APO)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "KKR (KKR)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Goldman Sachs (GS)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "BlackRock (BLK)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "AI infrastructure supply chain (packaging, photonics, connectors, power, construction)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "OpenAI / Anthropic (private AI labs)",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Michael Howell",
+      "org": "CrossBorder Capital",
+      "lane": "global liquidity",
+      "date": "2026-08-11",
+      "title": "Michael Howell: Liquidity Has Turned, Low Quality Returns Ahead for Stocks, and Real Driver of Gold",
+      "url": "https://www.youtube.com/watch?v=FPB4Z1KhE3s",
+      "summary": "Howell argues the global liquidity cycle has peaked and its momentum is now inflecting lower as a booming real economy (Atlanta Fed ~6% Q3 nowcast) drains liquidity out of financial assets, ushering in a choppy 'speculation' regime of low-quality returns. He reframes gold's near-term rally as driven chiefly by China/PBOC liquidity rather than the Western 'great debasement' trade, staying bullish gold/silver and commodities, bearish bonds and crypto, and cautious/range-bound on Wall Street.",
+      "themes": [
+        "global-liquidity-cycle",
+        "china-pboc-gold",
+        "monetary-inflation-hedges",
+        "rising-bond-yields",
+        "speculation-regime",
+        "commodities"
+      ],
+      "calls": [
+        {
+          "asset": "Global liquidity",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Gold (near-term)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Gold (long-term)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Bitcoin / crypto (near-term)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "US 10Y Treasuries / bonds",
+          "stance": "bearish"
+        },
+        {
+          "asset": "US equities / Wall Street",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Commodities (incl. crude oil)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Silver",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Doomberg",
+      "org": "Doomberg",
+      "lane": "energy/commodities",
+      "date": "2026-08-11",
+      "title": "Doomberg: Energy, AI, and the Calls Nobody Else Made",
+      "url": "https://www.youtube.com/watch?v=CxWZxbwQ_rI",
+      "summary": "Doomberg walks through operative mental models: hydrocarbon BTU-parity/arbitrage (US gas cheapest vs oil), China's coal/grid resilience and solar intermittency overshoot, Carney 'unsticking Alberta' still live via pipeline headlines, and 'human endeavor is infinite compute' for AI power. They pivoted off the consensus $150 Iran-war oil spike (actual ~$80–90) but, if pushed, stay somewhat oil-bullish while Hormuz remains contested; favor gas turbines/conversion kit over utility equities; warn sanctions force China into semis/DUV and that ASML-style moats erode (explicitly not a stock call).",
+      "themes": [
+        "hydrocarbon BTU parity / molecular arbitrage",
+        "Iran war / Hormuz oil",
+        "China energy strategy / coal dispatchability",
+        "Canada Alberta pipelines / Carney",
+        "AI power / infinite compute",
+        "gas turbines vs utilities",
+        "sanctions / China semis"
+      ],
+      "calls": [
+        {
+          "asset": "Crude oil",
+          "stance": "bullish"
+        },
+        {
+          "asset": "US natural gas (Henry Hub)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Gas turbines / NG-to-power equipment",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Regulated utilities (equity)",
+          "stance": "neutral"
+        },
+        {
+          "asset": "Canadian oil / Alberta pipeline capacity",
+          "stance": "bullish"
+        },
+        {
+          "asset": "AI power / data-center buildout",
+          "stance": "bullish"
+        },
+        {
+          "asset": "China solar / intermittency-heavy grids",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Peter Attia",
+      "org": "The Drive",
+      "lane": "longevity/health-science",
+      "date": "2026-08-10",
+      "title": "403 ‒ Peptides: separating scientific promise from marketing hype",
+      "url": "https://www.youtube.com/watch?v=Km_01CLEkYU",
+      "summary": "Attia builds a framework for evaluating peptides — mechanism, human evidence, manufacturing/analytical control — and argues the wellness-peptide market is largely repackaging molecules the pharma industry already abandoned (CJC-1295 vs tesamorelin). He is explicitly unwilling to recommend non-approved, gray-market or compounded peptides including gray-market GLP-1 analogs.",
+      "themes": [
+        "peptides",
+        "GLP-1-agonists",
+        "compounded/gray-market-pharma",
+        "FDA-approval-moat",
+        "CMC-manufacturing-quality",
+        "pharma-patent-strategy"
+      ],
+      "calls": [
+        {
+          "asset": "Gray-market / compounded peptide and GLP-1 vendors (theme)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Branded pharma peptide/GLP-1 franchises (patent & manufacturing moat)",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Jordi Visser",
+      "org": "22V Research / Visser Labs",
+      "lane": "macro/AI/crypto",
+      "date": "2026-08-09",
+      "title": "The AI Crash Is Over. Here's What Comes Next",
+      "url": "https://www.youtube.com/watch?v=HFEex-dRjNs",
+      "summary": "Visser declares the summer AI 'speed crash' over and the low probably in, citing a violent breadth/momentum rally, falling factor vol, strong earnings/PMI, and the Gavin Baker interview as confirmation of undiminished AI demand; but he explicitly walks back outright bullishness on hyperscalers specifically (citing FCF/ROIC risk and bureaucracy vs. AI-native startups), discloses he sold his entire Micron position in July, and flags Bitcoin as still technically in a bear market even as he leans into gold/silver/platinum/BTC as a fiat-debasement trade.",
+      "themes": [
+        "AI thematic trade",
+        "hyperscaler capex debate",
+        "memory/compute bottleneck",
+        "gold/silver debasement trade",
+        "Bitcoin",
+        "Fed/BOJ intervention",
+        "labor market weakness"
+      ],
+      "calls": [
+        {
+          "asset": "Hyperscalers (MSFT/META/AMZN/GOOGL)",
+          "stance": "neutral"
+        },
+        {
+          "asset": "AI thematic portfolio (broad, ~100 names)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Micron (MU)",
+          "stance": "neutral"
+        },
+        {
+          "asset": "Bitcoin",
+          "stance": "neutral"
+        },
+        {
+          "asset": "Gold / Silver / Platinum",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Nvidia (NVDA)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Palantir (PLTR)",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Daniel Lacalle (guest, via Real Vision/Raoul Pal channel)",
+      "org": "Tressis",
+      "lane": "macro (guest commentary)",
+      "date": "2026-08-09",
+      "title": "Why This Investor Thinks The Fed Is Making a Policy Mistake with Daniel Lacalle",
+      "url": "https://www.youtube.com/watch?v=U2WwLW-m-Qc",
+      "summary": "DATA QUALITY FLAG: this preview clip is an Ash Bennington interview with guest Daniel Lacalle (chief economist, Tressis) about the Fed holding rates after a soft Q2 GDP print; Raoul Pal does not speak or appear anywhere in the transcript despite the frontmatter attribution. Lacalle argues the GDP 'miss' is a government-spending statistical artifact, private-sector growth/investment is genuinely strong despite elevated rates, and the Fed is making a policy mistake by holding rates high in response to an energy-driven inflation spike rather than easing.",
+      "themes": [
+        "Fed policy mistake",
+        "US GDP",
+        "inflation composition",
+        "rate policy",
+        "data quality flag",
+        "yen weakness"
+      ],
+      "calls": [
+        {
+          "asset": "Fed funds rate path",
+          "stance": "bearish"
+        },
+        {
+          "asset": "US economy/private-sector GDP",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Japanese yen",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Farzad Mesbahi",
+      "org": "Farzad FM (independent)",
+      "lane": "Tesla/EV/equities",
+      "date": "2026-08-07",
+      "title": "AI Powered Robots Will Slash the Price of Everything",
+      "url": "https://www.youtube.com/watch?v=qvKatYJAdaI",
+      "summary": "Thematic essay-style video arguing mature humanoid robots will collapse the cost of physical labor (from a ~$46/hr US private-employer average toward roughly $2/hr), reshaping housing, healthcare, construction and geopolitics, and framing the video's Tesla-investor sponsor tie-in around this as the core case for Optimus-style humanoid economics.",
+      "themes": [
+        "humanoid robots",
+        "labor cost deflation",
+        "Tesla Optimus",
+        "housing/construction",
+        "geopolitics of automation",
+        "UBI/wage insurance"
+      ],
+      "calls": [
+        {
+          "asset": "Humanoid robots (theme)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "TSLA/Tesla Optimus",
+          "stance": "bullish"
+        }
+      ]
+    }
+  ]
+}

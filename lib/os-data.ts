@@ -1,7 +1,111 @@
 import convictionJson from '@/data/os/conviction.json';
 import targetBookJson from '@/data/os/target-book.json';
 import paperPortfolioJson from '@/data/os/paper-portfolio.json';
+import signalPackJson from '@/data/os/signal-pack.json';
 
+export type SignalCall = { asset: string; stance: string };
+export type RecentSignal = {
+  figure: string;
+  org?: string;
+  lane?: string;
+  date: string;
+  title: string;
+  url?: string;
+  summary?: string;
+  themes: string[];
+  calls: SignalCall[];
+};
+
+export type ThemeCall = {
+  name: string;
+  stance: string;
+  citation_count: number;
+  citations: string[];
+};
+
+export const signalPack = signalPackJson as {
+  status: {
+    gate: string;
+    as_of: string;
+    valid_until?: string;
+    author_sense?: string;
+    adopted_by?: string;
+    paper_book_action?: string;
+    conditions?: string[];
+    note?: string;
+    signals_json?: { n_records?: number; generated?: string };
+  };
+  brief: {
+    as_of: string;
+    timezone?: string;
+    gate: string;
+    author: string;
+    adopted_by?: string;
+    adopted_at?: string;
+    regime_one_liner: string;
+    paper_book_action?: string;
+    paper_book_implications?: Record<string, string[]>;
+    pending?: string;
+    falsifiers: string[];
+    themes: ThemeCall[];
+    signals_json_n?: number;
+    signals_json_generated?: string;
+    brief_md?: string;
+  };
+  recent_signals: RecentSignal[];
+};
+
+export function stanceTone(stance: string) {
+  const s = stance.toUpperCase();
+  if (s === 'OW' || s.startsWith('BULL')) return 'ok' as const;
+  if (s === 'UW' || s.startsWith('BEAR')) return 'danger' as const;
+  return 'neutral' as const;
+}
+
+export type BriefCitation = {
+  source?: string;
+  figure?: string;
+  date?: string;
+  title?: string;
+  url?: string;
+  raw: string;
+};
+
+/** Parse Sense brief citation pipes: source|figure|date|title|url (url optional). */
+export function parseBriefCitation(raw: string): BriefCitation {
+  const parts = raw.split('|').map((p) => p.trim());
+  if (parts.length >= 4) {
+    const [source, figure, date, title, url] = parts;
+    return {
+      source,
+      figure,
+      date,
+      title,
+      url: url && /^https?:\/\//i.test(url) ? url : undefined,
+      raw,
+    };
+  }
+  return { raw, title: raw };
+}
+
+export function hasSignalStatus(
+  pack: typeof signalPack | null | undefined,
+): pack is typeof signalPack {
+  return Boolean(pack?.status?.gate && pack?.status?.as_of);
+}
+
+export function stanceBadgeClass(stance: string) {
+  const tone = stanceTone(stance);
+  if (tone === 'ok') {
+    return 'border-[var(--status-ok)]/25 bg-[var(--status-ok)]/10 text-[var(--status-ok)]';
+  }
+  if (tone === 'danger') {
+    return 'border-[var(--status-danger)]/25 bg-[var(--status-danger)]/10 text-[var(--status-danger)]';
+  }
+  return 'border-[var(--border)] bg-white/[0.03] text-[var(--muted)]';
+}
+
+/** Act/Book view — Vera-signed book lines only (from target-book / slim conviction.json). */
 export type ConvictionRow = {
   symbol: string;
   score: number;
