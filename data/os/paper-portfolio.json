@@ -1,0 +1,141 @@
+{
+  "mode": "paper",
+  "live_blocked": true,
+  "cash_pct": 30.0,
+  "equity": 100000.0,
+  "currency": "USD",
+  "updated": "2026-09-06T10:14:36.380299+00:00",
+  "last_fill_count": 8,
+  "instrument_map": {
+    "GOLD": {
+      "instrument": "GLD",
+      "venue": "paper",
+      "asset_class": "etf_proxy",
+      "note": "SPDR Gold paper proxy",
+      "weight_pct": 10.0
+    },
+    "BTC": {
+      "instrument": "BTC-USD",
+      "venue": "paper",
+      "asset_class": "crypto",
+      "note": "spot BTC paper",
+      "weight_pct": 9.92
+    },
+    "SILVER": {
+      "instrument": "SLV",
+      "venue": "paper",
+      "asset_class": "etf_proxy",
+      "note": "iShares Silver paper proxy",
+      "weight_pct": 9.44
+    },
+    "TSM": {
+      "instrument": "TSM",
+      "venue": "paper",
+      "asset_class": "equity",
+      "note": "ADR paper",
+      "weight_pct": 8.67
+    },
+    "COPPER": {
+      "instrument": "CPER",
+      "venue": "paper",
+      "asset_class": "etf_proxy",
+      "note": "US Copper paper proxy",
+      "weight_pct": 8.64
+    },
+    "NVDA": {
+      "instrument": "NVDA",
+      "venue": "paper",
+      "asset_class": "equity",
+      "note": "equity paper",
+      "weight_pct": 7.98
+    },
+    "ETH": {
+      "instrument": "ETH-USD",
+      "venue": "paper",
+      "asset_class": "crypto",
+      "note": "spot ETH paper",
+      "weight_pct": 7.92
+    },
+    "OIL": {
+      "instrument": "USO",
+      "venue": "paper",
+      "asset_class": "etf_proxy",
+      "note": "US Oil paper proxy",
+      "weight_pct": 7.43
+    }
+  },
+  "positions": [
+    {
+      "symbol": "GOLD",
+      "weight_pct": 10.0,
+      "sleeve": "macro_hedge",
+      "score": 90.0,
+      "instrument": "GLD",
+      "venue": "paper",
+      "asset_class": "etf_proxy"
+    },
+    {
+      "symbol": "BTC",
+      "weight_pct": 9.92,
+      "sleeve": "crypto_beta",
+      "score": 84.0,
+      "instrument": "BTC-USD",
+      "venue": "paper",
+      "asset_class": "crypto"
+    },
+    {
+      "symbol": "SILVER",
+      "weight_pct": 9.44,
+      "sleeve": "macro_hedge",
+      "score": 79.7,
+      "instrument": "SLV",
+      "venue": "paper",
+      "asset_class": "etf_proxy"
+    },
+    {
+      "symbol": "TSM",
+      "weight_pct": 8.67,
+      "sleeve": "equity_rails",
+      "score": 72.7,
+      "instrument": "TSM",
+      "venue": "paper",
+      "asset_class": "equity"
+    },
+    {
+      "symbol": "COPPER",
+      "weight_pct": 8.64,
+      "sleeve": "macro_hedge",
+      "score": 72.5,
+      "instrument": "CPER",
+      "venue": "paper",
+      "asset_class": "etf_proxy"
+    },
+    {
+      "symbol": "NVDA",
+      "weight_pct": 7.98,
+      "sleeve": "equity_rails",
+      "score": 66.5,
+      "instrument": "NVDA",
+      "venue": "paper",
+      "asset_class": "equity"
+    },
+    {
+      "symbol": "ETH",
+      "weight_pct": 7.92,
+      "sleeve": "crypto_beta",
+      "score": 66.0,
+      "instrument": "ETH-USD",
+      "venue": "paper",
+      "asset_class": "crypto"
+    },
+    {
+      "symbol": "OIL",
+      "weight_pct": 7.43,
+      "sleeve": "macro_hedge",
+      "score": 61.6,
+      "instrument": "USO",
+      "venue": "paper",
+      "asset_class": "etf_proxy"
+    }
+  ]
+}

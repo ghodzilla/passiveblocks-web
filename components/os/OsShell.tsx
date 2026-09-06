@@ -21,16 +21,25 @@ interface OsShellProps {
   children: ReactNode;
   title: string;
   subtitle?: string;
+  eyebrow?: string;
 }
 
-export function OsShell({ pathname, children, title, subtitle }: OsShellProps) {
+export function OsShell({ pathname, children, title, subtitle, eyebrow }: OsShellProps) {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="border-b border-[var(--border)] px-4 sm:px-6">
-        <div className="mx-auto flex max-w-5xl flex-col gap-4 py-4">
+    <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-[420px] opacity-80"
+        style={{
+          background:
+            'radial-gradient(ellipse 80% 60% at 15% -10%, rgba(59,130,246,0.22), transparent 55%), radial-gradient(ellipse 60% 50% at 85% 0%, rgba(74,222,128,0.08), transparent 50%)',
+        }}
+      />
+      <header className="relative border-b border-[var(--border)]/80 bg-background/70 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 sm:px-6">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <Link href="/os">
+              <Link href="/os" className="shrink-0">
                 <Image
                   src="/passiveblocks_logo_cropped.png"
                   alt="PassiveBlocks"
@@ -40,8 +49,11 @@ export function OsShell({ pathname, children, title, subtitle }: OsShellProps) {
                   priority
                 />
               </Link>
-              <span className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">
+              <span className="rounded-full border border-[var(--accent)]/30 bg-[var(--accent-muted)] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[var(--accent-soft)]">
                 Private OS
+              </span>
+              <span className="hidden rounded-full border border-[var(--status-ok)]/25 bg-[var(--status-ok)]/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[var(--status-ok)] sm:inline">
+                Paper · Vera-signed
               </span>
             </div>
             <Link
@@ -58,9 +70,9 @@ export function OsShell({ pathname, children, title, subtitle }: OsShellProps) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`whitespace-nowrap rounded-[var(--radius-sm)] px-3 py-1.5 text-sm font-medium transition-colors ${
+                  className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm font-medium transition-all ${
                     active
-                      ? 'bg-[var(--accent-muted)] text-[var(--accent-soft)]'
+                      ? 'bg-[var(--accent)] text-white shadow-[0_0_24px_rgba(59,130,246,0.35)]'
                       : 'text-[var(--muted)] hover:bg-[var(--surface)] hover:text-foreground'
                   }`}
                 >
@@ -72,11 +84,16 @@ export function OsShell({ pathname, children, title, subtitle }: OsShellProps) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-        <div className="mb-8">
-          <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{title}</h1>
+      <main className="relative mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12">
+        <div className="mb-8 sm:mb-10">
+          {eyebrow ? (
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">
+              {eyebrow}
+            </p>
+          ) : null}
+          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{title}</h1>
           {subtitle ? (
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--muted)]">
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--muted)] sm:text-base">
               {subtitle}
             </p>
           ) : null}

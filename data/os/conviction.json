@@ -1,0 +1,107 @@
+{
+  "as_of": "2026-09-06T10:13:38.850725+00:00",
+  "vera_signed": true,
+  "vera_line_sign_ref": {
+    "status": "PARTIAL",
+    "signed_at": "2026-09-06T10:13:18.361488+00:00",
+    "signed_by": "Vera Passive Blocks Risk",
+    "book_eligible_symbols": [
+      "GOLD",
+      "BTC",
+      "SILVER",
+      "TSM",
+      "COPPER",
+      "NVDA",
+      "ETH",
+      "OIL"
+    ],
+    "vetoed_symbols": [
+      "POWER"
+    ],
+    "attestation": "/workspace/passiveblocks/risk/signs/2026-09-06-conviction-ledger-d2-line-sign.json"
+  },
+  "mode": "paper",
+  "rows": [
+    {
+      "symbol": "GOLD",
+      "score": 90.0,
+      "tier": "Core",
+      "sleeve": "macro_hedge",
+      "theme_bucket": "metals",
+      "instrument": "GLD",
+      "why": "D2 dry score 90.0; Vera line-signed 2026-09-06",
+      "vera_book_signed": true
+    },
+    {
+      "symbol": "BTC",
+      "score": 84.0,
+      "tier": "Core",
+      "sleeve": "crypto_beta",
+      "theme_bucket": "crypto",
+      "instrument": "BTC-USD",
+      "why": "D2 dry score 84.0; Vera line-signed 2026-09-06",
+      "vera_book_signed": true
+    },
+    {
+      "symbol": "SILVER",
+      "score": 79.7,
+      "tier": "Core",
+      "sleeve": "macro_hedge",
+      "theme_bucket": "metals",
+      "instrument": "SLV",
+      "why": "D2 dry score 79.7; Vera line-signed 2026-09-06",
+      "vera_book_signed": true
+    },
+    {
+      "symbol": "TSM",
+      "score": 72.7,
+      "tier": "Growth",
+      "sleeve": "equity_rails",
+      "theme_bucket": "semis",
+      "instrument": "TSM",
+      "why": "D2 dry score 72.7; Vera line-signed 2026-09-06",
+      "vera_book_signed": true
+    },
+    {
+      "symbol": "COPPER",
+      "score": 72.5,
+      "tier": "Growth",
+      "sleeve": "macro_hedge",
+      "theme_bucket": "metals",
+      "instrument": "CPER",
+      "why": "D2 dry score 72.5; Vera line-signed 2026-09-06",
+      "vera_book_signed": true
+    },
+    {
+      "symbol": "NVDA",
+      "score": 66.5,
+      "tier": "Growth",
+      "sleeve": "equity_rails",
+      "theme_bucket": "ai",
+      "instrument": "NVDA",
+      "why": "D2 dry score 66.5; Vera line-signed 2026-09-06",
+      "vera_book_signed": true
+    },
+    {
+      "symbol": "ETH",
+      "score": 66.0,
+      "tier": "Growth",
+      "sleeve": "crypto_beta",
+      "theme_bucket": "crypto",
+      "instrument": "ETH-USD",
+      "why": "D2 dry score 66.0; Vera line-signed 2026-09-06",
+      "vera_book_signed": true
+    },
+    {
+      "symbol": "OIL",
+      "score": 61.6,
+      "tier": "Growth",
+      "sleeve": "macro_hedge",
+      "theme_bucket": "energy",
+      "instrument": "USO",
+      "why": "D2 dry score 61.6; Vera line-signed 2026-09-06",
+      "vera_book_signed": true
+    }
+  ],
+  "note": "Only Vera book-signed lines. POWER vetoed. No inventable scores."
+}

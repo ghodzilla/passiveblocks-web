@@ -1,0 +1,106 @@
+{
+  "as_of": "2026-09-06T10:13:38.850725+00:00",
+  "mode": "paper",
+  "status": "vera_book_signed_paper",
+  "cash_pct": 30.0,
+  "invested_pct": 70.0,
+  "theme_exposure_pct": {
+    "metals": 28.08,
+    "crypto": 17.84,
+    "semis": 8.67,
+    "ai": 7.98,
+    "energy": 7.43
+  },
+  "risk_ceilings_ref": {
+    "max_drawdown_pct": 15,
+    "max_il_budget_pct": 5,
+    "max_single_name_pct": 10,
+    "max_single_theme_pct": 40,
+    "kill_switch": true
+  },
+  "vera_book_signed": true,
+  "vera_book_signed_by": "Vera Passive Blocks Risk",
+  "vera_book_signed_at": "2026-09-06T10:14:12.047832+00:00",
+  "positions": [
+    {
+      "symbol": "GOLD",
+      "weight_pct": 10.0,
+      "instrument": "GLD",
+      "venue": "paper",
+      "sleeve": "macro_hedge",
+      "theme_bucket": "metals",
+      "score": 90.0,
+      "tier": "Core"
+    },
+    {
+      "symbol": "BTC",
+      "weight_pct": 9.92,
+      "instrument": "BTC-USD",
+      "venue": "paper",
+      "sleeve": "crypto_beta",
+      "theme_bucket": "crypto",
+      "score": 84.0,
+      "tier": "Core"
+    },
+    {
+      "symbol": "SILVER",
+      "weight_pct": 9.44,
+      "instrument": "SLV",
+      "venue": "paper",
+      "sleeve": "macro_hedge",
+      "theme_bucket": "metals",
+      "score": 79.7,
+      "tier": "Core"
+    },
+    {
+      "symbol": "TSM",
+      "weight_pct": 8.67,
+      "instrument": "TSM",
+      "venue": "paper",
+      "sleeve": "equity_rails",
+      "theme_bucket": "semis",
+      "score": 72.7,
+      "tier": "Growth"
+    },
+    {
+      "symbol": "COPPER",
+      "weight_pct": 8.64,
+      "instrument": "CPER",
+      "venue": "paper",
+      "sleeve": "macro_hedge",
+      "theme_bucket": "metals",
+      "score": 72.5,
+      "tier": "Growth"
+    },
+    {
+      "symbol": "NVDA",
+      "weight_pct": 7.98,
+      "instrument": "NVDA",
+      "venue": "paper",
+      "sleeve": "equity_rails",
+      "theme_bucket": "ai",
+      "score": 66.5,
+      "tier": "Growth"
+    },
+    {
+      "symbol": "ETH",
+      "weight_pct": 7.92,
+      "instrument": "ETH-USD",
+      "venue": "paper",
+      "sleeve": "crypto_beta",
+      "theme_bucket": "crypto",
+      "score": 66.0,
+      "tier": "Growth"
+    },
+    {
+      "symbol": "OIL",
+      "weight_pct": 7.43,
+      "instrument": "USO",
+      "venue": "paper",
+      "sleeve": "macro_hedge",
+      "theme_bucket": "energy",
+      "score": 61.6,
+      "tier": "Growth"
+    }
+  ]
+}
