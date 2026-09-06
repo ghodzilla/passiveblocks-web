@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/account/", "/drafts/"],
+      disallow: ["/api/", "/account/", "/drafts/", "/os/"],
     },
     sitemap: "https://www.passiveblocks.io/sitemap.xml",
   };

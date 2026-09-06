@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
 // IP allowlist for private surfaces. Comma-separated env var.
-// Default: Pritesh's home IP (matches yield-dashboard ALLOWED_IPS).
+// Gates /drafts and /os. Fail closed when unset.
 function getClientIp(request: NextRequest): string {
   const xff = request.headers.get('x-forwarded-for');
   if (xff) return xff.split(',')[0].trim();
@@ -12,29 +12,32 @@ function getClientIp(request: NextRequest): string {
 
 function isIpAllowed(ip: string): boolean {
   const raw = process.env.ALLOWED_IPS || '';
-  // If no allowlist is configured, fail closed for /drafts (never expose publicly).
   if (!raw.trim()) return false;
   const list = raw.split(',').map((s) => s.trim()).filter(Boolean);
   return list.includes(ip);
 }
 
+function denyPrivate(): NextResponse {
+  return new NextResponse('Not Found', {
+    status: 404,
+    headers: {
+      'content-type': 'text/plain',
+      'x-robots-tag': 'noindex, nofollow',
+    },
+  });
+}
+
 // Protect /tax — must be logged in (subscription check happens in the page itself)
-// Protect /drafts — IP-allowlist only (private review surface)
+// Protect /drafts and /os — IP-allowlist only (private surfaces)
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next({ request });
   const { pathname } = request.nextUrl;
 
-  // /drafts — IP allowlist gate. No auth, no Supabase. Never indexable.
-  if (pathname.startsWith('/drafts')) {
+  // /drafts and /os — IP allowlist gate. No auth, no Supabase. Never indexable.
+  if (pathname.startsWith('/drafts') || pathname.startsWith('/os')) {
     const ip = getClientIp(request);
     if (!isIpAllowed(ip)) {
-      return new NextResponse('Not Found', {
-        status: 404,
-        headers: {
-          'content-type': 'text/plain',
-          'x-robots-tag': 'noindex, nofollow',
-        },
-      });
+      return denyPrivate();
     }
     response.headers.set('x-robots-tag', 'noindex, nofollow');
     return response;
@@ -71,5 +74,14 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/tax', '/tax/:path*', '/account', '/account/:path*', '/drafts', '/drafts/:path*'],
+  matcher: [
+    '/tax',
+    '/tax/:path*',
+    '/account',
+    '/account/:path*',
+    '/drafts',
+    '/drafts/:path*',
+    '/os',
+    '/os/:path*',
+  ],
 };
