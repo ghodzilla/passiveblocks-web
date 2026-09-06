@@ -1,4 +1,5 @@
 import convictionJson from '@/data/os/conviction.json';
+import convictionShowJson from '@/data/os/conviction-show.json';
 import targetBookJson from '@/data/os/target-book.json';
 import paperPortfolioJson from '@/data/os/paper-portfolio.json';
 import signalPackJson from '@/data/os/signal-pack.json';
@@ -104,6 +105,57 @@ export function stanceBadgeClass(stance: string) {
   }
   return 'border-[var(--border)] bg-white/[0.03] text-[var(--muted)]';
 }
+
+/** TOP100 Conviction Show — Vera line-signed (`vera_decision`). Show ≠ Act. */
+export type ConvictionShowRow = {
+  symbol: string;
+  score: number;
+  tier: string;
+  primary_theme: string;
+  jordi_layer: string;
+  evidence_grade: string;
+  flags: string[];
+  writeup: string;
+  n_calls: number;
+  n_voices: number;
+  show_ok: boolean;
+  book_eligible: boolean;
+  vera_decision: string;
+  vera_note: string;
+};
+
+export type ConvictionBookRow = {
+  symbol: string;
+  weight_pct: number;
+  instrument: string;
+  venue: string;
+  sleeve: string;
+  theme_bucket: string;
+  score: number;
+  tier: string;
+  vera_line_sign: string | null;
+  vera_book_signed: boolean;
+  note: string;
+  book_eligible: boolean;
+};
+
+export const convictionShow = convictionShowJson as {
+  as_of: string;
+  mode: string;
+  label: string;
+  note: string;
+  counts: {
+    rows: number;
+    by_decision: Record<string, number>;
+    book_eligible: number;
+  };
+  vera_signed_at: string;
+  attestation: string;
+  revised_at?: string;
+  revision_note?: string;
+  show_rows: ConvictionShowRow[];
+  book_rows: ConvictionBookRow[];
+};
 
 /** Act/Book view — Vera-signed book lines only (from target-book / slim conviction.json). */
 export type ConvictionRow = {

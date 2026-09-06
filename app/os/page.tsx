@@ -3,7 +3,7 @@ import { OsCard } from '@/components/os/OsCard';
 import { ScoreBar } from '@/components/os/ScoreBar';
 import { StatStrip } from '@/components/os/StatStrip';
 import { ThemeBars } from '@/components/os/ThemeBars';
-import { conviction, formatAsOf, formatPct, formatThemeLabel, hasSignalStatus, paperPortfolio, signalPack, targetBook } from '@/lib/os-data';
+import { convictionShow, formatAsOf, formatPct, formatThemeLabel, hasSignalStatus, paperPortfolio, signalPack, targetBook } from '@/lib/os-data';
 
 export const metadata = {
   title: 'OS · Passive Blocks',
@@ -11,7 +11,7 @@ export const metadata = {
 };
 
 export default function OsHomePage() {
-  const top = [...conviction.rows].sort((a, b) => b.score - a.score).slice(0, 3);
+  const top = [...convictionShow.show_rows].sort((a, b) => b.score - a.score).slice(0, 3);
   const ceilings = targetBook.risk_ceilings_ref;
   const signalLive = hasSignalStatus(signalPack);
 
@@ -54,7 +54,7 @@ export default function OsHomePage() {
               Top conviction
             </h2>
             <span className="font-mono text-[11px] text-[var(--muted)]">
-              as of {formatAsOf(conviction.as_of)}
+              as of {formatAsOf(convictionShow.as_of)}
             </span>
           </div>
           <ul className="divide-y divide-[var(--border)]">
@@ -63,7 +63,7 @@ export default function OsHomePage() {
                 <div className="min-w-0">
                   <p className="font-semibold tracking-tight">{row.symbol}</p>
                   <p className="text-xs text-[var(--muted)]">
-                    {row.instrument} · {formatThemeLabel(row.theme_bucket)} · {row.tier}
+                    {formatThemeLabel(row.primary_theme)} · {row.tier} · {row.vera_decision.replace(/^SIGN_/, '')}
                   </p>
                 </div>
                 <ScoreBar score={row.score} />
@@ -89,10 +89,10 @@ export default function OsHomePage() {
           href="/os/conviction"
           label="Decide"
           title="Conviction ledger"
-          description="Vera-signed scores across the paper universe. No inventable PnL."
+          description="Vera line-signed Show TOP100 vs 8 Vera Act book weights. Show ≠ Act."
           status="Signed"
           accent="ok"
-          meta={`${conviction.rows.length} lines · ${formatAsOf(conviction.as_of)}`}
+          meta={`${convictionShow.show_rows.length} Show · ${convictionShow.book_rows.length} book · ${formatAsOf(convictionShow.as_of)}`}
         />
         <OsCard
           href="/os/book"

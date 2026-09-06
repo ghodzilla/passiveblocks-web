@@ -2,9 +2,15 @@
 
 Tiny checklist before shipping OS Signal / Sources / Act surfaces.
 
+## Show vs Act (Conviction)
+
+- [ ] Conviction **Show** table is Vera **line-signed** (`vera_decision` on `show_rows`) — NOT Act; copy reads “Vera line-signed Show · not Act”.
+- [ ] Act/Book section lists only Vera **book-signed** `book_rows` (paper weights). `book_eligible` ≠ book-signed.
+- [ ] Home Conviction card meta: N Show vs M book.
+
 ## Signed-only Act surfaces
 
-- [ ] Conviction, Book, and Risk show **Vera-signed** book lines only — no Sense theme OW/N/UW as investable ranks.
+- [ ] Book and Risk show **Vera-signed** book lines only — no Sense theme OW/N/UW as investable ranks. Conviction Show is line-signed narrative, not investable ranks.
 - [ ] Paper book weights / scores never appear on Signal or Sources.
 - [ ] Home Command cards for Act stay Signed / Paper; Sense cards may be Live when a pack is present.
 
