@@ -44,7 +44,7 @@ export default function AboutPage() {
                 "Protocol deep dives — how the mechanics actually work",
                 "Risk signals — TVL movements, correlation shifts, peg deviations",
                 "DeFi news — what moved markets and why it matters for yield",
-                "Premium: specific entry/exit signals, allocation models, protocol risk scores",
+                "Personal OS — conviction, paper book, and risk ceilings (private)",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-3">
                   <span className="text-blue-400 mt-1">→</span>
@@ -55,9 +55,9 @@ export default function AboutPage() {
           </div>
 
           <div className="border-t border-white/10 pt-8">
-            <h2 className="text-xl font-bold text-white mb-4">The model</h2>
-            <p>Free newsletter, forever. Premium tier at $19/month for readers who want signals and allocation models, not just analysis.</p>
-            <p className="mt-3">We grow the audience, deliver real value, and eventually sell to the right acquirer. We&apos;ll be transparent about that when the time comes.</p>
+            <h2 className="text-xl font-bold text-white mb-4">How we work</h2>
+            <p>Free newsletter, forever. The deeper work is a private research OS — Sense, Decide, Show, and paper Act — built for capital we actually run. Productize later, if and when it earns it.</p>
+            <p className="mt-3">No inventable rankings. Risk signs figures before anything claimable goes live.</p>
           </div>
         </div>
 

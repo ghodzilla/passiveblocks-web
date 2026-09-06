@@ -3,8 +3,41 @@
 @tailwind utilities;
 
 :root {
+  /* Core */
   --background: #08080f;
   --foreground: #f0f0f5;
+  --muted: #8b8b9a;
+  --muted-foreground: rgba(255, 255, 255, 0.35);
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --surface: rgba(255, 255, 255, 0.03);
+  --surface-hover: rgba(255, 255, 255, 0.05);
+
+  /* Brand */
+  --accent: #3b82f6;
+  --accent-soft: #6789ed;
+  --accent-muted: rgba(59, 130, 246, 0.15);
+
+  /* Risk semantics (OS) */
+  --status-ok: #4ade80;
+  --status-warn: #fbbf24;
+  --status-danger: #f87171;
+  --status-neutral: #94a3b8;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  /* Type scale */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
 }
 
 body {

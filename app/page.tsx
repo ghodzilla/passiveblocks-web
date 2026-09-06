@@ -97,11 +97,6 @@ const yieldRows = [
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#08080f] text-white">
-      {/* Top banner */}
-      <div className="bg-blue-600 text-white text-center text-sm font-semibold py-2 px-4">
-        New issue every Monday — free forever. Premium signals from $19/mo.
-      </div>
-
       {/* 1. Nav */}
       <nav className="border-b border-white/5 px-6 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-6">
@@ -119,7 +114,6 @@ export default function Home() {
             <Link href="/learn" className="hover:text-white transition-colors">Learn</Link>
             <Link href="/newsletter" className="hover:text-white transition-colors">Archive</Link>
             <Link href="/tax" className="hover:text-white transition-colors">Tax Calculator</Link>
-            <Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link>
             <Link href="/about" className="hover:text-white transition-colors">About</Link>
           </div>
           <div className="flex items-center gap-3">
@@ -299,7 +293,10 @@ export default function Home() {
             height={30}
             className="h-8 w-auto opacity-60"
           />
-          <span>© {new Date().getFullYear()} PassiveBlocks. All rights reserved.</span>
+          <div className="flex items-center gap-4">
+            <Link href="/pricing" className="hover:text-white/50 transition-colors">Pricing</Link>
+            <span>© {new Date().getFullYear()} PassiveBlocks. All rights reserved.</span>
+          </div>
         </div>
       </footer>
 

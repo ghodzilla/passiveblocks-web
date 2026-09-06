@@ -12,6 +12,23 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        muted: "var(--muted)",
+        border: "var(--border)",
+        surface: "var(--surface)",
+        accent: {
+          DEFAULT: "var(--accent)",
+          soft: "var(--accent-soft)",
+          muted: "var(--accent-muted)",
+        },
+        status: {
+          ok: "var(--status-ok)",
+          warn: "var(--status-warn)",
+          danger: "var(--status-danger)",
+          neutral: "var(--status-neutral)",
+        },
+      },
+      borderRadius: {
+        os: "var(--radius-lg)",
       },
     },
   },
