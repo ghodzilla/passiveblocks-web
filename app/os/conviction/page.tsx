@@ -44,6 +44,34 @@ function decisionLabel(decision: string) {
   return decision.replace(/^SIGN_/, '').replace(/_/g, ' ');
 }
 
+/** When Vera decision is INSUFFICIENT, do not show the dry-ledger tier (e.g. Growth) as investable. */
+function showTierLabel(tier: string, decision: string) {
+  if (decision === 'INSUFFICIENT') return '—';
+  return tier;
+}
+
+function showTierClass(tier: string, decision: string) {
+  if (decision === 'INSUFFICIENT') {
+    return 'text-[var(--muted)] bg-white/[0.03] border-[var(--border)]';
+  }
+  return tierClass(tier);
+}
+
+const RETRACTION_FLAG_RE = /retract|cite_false_positive/i;
+
+function hasRetractionSignal(flags: string[], veraNote: string) {
+  if (flags.some((f) => RETRACTION_FLAG_RE.test(f))) return true;
+  return /retract/i.test(veraNote);
+}
+
+/** Prefer vera_note in Why when retracted / cite false-positive; else writeup. */
+function whyLine(row: { writeup: string; vera_note: string; flags: string[] }) {
+  if (hasRetractionSignal(row.flags, row.vera_note) && row.vera_note) {
+    return row.vera_note;
+  }
+  return row.writeup;
+}
+
 export default function ConvictionPage() {
   const showRows = [...convictionShow.show_rows].sort((a, b) => b.score - a.score);
   const bookRows = [...convictionShow.book_rows].sort((a, b) => b.weight_pct - a.weight_pct);
@@ -141,9 +169,9 @@ export default function ConvictionPage() {
                     </td>
                     <td className="px-4 py-3.5">
                       <span
-                        className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${tierClass(row.tier)}`}
+                        className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${showTierClass(row.tier, row.vera_decision)}`}
                       >
-                        {row.tier}
+                        {showTierLabel(row.tier, row.vera_decision)}
                       </span>
                     </td>
                     <td className="px-4 py-3.5">
@@ -162,7 +190,7 @@ export default function ConvictionPage() {
                       {row.evidence_grade}
                     </td>
                     <td className="max-w-sm px-4 py-3.5 text-xs leading-relaxed text-[var(--muted)]">
-                      {row.writeup}
+                      {whyLine(row)}
                     </td>
                     <td className="px-4 py-3.5 font-mono text-xs text-[var(--muted)]">
                       {row.n_calls}c / {row.n_voices}v
