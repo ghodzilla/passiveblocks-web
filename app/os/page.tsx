@@ -27,7 +27,7 @@ export default function OsHomePage() {
           href="/os/risk"
           label="Risk"
           title="Risk ceilings"
-          description="Paper structure for DD, IL, name, theme, and kill switch — pending Vera schema sign-off."
+          description="Vera-signed paper ceilings for DD, IL, name, theme, and kill switch. Live remains unsigned."
           status="Structure"
         />
         <OsCard

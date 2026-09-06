@@ -20,10 +20,10 @@ export default function OsRiskPage() {
     <OsShell
       pathname="/os/risk"
       title="Risk ceilings"
-      subtitle="Paper structure only — pending Vera schema sign-off. Values below are Diego-drafted operating rails, not live signed limits."
+      subtitle="Vera-signed paper ceilings (2026-09-06). Live capital ceilings remain unsigned and separate."
     >
       <div className="mb-4 rounded-[var(--radius-md)] border border-[var(--status-warn)]/25 bg-[var(--status-warn)]/5 px-4 py-3 text-sm text-[var(--status-warn)]">
-        Structure only · not Vera-signed · do not treat as live risk policy
+        Paper · Vera-signed · not live capital policy
       </div>
       <div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)]">
         <table className="w-full text-sm">
