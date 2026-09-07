@@ -1,20 +1,21 @@
 import Link from 'next/link';
 
+type OsStamp = 'show' | 'act' | 'sense';
+
 interface OsCardProps {
   href: string;
   label: string;
   title: string;
   description: string;
-  status?: string;
+  /** Phase 2: Show / Act / Sense stamp language (never invent ranks). */
+  stamp: OsStamp;
   meta?: string;
-  accent?: 'ok' | 'warn' | 'accent' | 'neutral';
 }
 
-const statusTone = {
-  ok: 'border-[var(--status-ok)]/30 text-[var(--status-ok)] bg-[var(--status-ok)]/10',
-  warn: 'border-[var(--status-warn)]/30 text-[var(--status-warn)] bg-[var(--status-warn)]/10',
-  accent: 'border-[var(--accent)]/30 text-[var(--accent-soft)] bg-[var(--accent-muted)]',
-  neutral: 'border-[var(--border)] text-[var(--muted)] bg-transparent',
+const STAMP_LABEL: Record<OsStamp, string> = {
+  show: 'Show',
+  act: 'Act',
+  sense: 'Sense',
 };
 
 export function OsCard({
@@ -22,9 +23,8 @@ export function OsCard({
   label,
   title,
   description,
-  status,
+  stamp,
   meta,
-  accent = 'neutral',
 }: OsCardProps) {
   return (
     <Link
@@ -36,13 +36,7 @@ export function OsCard({
         <p className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
           {label}
         </p>
-        {status ? (
-          <span
-            className={`rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${statusTone[accent]}`}
-          >
-            {status}
-          </span>
-        ) : null}
+        <span className={`os-stamp os-stamp--${stamp}`}>{STAMP_LABEL[stamp]}</span>
       </div>
       <h3 className="text-lg font-bold tracking-tight text-foreground transition-colors group-hover:text-[var(--accent-soft)]">
         {title}

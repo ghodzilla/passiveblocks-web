@@ -90,8 +90,7 @@ export default function OsHomePage() {
           label="Decide"
           title="Conviction ledger"
           description="Vera line-signed Show TOP100 vs 8 Vera Act book weights. Show ≠ Act."
-          status="Signed"
-          accent="ok"
+          stamp="show"
           meta={`${convictionShow.show_rows.length} Show · ${convictionShow.book_rows.length} book · ${formatAsOf(convictionShow.as_of)}`}
         />
         <OsCard
@@ -99,30 +98,27 @@ export default function OsHomePage() {
           label="Act"
           title="Paper book"
           description="Target weights after first paper fills. Live Act remains blocked."
-          status="Paper"
-          accent="accent"
-          meta={`${formatPct(targetBook.invested_pct)} invested`}
+          stamp="act"
+          meta={`Paper · ${formatPct(targetBook.invested_pct)} invested`}
         />
         <OsCard
           href="/os/risk"
           label="Risk"
           title="Ceilings"
           description="Hard paper risk envelope Vera locked for unsupervised Act."
-          status="Active"
-          accent="warn"
-          meta={`DD ${ceilings.max_drawdown_pct}% · IL ${ceilings.max_il_budget_pct}%`}
+          stamp="act"
+          meta={`Signed · DD ${ceilings.max_drawdown_pct}% · IL ${ceilings.max_il_budget_pct}%`}
         />
         <OsCard
           href="/os/signal"
           label="Sense"
           title="Signal inbox"
           description="Adopted weekly pack — regime, theme calls, and recent roster hits. Sense never sizes the book."
-          status={signalLive ? 'Live' : 'Waiting'}
-          accent={signalLive ? 'ok' : 'neutral'}
+          stamp="sense"
           meta={
             signalLive
-              ? `${signalPack.recent_signals.length} signals · ${signalPack.brief.themes.length} themes`
-              : undefined
+              ? `Live · ${signalPack.recent_signals.length} signals · ${signalPack.brief.themes.length} themes`
+              : 'Waiting · pack not present'
           }
         />
         <OsCard
@@ -130,12 +126,11 @@ export default function OsHomePage() {
           label="Truth"
           title="Sources"
           description="Figures, URLs, and brief citations derived from the Sense pack."
-          status={signalLive ? 'Live' : 'Waiting'}
-          accent={signalLive ? 'accent' : 'neutral'}
+          stamp="sense"
           meta={
             signalLive
-              ? `${new Set(signalPack.recent_signals.map((s) => s.figure)).size} figures`
-              : undefined
+              ? `Live · ${new Set(signalPack.recent_signals.map((s) => s.figure)).size} figures`
+              : 'Waiting · pack not present'
           }
         />
       </div>

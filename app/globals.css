@@ -76,6 +76,31 @@
   --os-table-header-size: 0.625rem;
   --os-table-row-py: 14px;
   --os-table-row-hover: rgba(255, 255, 255, 0.02);
+
+  /* Decision / tier pills — Phase 2 (Artemis calm, lower chroma) */
+  --os-pill-core-fg: #86c9a0;
+  --os-pill-core-bg: rgba(74, 222, 128, 0.06);
+  --os-pill-core-border: rgba(74, 222, 128, 0.18);
+
+  --os-pill-growth-fg: #8fa3d4;
+  --os-pill-growth-bg: rgba(59, 130, 246, 0.07);
+  --os-pill-growth-border: rgba(59, 130, 246, 0.16);
+
+  --os-pill-moonshot-fg: #9aa8c8;
+  --os-pill-moonshot-bg: rgba(148, 163, 184, 0.07);
+  --os-pill-moonshot-border: rgba(148, 163, 184, 0.18);
+
+  --os-pill-watch-fg: #c9b57a;
+  --os-pill-watch-bg: rgba(251, 191, 36, 0.06);
+  --os-pill-watch-border: rgba(251, 191, 36, 0.16);
+
+  --os-pill-veto-fg: #c99a9a;
+  --os-pill-veto-bg: rgba(248, 113, 113, 0.06);
+  --os-pill-veto-border: rgba(248, 113, 113, 0.16);
+
+  --os-pill-insufficient-fg: var(--muted);
+  --os-pill-insufficient-bg: rgba(255, 255, 255, 0.02);
+  --os-pill-insufficient-border: var(--border);
 }
 
 body {
@@ -138,5 +163,56 @@ body {
     background: var(--os-weather-bg);
     border-radius: var(--radius-lg);
     padding: var(--space-4) var(--space-5);
+  }
+
+  /* Quiet decision / tier pills (Show ledger + Act book tiers) */
+  .os-pill {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    border-width: 1px;
+    border-style: solid;
+    padding: 0.125rem 0.5rem;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .os-pill--core {
+    color: var(--os-pill-core-fg);
+    background: var(--os-pill-core-bg);
+    border-color: var(--os-pill-core-border);
+  }
+
+  .os-pill--growth,
+  .os-pill--satellite {
+    color: var(--os-pill-growth-fg);
+    background: var(--os-pill-growth-bg);
+    border-color: var(--os-pill-growth-border);
+  }
+
+  .os-pill--moonshot {
+    color: var(--os-pill-moonshot-fg);
+    background: var(--os-pill-moonshot-bg);
+    border-color: var(--os-pill-moonshot-border);
+  }
+
+  .os-pill--watch {
+    color: var(--os-pill-watch-fg);
+    background: var(--os-pill-watch-bg);
+    border-color: var(--os-pill-watch-border);
+  }
+
+  .os-pill--veto {
+    color: var(--os-pill-veto-fg);
+    background: var(--os-pill-veto-bg);
+    border-color: var(--os-pill-veto-border);
+  }
+
+  .os-pill--insufficient {
+    color: var(--os-pill-insufficient-fg);
+    background: var(--os-pill-insufficient-bg);
+    border-color: var(--os-pill-insufficient-border);
   }
 }

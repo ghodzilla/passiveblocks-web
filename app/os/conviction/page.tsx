@@ -15,29 +15,29 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-const tierTone: Record<string, string> = {
-  core: 'text-[var(--status-ok)] bg-[var(--status-ok)]/10 border-[var(--status-ok)]/25',
-  growth: 'text-[var(--accent-soft)] bg-[var(--accent-muted)] border-[var(--accent)]/25',
-  satellite: 'text-[var(--accent-soft)] bg-[var(--accent-muted)] border-[var(--accent)]/25',
-  moonshot: 'text-[var(--accent-soft)] bg-[var(--accent-muted)] border-[var(--accent)]/25',
-  watch: 'text-[var(--status-warn)] bg-[var(--status-warn)]/10 border-[var(--status-warn)]/25',
-  veto: 'text-[var(--status-danger)] bg-[var(--status-danger)]/10 border-[var(--status-danger)]/25',
+const TIER_PILL: Record<string, string> = {
+  core: 'os-pill--core',
+  growth: 'os-pill--growth',
+  satellite: 'os-pill--satellite',
+  moonshot: 'os-pill--moonshot',
+  watch: 'os-pill--watch',
+  veto: 'os-pill--veto',
 };
 
-const decisionTone: Record<string, string> = {
-  SIGN_CORE: 'text-[var(--status-ok)] bg-[var(--status-ok)]/10 border-[var(--status-ok)]/25',
-  SIGN_GROWTH: 'text-[var(--accent-soft)] bg-[var(--accent-muted)] border-[var(--accent)]/25',
-  SIGN_MOONSHOT: 'text-[var(--accent-soft)] bg-[var(--accent-muted)] border-[var(--accent)]/25',
-  SIGN_WATCH: 'text-[var(--status-warn)] bg-[var(--status-warn)]/10 border-[var(--status-warn)]/25',
-  INSUFFICIENT: 'text-[var(--muted)] bg-white/[0.03] border-[var(--border)]',
+const DECISION_PILL: Record<string, string> = {
+  SIGN_CORE: 'os-pill--core',
+  SIGN_GROWTH: 'os-pill--growth',
+  SIGN_MOONSHOT: 'os-pill--moonshot',
+  SIGN_WATCH: 'os-pill--watch',
+  INSUFFICIENT: 'os-pill--insufficient',
 };
 
-function tierClass(tier: string) {
-  return tierTone[tier.toLowerCase()] ?? tierTone.watch;
+function tierPill(tier: string) {
+  return TIER_PILL[tier.toLowerCase()] ?? 'os-pill--watch';
 }
 
-function decisionClass(decision: string) {
-  return decisionTone[decision] ?? decisionTone.INSUFFICIENT;
+function decisionPill(decision: string) {
+  return DECISION_PILL[decision] ?? 'os-pill--insufficient';
 }
 
 function decisionLabel(decision: string) {
@@ -50,11 +50,9 @@ function showTierLabel(tier: string, decision: string) {
   return tier;
 }
 
-function showTierClass(tier: string, decision: string) {
-  if (decision === 'INSUFFICIENT') {
-    return 'text-[var(--muted)] bg-white/[0.03] border-[var(--border)]';
-  }
-  return tierClass(tier);
+function showTierPill(tier: string, decision: string) {
+  if (decision === 'INSUFFICIENT') return 'os-pill--insufficient';
+  return tierPill(tier);
 }
 
 const RETRACTION_FLAG_RE = /retract|cite_false_positive/i;
@@ -118,11 +116,47 @@ export default function ConvictionPage() {
       />
 
       {convictionShow.revision_note ? (
-        <p className="mb-6 text-xs text-[var(--muted)]">
+        <p className="mb-4 text-xs text-[var(--muted)]">
           Revised {formatAsOf(convictionShow.revised_at ?? convictionShow.as_of)} ·{' '}
           {convictionShow.revision_note}
         </p>
       ) : null}
+
+      {/* Sticky scarce Act summary — keeps 8 Vera weights scannable above Show TOP100 */}
+      <div className="sticky top-0 z-20 mb-8 -mx-1 border-b border-[var(--os-act-border)] bg-background/90 px-1 py-3 backdrop-blur-md">
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="os-stamp os-stamp--act">Act</span>
+            <p className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+              Act book · {bookCount} Vera-signed weights
+            </p>
+          </div>
+          <a
+            href="#act-book"
+            className="text-[11px] font-medium text-[var(--os-act-fg)] underline-offset-2 hover:underline"
+          >
+            Jump to Act detail ↓
+          </a>
+        </div>
+        <ul className="flex flex-wrap gap-2">
+          {bookRows.map((row) => (
+            <li
+              key={row.symbol}
+              className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--os-act-border)] bg-[var(--os-act-bg)] px-2.5 py-1.5"
+            >
+              <span className="text-xs font-semibold tracking-tight text-foreground">
+                {row.symbol}
+              </span>
+              <span className="os-tabular font-mono text-[11px] font-bold text-[var(--os-act-fg)]">
+                {formatPct(row.weight_pct)}
+              </span>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-2 text-[11px] text-[var(--muted)]">
+          Scarce Act only — not Show density. Paper HOLD · Show ledger below never sizes the book.
+        </p>
+      </div>
 
       <section className="mb-10">
         <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
@@ -171,15 +205,13 @@ export default function ConvictionPage() {
                       <ScoreBar score={row.score} />
                     </td>
                     <td className="px-4 py-3.5">
-                      <span
-                        className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${showTierClass(row.tier, row.vera_decision)}`}
-                      >
+                      <span className={`os-pill ${showTierPill(row.tier, row.vera_decision)}`}>
                         {showTierLabel(row.tier, row.vera_decision)}
                       </span>
                     </td>
                     <td className="px-4 py-3.5">
                       <span
-                        className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${decisionClass(row.vera_decision)}`}
+                        className={`os-pill ${decisionPill(row.vera_decision)}`}
                         title={row.vera_note}
                       >
                         {decisionLabel(row.vera_decision)}
@@ -222,7 +254,7 @@ export default function ConvictionPage() {
         </div>
       </section>
 
-      <section>
+      <section id="act-book" className="scroll-mt-24">
         <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
           <div>
             <div className="flex flex-wrap items-center gap-2">
@@ -239,10 +271,10 @@ export default function ConvictionPage() {
           <span className="font-mono text-[11px] text-[var(--muted)]">{bookCount} lines</span>
         </div>
 
-        <div className="overflow-hidden rounded-[var(--radius-xl)] border border-[var(--status-ok)]/25 bg-[var(--surface)]">
+        <div className="overflow-hidden rounded-[var(--radius-xl)] border border-[var(--os-act-border)] bg-[var(--surface)]">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[900px] text-left text-sm">
-              <thead className="border-b border-[var(--border)] bg-[var(--status-ok)]/5 text-[10px] uppercase tracking-widest text-[var(--muted-foreground)]">
+              <thead className="border-b border-[var(--border)] bg-[var(--os-act-bg)] text-[10px] uppercase tracking-widest text-[var(--muted-foreground)]">
                 <tr>
                   <th className="px-4 py-3 font-bold">Symbol</th>
                   <th className="px-4 py-3 font-bold">Weight</th>
@@ -267,11 +299,7 @@ export default function ConvictionPage() {
                       <ScoreBar score={row.score} />
                     </td>
                     <td className="px-4 py-3.5">
-                      <span
-                        className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${tierClass(row.tier)}`}
-                      >
-                        {row.tier}
-                      </span>
+                      <span className={`os-pill ${tierPill(row.tier)}`}>{row.tier}</span>
                     </td>
                     <td className="px-4 py-3.5 text-[var(--muted)]">
                       <p>{formatThemeLabel(row.sleeve)}</p>
@@ -279,10 +307,8 @@ export default function ConvictionPage() {
                     </td>
                     <td className="px-4 py-3.5">
                       <span
-                        className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
-                          row.vera_book_signed
-                            ? 'border-[var(--status-ok)]/25 bg-[var(--status-ok)]/10 text-[var(--status-ok)]'
-                            : 'border-[var(--status-danger)]/25 bg-[var(--status-danger)]/10 text-[var(--status-danger)]'
+                        className={`os-pill ${
+                          row.vera_book_signed ? 'os-pill--core' : 'os-pill--veto'
                         }`}
                       >
                         {row.vera_book_signed ? 'Signed' : 'Unsigned'}
