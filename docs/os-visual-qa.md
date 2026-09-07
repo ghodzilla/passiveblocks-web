@@ -2,6 +2,22 @@
 
 Tiny checklist before shipping OS Signal / Sources / Act surfaces.
 
+## Productize-ready bar
+
+Private access is an IP/gate — **not** an excuse for shabby UI. `/os` must look public-grade now so productize is packaging, not redesign.
+
+- [ ] **Private ≠ shabby** — desk chrome would pass a public product review; no “internal tool” apology UI.
+- [ ] **Public-grade chrome** — `OsShell` nav, stamps, and cards match Artemis composure (quiet, intentional).
+- [ ] **Calm institutional** — dark sparse palette, typography-first, minimal accents (Messari × Token Terminal × Glassnode weather feel).
+- [ ] **Cite-first** — every investable claim has a clear path into Sources / provenance.
+- [ ] **Show ≠ Act** — banner, density, and stamp language differ; Show never carries weight bars; Act never dumps TOP100 Show as book.
+- [ ] **Sense stances ≠ ranks** — OW / N / UW read as Sense stance only; no rank / tier / weight copy on Signal or Sources.
+- [ ] **Empty states premium** — intentional waiting + skeletons; never look broken or unfinished by accident.
+- [ ] **No meme crypto** — no rainbow TVL vibes, neon carnival, or retail chart skins.
+- [ ] **No admin-grey** — no flat greys-on-greys without craft; surfaces use hairline borders + designed wash.
+
+Related: `docs/OS_VISUAL_NORTH_STAR.md`, `docs/os-moodboard.md`, `docs/os-craft-pass-plan.md`.
+
 ## Show vs Act (Conviction)
 
 - [ ] Conviction **Show** table is Vera **line-signed** (`vera_decision` on `show_rows`) — NOT Act; copy reads “Vera line-signed Show · not Act”.

@@ -1,0 +1,131 @@
+/**
+ * PROPOSAL ONLY — do not import into production yet.
+ * Additive token stub for Passive Blocks `/os` calm institutional craft.
+ * Promote into app/globals.css + tailwind.config.ts in Phase 1 (see docs/os-craft-pass-plan.md).
+ *
+ * Grid: 4px base / 8px major.
+ * Feel: Private Messari × Token Terminal × Glassnode weather (Artemis composure).
+ */
+
+:root {
+  /* ===== Existing baseline (mirror of app/globals.css — reference) ===== */
+  --background: #08080f;
+  --foreground: #f0f0f5;
+  --muted: #8b8b9a;
+  --muted-foreground: rgba(255, 255, 255, 0.35);
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --surface: rgba(255, 255, 255, 0.03);
+  --surface-hover: rgba(255, 255, 255, 0.05);
+
+  --accent: #3b82f6;
+  --accent-soft: #6789ed;
+  --accent-muted: rgba(59, 130, 246, 0.15);
+
+  --status-ok: #4ade80;
+  --status-warn: #fbbf24;
+  --status-danger: #f87171;
+  --status-neutral: #94a3b8;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+
+  /* ===== Proposed additive: spacing (4px base) ===== */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* ===== Proposed additive: elevation ===== */
+  --elevation-0: none;
+  --elevation-1: 0 1px 0 rgba(255, 255, 255, 0.03);
+  --elevation-2: 0 20px 50px rgba(0, 0, 0, 0.35);
+  --elevation-nav-active: 0 0 20px rgba(59, 130, 246, 0.22); /* softer than current */
+
+  /* ===== Proposed additive: desk semantics (language-first; color quiet) ===== */
+  --os-show-fg: var(--accent-soft);
+  --os-show-bg: var(--accent-muted);
+  --os-show-border: rgba(59, 130, 246, 0.28);
+
+  --os-act-fg: var(--status-ok);
+  --os-act-bg: rgba(74, 222, 128, 0.1);
+  --os-act-border: rgba(74, 222, 128, 0.25);
+
+  --os-sense-fg: var(--status-neutral);
+  --os-sense-bg: rgba(148, 163, 184, 0.1);
+  --os-sense-border: rgba(148, 163, 184, 0.28);
+
+  --os-weather-bg: rgba(255, 255, 255, 0.025);
+  --os-weather-border: var(--border);
+
+  /* ===== Proposed additive: table density ===== */
+  --os-table-header-size: 0.625rem; /* 10px */
+  --os-table-row-py: 14px; /* ~3.5 * 4px — DefiLlama-ish without cramp */
+  --os-table-row-hover: rgba(255, 255, 255, 0.02);
+}
+
+/* Proposed utilities (promote with @layer utilities in Phase 1) */
+.os-tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.os-section-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.os-stamp {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  border-width: 1px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.os-stamp--show {
+  color: var(--os-show-fg);
+  background: var(--os-show-bg);
+  border-color: var(--os-show-border);
+}
+
+.os-stamp--act {
+  color: var(--os-act-fg);
+  background: var(--os-act-bg);
+  border-color: var(--os-act-border);
+}
+
+.os-stamp--sense {
+  color: var(--os-sense-fg);
+  background: var(--os-sense-bg);
+  border-color: var(--os-sense-border);
+}
+
+.os-weather {
+  border: 1px solid var(--os-weather-border);
+  background: var(--os-weather-bg);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+}
