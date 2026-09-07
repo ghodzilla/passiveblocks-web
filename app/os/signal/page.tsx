@@ -98,9 +98,7 @@ export default function OsSignalPage() {
           <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
             Regime
           </h2>
-          <span className="rounded-full border border-[var(--border)] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--muted-foreground)]">
-            Sense · not Act
-          </span>
+          <span className="os-stamp os-stamp--sense">Sense · not Act</span>
         </div>
         <p className="text-sm leading-relaxed text-foreground">{brief.regime_one_liner}</p>
         {status.note ? (

@@ -72,7 +72,7 @@ export function OsShell({ pathname, children, title, subtitle, eyebrow }: OsShel
                   href={item.href}
                   className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm font-medium transition-all ${
                     active
-                      ? 'bg-[var(--accent)] text-white shadow-[0_0_24px_rgba(59,130,246,0.35)]'
+                      ? 'bg-[var(--accent)] text-white shadow-[var(--elevation-nav-active)]'
                       : 'text-[var(--muted)] hover:bg-[var(--surface)] hover:text-foreground'
                   }`}
                 >

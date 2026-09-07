@@ -1,7 +1,8 @@
 /**
- * PROPOSAL ONLY — do not import into production yet.
+ * ARCHIVE / REFERENCE — promoted in Phase 1 branch nora/os-phase1-tokens.
+ * Live tokens + utilities now live in app/globals.css (:root + @layer utilities).
  * Additive token stub for Passive Blocks `/os` calm institutional craft.
- * Promote into app/globals.css + tailwind.config.ts in Phase 1 (see docs/os-craft-pass-plan.md).
+ * See docs/os-craft-pass-plan.md.
  *
  * Grid: 4px base / 8px major.
  * Feel: Private Messari × Token Terminal × Glassnode weather (Artemis composure).

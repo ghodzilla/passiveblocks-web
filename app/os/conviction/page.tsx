@@ -127,9 +127,12 @@ export default function ConvictionPage() {
       <section className="mb-10">
         <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
-              Show ledger · TOP100
-            </h2>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="os-stamp os-stamp--show">Show</span>
+              <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+                Show ledger · TOP100
+              </h2>
+            </div>
             <p className="mt-1 text-xs text-[var(--muted)]">
               Vera line-signed Show · not Act. Sorted by score. Numbers from feed JSON only.
             </p>
@@ -222,9 +225,12 @@ export default function ConvictionPage() {
       <section>
         <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
-              Act book · Vera-signed weights
-            </h2>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="os-stamp os-stamp--act">Act</span>
+              <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+                Act book · Vera-signed weights
+              </h2>
+            </div>
             <p className="mt-1 text-xs text-[var(--muted)]">
               Only these {bookCount} <span className="font-mono">book_rows</span> are Vera Act
               weights (paper HOLD). Show rows above never become Act without a separate book-sign.
