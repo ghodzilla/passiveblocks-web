@@ -1,30 +1,32 @@
 {
   "status": {
     "gate": "GATE_OPEN",
-    "as_of": "2026-09-06",
-    "valid_until": "2026-09-13",
+    "as_of": "2026-09-10",
+    "valid_until": "2026-09-17",
     "author_sense": "Sam Passive Blocks Signal",
     "adopted_by": "Diego Passive Blocks",
     "paper_book_action": "HOLD",
     "conditions": [
-      "new Act lines need Vera book-sign + theme_regime_brief_ref",
-      "SPCX/TSLA/AI-chase remain do-not-add this week",
-      "Tom Lee 2026-09-01 transcript PARTIAL (1 call) — treat cautiously"
+      "new Act needs Vera book-sign + theme_regime_brief_ref",
+      "SPCX/TSLA/AI-chase do-not-add",
+      "Tom Lee 2026-09-01 PARTIAL",
+      "copper is N (watch) — existing COPPER paper line stays HOLD (no mandated trim without Vera)",
+      "crypto OW is split-only with Howell falsifier #4 live"
     ],
-    "note": "Canonical Sense pack Decide-adopted. Focus extract 172 @ 2026-09-06. OneDrive signals.json restored (497339). Engine truth remains box-local signal-db/onedrive-cache. Paper book HOLD.",
+    "note": "Decide-adopted 2026-09-10 from Sense refresh INPUT. Copper OW→N. Crypto split OW + falsifier #4 unrebutted (GLI INSUFFICIENT). Signals still freeze: generated 2026-09-06, n=172, latest 2026-09-04. Paper book HOLD. No new Act / no score changes. OneDrive signals.json restore metadata retained.",
     "signals_json": {
       "n_records": 172,
       "generated": "2026-09-06"
     }
   },
   "brief": {
-    "as_of": "2026-09-06",
-    "timezone": "Australia/Melbourne (AEST)",
+    "as_of": "2026-09-10",
+    "timezone": "Australia/Melbourne (AEST) / Sydney UTC+10",
     "gate": "GATE_OPEN",
     "author": "Sense (Sam)",
     "adopted_by": "Diego Passive Blocks (Decide)",
-    "adopted_at": "2026-09-06T21:33:00+10:00",
-    "regime_one_liner": "Fiscal-dominance / hard-asset debasement regime; AI demand intact but multiple-compression mud; Hormuz/choke-point energy premium — OW hard assets + copper + crypto rails; N AI/semis; UW long nominal duration.",
+    "adopted_at": "2026-09-10T09:19:00+10:00",
+    "regime_one_liner": "Fiscal-dominance / hard-asset hedge still the frame. Gold is the only dense independent desk agree. Copper is supply narrative / company-pitch tape — not desk-cluster OW. Crypto rails stay OW only as a split (bulls not one call; Howell near-term bear unrebutted; ETF/stablecoin prints from the 9 Sep card do not adjudicate GLI). AI/semis N. Long duration UW. Booth/Mucha dropped as current seats.",
     "paper_book_action": "HOLD",
     "paper_book_implications": {
       "hold": [
@@ -33,7 +35,8 @@
         "BTC",
         "ETH",
         "COPPER",
-        "TSM"
+        "TSM",
+        "OIL"
       ],
       "hold_no_add": [
         "NVDA"
@@ -42,92 +45,121 @@
         "OIL"
       ],
       "trim": [],
-      "add_queue": [
-        "LLY",
-        "DEFENSE",
-        "LMT",
-        "RTX"
-      ],
+      "add_queue": [],
       "will_not_size": [
-        "POWER",
         "SPCX",
         "TSLA",
-        "TLT",
         "AI BASKET",
-        "NUCLEAR"
+        "SOL",
+        "Selkirk",
+        "Phoenix",
+        "TLT",
+        "BE",
+        "GEV",
+        "CCJ"
       ]
     },
-    "pending": "Vera book-sign required for any new Act lines; Tom Lee 2026-09-01 PARTIAL",
+    "pending": "Vera book-sign required for any new Act lines; Tom Lee 2026-09-01 PARTIAL; copper N watch — COPPER paper HOLD no mandated trim; crypto split OW + falsifier #4 live",
     "falsifiers": [
-      "Debasement break: durable USD strength + gold/silver trend failure / CB diversification stops",
-      "Hormuz normalization: sustained pre-war Gulf crude throughput without fiscal/inflation echo",
-      "AI demand break: hyperscaler capex/backlog collapse or memory-bottleneck relief",
-      "Liquidity kill for crypto: Howell falling-liquidity momentum dominates debasement-crypto bid",
-      "Duration vindication: Warsh delivers clean disinflation + credible long-end bid rewarding TLT"
+      "Debasement break: durable USD strength + gold/silver trend failure / CB diversification stops — Live.",
+      "Hormuz normalization: sustained pre-war Gulf crude throughput without fiscal/inflation echo — Live.",
+      "AI demand break: hyperscaler capex/backlog collapse or memory-bottleneck relief — Live.",
+      "Liquidity kill for crypto: Howell falling-liquidity momentum dominates debasement-crypto bid — Live (unrebutted voice). GLI cell INSUFFICIENT (Hole. Not zero.). Hole. Not zero. ETF/stablecoin prints from liquidity-card-2026-09-09 do not adjudicate Howell.",
+      "Duration vindication: Warsh delivers clean disinflation + credible long-end bid rewarding TLT — Live. Booth/Mucha dropped as current supporting seats"
     ],
     "themes": [
       {
-        "name": "Hard-asset debasement (Gold/Silver)",
+        "name": "Hard-asset debasement (Gold)",
         "stance": "OW",
         "citation_count": 5,
         "citations": [
-          "onedrive-cache/signals.json|Luke Gromen|2026-08-28|Some quick thoughts on gold, BTC, and \"my framework\"|https://www.youtube.com/watch?v=R1VLmuXYU3o",
-          "onedrive-cache/signals.json|Jordi Visser|2026-08-23|The AI Crypto Macro Nexus Point|https://www.youtube.com/watch?v=FoSLsvUKvws",
-          "onedrive-cache/signals.json|Jesse Day|2026-08-27|Debit Spiral About to Implode and $20k Gold is the Only Way Out|https://www.youtube.com/watch?v=YClSbElOUtI",
-          "onedrive-cache/signals.json|Rick Rule|2026-08-22|Rick Rule Evaluates 8 Mining Stocks",
-          "onedrive-cache/generational-themes-2026.md"
-        ]
+          "onedrive-cache/signals.json|Luke Gromen|2026-08-28|https://www.youtube.com/watch?v=R1VLmuXYU3o",
+          "onedrive-cache/signals.json|Jordi Visser|2026-08-23|https://www.youtube.com/watch?v=FoSLsvUKvws",
+          "onedrive-cache/signals.json|Michael Howell|2026-08-11|https://www.youtube.com/watch?v=FPB4Z1KhE3s",
+          "onedrive-cache/signals.json|Rick Rule|2026-08-22|https://www.youtube.com/watch?v=-mxfxVtbqXc",
+          "onedrive-cache/signals.json|Arthur Hayes|2026-08-21|https://www.youtube.com/watch?v=0b_nJ53uiA0"
+        ],
+        "confidence": "high",
+        "change_vs_brief_2026_09_06": "holds"
       },
       {
-        "name": "Copper / critical minerals",
+        "name": "Hard-asset debasement (Silver)",
         "stance": "OW",
         "citation_count": 4,
         "citations": [
-          "onedrive-cache/signals.json|Crux Investor|2026-08-28|Selkirk Copper|https://www.youtube.com/watch?v=sEyT9WPM5Bo",
-          "onedrive-cache/signals.json|Crux Investor|2026-08-31|Drill Results Pile Up|https://www.youtube.com/watch?v=HEnRn9p8c9w",
-          "onedrive-cache/signals.json|Jesse Day|2026-09-01|GOLD Just Became a Real Alternative|https://www.youtube.com/watch?v=hrG7rtIRFIQ",
-          "onedrive-cache/generational-themes-2026.md"
-        ]
+          "onedrive-cache/signals.json|Jordi Visser|2026-08-23|https://www.youtube.com/watch?v=FoSLsvUKvws",
+          "onedrive-cache/signals.json|Michael Howell|2026-08-11|https://www.youtube.com/watch?v=FPB4Z1KhE3s",
+          "onedrive-cache/signals.json|Rick Rule|2026-08-22|https://www.youtube.com/watch?v=-mxfxVtbqXc",
+          "Matthew Piepenburg (guest, Jesse Day channel)|2026-08-27|https://www.youtube.com/watch?v=YClSbElOUtI"
+        ],
+        "confidence": "medium",
+        "change_vs_brief_2026_09_06": "holds_lower_confidence"
+      },
+      {
+        "name": "Copper / critical minerals",
+        "stance": "N",
+        "citation_count": 4,
+        "citations": [
+          "Crux Investor|2026-08-28|Selkirk CEO|https://www.youtube.com/watch?v=sEyT9WPM5Bo",
+          "Crux Investor|2026-08-31|Olive scarcity|https://www.youtube.com/watch?v=HEnRn9p8c9w",
+          "Nick Campbell (guest, Jesse Day channel)|2026-09-01|sponsored|https://www.youtube.com/watch?v=hrG7rtIRFIQ",
+          "David Hunter (guest, Jesse Day channel)|2026-08-20|basket|https://www.youtube.com/watch?v=JKDkHIUcPx4"
+        ],
+        "confidence": "low_to_medium_narrative",
+        "change_vs_brief_2026_09_06": "CHANGE from OW to N — cannot desk-cluster OW on company pitches",
+        "paper_line": "COPPER HOLD (already owned); do-not-add; discovery stays discovery; no mandated trim without Vera"
       },
       {
         "name": "Crypto rails / tokenization (BTC/ETH)",
         "stance": "OW",
-        "citation_count": 5,
+        "citation_count": 6,
         "citations": [
-          "onedrive-cache/signals.json|Luke Gromen|2026-08-28|BTC stance_change=flip",
-          "onedrive-cache/signals.json|Jordi Visser|2026-08-23|BTC/ETH/tokenization",
-          "onedrive-cache/signals.json|Jordi Visser|2026-08-30|Bessent Gets Drucked|https://www.youtube.com/watch?v=2FND8g-De8Y",
-          "onedrive-cache/signals.json|Arthur Hayes|2026-08-21|Bitcoin to $200K|https://www.youtube.com/watch?v=0b_nJ53uiA0",
-          "signal-db/transcripts/Tom-Lee/2026-09-02-fOMlh1gq33g.md|video_id=fOMlh1gq33g"
-        ]
+          "Jordi Visser|2026-08-23|https://www.youtube.com/watch?v=FoSLsvUKvws",
+          "Jordi Visser|2026-08-30|https://www.youtube.com/watch?v=2FND8g-De8Y",
+          "Luke Gromen|2026-08-28|https://www.youtube.com/watch?v=R1VLmuXYU3o",
+          "Arthur Hayes|2026-08-21|https://www.youtube.com/watch?v=0b_nJ53uiA0",
+          "Tom Lee|2026-09-02|https://www.youtube.com/watch?v=fOMlh1gq33g",
+          "Michael Howell|2026-08-11|near-term crypto bear|https://www.youtube.com/watch?v=FPB4Z1KhE3s"
+        ],
+        "confidence": "low_to_medium",
+        "change_vs_brief_2026_09_06": "holds_only_as_split_OW",
+        "diego_fork": "Would go N if unrebutted-bear bar required with no GLI print; under continuing GATE language retained split OW + live falsifier #4"
       },
       {
         "name": "AI compute / semis infrastructure",
         "stance": "N",
         "citation_count": 5,
         "citations": [
-          "onedrive-cache/signals.json|Jensen Huang|2026-09-01|NVDA/HBM",
-          "onedrive-cache/signals.json|Jordi Visser|2026-08-02|hyperscalers flip bullish|https://www.youtube.com/watch?v=VVfTS50v91I",
-          "onedrive-cache/signals.json|Jordi Visser|2026-08-30|AI infra mudstorm",
-          "signal-db/transcripts/Tom-Lee/2026-09-02-fOMlh1gq33g.md|video_id=fOMlh1gq33g",
-          "onedrive-cache/generational-themes-2026.md"
-        ]
+          "Jordi Visser|2026-08-30|https://www.youtube.com/watch?v=2FND8g-De8Y",
+          "Tom Lee|2026-09-02|https://www.youtube.com/watch?v=fOMlh1gq33g",
+          "Arthur Hayes|2026-08-21|https://www.youtube.com/watch?v=0b_nJ53uiA0",
+          "Jensen Huang|2026-09-01|https://www.youtube.com/watch?v=UG36zbFOojw",
+          "Matthew Piepenburg (guest)|2026-08-27|https://www.youtube.com/watch?v=YClSbElOUtI"
+        ],
+        "confidence": "medium",
+        "change_vs_brief_2026_09_06": "holds"
       },
       {
         "name": "Long nominal duration (Treasuries/TLT)",
         "stance": "UW",
-        "citation_count": 4,
+        "citation_count": 6,
         "citations": [
-          "onedrive-cache/signals.json|Luke Gromen|2026-08-28|long-end bearish",
-          "onedrive-cache/signals.json|Jesse Day|2026-08-27|30Y flip bearish",
-          "onedrive-cache/signals.json|Raoul Pal|2026-08-23|Bianco panel Treasuries bearish|https://www.youtube.com/watch?v=lFpQuOEzGzc",
-          "signal-db/transcripts/Danielle-DiMartino-Booth/2026-06-11-SvQe7R6283c.md|video_id=SvQe7R6283c"
-        ]
+          "Luke Gromen|2026-08-28|https://www.youtube.com/watch?v=R1VLmuXYU3o",
+          "Matthew Piepenburg (guest)|2026-08-27|https://www.youtube.com/watch?v=YClSbElOUtI",
+          "Michael Howell|2026-08-11|https://www.youtube.com/watch?v=FPB4Z1KhE3s",
+          "Jim Bianco (guest, Raoul Pal channel)|2026-08-23|https://www.youtube.com/watch?v=lFpQuOEzGzc",
+          "Mohamed El-Erian|2026-08-19|https://www.youtube.com/watch?v=hLWzUoHwGx8",
+          "Jordi Visser|2026-08-23|long-end neutral flip|https://www.youtube.com/watch?v=FoSLsvUKvws"
+        ],
+        "confidence": "medium",
+        "change_vs_brief_2026_09_06": "holds; drop Booth/Mucha as current supporting seats"
       }
     ],
     "signals_json_n": 172,
     "signals_json_generated": "2026-09-06",
-    "brief_md": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-06.md"
+    "brief_md": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-10.md",
+    "valid_until": "2026-09-17",
+    "superseded_brief": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-06.md"
   },
   "recent_signals": [
     {

@@ -59,8 +59,9 @@ function LeadProse({ compact = false }: { compact?: boolean }) {
       </p>
       <p>
         What to sit with: hold the metal. Do not treat bitcoin as the same trade as gold until a flow
-        print or a later Howell tape says the liquidity clock has turned. Copper the metal is cited;
-        copper juniors and Caterpillar are not a three-desk agree. No path to 40% is in this file.
+        print or a later Howell tape says the liquidity clock has turned. Copper stays owned under a
+        watch/N theme — supply narrative and company-pitch tape, not a desk-cluster OW; juniors and
+        Caterpillar are not a three-desk agree. No path to 40% is in this file.
       </p>
     </div>
   );
