@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { liquidityCard } from '@/lib/os-data';
+import { formatFlowUsdMillions, liquidityCard } from '@/lib/os-data';
 import { MetricTile } from '@/components/os/MetricTile';
 
 function tone(value: string): 'ok' | 'bad' | 'neutral' {
@@ -21,6 +21,9 @@ export function LiquidityCard({ variant = 'full' }: { variant?: 'full' | 'teaser
   const btcSessions = sessions(btc.farside_sessions_usdm);
   const ethSessions = sessions(eth.farside_sessions_usdm);
 
+  const btcFlow = formatFlowUsdMillions(btc.farside_sum);
+  const ethFlow = formatFlowUsdMillions(eth.farside_sum, eth.farside_sum_unit);
+
   const tiles = [
     {
       label: 'Stablecoins',
@@ -31,17 +34,17 @@ export function LiquidityCard({ variant = 'full' }: { variant?: 'full' | 'teaser
     },
     {
       label: 'BTC ETFs',
-      value: btc.farside_sum,
+      value: btcFlow,
       delta: '1–4 Sep net',
       meta: `${btc.farside_as_of} · Farside`,
-      tone: 'ok' as const,
+      tone: tone(btcFlow),
     },
     {
       label: 'ETH ETFs',
-      value: `+${eth.farside_sum}m`,
+      value: ethFlow,
       delta: '1–4 Sep net',
       meta: `${eth.farside_as_of} · Farside`,
-      tone: 'ok' as const,
+      tone: tone(ethFlow),
     },
     {
       label: 'BTC 8 Sep',
@@ -122,7 +125,7 @@ export function LiquidityCard({ variant = 'full' }: { variant?: 'full' | 'teaser
                   {value}
                 </td>
               ))}
-              <td className="px-4 py-3 font-mono font-semibold">{btc.farside_sum}</td>
+              <td className="px-4 py-3 font-mono font-semibold">{btcFlow}</td>
             </tr>
             <tr className="border-t border-[var(--border)]">
               <td className="px-4 py-3 font-semibold">ETH</td>
@@ -131,7 +134,7 @@ export function LiquidityCard({ variant = 'full' }: { variant?: 'full' | 'teaser
                   {value}
                 </td>
               ))}
-              <td className="px-4 py-3 font-mono font-semibold">+{eth.farside_sum}m</td>
+              <td className="px-4 py-3 font-mono font-semibold">{ethFlow}</td>
             </tr>
           </tbody>
         </table>

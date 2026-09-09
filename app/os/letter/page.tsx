@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { OsShell } from '@/components/os/OsShell';
 import { MetricTile } from '@/components/os/MetricTile';
+import { formatFlowUsdMillions } from '@/lib/os-data';
 import card from '@/data/os/liquidity-card.json';
 
 export const metadata = {
@@ -50,8 +51,8 @@ export default function LetterPage() {
           </p>
           <div className="grid gap-3 sm:grid-cols-3">
             <MetricTile label="Stablecoins" value="$309.85bn" delta="+1.44bn 7d" meta="8 Sep · DefiLlama" tone="ok" />
-            <MetricTile label="BTC ETFs" value="+$770m" delta="1–4 Sep" meta="4 Sep · Farside" tone="ok" />
-            <MetricTile label="ETH ETFs" value="+$127.7m" delta="1–4 Sep" meta="4 Sep · Farside" tone="ok" />
+            <MetricTile label="BTC ETFs" value={formatFlowUsdMillions(card.tradfi_to_crypto.btc.farside_sum)} delta="1–4 Sep" meta="4 Sep · Farside" tone="ok" />
+            <MetricTile label="ETH ETFs" value={formatFlowUsdMillions(card.tradfi_to_crypto.eth.farside_sum, card.tradfi_to_crypto.eth.farside_sum_unit)} delta="1–4 Sep" meta="4 Sep · Farside" tone="ok" />
           </div>
           <p className="mt-2 text-xs text-[var(--muted)]">
             Basis, gold flow, and a global-liquidity index are insufficient. Full card on{' '}

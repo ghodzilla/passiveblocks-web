@@ -4,6 +4,20 @@ import { ThemeBars } from '@/components/os/ThemeBars';
 import { WeightBar } from '@/components/os/WeightBar';
 import { formatAsOf, formatPct, formatScore, formatThemeLabel, paperPortfolio, targetBook } from '@/lib/os-data';
 
+/** Book theme map. NVDA is AI; TSM stays Semis. */
+const BOOK_THEME_LABELS: Record<string, string> = {
+  metals: 'Metals',
+  crypto: 'Crypto',
+  semis: 'Semis',
+  ai: 'AI',
+  energy: 'Energy',
+};
+
+function bookThemeLabel(theme: string) {
+  const key = theme.trim().toLowerCase();
+  return BOOK_THEME_LABELS[key] ?? formatThemeLabel(theme);
+}
+
 export const metadata = {
   title: 'Book · OS',
   robots: { index: false, follow: false },
@@ -43,10 +57,11 @@ export default function BookPage() {
             Positions
           </h2>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-left text-sm">
+            <table className="w-full min-w-[720px] text-left text-sm">
               <thead className="border-b border-[var(--border)] text-[10px] uppercase tracking-widest text-[var(--muted-foreground)]">
                 <tr>
                   <th className="pb-2 font-bold">Symbol</th>
+                  <th className="pb-2 font-bold">Theme</th>
                   <th className="pb-2 font-bold">Weight</th>
                   <th className="pb-2 font-bold">Score</th>
                   <th className="pb-2 font-bold">Instrument</th>
@@ -58,8 +73,8 @@ export default function BookPage() {
                   <tr key={p.symbol} className="hover:bg-white/[0.02]">
                     <td className="py-3.5">
                       <p className="font-semibold">{p.symbol}</p>
-                      <p className="text-[11px] text-[var(--muted)]">{formatThemeLabel(p.theme_bucket)}</p>
                     </td>
+                    <td className="py-3.5 text-sm">{bookThemeLabel(p.theme_bucket)}</td>
                     <td className="py-3.5">
                       <WeightBar pct={p.weight_pct} max={ceilings.max_single_name_pct} />
                     </td>
@@ -70,6 +85,7 @@ export default function BookPage() {
                 ))}
                 <tr>
                   <td className="py-3.5 font-semibold text-[var(--muted)]">CASH</td>
+                  <td className="py-3.5 text-xs text-[var(--muted)]">—</td>
                   <td className="py-3.5">
                     <WeightBar pct={targetBook.cash_pct} max={100} />
                   </td>
@@ -86,7 +102,7 @@ export default function BookPage() {
           <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
             Theme exposure
           </h2>
-          <ThemeBars exposure={targetBook.theme_exposure_pct} capPct={ceilings.max_single_theme_pct} />
+          <ThemeBars exposure={targetBook.theme_exposure_pct} capPct={ceilings.max_single_theme_pct} labels={BOOK_THEME_LABELS} />
           <p className="mt-5 text-[11px] leading-relaxed text-[var(--muted)]">
             Signed by {targetBook.vera_book_signed_by} · {formatAsOf(targetBook.vera_book_signed_at)}. Weights
             only — no mark-to-market invented here.

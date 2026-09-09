@@ -299,6 +299,45 @@ export function formatUsd(n: number) {
   }).format(n);
 }
 
+/**
+ * One signed US$m string for ETF flow tiles and sums.
+ * The source already carries its sign — callers must not prepend another +.
+ * Unit is always "US$m" so "$...m" and "US$m" cannot diverge.
+ */
+export function formatFlowUsdMillions(raw: string, unit = 'US$m'): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return trimmed;
+
+  let body = trimmed
+    .replace(/US\$m/gi, '')
+    .replace(/\$m/gi, '')
+    .replace(/\s*m$/i, '')
+    .replace(/[$,]/g, '')
+    .trim();
+
+  const negative = /^[\u2212-]/.test(body);
+  body = body.replace(/^[+\u2212-]+/, '').trim();
+
+  if (!/^\d+(\.\d+)?$/.test(body)) return trimmed;
+
+  const sign = negative ? '\u2212' : '+';
+  const decimals = body.includes('.') ? body.split('.')[1].length : 1;
+  return `${sign}${Number(body).toFixed(decimals)} ${unit}`;
+}
+
+/** Month or day stamp already stored on a panel. Does not invent a date. */
+export function formatVintage(iso: string) {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) return formatDate(iso);
+  if (/^\d{4}-\d{2}$/.test(iso)) {
+    const [year, month] = iso.split('-');
+    const name = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][
+      Number(month) - 1
+    ];
+    return name ? `${name} ${year}` : iso;
+  }
+  return iso;
+}
+
 export function formatDate(iso: string) {
   try {
     return new Date(iso).toLocaleDateString('en-AU', {
