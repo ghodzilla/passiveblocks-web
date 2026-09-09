@@ -4,6 +4,7 @@ import Link from 'next/link';
 
 const NAV = [
   { href: '/os', label: 'Home', exact: true },
+  { href: '/os/letter', label: 'Letter' },
   { href: '/os/conviction', label: 'Conviction' },
   { href: '/os/results', label: 'Results' },
   { href: '/os/crypto', label: 'Crypto' },
