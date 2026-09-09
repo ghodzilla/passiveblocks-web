@@ -89,7 +89,7 @@ export default function CryptoPage() {
             >
               <div className="flex items-baseline justify-between gap-2">
                 <p className="font-semibold tracking-tight">{coin.symbol}</p>
-                <p className="font-mono text-sm">{coin.price}</p>
+                <p className="font-mono text-xl font-semibold">{coin.price}</p>
               </div>
               <p className="text-xs text-[var(--muted)]">
                 {coin.name}
