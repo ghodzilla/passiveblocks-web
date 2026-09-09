@@ -1,0 +1,240 @@
+{
+  "as_of_note": "Quarterly prints are the research-dashboard snapshot as of Jul 2026. Next-report dates that the 9 Sep sync had already moved are shown as reported, not as still ahead. Not Act. Not a score.",
+  "lead": "The money is going into the spenders' capex, not into a new ticket. That spend is a tailwind for the quality already held, and a cash drag on the companies writing the cheques. Do not add Tesla on the robotaxi spend. Paper stays hold.",
+  "watch": [
+    "Hyperscaler AI capex for 2026, as printed on this snapshot: Google $180–190B, Amazon ~$200B, Microsoft ~$190B, Meta $125–145B. Tailwind for the compute and power names. Free-cash-flow drag on the spenders.",
+    "Strategic buildouts on the same snapshot: Palo Alto–CyberArk/Chronosphere ($25B), GE Vernova–Prolec ($5.3B), Rocket Lab Neutron, Tesla's $3B Texas chip plant, Constellation–Calpine ($21.8B)."
+  ],
+  "quarterly": {
+    "as_of": "2026-07",
+    "caption": "Most recent reported quarter on the Jul 2026 snapshot. Calendar-Q2 season had not started yet on that print, except names that report on a fiscal spring. ETFs and crypto are omitted. They do not report earnings.",
+    "rows": [
+      {
+        "symbol": "NVDA",
+        "quarter": "FQ1 FY27 (Apr 2026)",
+        "revenue": "$81.6B +85%",
+        "profit": "Adj EPS $1.87 (GAAP $2.39)",
+        "margin": "GM 75.0%",
+        "capex": "Opex ~$7.6B; FCF $48.6B",
+        "notable": "Data Center $75.2B +92% (networking $14.8B +199%). Blackwell/GB300 scale-out. GAAP EPS lifted by AI-stake gains."
+      },
+      {
+        "symbol": "GOOGL",
+        "quarter": "Q1 2026 (Mar)",
+        "revenue": "$109.9B +22%",
+        "profit": "Op income $39.7B",
+        "margin": "Op margin 36%",
+        "capex": "Capex $35.7B/q; FY $180–190B",
+        "notable": "AI datacenter buildout. Cloud +63% ($20B). Backlog ~$462B."
+      },
+      {
+        "symbol": "MSFT",
+        "quarter": "FQ3 FY26 (Mar)",
+        "revenue": "$82.9B +18%",
+        "profit": "EPS $4.27 +21%",
+        "margin": "Op margin ~46%",
+        "capex": "Capex $31.9B/q; CY26 ~$190B",
+        "notable": "Azure +40%, fifth straight acceleration. Flagged ~$25B memory-cost headwind."
+      },
+      {
+        "symbol": "AMZN",
+        "quarter": "Q1 2026 (Mar)",
+        "revenue": "$181.5B +17%",
+        "profit": "Op income $23.9B (record)",
+        "margin": "Op margin 13%",
+        "capex": "Capex ~$44B/q; FY ~$200B",
+        "notable": "AWS +28% ($37.6B) plus Trainium silicon. Net income lifted by an AI-stake gain."
+      },
+      {
+        "symbol": "TSM",
+        "quarter": "Q1 2026 (Mar)",
+        "revenue": "$35.9B +41%",
+        "profit": "Net NT$572B +58%",
+        "margin": "GM 66% / Op 58%",
+        "capex": "Capex $11.1B/q; FY $52–56B",
+        "notable": "2nm ramp and Arizona fabs. Q2 guide on that print $39–40.2B."
+      },
+      {
+        "symbol": "AVGO",
+        "quarter": "FQ2 FY26 (May)",
+        "revenue": "$22.2B +48%",
+        "profit": "Adj EPS $2.44",
+        "margin": "GM 77%",
+        "capex": "Capex $231M; R&D ~$3.0B",
+        "notable": "AI semi $10.8B +143%, about half of revenue. Q3 AI guide on that print $16B."
+      },
+      {
+        "symbol": "ISRG",
+        "quarter": "Q1 2026 (Mar)",
+        "revenue": "$2.77B +23%",
+        "profit": "Adj EPS $2.50 +38%",
+        "margin": "GM ~68%",
+        "capex": "—",
+        "notable": "Procedures +16%. da Vinci 5 was 85% of US system placements. About 100bps tariff drag."
+      },
+      {
+        "symbol": "LLY",
+        "quarter": "Q2 2026 (Jun)",
+        "revenue": "$23.0B +48%",
+        "profit": "Adj EPS $8.38 (beat $6.07 est)",
+        "margin": "—",
+        "capex": "R&D scaling with pipeline",
+        "notable": "Mounjaro $9.9B +91%. FY26 revenue guide raised to $85–87B from $82–85B."
+      },
+      {
+        "symbol": "META",
+        "quarter": "Q1 2026 (Mar)",
+        "revenue": "$56.3B +33%",
+        "profit": "Op income $22.9B",
+        "margin": "Op margin 41%",
+        "capex": "Capex $19.8B/q; FY $125–145B",
+        "notable": "First model shipped from the new lab. Reality Labs –$4.0B. About 8,000 job cuts."
+      },
+      {
+        "symbol": "ASML",
+        "quarter": "Q1 2026 (Mar)",
+        "revenue": "€8.8B +13%",
+        "profit": "Net €2.8B +17% (EPS €7.15)",
+        "margin": "GM 53%",
+        "capex": "EUV €4.1B incl 2 High-NA",
+        "notable": "High-NA EUV ramp. FY guide raised to €36–40B."
+      },
+      {
+        "symbol": "PANW",
+        "quarter": "FQ3 FY26 (Apr)",
+        "revenue": "$3.00B +31%",
+        "profit": "Adj EPS $0.85 (GAAP –$0.22)",
+        "margin": "Adj op ~21%",
+        "capex": "$25B CyberArk + Chronosphere deals",
+        "notable": "NGS ARR $8.1B +60% (organic +28%). GAAP loss from acquisition costs and stock-comp."
+      },
+      {
+        "symbol": "TSLA",
+        "quarter": "Q2 2026 (Jun)",
+        "revenue": "$28.2B +26%",
+        "profit": "Non-GAAP EPS $0.33 (missed $0.53 est)",
+        "margin": "Op margin 1.4%",
+        "capex": "Capex $5.79B/q (+142%)",
+        "notable": "Auto gross margin ex-credits 16.3%. Capex surge on robotaxi and AI. TTM revenue above $100B."
+      },
+      {
+        "symbol": "GEV",
+        "quarter": "Q2 2026 (Jun)",
+        "revenue": "$11.1B +12% (beat $10.8B est)",
+        "profit": "EPS $2.47 (missed $3.04 est)",
+        "margin": "Adj EBITDA +61% to $1.2B",
+        "capex": "~$10B FCF YTD",
+        "notable": "Orders more than doubled. Backlog $176B. FY26 revenue guide raised to $45.5–46.5B. Wind orders –40%."
+      },
+      {
+        "symbol": "RKLB",
+        "quarter": "Q1 2026 (Mar)",
+        "revenue": "$200M +64% (record)",
+        "profit": "Net loss –$45M",
+        "margin": "GM 38%; cash $1.48B",
+        "capex": "Neutron ~$190M booked",
+        "notable": "Backlog $2.2B +108%. Neutron medium-lift was on track for a later-2026 debut on that print."
+      },
+      {
+        "symbol": "CEG",
+        "quarter": "Q2 2026 (Jun)",
+        "revenue": "$7.5B (missed $7.7B est)",
+        "profit": "Adj EPS $2.55 (beat $2.34 est)",
+        "margin": "—",
+        "capex": "Capex ~$3.9B",
+        "notable": "Calpine close and 920MW of new nuclear PPAs. FY26 adj EPS guide raised to $11.50–12.50."
+      }
+    ]
+  },
+  "now": {
+    "as_of": "2026-08-20",
+    "refreshed": "2026-09-09",
+    "caption": "Between-earnings layer from the 20 Aug dashboard. Next-report dates updated only where the 9 Sep sync had already recorded a print. Deep financials above stay the Jul snapshot.",
+    "rows": [
+      {
+        "symbol": "NVDA",
+        "next": "Reported 26 Aug 2026 (FQ2 FY27). Next ~25 Nov 2026.",
+        "watch": "The print that landed: revenue $96.2B, EPS $2.22, data center +117%, Q3 guide $105.8–110.6B. Watch the guide, ship rate, and whether networking keeps carrying the mix.",
+        "latest": "FQ2 (26 Aug): rev $96.2B, EPS $2.22, DC +117%, Q3 guide $105.8–110.6B."
+      },
+      {
+        "symbol": "GOOGL",
+        "next": "27 Oct 2026 (Q3, confirmed).",
+        "watch": "Cloud growth versus the $180–190B capex bill, and whether search monetization holds.",
+        "latest": "Q2: $119.8B +24%, Cloud +82% to $24.8B."
+      },
+      {
+        "symbol": "MSFT",
+        "next": "~27–28 Oct 2026 (FQ1 FY27).",
+        "watch": "Azure acceleration versus the memory-cost headwind already flagged.",
+        "latest": "FQ4: $90.0B +18%, Azure +43%."
+      },
+      {
+        "symbol": "AMZN",
+        "next": "~22 Oct 2026 (Q3, aggregator-listed, not company-confirmed).",
+        "watch": "AWS growth and whether retail margin pays for the capex guide near $200B.",
+        "latest": "Q2: $200.6B +20%, AWS +36.7% to $42.2B."
+      },
+      {
+        "symbol": "TSM",
+        "next": "~15 Oct 2026 (Q3, est., not company-confirmed).",
+        "watch": "Monthly sales versus the guided pace, 2nm ramp, Arizona yields, and the capex number.",
+        "latest": "Jul sales on the 10 Aug print: NT$467.58B, +44.7% YoY."
+      },
+      {
+        "symbol": "AVGO",
+        "next": "Reported 2 Sep 2026 (FQ3 FY26). Next ~11 Dec 2026.",
+        "watch": "Custom-chip customer ramp and VMware margins. The 9 Sep sync recorded revenue $29.59B +86%, adj EPS $2.68, AI semis $16.7B +221%.",
+        "latest": "FQ3 (2 Sep): rev $29.59B +86%, adj EPS $2.68, AI semis $16.7B +221%."
+      },
+      {
+        "symbol": "ISRG",
+        "next": "20 Oct 2026 (Q3, confirmed).",
+        "watch": "Procedure growth, da Vinci 5 mix, tariff drag.",
+        "latest": "Q2: $2.89B +19%, procedures +16%, adj EPS $2.80."
+      },
+      {
+        "symbol": "LLY",
+        "next": "29 Oct 2026 (Q3, confirmed).",
+        "watch": "Volume on the injection franchise, oral launch pace, supply.",
+        "latest": "Q2: $23.0B +48%, adj EPS $8.38. FY26 guide raised to $85–87B."
+      },
+      {
+        "symbol": "META",
+        "next": "28 Oct 2026 (Q3, confirmed).",
+        "watch": "Whether the capex bill ($125–145B) still clears against ad growth.",
+        "latest": "Q2: $60.8B +28%. EPS $6.18, down 13%."
+      },
+      {
+        "symbol": "ASML",
+        "next": "14 Oct 2026 (Q3, confirmed).",
+        "watch": "Bookings, High-NA adoption, China share.",
+        "latest": "Q2 reported 16 Jul: €8.8B +13%."
+      },
+      {
+        "symbol": "PANW",
+        "next": "Reported 1 Sep 2026 (FQ4 FY26). Next ~mid-Nov 2026.",
+        "watch": "Whether the deal integrations stay on the margin path. The 20 Aug dashboard had the 1 Sep print at $3.41B +34%, adj EPS $1.02, NGS ARR $9.10B +63%.",
+        "latest": "FQ4 (1 Sep): rev $3.41B +34%, adj EPS $1.02, NGS ARR $9.10B +63%."
+      },
+      {
+        "symbol": "TSLA",
+        "next": "28 Oct 2026 (Q3, confirmed).",
+        "watch": "Cash, not the story. Operating margin was 1.4%. Do not add.",
+        "latest": "Q2: $28.2B +26%, op margin 1.4%, non-GAAP EPS $0.33."
+      },
+      {
+        "symbol": "GEV",
+        "next": "~21 Oct 2026 (Q3, est.).",
+        "watch": "Gas-turbine slot bookings, the Prolec deal, and wind-segment drag.",
+        "latest": "Q2: $11.1B +12%, EPS $2.47 miss, backlog $176B."
+      },
+      {
+        "symbol": "RKLB",
+        "next": "~mid-Nov 2026 (Q3, est.).",
+        "watch": "Neutron debut timing and whether the backlog converts. Not a desk add.",
+        "latest": "Q2 (10 Aug): rev $234.1M +62%, backlog $2.36B."
+      }
+    ]
+  }
+}
