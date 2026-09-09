@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { OsShell } from '@/components/os/OsShell';
+import { MetricTile } from '@/components/os/MetricTile';
 import card from '@/data/os/liquidity-card.json';
 
 export const metadata = {
@@ -7,19 +8,7 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-type Cell = {
-  group: string;
-  label: string;
-  as_of: string;
-  publisher: string;
-  source_url: string;
-  headline: string;
-  detail: string;
-};
-
 export default function LetterPage() {
-  const cells = card.filled as Cell[];
-
   return (
     <OsShell
       pathname="/os/letter"
@@ -59,22 +48,10 @@ export default function LetterPage() {
           <p className="mb-3 text-xs text-[var(--muted)]">
             Pulled 9 Sep from the sources named. Not the July board. {card.absent}
           </p>
-          <div className="overflow-hidden rounded-[var(--radius-xl)] border border-[var(--border)]">
-            <table className="w-full text-left text-sm">
-              <tbody>
-                {cells.map((row) => (
-                  <tr key={row.label} className="border-b border-[var(--border)]/70 align-top">
-                    <td className="px-3 py-3 text-xs text-[var(--muted)]">{row.group}</td>
-                    <td className="px-3 py-3">
-                      <p className="font-medium">{row.headline}</p>
-                      <p className="mt-1 text-xs text-[var(--muted)]">
-                        {row.as_of} · {row.publisher}
-                      </p>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <MetricTile label="Stablecoins" value="$309.85bn" delta="+1.44bn 7d" meta="8 Sep · DefiLlama" tone="ok" />
+            <MetricTile label="BTC ETFs" value="+$770m" delta="1–4 Sep" meta="4 Sep · Farside" tone="ok" />
+            <MetricTile label="ETH ETFs" value="+$127.7m" delta="1–4 Sep" meta="4 Sep · Farside" tone="ok" />
           </div>
           <p className="mt-2 text-xs text-[var(--muted)]">
             Basis, gold flow, and a global-liquidity index are insufficient. Full card on{' '}
