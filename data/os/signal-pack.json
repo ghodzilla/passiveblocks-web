@@ -13,9 +13,9 @@
       "copper is N (watch) \u2014 existing COPPER paper line stays HOLD (no mandated trim without Vera)",
       "crypto OW is split-only with Howell falsifier #4 live"
     ],
-    "note": "Decide-adopted 2026-09-10 from Sense refresh INPUT. Copper OW\u2192N. Crypto split OW + falsifier #4 unrebutted (GLI INSUFFICIENT). Signals extract moved 2026-09-10: n=173, latest 2026-09-06 (Jordi Whisper). Brief stances unchanged. Paper HOLD.",
+    "note": "Decide-adopted 2026-09-10 from Sense refresh INPUT. Copper OW\u2192N. Crypto split OW + falsifier #4 unrebutted (GLI INSUFFICIENT). Signals extract moved 2026-09-10: n=174, latest 2026-09-06 (Jordi Whisper; Doomberg music stub #calls=0). Brief stances unchanged. Paper HOLD.",
     "signals_json": {
-      "n_records": 173,
+      "n_records": 174,
       "generated": "2026-09-10"
     }
   },
@@ -155,7 +155,7 @@
         "change_vs_brief_2026_09_06": "holds; drop Booth/Mucha as current supporting seats"
       }
     ],
-    "signals_json_n": 173,
+    "signals_json_n": 174,
     "signals_json_generated": "2026-09-10",
     "brief_md": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-10.md",
     "valid_until": "2026-09-17",
