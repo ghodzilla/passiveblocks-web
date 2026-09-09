@@ -1,0 +1,103 @@
+{
+  "as_of": "2026-08",
+  "flow_window": "July 2026 flows, printed on the August board",
+  "lead": "This board is a crypto bid on the August snapshot: bitcoin up on the month, above its 30-day line, and ether outperforming it. That is not a new ticket. Hold bitcoin. It is still not the same trade as gold. Do not add Solana because it led the month. Account holdings did not load on this run, so there is no position tape here.",
+  "regime": {
+    "label": "Risk-on, crypto bid",
+    "score": 3,
+    "checks": [
+      "Bitcoin up on the month",
+      "Bitcoin above its 30-day line",
+      "Ether outperforming bitcoin"
+    ]
+  },
+  "exposure": "ETH + RPL",
+  "exposure_note": "The board's exposure line, not a loaded account. The account feed failed on this run.",
+  "coins": [
+    {
+      "symbol": "BTC",
+      "name": "Bitcoin",
+      "price": "$76,713",
+      "day": "-1.59%",
+      "month": "+22.6%",
+      "held": false
+    },
+    {
+      "symbol": "ETH",
+      "name": "Ethereum",
+      "price": "$2,384",
+      "day": "-2.71%",
+      "month": "+29.6%",
+      "held": true
+    },
+    {
+      "symbol": "SOL",
+      "name": "Solana",
+      "price": "$98.90",
+      "day": "-3.23%",
+      "month": "+36.7%",
+      "held": false
+    },
+    {
+      "symbol": "RPL",
+      "name": "Rocket Pool",
+      "price": "$1.60",
+      "day": "+0.78%",
+      "month": "+4.7%",
+      "held": true
+    },
+    {
+      "symbol": "BNB",
+      "name": "BNB",
+      "price": "$684.68",
+      "day": "-0.20%",
+      "month": "+17.0%",
+      "held": false
+    },
+    {
+      "symbol": "XRP",
+      "name": "XRP",
+      "price": "$1.733",
+      "day": "-1.83%",
+      "month": "+24.6%",
+      "held": false
+    },
+    {
+      "symbol": "LINK",
+      "name": "Chainlink",
+      "price": "$11.09",
+      "day": "-2.28%",
+      "month": "+35.0%",
+      "held": false
+    },
+    {
+      "symbol": "DOGE",
+      "name": "Dogecoin",
+      "price": "$0.0809",
+      "day": "-1.83%",
+      "month": "+16.7%",
+      "held": false
+    }
+  ],
+  "flows": [
+    {
+      "bucket": "Bitcoin ETFs",
+      "print": "-$0.2B, July",
+      "tag": "Weakest ever",
+      "note": "Smallest monthly net inflow on that print. A 10-day $2.73B outflow streak, then a $510M inflow burst. 30 Jul +$233M. 31 Jul -$265M in a single day."
+    },
+    {
+      "bucket": "Ethereum ETFs",
+      "print": "+$0.37B, July",
+      "tag": "Outpaced bitcoin",
+      "note": "Ether ETFs out-drew bitcoin ETFs for the month on this snapshot."
+    },
+    {
+      "bucket": "Stablecoin supply",
+      "print": "$303.7B, -1.6% over 30 days",
+      "tag": "Now",
+      "note": "Mild on-chain outflow on this print. Sideline cash, not a drain of the system."
+    }
+  ],
+  "sources": "Reported ETF and fund net flows from the August board (July data). Prices are the board's daily read, not a live quote. A later flow card sits on Signal and is not this snapshot."
+}
