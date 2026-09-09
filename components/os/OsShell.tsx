@@ -7,6 +7,7 @@ const NAV = [
   { href: '/os/conviction', label: 'Conviction' },
   { href: '/os/results', label: 'Results' },
   { href: '/os/crypto', label: 'Crypto' },
+  { href: '/os/liquidity', label: 'Liquidity' },
   { href: '/os/book', label: 'Book' },
   { href: '/os/risk', label: 'Risk' },
   { href: '/os/signal', label: 'Signal' },
