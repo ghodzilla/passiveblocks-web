@@ -173,16 +173,10 @@ export default function ConvictionPage() {
 
         <div className="mb-5 max-w-3xl space-y-3 text-sm leading-relaxed text-foreground">
           <p>
-            The score organises the research. It is not the trade. The useful line is where your
-            journal and the tape disagree. Tesla is that line. You have it at 5/5 in the{' '}
-            <span className="font-medium">Decision Thesis Journal (20 Aug)</span>, a jockey-first bet
-            on Musk. The <span className="font-medium">Tesla/SpaceX weekly (22 Aug)</span> does not
-            corroborate that on the stock: record deliveries, then a 1.4% operating margin, negative
-            free cash flow, and the stock down about 26% on the month. Both can be true. That gap is
-            the point of the page.
-          </p>
-          <p className="text-xs text-[var(--muted)]">
-            Decision Thesis Journal 20 Aug; Tesla/SpaceX weekly 22 Aug.
+            Desk recommendation from the transcripts, not a quote list. Hold the metal already in
+            the book. Do not add more gold to force a return. Hold bitcoin. It is not the same trade
+            as gold until the liquidity clock is settled. Do not add Solana, Caterpillar, Tesla, or
+            a second operator ticket beside Tesla. No path to 40% is in this file. Paper stays hold.
           </p>
         </div>
 
