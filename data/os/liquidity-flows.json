@@ -1,0 +1,39 @@
+{
+  "as_of": "2026-08",
+  "window": "Data through late July 2026, printed on the August board",
+  "lead": "Cash is still parked. Money-market funds hit a record on this print, then eased and stayed elevated. Gold ETFs were an outflow in June. Bitcoin ETFs were a small net outflow for July. Ether ETFs out-drew them. That is not a settled liquidity clock, and it is not a new ticket. Paper stays hold.",
+  "timeline": "The liquidity timeline did not load on this snapshot. No chart is invented in its place.",
+  "rows": [
+    {
+      "bucket": "All long-term funds and ETFs",
+      "print": "+$13.1B, week of 15 Jul",
+      "note": "Broad-based net creation continuing."
+    },
+    {
+      "bucket": "US ETF net issuance",
+      "print": "Week of 22 Jul",
+      "note": "Equities +$19.9B domestic and +$6.6B world, after a brief -$2.5B equity dip the prior week."
+    },
+    {
+      "bucket": "Money-market funds",
+      "print": "$7.95T record, then eased",
+      "note": "Record $7.95T in the week of 1 Jul, up $47.7B that week, then eased $22.6B by the week of 22 Jul. Still elevated cash parking."
+    },
+    {
+      "bucket": "Gold ETFs, global",
+      "print": "-$8.0B, June",
+      "note": "North America led the outflow. First-half net inflows cut to +$8B. GLD alone bounced +$557M on 24 Jul, a US-specific stabilisation inside a weak global picture."
+    },
+    {
+      "bucket": "Bitcoin ETFs",
+      "print": "-$0.17B to -$0.21B, July",
+      "note": "Smallest monthly net inflow on that print. A 10-day $2.73B outflow streak, then a 3-day $510M inflow burst early in the month."
+    },
+    {
+      "bucket": "Ethereum ETFs",
+      "print": "+$0.37B, July",
+      "note": "Outpaced bitcoin ETFs for the month on this snapshot."
+    }
+  ],
+  "sources": "August 2026 research board, reported net flows through late July. Complements the later Signal flow card. Do not blend the two prints."
+}
