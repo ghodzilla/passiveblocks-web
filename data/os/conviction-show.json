@@ -2,7 +2,7 @@
   "as_of": "2026-09-06T23:21:46.915640+00:00",
   "mode": "show_line_signed",
   "label": "Top-100 Conviction Show (Vera line-signed tiers)",
-  "note": "Show\u2260Act. show_rows Vera line-signed 2026-09-07 (BE retracted to INSUFFICIENT). book_rows = 8 Vera Act weights (paper HOLD). Future book-eligible not yet in Act book: SOL, CAT.",
+  "note": "Show≠Act. show_rows Vera line-signed 2026-09-07 (BE retracted to INSUFFICIENT). book_rows = 8 Vera Act weights (paper HOLD). Future book-eligible not yet in Act book: SOL, CAT.",
   "counts": {
     "rows": 100,
     "by_decision": {
@@ -27,8 +27,8 @@
       "vera_decision": "SIGN_CORE",
       "show_ok": true,
       "book_eligible": true,
-      "vera_note": "Core coverage floor met \u2014 Show + book-eligible for later package",
-      "writeup": "GOLD: dry Show row. Citations: 10.",
+      "vera_note": "Core coverage floor met — Show + book-eligible for later package",
+      "writeup": "Hold the metal. That is the only dense agreement in the transcripts. The desks do not agree why, and adding more does not answer which clock wins. Already in the paper book. Not an add.",
       "flags": []
     },
     {
@@ -43,8 +43,8 @@
       "vera_decision": "SIGN_CORE",
       "show_ok": true,
       "book_eligible": true,
-      "vera_note": "Core coverage floor met \u2014 Show + book-eligible for later package",
-      "writeup": "BTC: dry Show row. Citations: 12.",
+      "vera_note": "Core coverage floor met — Show + book-eligible for later package",
+      "writeup": "Hold. The transcripts do not make one crypto call. The liquidity clock and the debasement bid are still both live, and this week’s flows do not settle which one wins. Already owned. Not the same trade as gold, and not an add.",
       "flags": []
     },
     {
@@ -59,8 +59,8 @@
       "vera_decision": "SIGN_CORE",
       "show_ok": true,
       "book_eligible": true,
-      "vera_note": "Core coverage floor met \u2014 Show + book-eligible for later package",
-      "writeup": "SILVER: dry Show row. Citations: 12.",
+      "vera_note": "Core coverage floor met — Show + book-eligible for later package",
+      "writeup": "Hold. The metal is cited with gold, not as a fresh add. Already owned. Do not size it up on a single story.",
       "flags": []
     },
     {
@@ -75,8 +75,8 @@
       "vera_decision": "SIGN_GROWTH",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Show OK; below book floor (2v/5c < 3v/5c) \u2014 not Act-eligible",
-      "writeup": "LLY: dry Show row. Citations: 5.",
+      "vera_note": "Show OK; below book floor (2v/5c < 3v/5c) — not Act-eligible",
+      "writeup": "Not a desk add this cycle. Healthcare is a coverage hole in the transcripts, not a recommendation.",
       "flags": [
         "below_book_eligible_floor"
       ]
@@ -93,8 +93,8 @@
       "vera_decision": "SIGN_GROWTH",
       "show_ok": true,
       "book_eligible": true,
-      "vera_note": "Growth coverage floor met \u2014 Show + book-eligible for later package (still needs book-sign + brief_ref)",
-      "writeup": "TSM: dry Show row. Citations: 13.",
+      "vera_note": "Growth coverage floor met — Show + book-eligible for later package (still needs book-sign + brief_ref)",
+      "writeup": "Hold the quality already in the book. A foundry bottleneck is not permission to add more semis. Not an add.",
       "flags": []
     },
     {
@@ -109,8 +109,8 @@
       "vera_decision": "SIGN_GROWTH",
       "show_ok": true,
       "book_eligible": true,
-      "vera_note": "Growth coverage floor met \u2014 Show + book-eligible for later package (still needs book-sign + brief_ref)",
-      "writeup": "COPPER: dry Show row. Citations: 9.",
+      "vera_note": "Growth coverage floor met — Show + book-eligible for later package (still needs book-sign + brief_ref)",
+      "writeup": "Hold the metal. The transcript agree is the metal, not the miners or the equipment names sitting near this row. Already owned. Not an add.",
       "flags": []
     },
     {
@@ -125,8 +125,8 @@
       "vera_decision": "SIGN_GROWTH",
       "show_ok": true,
       "book_eligible": true,
-      "vera_note": "Growth coverage floor met \u2014 Show + book-eligible for later package (still needs book-sign + brief_ref)",
-      "writeup": "SOL mapped via Jordi-style theme\u2192name (crypto rails / crypto). Corpus calls: 5 across 3 voices. Evidence grade: strong. Dry Show only \u2014 not book-signed; Vera line-sign required before Act. Latest: Farzad Mesbahi (2026-08-17): Cites the IEA finding that onshore wind and solar were the lowest-cost sources of new generation globally in 2024, notes Texas now leads US solar buildout and China installs about five times Texas's annual capacity, with 2025 alone exceedin.",
+      "vera_note": "Growth coverage floor met — Show + book-eligible for later package (still needs book-sign + brief_ref)",
+      "writeup": "Do not add. The clean Solana call is one voice, not a desk recommendation. The quote that was sitting on this row was about power buildout, not the token. Show only.",
       "flags": []
     },
     {
@@ -141,8 +141,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Vera 2026-09-07: SIGN_GROWTH retracted \u2192 INSUFFICIENT (Sam cite audit \u2014 not Bloom Energy). See risk/signs/2026-09-07-BE-line-sign-revision.json",
-      "writeup": "BE mapped via Jordi-style theme\u2192name (power/grid / power). Corpus calls: 9 across 9 voices. Evidence grade: strong. Dry Show only \u2014 not book-signed; Vera line-sign required before Act. Latest: Jordi Visser (2026-06-21): AI tools obsolete legacy SaaS; long semis / short software.. Vera retraction 2026-09-07: prior Growth sign void \u2014 coverage was not Bloom Energy.",
+      "vera_note": "Vera 2026-09-07: SIGN_GROWTH retracted → INSUFFICIENT (Sam cite audit — not Bloom Energy). See risk/signs/2026-09-07-BE-line-sign-revision.json",
+      "writeup": "Do not add. This row was a false match, not a clean company call. Not book-eligible.",
       "flags": [
         "cite_false_positive",
         "sam_sense_gap",
@@ -162,8 +162,8 @@
       "vera_decision": "SIGN_GROWTH",
       "show_ok": true,
       "book_eligible": true,
-      "vera_note": "Growth coverage floor met \u2014 Show + book-eligible for later package (still needs book-sign + brief_ref) Sense-confirmed clean CAT turbine cites.",
-      "writeup": "CAT mapped via Jordi-style theme\u2192name (power/grid / power). Corpus calls: 5 across 3 voices. Evidence grade: strong. Dry Show only \u2014 not book-signed; Vera line-sign required before Act. Latest: Jim Bianco (2026-06-19): Secular bull market over since 2020, but 5% yields are a perfectly acceptable return; bonds not to be ruled out..",
+      "vera_note": "Growth coverage floor met — Show + book-eligible for later package (still needs book-sign + brief_ref) Sense-confirmed clean CAT turbine cites.",
+      "writeup": "Do not add. The wording in the tape is a basket, not a clean ticker. Not a desk recommendation.",
       "flags": []
     },
     {
@@ -178,8 +178,8 @@
       "vera_decision": "SIGN_GROWTH",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Show OK; AI theme Neutral this week \u2014 no new AI-beta book-eligible",
-      "writeup": "MU mapped via Jordi-style theme\u2192name (AI/semis / semis). Corpus calls: 16 across 8 voices. Evidence grade: strong. Dry Show only \u2014 not book-signed; Vera line-sign required before Act. Latest: Jordi Visser (2026-06-21): Hardware could overtake hyperscalers; MU 600s to 1000+..",
+      "vera_note": "Show OK; AI theme Neutral this week — no new AI-beta book-eligible",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -194,8 +194,8 @@
       "vera_decision": "SIGN_GROWTH",
       "show_ok": true,
       "book_eligible": true,
-      "vera_note": "Growth coverage floor met \u2014 Show + book-eligible for later package (still needs book-sign + brief_ref)",
-      "writeup": "NVDA: dry Show row. Citations: 15.",
+      "vera_note": "Growth coverage floor met — Show + book-eligible for later package (still needs book-sign + brief_ref)",
+      "writeup": "Hold, do not add. The calls support the name you already own. They do not diversify the book, and they are not a new ticket.",
       "flags": []
     },
     {
@@ -210,8 +210,8 @@
       "vera_decision": "SIGN_GROWTH",
       "show_ok": true,
       "book_eligible": true,
-      "vera_note": "Growth coverage floor met \u2014 Show + book-eligible for later package (still needs book-sign + brief_ref)",
-      "writeup": "ETH: dry Show row. Citations: 11.",
+      "vera_note": "Growth coverage floor met — Show + book-eligible for later package (still needs book-sign + brief_ref)",
+      "writeup": "Hold with bitcoin, same sleeve. Not a separate high-conviction add.",
       "flags": []
     },
     {
@@ -226,8 +226,8 @@
       "vera_decision": "SIGN_GROWTH",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Show OK; do_not_add_this_week \u2014 not book-eligible (AI/space chase gate)",
-      "writeup": "Same weekly: first public quarter, revenue US$7.8B, Starlink the only operating-profit segment, xAI AI-segment operating loss −US$1.26B, cash US$93.5B, stock near the US$135 IPO. The 2 Sep cross-transcript synthesis treats TSLA and SPCX as one Musk bet, not two. Orbital compute is gated on a Starship cadence that does not yet exist. Show only. Not an Act add, and not a second ticket beside Tesla.",
+      "vera_note": "Show OK; do_not_add_this_week — not book-eligible (AI/space chase gate)",
+      "writeup": "Do not add. This is the same operator bet as Tesla, not a second ticket. First public quarter: revenue US$7.8B, Starlink the only operating profit, the AI segment losing US$1.26B, cash US$93.5B, stock near the US$135 IPO. Orbital compute still needs a launch cadence that does not exist.",
       "flags": [
         "do_not_add_this_week"
       ]
@@ -244,8 +244,8 @@
       "vera_decision": "SIGN_GROWTH",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Show OK; AI theme Neutral this week \u2014 no new AI-beta book-eligible",
-      "writeup": "GOOGL mapped via Jordi-style theme\u2192name (AI/semis / agents). Corpus calls: 7 across 5 voices. Evidence grade: strong. Dry Show only \u2014 not book-signed; Vera line-sign required before Act. Latest: Gavin Baker (2025-12-09): TPU v7 gave Google a real but temporary pre-training and low-cost-token edge while Blackwell was delayed; that advantage erodes once Blackwell/Rubin ramp, forcing Google to run AI at ~-30% margin or cede share..",
+      "vera_note": "Show OK; AI theme Neutral this week — no new AI-beta book-eligible",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -260,8 +260,8 @@
       "vera_decision": "SIGN_GROWTH",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Show OK; AI theme Neutral this week \u2014 no new AI-beta book-eligible",
-      "writeup": "META mapped via Jordi-style theme\u2192name (AI/semis / agents). Corpus calls: 6 across 5 voices. Evidence grade: strong. Dry Show only \u2014 not book-signed; Vera line-sign required before Act. Latest: Michael Howell (2025-12-17): Money leaving financial markets flows into a strong real economy; cycle favors commodities around the liquidity peak, backed by inflationary Treasury QE and Chinese liquidity..",
+      "vera_note": "Show OK; AI theme Neutral this week — no new AI-beta book-eligible",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -276,8 +276,8 @@
       "vera_decision": "SIGN_GROWTH",
       "show_ok": true,
       "book_eligible": true,
-      "vera_note": "Growth coverage floor met \u2014 Show + book-eligible for later package (still needs book-sign + brief_ref)",
-      "writeup": "OIL: dry Show row. Citations: 12.",
+      "vera_note": "Growth coverage floor met — Show + book-eligible for later package (still needs book-sign + brief_ref)",
+      "writeup": "Hold, and do not add. The spike story and the killed spike story are both in the tape. Trim-watch only.",
       "flags": []
     },
     {
@@ -292,8 +292,8 @@
       "vera_decision": "SIGN_GROWTH",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Show OK; below book floor (2v/8c < 3v/5c) \u2014 not Act-eligible",
-      "writeup": "MSFT: dry Show row. Citations: 12.",
+      "vera_note": "Show OK; below book floor (2v/8c < 3v/5c) — not Act-eligible",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": [
         "below_book_eligible_floor"
       ]
@@ -310,8 +310,8 @@
       "vera_decision": "SIGN_GROWTH",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Show OK; below book floor (2v/8c < 3v/5c) \u2014 not Act-eligible",
-      "writeup": "AMD: dry Show row. Citations: 13.",
+      "vera_note": "Show OK; below book floor (2v/8c < 3v/5c) — not Act-eligible",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": [
         "below_book_eligible_floor"
       ]
@@ -328,8 +328,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "SMALL CAPS: dry Show row. Citations: 5.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -344,8 +344,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "GAS: dry Show row. Citations: 8.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -360,8 +360,8 @@
       "vera_decision": "SIGN_MOONSHOT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Moonshot Show only \u2014 not book-eligible this cycle",
-      "writeup": "IREN mapped via Jordi-style theme\u2192name (crypto rails / power). Corpus calls: 1 across 1 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act. Latest: Raoul Pal (2026-06-21): Vertically integrated infra wielding own AI compute; far above ~$58..",
+      "vera_note": "Moonshot Show only — not book-eligible this cycle",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -376,8 +376,8 @@
       "vera_decision": "SIGN_MOONSHOT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Moonshot Show only \u2014 not book-eligible this cycle",
-      "writeup": "INTC mapped via Jordi-style theme\u2192name (AI/semis / semis). Corpus calls: 2 across 1 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act. Latest: Gavin Baker (2025-10-22): High-NA EUV first-mover + US 10% stake gives a real shot..",
+      "vera_note": "Moonshot Show only — not book-eligible this cycle",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -392,8 +392,8 @@
       "vera_decision": "SIGN_MOONSHOT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Moonshot Show only \u2014 not book-eligible this cycle",
-      "writeup": "MRVL mapped via Jordi-style theme\u2192name (AI/semis / semis). Corpus calls: 2 across 1 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act. Latest: Jordi Visser (2026-07-26): His largest position (biggest semi holding besides Nvidia); expects an earnings 'step-up function' in optical/photonics as the Vera Rubin platform ramps.",
+      "vera_note": "Moonshot Show only — not book-eligible this cycle",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -408,8 +408,8 @@
       "vera_decision": "SIGN_MOONSHOT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Show as Moonshot; do_not_add_this_week \u2014 never Act this cycle",
-      "writeup": "Journal 5/5 (20 Aug), last reviewed that day. The 22 Aug weekly: Q2 deliveries 480,126, revenue US$28.24B, EPS US$0.33, operating margin 1.4%, free cash flow −US$1.09B. Bull case is optionality (Cybercab, FSD, Optimus). Bear case is near-term cash. Farzad checks the operating numbers and skips the cash-flow hit — opinion, not the filing. Next dated catalyst the weekly names is Q3 earnings, about 28 Oct 2026. Show only. Not an Act weight.",
+      "vera_note": "Show as Moonshot; do_not_add_this_week — never Act this cycle",
+      "writeup": "Do not add. Your own note is 5/5. The weekly tape is record deliveries and broken near-term cash: 480,126 deliveries, a 1.4% operating margin, free cash flow of −US$1.09B. Both can be true. That gap is the read. Not an Act weight.",
       "flags": [
         "do_not_add_this_week"
       ]
@@ -426,8 +426,8 @@
       "vera_decision": "SIGN_MOONSHOT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Moonshot Show only \u2014 not book-eligible this cycle",
-      "writeup": "ENTG mapped via Jordi-style theme\u2192name (AI/semis / chemicals). Corpus calls: 1 across 1 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act. Latest: Jordi Visser (2026-06-14): Chemicals are the oil of the next 10 years; Vera Rubin complexity and NAND transition drive demand; Entegris breaking out of multi-year base..",
+      "vera_note": "Moonshot Show only — not book-eligible this cycle",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -442,8 +442,8 @@
       "vera_decision": "SIGN_MOONSHOT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Moonshot Show only \u2014 not book-eligible this cycle",
-      "writeup": "AVGO: dry Show row. Citations: 10.",
+      "vera_note": "Moonshot Show only — not book-eligible this cycle",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -458,8 +458,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "NUCLEAR: dry Show row. Citations: 7.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -474,8 +474,8 @@
       "vera_decision": "SIGN_MOONSHOT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Moonshot Show only \u2014 not book-eligible this cycle",
-      "writeup": "LNG mapped via Jordi-style theme\u2192name (unmapped / other). Corpus calls: 1 across 1 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act. Latest: Doomberg (2026-03-26): Europe 'in the crosshairs' and will suffer greatly; Taiwan cited with only ~11 days of natural gas supply..",
+      "vera_note": "Moonshot Show only — not book-eligible this cycle",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -490,8 +490,8 @@
       "vera_decision": "SIGN_MOONSHOT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Moonshot Show only \u2014 not book-eligible this cycle",
-      "writeup": "MSTR: dry Show row. Citations: 11.",
+      "vera_note": "Moonshot Show only — not book-eligible this cycle",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -506,8 +506,8 @@
       "vera_decision": "SIGN_MOONSHOT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Moonshot Show only \u2014 not book-eligible this cycle",
-      "writeup": "AMZN mapped via Jordi-style theme\u2192name (AI/semis / agents). Corpus calls: 1 across 1 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act. Latest: Jensen Huang (2026-08-27): AWS deploying an additional 2M GPUs through FY2029 plus CPUs and NVIDIA robotics stack, despite building its own silicon..",
+      "vera_note": "Moonshot Show only — not book-eligible this cycle",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -522,8 +522,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "AEM mapped via Jordi-style theme\u2192name (gold-silver / hard_asset). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -538,8 +538,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "BHP mapped via Jordi-style theme\u2192name (copper / hard_asset). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -554,8 +554,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "BYN mapped via Jordi-style theme\u2192name (gold-silver / hard_asset). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -570,8 +570,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "FCX mapped via Jordi-style theme\u2192name (copper / hard_asset). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -586,8 +586,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "GDX mapped via Jordi-style theme\u2192name (gold-silver / hard_asset). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -602,8 +602,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "GDXJ mapped via Jordi-style theme\u2192name (gold-silver / hard_asset). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -618,8 +618,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "GLAD mapped via Jordi-style theme\u2192name (copper / hard_asset). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -634,8 +634,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "GLD mapped via Jordi-style theme\u2192name (gold-silver / hard_asset). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -650,8 +650,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "IAU mapped via Jordi-style theme\u2192name (gold-silver / hard_asset). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -666,8 +666,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "IAUX mapped via Jordi-style theme\u2192name (gold-silver / hard_asset). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -682,8 +682,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "NEM mapped via Jordi-style theme\u2192name (gold-silver / hard_asset). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -698,8 +698,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "RIO mapped via Jordi-style theme\u2192name (copper / hard_asset). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -714,8 +714,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "SCCO mapped via Jordi-style theme\u2192name (copper / hard_asset). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -730,8 +730,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "SCMI mapped via Jordi-style theme\u2192name (copper / hard_asset). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -746,8 +746,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "SLV mapped via Jordi-style theme\u2192name (gold-silver / hard_asset). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -762,8 +762,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "VALE mapped via Jordi-style theme\u2192name (copper / hard_asset). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -778,8 +778,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "AGING: dry Show row. Citations: 6.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -794,8 +794,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "AMAT mapped via Jordi-style theme\u2192name (AI/semis / semis). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -810,8 +810,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "ANET mapped via Jordi-style theme\u2192name (AI/semis / optical). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -826,8 +826,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "ARM mapped via Jordi-style theme\u2192name (AI/semis / semis). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -842,8 +842,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "ASML mapped via Jordi-style theme\u2192name (AI/semis / semis). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -858,8 +858,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "CARR mapped via Jordi-style theme\u2192name (power/grid / power). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -874,8 +874,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "CCJ: dry Show row. Citations: 6.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -890,8 +890,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "CDNS mapped via Jordi-style theme\u2192name (AI/semis / semis). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -906,8 +906,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "CEG mapped via Jordi-style theme\u2192name (power/grid / power). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -922,8 +922,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "COHR mapped via Jordi-style theme\u2192name (AI/semis / optical). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -938,8 +938,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "CRDO mapped via Jordi-style theme\u2192name (AI/semis / optical). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -954,8 +954,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "CRSP: dry Show row. Citations: 6.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -970,8 +970,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "CVX mapped via Jordi-style theme\u2192name (energy / power). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -986,8 +986,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "DE mapped via Jordi-style theme\u2192name (power/grid / power). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1002,8 +1002,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "DLR mapped via Jordi-style theme\u2192name (power/grid / power). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1018,8 +1018,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "EQIX mapped via Jordi-style theme\u2192name (power/grid / power). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1034,8 +1034,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "ETN mapped via Jordi-style theme\u2192name (power/grid / power). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1050,8 +1050,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "GEV mapped via Jordi-style theme\u2192name (power/grid / power). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Do not add. Grid equipment is not a three-desk agree in this corpus. Show only.",
       "flags": []
     },
     {
@@ -1066,8 +1066,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "GILD: dry Show row. Citations: 6.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1082,8 +1082,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "GLW mapped via Jordi-style theme\u2192name (AI/semis / optical). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1098,8 +1098,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "HBM mapped via Jordi-style theme\u2192name (AI/semis / semis). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1114,8 +1114,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "KLAC mapped via Jordi-style theme\u2192name (AI/semis / semis). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1130,8 +1130,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "LMT: dry Show row. Citations: 6.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1146,8 +1146,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "LONGEVITY: dry Show row. Citations: 6.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1162,8 +1162,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "LRCX mapped via Jordi-style theme\u2192name (AI/semis / semis). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1178,8 +1178,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "NVO: dry Show row. Citations: 6.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1194,8 +1194,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "PWR mapped via Jordi-style theme\u2192name (power/grid / power). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1210,8 +1210,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "QCOM mapped via Jordi-style theme\u2192name (AI/semis / semis). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1226,8 +1226,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "REINDUSTRIALIZATION: dry Show row. Citations: 6.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1242,8 +1242,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "RTX: dry Show row. Citations: 6.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1258,8 +1258,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "SMH mapped via Jordi-style theme\u2192name (AI/semis / semis). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1274,8 +1274,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "SNPS mapped via Jordi-style theme\u2192name (AI/semis / semis). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1290,8 +1290,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "SOXX mapped via Jordi-style theme\u2192name (AI/semis / semis). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1306,8 +1306,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "TLT: dry Show row. Citations: 6.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1322,8 +1322,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "TT mapped via Jordi-style theme\u2192name (power/grid / power). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1338,8 +1338,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "URI mapped via Jordi-style theme\u2192name (power/grid / power). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1354,8 +1354,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "URNM mapped via Jordi-style theme\u2192name (copper/uranium / power). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1370,8 +1370,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "VRT mapped via Jordi-style theme\u2192name (power/grid / power). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1386,8 +1386,8 @@
       "vera_decision": "SIGN_WATCH",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Watch Show only \u2014 thin research; not book-eligible",
-      "writeup": "XOM: dry Show row. Citations: 6.",
+      "vera_note": "Watch Show only — thin research; not book-eligible",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     },
     {
@@ -1402,8 +1402,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Insufficient evidence \u2014 Show only with INSUFFICIENT label; never Act",
-      "writeup": "AEP mapped via Jordi-style theme\u2192name (unmapped / other). Corpus calls: 0 across 0 voices. Evidence grade: insufficient. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Insufficient evidence — Show only with INSUFFICIENT label; never Act",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": [
         "INSUFFICIENT_EVIDENCE"
       ]
@@ -1420,8 +1420,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Insufficient evidence \u2014 Show only with INSUFFICIENT label; never Act",
-      "writeup": "D mapped via Jordi-style theme\u2192name (unmapped / other). Corpus calls: 0 across 0 voices. Evidence grade: insufficient. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Insufficient evidence — Show only with INSUFFICIENT label; never Act",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": [
         "INSUFFICIENT_EVIDENCE"
       ]
@@ -1438,8 +1438,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Insufficient evidence \u2014 Show only with INSUFFICIENT label; never Act",
-      "writeup": "DUK mapped via Jordi-style theme\u2192name (unmapped / other). Corpus calls: 0 across 0 voices. Evidence grade: insufficient. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Insufficient evidence — Show only with INSUFFICIENT label; never Act",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": [
         "INSUFFICIENT_EVIDENCE"
       ]
@@ -1456,8 +1456,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Insufficient evidence \u2014 Show only with INSUFFICIENT label; never Act",
-      "writeup": "EIX mapped via Jordi-style theme\u2192name (unmapped / other). Corpus calls: 0 across 0 voices. Evidence grade: insufficient. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Insufficient evidence — Show only with INSUFFICIENT label; never Act",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": [
         "INSUFFICIENT_EVIDENCE"
       ]
@@ -1474,8 +1474,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Insufficient evidence \u2014 Show only with INSUFFICIENT label; never Act",
-      "writeup": "ENPH mapped via Jordi-style theme\u2192name (unmapped / other). Corpus calls: 0 across 0 voices. Evidence grade: insufficient. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Insufficient evidence — Show only with INSUFFICIENT label; never Act",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": [
         "INSUFFICIENT_EVIDENCE"
       ]
@@ -1492,8 +1492,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Insufficient evidence \u2014 Show only with INSUFFICIENT label; never Act",
-      "writeup": "FSLR mapped via Jordi-style theme\u2192name (unmapped / other). Corpus calls: 0 across 0 voices. Evidence grade: insufficient. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Insufficient evidence — Show only with INSUFFICIENT label; never Act",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": [
         "INSUFFICIENT_EVIDENCE"
       ]
@@ -1510,8 +1510,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Insufficient evidence \u2014 Show only with INSUFFICIENT label; never Act",
-      "writeup": "KMI mapped via Jordi-style theme\u2192name (unmapped / other). Corpus calls: 0 across 0 voices. Evidence grade: insufficient. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Insufficient evidence — Show only with INSUFFICIENT label; never Act",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": [
         "INSUFFICIENT_EVIDENCE"
       ]
@@ -1528,8 +1528,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Insufficient evidence \u2014 Show only with INSUFFICIENT label; never Act",
-      "writeup": "NEE mapped via Jordi-style theme\u2192name (unmapped / other). Corpus calls: 0 across 0 voices. Evidence grade: insufficient. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Insufficient evidence — Show only with INSUFFICIENT label; never Act",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": [
         "INSUFFICIENT_EVIDENCE"
       ]
@@ -1546,8 +1546,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Insufficient evidence \u2014 Show only with INSUFFICIENT label; never Act",
-      "writeup": "PCG mapped via Jordi-style theme\u2192name (unmapped / other). Corpus calls: 0 across 0 voices. Evidence grade: insufficient. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Insufficient evidence — Show only with INSUFFICIENT label; never Act",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": [
         "INSUFFICIENT_EVIDENCE"
       ]
@@ -1564,8 +1564,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Insufficient evidence \u2014 Show only with INSUFFICIENT label; never Act",
-      "writeup": "RUN mapped via Jordi-style theme\u2192name (unmapped / other). Corpus calls: 0 across 0 voices. Evidence grade: insufficient. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Insufficient evidence — Show only with INSUFFICIENT label; never Act",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": [
         "INSUFFICIENT_EVIDENCE"
       ]
@@ -1582,8 +1582,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Insufficient evidence \u2014 Show only with INSUFFICIENT label; never Act",
-      "writeup": "SEDG mapped via Jordi-style theme\u2192name (unmapped / other). Corpus calls: 0 across 0 voices. Evidence grade: insufficient. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Insufficient evidence — Show only with INSUFFICIENT label; never Act",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": [
         "INSUFFICIENT_EVIDENCE"
       ]
@@ -1600,8 +1600,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Insufficient evidence \u2014 Show only with INSUFFICIENT label; never Act",
-      "writeup": "SO mapped via Jordi-style theme\u2192name (unmapped / other). Corpus calls: 0 across 0 voices. Evidence grade: insufficient. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Insufficient evidence — Show only with INSUFFICIENT label; never Act",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": [
         "INSUFFICIENT_EVIDENCE"
       ]
@@ -1618,8 +1618,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Insufficient evidence \u2014 Show only with INSUFFICIENT label; never Act",
-      "writeup": "SRE mapped via Jordi-style theme\u2192name (unmapped / other). Corpus calls: 0 across 0 voices. Evidence grade: insufficient. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Insufficient evidence — Show only with INSUFFICIENT label; never Act",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": [
         "INSUFFICIENT_EVIDENCE"
       ]
@@ -1636,8 +1636,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Insufficient evidence \u2014 Show only with INSUFFICIENT label; never Act",
-      "writeup": "WMB mapped via Jordi-style theme\u2192name (unmapped / other). Corpus calls: 0 across 0 voices. Evidence grade: insufficient. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Insufficient evidence — Show only with INSUFFICIENT label; never Act",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": [
         "INSUFFICIENT_EVIDENCE"
       ]
@@ -1654,8 +1654,8 @@
       "vera_decision": "INSUFFICIENT",
       "show_ok": true,
       "book_eligible": false,
-      "vera_note": "Zero voice/call coverage \u2014 Show as INSUFFICIENT (not a ranked investable)",
-      "writeup": "BSX mapped via Jordi-style theme\u2192name (healthcare / healthcare). Corpus calls: 0 across 0 voices. Evidence grade: thin. Dry Show only \u2014 not book-signed; Vera line-sign required before Act.",
+      "vera_note": "Zero voice/call coverage — Show as INSUFFICIENT (not a ranked investable)",
+      "writeup": "Not a desk recommendation this cycle. A guest or company line is not an agreement. Do not add on it.",
       "flags": []
     }
   ],
@@ -1776,5 +1776,5 @@
   "vera_signed_at": "2026-09-06T23:21:46.915640+00:00",
   "attestation": "/workspace/passiveblocks/risk/signs/2026-09-07-conviction-ledger-top100-line-sign.json",
   "revised_at": "2026-09-06T23:25:36.586739+00:00",
-  "revision_note": "BE SIGN_GROWTH retracted \u2192 INSUFFICIENT (false-positive cite). Future book-eligible excludes names already book-signed."
+  "revision_note": "BE SIGN_GROWTH retracted → INSUFFICIENT (false-positive cite). Future book-eligible excludes names already book-signed."
 }
