@@ -3,6 +3,7 @@ import convictionShowJson from '@/data/os/conviction-show.json';
 import targetBookJson from '@/data/os/target-book.json';
 import paperPortfolioJson from '@/data/os/paper-portfolio.json';
 import signalPackJson from '@/data/os/signal-pack.json';
+import liquidityCardJson from '@/data/os/liquidity-card.json';
 
 export type SignalCall = { asset: string; stance: string };
 export type RecentSignal = {
@@ -54,6 +55,42 @@ export const signalPack = signalPackJson as {
     brief_md?: string;
   };
   recent_signals: RecentSignal[];
+};
+
+
+export type LiquidityCell = {
+  id: string;
+  status: 'FILLED' | 'INSUFFICIENT';
+  group: string;
+  label: string;
+  headline: string;
+  detail?: string;
+  as_of?: string;
+  publisher?: string;
+  source_url?: string;
+  tried?: string;
+};
+
+export const liquidityCard = liquidityCardJson as {
+  id: string;
+  as_of: string;
+  timezone: string;
+  compiled: string;
+  source_md: string;
+  preamble: string;
+  visible_note: string;
+  absent: string;
+  tradfi_to_crypto: {
+    label: string;
+    headline: string;
+    btc: Record<string, string>;
+    eth: Record<string, string>;
+    gross_share_creations: string;
+  };
+  stablecoins: Record<string, string>;
+  filled: Omit<LiquidityCell, 'status'>[];
+  insufficient: Omit<LiquidityCell, 'status'>[];
+  teaser_ids: string[];
 };
 
 export function stanceTone(stance: string) {

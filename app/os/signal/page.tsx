@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { EmptyState } from '@/components/os/EmptyState';
+import { LiquidityCard } from '@/components/os/LiquidityCard';
 import { OsShell } from '@/components/os/OsShell';
+import { RosterSplit } from '@/components/os/RosterSplit';
 import { StatStrip } from '@/components/os/StatStrip';
 import {
   formatAsOf,
@@ -63,7 +65,7 @@ export default function OsSignalPage() {
       pathname="/os/signal"
       eyebrow="Sense"
       title="Signal inbox"
-      subtitle="Adopted weekly pack — regime, theme Sense-stances, and recent roster hits. Sense never sizes the book; Act waits on Vera."
+      subtitle="Open split first — Howell vs debasement — then flow prints. Adopted weather sits under the split. Sense never sizes the book; Act waits on Vera."
     >
       <StatStrip
         stats={[
@@ -93,14 +95,23 @@ export default function OsSignalPage() {
         ]}
       />
 
-      <section className="mb-8 rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface)] p-5">
+      <RosterSplit />
+
+      <LiquidityCard />
+
+      <section className="os-weather mb-8">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
-            Regime
-          </h2>
+          <div>
+            <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+              Adopted weather
+            </h2>
+            <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">
+              not the open question
+            </p>
+          </div>
           <span className="os-stamp os-stamp--sense">Sense · not Act</span>
         </div>
-        <p className="text-sm leading-relaxed text-foreground">{brief.regime_one_liner}</p>
+        <p className="text-sm leading-relaxed text-[var(--muted)]">{brief.regime_one_liner}</p>
         {status.note ? (
           <p className="mt-3 text-xs leading-relaxed text-[var(--muted)]">{status.note}</p>
         ) : null}

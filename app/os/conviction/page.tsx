@@ -1,4 +1,5 @@
 import { OsShell } from '@/components/os/OsShell';
+import { RosterSplit } from '@/components/os/RosterSplit';
 import { ScoreBar } from '@/components/os/ScoreBar';
 import { StatStrip } from '@/components/os/StatStrip';
 import { WeightBar } from '@/components/os/WeightBar';
@@ -159,6 +160,8 @@ export default function ConvictionPage() {
       </div>
 
       <section className="mb-10">
+        <RosterSplit variant="banner" stamp="show" />
+
         <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
           <div>
             <div className="flex flex-wrap items-center gap-2">

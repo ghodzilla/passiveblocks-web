@@ -1,0 +1,229 @@
+{
+  "id": "liquidity-card-2026-09-09",
+  "as_of": "2026-09-09",
+  "timezone": "Australia/Sydney",
+  "compiled": "2026-09-09 16:20 AEST (2026-09-09 06:20 UTC)",
+  "source_md": "signal-db/liquidity-card-2026-09-09.md",
+  "preamble": "Every filled cell below was taken from a fetched primary page or API. No scores, sizes, Act advice, or return claims. US Labor Day was Monday 2026-09-07. The 2026-09-08 US cash session has closed; several official series have not printed it.",
+  "visible_note": "The tape does not adjudicate Howell. Howell’s test is global-liquidity momentum, which is not on this card. Completed Sep 1–4 ETF inflows and stablecoin +1.44bn 7d do not confirm his near-term crypto-bear as a September spot-ETF or stablecoin fact, and do not rebut a cycle claim. One SoSoValue post-holiday session does not reverse the Farside week.",
+  "absent": "No gold flow, no PBOC balance-sheet print, and no global-liquidity index are in this card. The gold overweight, and whether its near-term mechanism is debasement or China, cannot be confirmed or contradicted here.",
+  "tradfi_to_crypto": {
+    "label": "Tradfi→crypto",
+    "headline": "Farside 1–4 Sep BTC +770.0 US$m / ETH +127.7 (complete through 2026-09-04). SoSoValue 8 Sep BTC −46.6m / ETH −24.3m. Farside 8 Sep dashes ≠ zero (INSUFFICIENT).",
+    "btc": {
+      "farside_window": "2026-09-01 to 2026-09-04",
+      "farside_sessions_usdm": "−236.5, +101.1, +730.8, +174.6",
+      "farside_sum": "+770.0 US$m",
+      "farside_latest_complete": "+174.6 US$m on 2026-09-04 (IBIT 117.4, FBTC 57.2, all other tracked issuers 0.0)",
+      "farside_cumulative_usdm": "55,686",
+      "farside_cumulative_note": "The 08 Sep row is dashes with Total 0.0, so this cumulative equals the print through 2026-09-04.",
+      "farside_as_of": "2026-09-04",
+      "farside_lag": "5 calendar days; one US session unpublished",
+      "farside_url": "https://farside.co.uk/btc/",
+      "farside_publisher": "Farside Investors",
+      "sosovalue_as_of": "2026-09-08",
+      "sosovalue_display": "−46.6m",
+      "sosovalue_exact": "−$46.6464 million",
+      "sosovalue_cumulative": "$55.571 billion",
+      "sosovalue_net_assets": "$99.516 billion",
+      "sosovalue_issuer_map": "IBIT +10.6550, BITB +14.4672, ARKB +8.0596, MSBT +7.4144, FBTC −17.0527, GBTC −65.5096, BTCO −4.6804, others 0.0",
+      "sosovalue_url": "https://sosovalue.com/assets/etf/us-btc-spot",
+      "sosovalue_publisher": "SoSoValue",
+      "farside_2026_09_08": "INSUFFICIENT",
+      "farside_2026_09_08_note": "Row exists; issuer cells are dashes; Total 0.0 is a placeholder, not a zero-flow print. Farside 8 Sep dashes ≠ zero."
+    },
+    "eth": {
+      "farside_window": "2026-09-01 to 2026-09-04",
+      "farside_sessions_usdm": "+8.6, −48.2, +141.4, +25.9",
+      "farside_sum": "+127.7",
+      "farside_sum_unit": "US$m",
+      "farside_latest_complete": "+25.9 US$m on 2026-09-04 (ETHA 57.8, ETHB 16.4, FETH −48.3, other tracked issuers 0.0)",
+      "farside_cumulative_usdm": "13,185",
+      "farside_cumulative_note": "Includes asterisked ETHE/ETH seed conversion. 08 Sep row is dashes with Total 0.0.",
+      "farside_as_of": "2026-09-04",
+      "farside_lag": "5 calendar days",
+      "farside_url": "https://farside.co.uk/eth/",
+      "farside_publisher": "Farside Investors",
+      "sosovalue_as_of": "2026-09-08",
+      "sosovalue_display": "−24.3m",
+      "sosovalue_exact": "−$24.2921 million",
+      "sosovalue_cumulative": "$13.169 billion",
+      "sosovalue_url": "https://sosovalue.com/assets/etf/us-eth-spot",
+      "sosovalue_publisher": "SoSoValue",
+      "sosovalue_mismatch_note": "SoSoValue ETH on 2026-09-01 and 2026-09-04 does not match Farside to the tenth (10.9528 vs 8.6; 26.4613 vs 25.9). Completed-session figures cited here are Farside.",
+      "farside_2026_09_08": "INSUFFICIENT",
+      "farside_2026_09_08_note": "Tried https://farside.co.uk/eth/. Farside 8 Sep dashes ≠ zero."
+    },
+    "gross_share_creations": "INSUFFICIENT. Net flow is the published creations-minus-redemptions proxy. It is not a gross creation-unit count. SoSoValue newSharesMap for 2026-09-08 was empty strings. Issuer 8-Ks were not fetched."
+  },
+  "stablecoins": {
+    "label": "USD-pegged stablecoin circulating supply",
+    "status": "FILLED",
+    "headline": "Stablecoins: +1.44bn 7d to 8 Sep (level $309.850bn on 2026-09-08, DefiLlama totalCirculating.peggedUSD). 1d −$0.290bn.",
+    "level_exact": "$309,849,863,715",
+    "level_display": "$309.850 billion",
+    "level_required": "$309.850bn",
+    "as_of": "2026-09-08",
+    "lag": "1 calendar day",
+    "change_1d_exact": "-$289,786,471",
+    "change_1d_display": "-$0.290 billion",
+    "change_1d_required": "−$0.290bn",
+    "change_1d_vs": "2026-09-07",
+    "change_7d_exact": "$1,440,080,061",
+    "change_7d_display": "+$1.440 billion",
+    "change_7d_required": "+1.44bn",
+    "change_7d_vs": "2026-09-01",
+    "change_30d_exact": "$4,033,304,192",
+    "change_30d_display": "+$4.033 billion",
+    "change_30d_vs": "2026-08-09",
+    "source_url": "https://stablecoins.llama.fi/stablecoincharts/all",
+    "publisher": "DefiLlama",
+    "field": "totalCirculating.peggedUSD",
+    "field_note": "Native circulating USD-pegged units. Not the DefiLlama webpage headline, and not mark-to-market totalCirculatingUSD. A same-day 2026-09-09 point exists on the chart and was not used."
+  },
+  "filled": [
+    {
+      "id": "stablecoins",
+      "group": "Crypto flows",
+      "label": "USD-pegged stablecoin circulating supply",
+      "as_of": "2026-09-08",
+      "publisher": "DefiLlama",
+      "source_url": "https://stablecoins.llama.fi/stablecoincharts/all",
+      "headline": "+1.44bn 7d to 8 Sep · level $309.850bn · 1d −$0.290bn",
+      "detail": "Level $309,849,863,715 ($309.850 billion) on 2026-09-08. 1-day vs 2026-09-07: -$289,786,471 (-$0.290 billion). 7-day vs 2026-09-01: $1,440,080,061 (+$1.440 billion). 30-day vs 2026-08-09: $4,033,304,192 (+$4.033 billion). Field totalCirculating.peggedUSD. Not the webpage headline, not totalCirculatingUSD. A same-day 2026-09-09 point exists and was not used."
+    },
+    {
+      "id": "btc-farside",
+      "group": "Tradfi→crypto",
+      "label": "US spot BTC ETF net flow, Farside complete",
+      "as_of": "2026-09-04",
+      "publisher": "Farside Investors",
+      "source_url": "https://farside.co.uk/btc/",
+      "headline": "Farside 1–4 Sep BTC +770.0 US$m (complete through 2026-09-04)",
+      "detail": "Sessions 2026-09-01 to 2026-09-04, US$m: −236.5, +101.1, +730.8, +174.6. Sum +770.0. Latest complete session +174.6 US$m on 2026-09-04 (IBIT 117.4, FBTC 57.2, all other tracked issuers 0.0). Cumulative Total row 55,686 US$m equals the print through 2026-09-04. Lag vs card date: 5 calendar days; one US session unpublished."
+    },
+    {
+      "id": "eth-farside",
+      "group": "Tradfi→crypto",
+      "label": "US spot ETH ETF net flow, Farside complete",
+      "as_of": "2026-09-04",
+      "publisher": "Farside Investors",
+      "source_url": "https://farside.co.uk/eth/",
+      "headline": "Farside 1–4 Sep ETH +127.7 (complete through 2026-09-04)",
+      "detail": "Sessions 2026-09-01 to 2026-09-04, US$m: +8.6, −48.2, +141.4, +25.9. Sum +127.7. Latest complete session +25.9 US$m on 2026-09-04 (ETHA 57.8, ETHB 16.4, FETH −48.3, other tracked issuers 0.0). Cumulative Total row 13,185 US$m. Includes asterisked ETHE/ETH seed conversion. SoSoValue ETH on 2026-09-01 and 2026-09-04 does not match Farside to the tenth (10.9528 vs 8.6; 26.4613 vs 25.9). Completed-session figures cited here are Farside."
+    },
+    {
+      "id": "btc-sosovalue",
+      "group": "Tradfi→crypto",
+      "label": "US spot BTC ETF net flow, SoSoValue",
+      "as_of": "2026-09-08",
+      "publisher": "SoSoValue",
+      "source_url": "https://sosovalue.com/assets/etf/us-btc-spot",
+      "headline": "SoSoValue 8 Sep BTC −46.6m",
+      "detail": "Aggregate −$46.6464 million total net inflow (−46.6m). Cumulative $55.571 billion; net assets $99.516 billion. Issuer map sum matches the aggregate (IBIT +10.6550, BITB +14.4672, ARKB +8.0596, MSBT +7.4144, FBTC −17.0527, GBTC −65.5096, BTCO −4.6804, others 0.0)."
+    },
+    {
+      "id": "eth-sosovalue",
+      "group": "Tradfi→crypto",
+      "label": "US spot ETH ETF net flow, SoSoValue",
+      "as_of": "2026-09-08",
+      "publisher": "SoSoValue",
+      "source_url": "https://sosovalue.com/assets/etf/us-eth-spot",
+      "headline": "SoSoValue 8 Sep ETH −24.3m",
+      "detail": "Aggregate −$24.2921 million total net inflow (−24.3m). Cumulative $13.169 billion."
+    },
+    {
+      "id": "on-rrp",
+      "group": "Tradfi flows",
+      "label": "Overnight RRP (ON RRP)",
+      "as_of": "2026-09-08",
+      "publisher": "Federal Reserve Bank of New York, via FRED",
+      "source_url": "https://fred.stlouisfed.org/series/RRPONTSYD",
+      "headline": "ON RRP $0.626bn on 2026-09-08 (FRED RRPONTSYD)",
+      "detail": "$0.626 billion on 2026-09-08. Prior US session 2026-09-04: $0.675 billion. Session change −$0.049 billion. Nearby prints, US$ billions: 2026-08-31 6.726; 2026-09-01 0.725; 2026-09-02 0.525; 2026-09-03 0.702; 2026-09-04 0.675; 2026-09-07 blank; 2026-09-08 0.626. Facility usage, not H.4.1 total reverse repo. At this level the series is residual. The 2026-08-31 print of 6.726 is a month-end spike, not the prior-session comparison."
+    },
+    {
+      "id": "h41-rrp",
+      "group": "Tradfi flows",
+      "label": "H.4.1 reverse repurchase agreements",
+      "as_of": "2026-09-02",
+      "publisher": "Board of Governors of the Federal Reserve System, H.4.1",
+      "source_url": "https://www.federalreserve.gov/releases/h41/current/h41.htm",
+      "headline": "H.4.1 reverse repo $357,742 million on 2026-09-02",
+      "detail": "Release date 2026-09-03. Foreign official and international accounts $357,217 million. Others $525 million. Week average, week ended 2026-09-02: $365,043 million. Change from week ended 2026-08-26: +$2,830 million. Table 5 change since Wednesday 2026-08-26: +$1,584 million. Wednesday Others $525 million matches FRED ON RRP $0.525 billion on the same date. Most of this stock is foreign official, not the domestic overnight facility."
+    },
+    {
+      "id": "tga",
+      "group": "Tradfi flows",
+      "label": "TGA, Daily Treasury Statement",
+      "as_of": "2026-09-04",
+      "publisher": "U.S. Department of the Treasury, Fiscal Data",
+      "source_url": "https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/operating-cash-balance",
+      "headline": "TGA close $888,923m on 2026-09-04",
+      "detail": "Closing balance $888,923 million on 2026-09-04. Vs 2026-09-03 ($903,928 million): −$15,005 million. Vs 2026-08-28 ($971,343 million): −$82,420 million. Vs 2026-08-31 ($1,023,554 million): −$134,631 million. Lag vs card date: 5 calendar days. No 2026-09-08 statement was in the API response. API: https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/dts/operating_cash_balance. close_today_bal is null; open_today_bal was used for Treasury General Account (TGA) Closing Balance. The 2026-09-02 row is 944,364 million, matching H.4.1 Wednesday TGA."
+    },
+    {
+      "id": "h41-tga-reserves",
+      "group": "Tradfi flows",
+      "label": "H.4.1 TGA and reserve balances",
+      "as_of": "2026-09-02",
+      "publisher": "Board of Governors of the Federal Reserve System, H.4.1",
+      "source_url": "https://www.federalreserve.gov/releases/h41/current/h41.htm",
+      "headline": "H.4.1 TGA $944,364 million · reserves $2,929,285 million (2026-09-02)",
+      "detail": "Release date 2026-09-03. TGA week average week ended 2026-09-02: $967,935 million. Week-average change from week ended 2026-08-26: +$17,199 million. Table 5 change since Wednesday 2026-08-26: −$15,071 million. Reserve balances week average $2,894,531 million. Week-average change from week ended 2026-08-26: −$30,405 million. Cross-check only: FRED WTREGEN week-average TGA on 2026-09-02 is 967,935. FRED WLRRAL Wednesday reverse repo on 2026-09-02 is 357,742."
+    },
+    {
+      "id": "hy-oas",
+      "group": "Tradfi flows",
+      "label": "ICE BofA US high-yield OAS",
+      "as_of": "2026-09-07",
+      "publisher": "Ice Data Indices, LLC, via FRED",
+      "source_url": "https://fred.stlouisfed.org/series/BAMLH0A0HYM2",
+      "headline": "HY OAS 2.68% on 2026-09-07 (spread proxy, not a flow)",
+      "detail": "2026-09-04 also 2.68%. 2026-08-28 was 2.60%. Change 2026-08-28 to 2026-09-07: +0.08 percentage points. Lag vs card date: 2 calendar days. No 2026-09-08 observation in the CSV."
+    }
+  ],
+  "insufficient": [
+    {
+      "id": "farside-2026-09-08",
+      "group": "Tradfi→crypto",
+      "label": "Farside BTC and ETH for 2026-09-08",
+      "tried": "https://farside.co.uk/btc/ and https://farside.co.uk/eth/",
+      "headline": "Farside 8 Sep dashes ≠ zero (INSUFFICIENT)",
+      "detail": "Dash rows, Total 0.0 not used. Not a zero-flow print."
+    },
+    {
+      "id": "gross-creations",
+      "group": "Tradfi→crypto",
+      "label": "Gross ETF share creations",
+      "tried": "SoSoValue newSharesMap (empty); issuer 8-Ks not fetched",
+      "headline": "Gross ETF share creations — INSUFFICIENT",
+      "detail": "Net flow is the published creations-minus-redemptions proxy, not a gross creation-unit count. SoSoValue newSharesMap for 2026-09-08 was empty strings. Issuer 8-Ks were not fetched."
+    },
+    {
+      "id": "other-crypto",
+      "group": "Crypto flows",
+      "label": "Other crypto (reserves/basis)",
+      "tried": "No page fetched",
+      "headline": "Other crypto (reserves/basis) — INSUFFICIENT",
+      "detail": "No exchange-reserve, perp-basis, or Lookonchain-citing-a-primary print was fetched. Nothing recorded."
+    },
+    {
+      "id": "tga-after",
+      "group": "Tradfi flows",
+      "label": "TGA after 2026-09-04",
+      "tried": "Fiscal Data API returned 2026-09-04 as latest",
+      "headline": "TGA after 2026-09-04 — INSUFFICIENT",
+      "detail": "No 2026-09-08 statement was in the API response."
+    },
+    {
+      "id": "h41-after",
+      "group": "Tradfi flows",
+      "label": "H.4.1 week after 2026-09-02",
+      "tried": "https://www.federalreserve.gov/releases/h41/current/h41.htm",
+      "headline": "H.4.1 week after 2026-09-02 — INSUFFICIENT",
+      "detail": "Current release page still dated 2026-09-03."
+    }
+  ],
+  "teaser_ids": ["btc-farside", "stablecoins", "farside-2026-09-08"]
+}

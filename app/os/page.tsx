@@ -1,5 +1,7 @@
+import { LiquidityCard } from '@/components/os/LiquidityCard';
 import { OsShell } from '@/components/os/OsShell';
 import { OsCard } from '@/components/os/OsCard';
+import { RosterSplit } from '@/components/os/RosterSplit';
 import { ScoreBar } from '@/components/os/ScoreBar';
 import { StatStrip } from '@/components/os/StatStrip';
 import { ThemeBars } from '@/components/os/ThemeBars';
@@ -47,16 +49,43 @@ export default function OsHomePage() {
         ]}
       />
 
+      <RosterSplit />
+
+      {signalLive ? (
+        <section className="os-weather mb-8">
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+              Adopted weather
+            </h2>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">
+              not the open question
+            </span>
+          </div>
+          <p className="text-sm leading-relaxed text-[var(--muted)]">{signalPack.brief.regime_one_liner}</p>
+          <p className="mt-2 text-[11px] text-[var(--muted)]">
+            Adopted pack one-liner. Paper {signalPack.status.paper_book_action ?? 'HOLD'} stays copy, not a fill.
+          </p>
+        </section>
+      ) : null}
+
+      <LiquidityCard variant="teaser" />
+
       <div className="mb-8 grid gap-4 lg:grid-cols-5">
         <section className="rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface)] p-5 lg:col-span-3">
           <div className="mb-4 flex items-center justify-between gap-3">
-            <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
-              Top conviction
-            </h2>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="os-stamp os-stamp--show">Show · not Act</span>
+              <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+                Top conviction
+              </h2>
+            </div>
             <span className="font-mono text-[11px] text-[var(--muted)]">
               as of {formatAsOf(convictionShow.as_of)}
             </span>
           </div>
+          <p className="mb-3 text-[11px] text-[var(--muted)]">
+            Score ladder below the split. Not the thesis. Show rows never size the book.
+          </p>
           <ul className="divide-y divide-[var(--border)]">
             {top.map((row) => (
               <li key={row.symbol} className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0">
@@ -113,7 +142,7 @@ export default function OsHomePage() {
           href="/os/signal"
           label="Sense"
           title="Signal inbox"
-          description="Adopted weekly pack — regime, theme calls, and recent roster hits. Sense never sizes the book."
+          description="Open Howell vs debasement split, then flow prints. Adopted weather sits under the split. Sense never sizes the book."
           stamp="sense"
           meta={
             signalLive
