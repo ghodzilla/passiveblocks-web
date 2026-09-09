@@ -1,5 +1,4 @@
 import { OsShell } from '@/components/os/OsShell';
-import { RosterSplit } from '@/components/os/RosterSplit';
 import { ScoreBar } from '@/components/os/ScoreBar';
 import { StatStrip } from '@/components/os/StatStrip';
 import { WeightBar } from '@/components/os/WeightBar';
@@ -160,23 +159,31 @@ export default function ConvictionPage() {
       </div>
 
       <section className="mb-10">
-        <RosterSplit variant="banner" stamp="show" />
-
         <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="os-stamp os-stamp--show">Show</span>
-              <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
-                Show ledger · TOP100
-              </h2>
-            </div>
-            <p className="mt-1 text-xs text-[var(--muted)]">
-              Vera line-signed Show · not Act. Sorted by score. Numbers from feed JSON only.
-            </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="os-stamp os-stamp--show">Show · not Act</span>
+            <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+              Show ledger · TOP100
+            </h2>
           </div>
           <span className="font-mono text-[11px] text-[var(--muted)]">
             {showCount} rows · book_eligible {convictionShow.counts.book_eligible}
           </span>
+        </div>
+
+        <div className="mb-5 max-w-3xl space-y-3 text-sm leading-relaxed text-foreground">
+          <p>
+            The score organises the research. It is not the trade. The useful line is where your
+            journal and the tape disagree. Tesla is that line. You have it at 5/5 in the{' '}
+            <span className="font-medium">Decision Thesis Journal (20 Aug)</span>, a jockey-first bet
+            on Musk. The <span className="font-medium">Tesla/SpaceX weekly (22 Aug)</span> does not
+            corroborate that on the stock: record deliveries, then a 1.4% operating margin, negative
+            free cash flow, and the stock down about 26% on the month. Both can be true. That gap is
+            the point of the page.
+          </p>
+          <p className="text-xs text-[var(--muted)]">
+            Decision Thesis Journal 20 Aug; Tesla/SpaceX weekly 22 Aug.
+          </p>
         </div>
 
         <div className="overflow-hidden rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface)]">
