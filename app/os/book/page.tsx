@@ -2,7 +2,7 @@ import { OsShell } from '@/components/os/OsShell';
 import { StatStrip } from '@/components/os/StatStrip';
 import { ThemeBars } from '@/components/os/ThemeBars';
 import { WeightBar } from '@/components/os/WeightBar';
-import { formatAsOf, formatPct, formatScore, formatThemeLabel, paperPortfolio, targetBook } from '@/lib/os-data';
+import { formatAsOf, formatPct, formatScore, formatThemeLabel, formatUsd, paperPortfolio, targetBook } from '@/lib/os-data';
 
 /** Book theme map. NVDA is AI; TSM stays Semis. */
 const BOOK_THEME_LABELS: Record<string, string> = {
@@ -36,13 +36,26 @@ export default function BookPage() {
     >
       <StatStrip
         stats={[
-          { label: 'Invested', value: formatPct(targetBook.invested_pct), hint: 'Vera book-signed' },
-          { label: 'Cash', value: formatPct(targetBook.cash_pct), hint: 'Reserve' },
           {
-            label: 'Fills',
-            value: String(paperPortfolio.last_fill_count),
-            hint: formatAsOf(paperPortfolio.updated),
+            label: 'NAV',
+            value:
+              typeof paperPortfolio.nav === 'number'
+                ? formatUsd(paperPortfolio.nav)
+                : '—',
+            hint:
+              paperPortfolio.marked_at
+                ? `Marked ${formatAsOf(paperPortfolio.marked_at)}`
+                : 'Paper',
           },
+          {
+            label: 'P&L %',
+            value:
+              typeof paperPortfolio.pnl_pct === 'number'
+                ? `${paperPortfolio.pnl_pct > 0 ? '+' : ''}${paperPortfolio.pnl_pct.toFixed(2)}%`
+                : '—',
+            hint: 'vs USD 100k · public closes',
+          },
+          { label: 'Cash', value: formatPct(targetBook.cash_pct), hint: '~30% explicit reserve' },
           {
             label: 'Live',
             value: paperPortfolio.live_blocked ? 'Blocked' : 'Open',
@@ -105,7 +118,8 @@ export default function BookPage() {
           <ThemeBars exposure={targetBook.theme_exposure_pct} capPct={ceilings.max_single_theme_pct} labels={BOOK_THEME_LABELS} />
           <p className="mt-5 text-[11px] leading-relaxed text-[var(--muted)]">
             Signed by {targetBook.vera_book_signed_by} · {formatAsOf(targetBook.vera_book_signed_at)}. Weights
-            only — no mark-to-market invented here.
+            unchanged. Marked to public closes; entry reconstructed (fills were weights-only). Show ≠ Act.
+            Paper only.
           </p>
         </section>
       </div>
