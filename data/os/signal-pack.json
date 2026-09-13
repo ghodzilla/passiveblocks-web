@@ -1,8 +1,8 @@
 {
   "status": {
     "gate": "GATE_OPEN",
-    "as_of": "2026-09-10",
-    "valid_until": "2026-09-17",
+    "as_of": "2026-09-14",
+    "valid_until": "2026-09-21",
     "author_sense": "Sam Passive Blocks Signal",
     "adopted_by": "Diego Passive Blocks",
     "paper_book_action": "HOLD",
@@ -13,20 +13,20 @@
       "copper is N (watch) \u2014 existing COPPER paper line stays HOLD (no mandated trim without Vera)",
       "crypto OW is split-only with Howell falsifier #4 live"
     ],
-    "note": "Decide-adopted 2026-09-10 from Sense refresh INPUT. Copper OW\u2192N. Crypto split OW + falsifier #4 unrebutted (GLI INSUFFICIENT). Signals extract moved 2026-09-10: n=176, latest 2026-09-06 (Jordi Whisper; Doomberg music stub #calls=0). Brief stances unchanged. Paper HOLD.",
+    "note": "Decide-adopted 2026-09-14 as ADOPT-AS-IS of 2026-09-10 locks (no material stance edits). New-wave: Jordi er5mqvbDQU8 (crypto bull thicken, AI N holds, duration UW holds, S&P call flip); Zeihan QfjQAvzAnn4 + FgarzZkGU1Q (energy context, thickens falsifier #2). Ignore Doomberg music stub and Lyn dupe. Paper HOLD. Signals n=176, generated 2026-09-10, latest 2026-09-09.",
     "signals_json": {
       "n_records": 176,
       "generated": "2026-09-10"
     }
   },
   "brief": {
-    "as_of": "2026-09-10",
+    "as_of": "2026-09-14",
     "timezone": "Australia/Melbourne (AEST) / Sydney UTC+10",
     "gate": "GATE_OPEN",
     "author": "Sense (Sam)",
     "adopted_by": "Diego Passive Blocks (Decide)",
-    "adopted_at": "2026-09-10T09:19:00+10:00",
-    "regime_one_liner": "Fiscal-dominance / hard-asset hedge still the frame. Gold is the only dense independent desk agree. Copper is supply narrative / company-pitch tape \u2014 not desk-cluster OW. Crypto rails stay OW only as a split (bulls not one call; Howell near-term bear unrebutted; ETF/stablecoin prints from the 9 Sep card do not adjudicate GLI). AI/semis N. Long duration UW. Booth/Mucha dropped as current seats.",
+    "adopted_at": "2026-09-14T09:19:00+10:00",
+    "regime_one_liner": "Fiscal-dominance / hard-asset hedge still the frame. Gold is the only dense independent desk agree. Copper is supply narrative / company-pitch tape \u2014 not desk-cluster OW. Crypto rails stay OW only as a split (bulls not one call; Howell near-term bear unrebutted; Jordi 09-06 thickens the bull side only; ETF/stablecoin prints from the 9 Sep card do not adjudicate GLI). AI/semis N. Long duration UW. Booth/Mucha dropped as current seats. Zeihan energy geography = context not 6th theme. Jordi S&P bearish\u2192neutral = call not theme rewrite.",
     "paper_book_action": "HOLD",
     "paper_book_implications": {
       "hold": [
@@ -51,21 +51,23 @@
         "TSLA",
         "AI BASKET",
         "SOL",
+        "HOOD",
         "Selkirk",
         "Phoenix",
         "TLT",
         "BE",
         "GEV",
-        "CCJ"
+        "CCJ",
+        "CAT"
       ]
     },
     "pending": "Vera book-sign required for any new Act lines; Tom Lee 2026-09-01 PARTIAL; copper N watch \u2014 COPPER paper HOLD no mandated trim; crypto split OW + falsifier #4 live",
     "falsifiers": [
       "Debasement break: durable USD strength + gold/silver trend failure / CB diversification stops \u2014 Live.",
-      "Hormuz normalization: sustained pre-war Gulf crude throughput without fiscal/inflation echo \u2014 Live.",
+      "Hormuz normalization: sustained pre-war Gulf crude throughput without fiscal/inflation echo \u2014 Live. Zeihan QfjQAvzAnn4 (09-09) + FgarzZkGU1Q (09-08) thicken energy-crisis context; do not clear falsifier; context not 6th theme.",
       "AI demand break: hyperscaler capex/backlog collapse or memory-bottleneck relief \u2014 Live.",
-      "Liquidity kill for crypto: Howell falling-liquidity momentum dominates debasement-crypto bid \u2014 Live (unrebutted voice). GLI cell INSUFFICIENT (Hole. Not zero.). ETF/stablecoin prints from liquidity-card-2026-09-09 do not adjudicate Howell.",
-      "Duration vindication: Warsh delivers clean disinflation + credible long-end bid rewarding TLT \u2014 Live. Booth/Mucha dropped as current supporting seats"
+      "Liquidity kill for crypto: Howell falling-liquidity momentum dominates debasement-crypto bid \u2014 Live (unrebutted voice). GLI cell INSUFFICIENT (Hole. Not zero.). ETF/stablecoin prints from liquidity-card-2026-09-09 do not adjudicate Howell. Jordi 09-06 crypto bull is not a Howell rebuttal.",
+      "Duration vindication: Warsh delivers clean disinflation + credible long-end bid rewarding TLT \u2014 Live. Booth/Mucha dropped as current supporting seats; Jordi 09-06 neutral \u2260 vindication"
     ],
     "themes": [
       {
@@ -80,7 +82,7 @@
           "onedrive-cache/signals.json|Arthur Hayes|2026-08-21|https://www.youtube.com/watch?v=0b_nJ53uiA0"
         ],
         "confidence": "high",
-        "change_vs_brief_2026_09_06": "holds"
+        "change_vs_brief_2026_09_10": "holds"
       },
       {
         "name": "Hard-asset debasement (Silver)",
@@ -93,7 +95,7 @@
           "Matthew Piepenburg (guest, Jesse Day channel)|2026-08-27|https://www.youtube.com/watch?v=YClSbElOUtI"
         ],
         "confidence": "medium",
-        "change_vs_brief_2026_09_06": "holds_lower_confidence"
+        "change_vs_brief_2026_09_10": "holds_lower_confidence"
       },
       {
         "name": "Copper / critical minerals",
@@ -106,30 +108,33 @@
           "David Hunter (guest, Jesse Day channel)|2026-08-20|basket|https://www.youtube.com/watch?v=JKDkHIUcPx4"
         ],
         "confidence": "low_to_medium_narrative",
-        "change_vs_brief_2026_09_06": "CHANGE from OW to N \u2014 cannot desk-cluster OW on company pitches",
+        "change_vs_brief_2026_09_10": "holds (N from prior OW\u2192N)",
         "paper_line": "COPPER HOLD (already owned); do-not-add; discovery stays discovery; no mandated trim without Vera"
       },
       {
         "name": "Crypto rails / tokenization (BTC/ETH)",
         "stance": "OW",
-        "citation_count": 6,
+        "citation_count": 7,
         "citations": [
           "Jordi Visser|2026-08-23|https://www.youtube.com/watch?v=FoSLsvUKvws",
           "Jordi Visser|2026-08-30|https://www.youtube.com/watch?v=2FND8g-De8Y",
+          "Jordi Visser|2026-09-06|https://www.youtube.com/watch?v=er5mqvbDQU8",
           "Luke Gromen|2026-08-28|https://www.youtube.com/watch?v=R1VLmuXYU3o",
           "Arthur Hayes|2026-08-21|https://www.youtube.com/watch?v=0b_nJ53uiA0",
           "Tom Lee|2026-09-02|https://www.youtube.com/watch?v=fOMlh1gq33g",
           "Michael Howell|2026-08-11|near-term crypto bear|https://www.youtube.com/watch?v=FPB4Z1KhE3s"
         ],
         "confidence": "low_to_medium",
-        "change_vs_brief_2026_09_06": "holds_only_as_split_OW",
+        "change_vs_brief_2026_09_10": "holds_only_as_split_OW; Jordi 09-06 thickens bull side",
+        "new_wave_note": "Jordi Visser|2026-09-06|er5mqvbDQU8 reiterates BTC/ETH/SOL/tokenization bullish/high \u2014 thickens bull side; does not rebut Howell",
         "diego_fork": "Would go N if unrebutted-bear bar required with no GLI print; under continuing GATE language retained split OW + live falsifier #4"
       },
       {
         "name": "AI compute / semis infrastructure",
         "stance": "N",
-        "citation_count": 5,
+        "citation_count": 6,
         "citations": [
+          "Jordi Visser|2026-09-06|https://www.youtube.com/watch?v=er5mqvbDQU8",
           "Jordi Visser|2026-08-30|https://www.youtube.com/watch?v=2FND8g-De8Y",
           "Tom Lee|2026-09-02|https://www.youtube.com/watch?v=fOMlh1gq33g",
           "Arthur Hayes|2026-08-21|https://www.youtube.com/watch?v=0b_nJ53uiA0",
@@ -137,29 +142,32 @@
           "Matthew Piepenburg (guest)|2026-08-27|https://www.youtube.com/watch?v=YClSbElOUtI"
         ],
         "confidence": "medium",
-        "change_vs_brief_2026_09_06": "holds"
+        "change_vs_brief_2026_09_10": "holds",
+        "new_wave_note": "Jordi 09-06 NVDA bullish/high + thematic medium \u2014 cite faithfully; does not upgrade N\u2192OW"
       },
       {
         "name": "Long nominal duration (Treasuries/TLT)",
         "stance": "UW",
-        "citation_count": 6,
+        "citation_count": 7,
         "citations": [
           "Luke Gromen|2026-08-28|https://www.youtube.com/watch?v=R1VLmuXYU3o",
           "Matthew Piepenburg (guest)|2026-08-27|https://www.youtube.com/watch?v=YClSbElOUtI",
           "Michael Howell|2026-08-11|https://www.youtube.com/watch?v=FPB4Z1KhE3s",
           "Jim Bianco (guest, Raoul Pal channel)|2026-08-23|https://www.youtube.com/watch?v=lFpQuOEzGzc",
           "Mohamed El-Erian|2026-08-19|https://www.youtube.com/watch?v=hLWzUoHwGx8",
-          "Jordi Visser|2026-08-23|long-end neutral flip|https://www.youtube.com/watch?v=FoSLsvUKvws"
+          "Jordi Visser|2026-08-23|long-end neutral flip|https://www.youtube.com/watch?v=FoSLsvUKvws",
+          "Jordi Visser|2026-09-06|duration neutral reiterated|https://www.youtube.com/watch?v=er5mqvbDQU8"
         ],
         "confidence": "medium",
-        "change_vs_brief_2026_09_06": "holds; drop Booth/Mucha as current supporting seats"
+        "change_vs_brief_2026_09_10": "holds; drop Booth/Mucha as current supporting seats",
+        "new_wave_note": "Jordi 09-06 duration neutral/medium reiterated (bond-crash trap) \u2014 not OW; UW holds"
       }
     ],
     "signals_json_n": 176,
     "signals_json_generated": "2026-09-10",
-    "brief_md": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-10.md",
-    "valid_until": "2026-09-17",
-    "superseded_brief": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-06.md"
+    "brief_md": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-14.md",
+    "valid_until": "2026-09-21",
+    "superseded_brief": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-10.md"
   },
   "recent_signals": [
     {
