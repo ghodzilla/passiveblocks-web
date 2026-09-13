@@ -1,0 +1,69 @@
+{
+  "mode": "paper",
+  "show_ne_act": true,
+  "entry_reconstructed": true,
+  "entry_date_rule": "fills.jsonl has NO fill prices (weights only) at 2026-09-06T10:14:36Z. Entry reconstructed from public daily close for the fill calendar date: prefer 2026-09-05 US equity close if that session exists; 2026-09-06 is Sunday and 2026-09-05 is Saturday (plus 2026-09-07 US Labor Day), so equities/ETFs use prior trading session 2026-09-04 close. Crypto uses 2026-09-06 UTC Yahoo daily close. Cash stays USD cash (no mark). Hole. Not zero. \u2014 if a source fails, cell is INSUFFICIENT.",
+  "starting_equity": 100000.0,
+  "cash_pct": 30.0,
+  "fill_ts": "2026-09-06T10:14:36Z",
+  "currency": "USD",
+  "max_dd_ceiling_pct": 15,
+  "interval": "daily_with_session_carry",
+  "points": [
+    {
+      "date": "2026-09-06",
+      "nav": 100000.0,
+      "pnl_pct": 0.0,
+      "source": "entry_reconstructed_day0; fills weights-only; units sized to notional"
+    },
+    {
+      "date": "2026-09-07",
+      "nav": 99773.32,
+      "pnl_pct": -0.2267,
+      "source": "Yahoo chart v8 daily closes (carry last session on non-trading days); GLD@2026-09-04,BTC-USD@2026-09-07,SLV@2026-09-04,TSM@2026-09-04,CPER@2026-09-04,NVDA@2026-09-04,ETH-USD@2026-09-07,USO@2026-09-04"
+    },
+    {
+      "date": "2026-09-08",
+      "nav": 99817.1,
+      "pnl_pct": -0.1829,
+      "source": "Yahoo chart v8 daily closes (carry last session on non-trading days); GLD@2026-09-08,BTC-USD@2026-09-08,SLV@2026-09-08,TSM@2026-09-08,CPER@2026-09-08,NVDA@2026-09-08,ETH-USD@2026-09-08,USO@2026-09-08"
+    },
+    {
+      "date": "2026-09-09",
+      "nav": 100205.58,
+      "pnl_pct": 0.2056,
+      "source": "Yahoo chart v8 daily closes (carry last session on non-trading days); GLD@2026-09-09,BTC-USD@2026-09-09,SLV@2026-09-09,TSM@2026-09-09,CPER@2026-09-09,NVDA@2026-09-09,ETH-USD@2026-09-09,USO@2026-09-09"
+    },
+    {
+      "date": "2026-09-10",
+      "nav": 98896.22,
+      "pnl_pct": -1.1038,
+      "source": "Yahoo chart v8 daily closes (carry last session on non-trading days); GLD@2026-09-10,BTC-USD@2026-09-10,SLV@2026-09-10,TSM@2026-09-10,CPER@2026-09-10,NVDA@2026-09-10,ETH-USD@2026-09-10,USO@2026-09-10"
+    },
+    {
+      "date": "2026-09-11",
+      "nav": 99323.64,
+      "pnl_pct": -0.6764,
+      "source": "Yahoo chart v8 daily closes (carry last session on non-trading days); GLD@2026-09-11,BTC-USD@2026-09-11,SLV@2026-09-11,TSM@2026-09-11,CPER@2026-09-11,NVDA@2026-09-11,ETH-USD@2026-09-11,USO@2026-09-11"
+    },
+    {
+      "date": "2026-09-12",
+      "nav": 99323.64,
+      "pnl_pct": -0.6764,
+      "source": "Yahoo chart v8 daily closes (carry last session on non-trading days); GLD@2026-09-11,BTC-USD@2026-09-11,SLV@2026-09-11,TSM@2026-09-11,CPER@2026-09-11,NVDA@2026-09-11,ETH-USD@2026-09-11,USO@2026-09-11"
+    },
+    {
+      "date": "2026-09-13",
+      "nav": 99373.72,
+      "pnl_pct": -0.6263,
+      "source": "Yahoo chart v8 daily closes (carry last session on non-trading days); GLD@2026-09-11,BTC-USD@2026-09-13,SLV@2026-09-11,TSM@2026-09-11,CPER@2026-09-11,NVDA@2026-09-11,ETH-USD@2026-09-13,USO@2026-09-11"
+    }
+  ],
+  "latest": {
+    "date": "2026-09-13",
+    "nav": 99373.72,
+    "pnl_pct": -0.6263,
+    "source": "Yahoo chart v8 daily closes (carry last session on non-trading days); GLD@2026-09-11,BTC-USD@2026-09-13,SLV@2026-09-11,TSM@2026-09-11,CPER@2026-09-11,NVDA@2026-09-11,ETH-USD@2026-09-13,USO@2026-09-11"
+  },
+  "note": "Paper only. Entry prices RECONSTRUCTED from public closes (fills were weights-only). Show \u2260 Act. Cash ~30% explicit. Not a path-to-40%. Hole. Not zero."
+}

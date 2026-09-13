@@ -2,6 +2,8 @@ import convictionJson from '@/data/os/conviction.json';
 import convictionShowJson from '@/data/os/conviction-show.json';
 import targetBookJson from '@/data/os/target-book.json';
 import paperPortfolioJson from '@/data/os/paper-portfolio.json';
+import paperMarksJson from '@/data/os/paper-marks.json';
+import paperEquityCurveJson from '@/data/os/paper-equity-curve.json';
 import signalPackJson from '@/data/os/signal-pack.json';
 import liquidityCardJson from '@/data/os/liquidity-card.json';
 
@@ -260,6 +262,13 @@ export const paperPortfolio = paperPortfolioJson as {
   currency: string;
   updated: string;
   last_fill_count: number;
+  nav?: number;
+  pnl_usd?: number;
+  pnl_pct?: number;
+  marked_at?: string;
+  mark_method?: string;
+  entry_reconstructed?: boolean;
+  max_dd_ceiling_pct?: number;
   positions: Array<{
     symbol: string;
     weight_pct: number;
@@ -269,6 +278,87 @@ export const paperPortfolio = paperPortfolioJson as {
     venue: string;
     asset_class: string;
   }>;
+};
+
+export type PaperMarkPosition = {
+  symbol: string;
+  instrument: string;
+  weight_pct: number;
+  notional_usd: number;
+  entry_price: number | string;
+  entry_as_of: string | null;
+  entry_source_url: string | null;
+  units: number | null;
+  mark_price: number | string;
+  mark_as_of: string | null;
+  mark_source_url: string | null;
+  market_value: number | string;
+  pnl_usd: number | string;
+  pnl_pct: number | string;
+  status: string;
+  entry_reconstructed?: boolean;
+  entry_note?: string;
+  note?: string;
+};
+
+export type PaperEquityPoint = {
+  date: string;
+  nav: number | string;
+  pnl_pct: number | string;
+  source: string;
+};
+
+export const paperMarks = paperMarksJson as {
+  mode: string;
+  live_blocked: boolean;
+  show_ne_act: boolean;
+  notional_equity_usd: number;
+  currency: string;
+  fill_ts: string;
+  entry_date_rule: string;
+  entry_reconstructed: boolean;
+  entry_reconstructed_note: string;
+  marked_at: string;
+  mark_method: string;
+  max_dd_ceiling_pct: number;
+  cash_pct: number;
+  invested_pct: number;
+  cash_note: string;
+  honesty: string[];
+  positions: PaperMarkPosition[];
+  cash: PaperMarkPosition;
+  totals: {
+    nav: number | string;
+    pnl_usd: number | string;
+    pnl_pct: number | string;
+    invested_pct: number;
+    cash_pct: number;
+    max_dd_ceiling_pct: number;
+    starting_equity: number;
+    invested_market_value: number | string;
+    invested_cost: number;
+    cash_usd: number;
+    latest_mark_as_of: string | null;
+    method_note: string;
+  };
+  insufficient_symbols: string[];
+  price_source: string;
+};
+
+export const paperEquityCurve = paperEquityCurveJson as {
+  mode: string;
+  show_ne_act: boolean;
+  entry_reconstructed: boolean;
+  entry_date_rule: string;
+  starting_equity: number;
+  cash_pct: number;
+  fill_ts: string;
+  currency: string;
+  max_dd_ceiling_pct: number;
+  interval: string;
+  points: PaperEquityPoint[];
+  latest: PaperEquityPoint | null;
+  note: string;
 };
 
 export function formatPct(n: number, digits = 1) {

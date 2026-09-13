@@ -137,5 +137,12 @@
       "venue": "paper",
       "asset_class": "etf_proxy"
     }
-  ]
+  ],
+  "nav": 99373.72,
+  "pnl_usd": -626.28,
+  "pnl_pct": -0.6263,
+  "marked_at": "2026-09-13T01:49:40Z",
+  "mark_method": "Entry RECONSTRUCTED from Yahoo public daily closes (fills were weights-only); marks = latest Yahoo daily close; cash ~30% explicit; paper only; Show\u2260Act",
+  "entry_reconstructed": true,
+  "max_dd_ceiling_pct": 15
 }
