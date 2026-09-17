@@ -361,6 +361,41 @@ export const paperEquityCurve = paperEquityCurveJson as {
   note: string;
 };
 
+/** Live Act desk: Vera book-sign that is not paper-only. Paper HOLD never funds this strip. */
+export function hasLiveActBookSign(
+  book: typeof targetBook = targetBook,
+  paper: typeof paperPortfolio = paperPortfolio,
+): boolean {
+  if (!book?.vera_book_signed) return false;
+  if (paper?.live_blocked) return false;
+  if (book.mode === 'paper') return false;
+  const status = String(book.status ?? '');
+  if (status.includes('paper')) return false;
+  return true;
+}
+
+/** True when a paper Act book exists (may still HOLD) — used only for empty-state copy. */
+export function hasPaperActBook(
+  book: typeof targetBook = targetBook,
+  show: typeof convictionShow = convictionShow,
+): boolean {
+  if (book?.mode === 'paper' && Array.isArray(book.positions) && book.positions.length > 0) {
+    return true;
+  }
+  return Array.isArray(show?.book_rows) && show.book_rows.length > 0;
+}
+
+/** brief_ref for live Act lines — never invent; only explicit theme_regime_brief_ref. */
+export function liveActBriefRef(
+  pack: typeof signalPack = signalPack,
+): string | null {
+  const brief = pack?.brief as { theme_regime_brief_ref?: string } | undefined;
+  if (brief?.theme_regime_brief_ref) return brief.theme_regime_brief_ref;
+  const status = pack?.status as { theme_regime_brief_ref?: string } | undefined;
+  if (status?.theme_regime_brief_ref) return status.theme_regime_brief_ref;
+  return null;
+}
+
 export function formatPct(n: number, digits = 1) {
   return `${n.toFixed(digits)}%`;
 }

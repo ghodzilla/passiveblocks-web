@@ -1,3 +1,4 @@
+import { ActDeskStrip } from '@/components/os/ActDeskStrip';
 import { OsShell } from '@/components/os/OsShell';
 import { StatStrip } from '@/components/os/StatStrip';
 import { ThemeBars } from '@/components/os/ThemeBars';
@@ -64,11 +65,16 @@ export default function BookPage() {
         ]}
       />
 
+      <ActDeskStrip />
+
       <div className="mb-8 grid gap-4 lg:grid-cols-3">
         <section className="rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface)] p-5 lg:col-span-2">
-          <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
-            Positions
-          </h2>
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <span className="os-stamp os-stamp--act">Paper · not live</span>
+            <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+              Paper positions
+            </h2>
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] text-left text-sm">
               <thead className="border-b border-[var(--border)] text-[10px] uppercase tracking-widest text-[var(--muted-foreground)]">

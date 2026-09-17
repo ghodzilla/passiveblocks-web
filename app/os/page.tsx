@@ -1,3 +1,4 @@
+import { ActDeskStrip } from '@/components/os/ActDeskStrip';
 import { LiquidityCard } from '@/components/os/LiquidityCard';
 import { OsShell } from '@/components/os/OsShell';
 import { OsCard } from '@/components/os/OsCard';
@@ -50,6 +51,8 @@ export default function OsHomePage() {
       />
 
       <RosterSplit />
+
+      <ActDeskStrip />
 
       {signalLive ? (
         <section className="os-weather mb-8">
