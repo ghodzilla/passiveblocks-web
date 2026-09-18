@@ -25,6 +25,28 @@ export type ThemeCall = {
   stance: string;
   citation_count: number;
   citations: string[];
+  confidence?: string;
+  stage?: string;
+  forward_thesis?: string;
+  change_vs_brief_2026_09_14?: string;
+  paper_line?: string;
+  new_wave_note?: string;
+  diego_fork?: string;
+};
+
+export type FutureReturnsTriage = {
+  watch: { count: number; items: string[] };
+  paper_test: { count: number; items: string[] };
+  live_promote: { count: number; items: string[] };
+  note?: string;
+};
+
+export type FutureReturnsReframe = {
+  orientation?: string;
+  watch_count?: number;
+  paper_test_count?: number;
+  live_promote_count?: number;
+  note?: string;
 };
 
 export const signalPack = signalPackJson as {
@@ -38,6 +60,7 @@ export const signalPack = signalPackJson as {
     conditions?: string[];
     note?: string;
     signals_json?: { n_records?: number; generated?: string };
+    reframe?: FutureReturnsReframe;
   };
   brief: {
     as_of: string;
@@ -52,9 +75,15 @@ export const signalPack = signalPackJson as {
     pending?: string;
     falsifiers: string[];
     themes: ThemeCall[];
+    reframe?: FutureReturnsReframe;
+    triage?: FutureReturnsTriage;
+    name_map_hygiene?: Record<string, string>;
     signals_json_n?: number;
     signals_json_generated?: string;
     brief_md?: string;
+    valid_until?: string;
+    superseded_brief?: string;
+    recommendation?: string;
   };
   recent_signals: RecentSignal[];
 };

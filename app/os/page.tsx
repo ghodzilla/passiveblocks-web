@@ -70,6 +70,8 @@ export default function OsHomePage() {
       ? signalPack.status.paper_book_action ?? signalPack.brief.paper_book_action ?? 'HOLD'
       : 'HOLD';
   const horizon = signalLive ? signalPack.status.valid_until ?? null : null;
+  const triage = signalLive ? signalPack.brief.triage : undefined;
+  const asOfBrief = signalLive ? signalPack.status.as_of ?? signalPack.brief.as_of : null;
   const horizonLabel = horizon
     ? new Intl.DateTimeFormat('en-AU', {
         timeZone: 'Australia/Melbourne',
@@ -128,7 +130,13 @@ export default function OsHomePage() {
           Next
         </span>
         <p className="text-sm leading-snug text-foreground">
-          Paper {paperAction} · live Act empty until Vera book-sign + brief_ref
+          Paper {paperAction}
+          {asOfBrief ? ` · brief ${asOfBrief}` : ''}
+          {' · '}
+          live Act empty until Vera book-sign + brief_ref
+          {triage
+            ? ` · triage ${triage.watch.count}/${triage.paper_test.count}/${triage.live_promote.count}`
+            : ''}
         </p>
       </div>
 
@@ -138,6 +146,13 @@ export default function OsHomePage() {
         {gate ? <span className="os-stamp os-stamp--sense">{gate}</span> : null}
         {horizonLabel ? (
           <span className="os-stamp">Horizon · {horizonLabel}</span>
+        ) : null}
+        {triage ? (
+          <>
+            <span className="os-stamp">Watch {triage.watch.count}</span>
+            <span className="os-stamp">Paper-test {triage.paper_test.count}</span>
+            <span className="os-stamp">Live-promote {triage.live_promote.count}</span>
+          </>
         ) : null}
         {paperMarks.entry_reconstructed ? (
           <span className="os-stamp">Entry RECONSTRUCTED</span>

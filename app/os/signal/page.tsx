@@ -57,6 +57,7 @@ export default function OsSignalPage() {
   const themes = brief.themes ?? [];
   const falsifiers = brief.falsifiers ?? [];
   const implications = brief.paper_book_implications ?? {};
+  const triage = brief.triage;
   const signals = [...recent_signals].sort((a, b) => b.date.localeCompare(a.date));
   const asOf = status.as_of || brief.as_of;
 
@@ -80,9 +81,11 @@ export default function OsSignalPage() {
             hint: status.valid_until ? `valid → ${formatDate(status.valid_until)}` : 'Adopted pack',
           },
           {
-            label: 'Themes',
-            value: String(themes.length),
-            hint: 'Sense stance calls',
+            label: 'Triage',
+            value: triage
+              ? `${triage.watch.count}/${triage.paper_test.count}/${triage.live_promote.count}`
+              : String(themes.length),
+            hint: triage ? 'Watch · Paper-test · Live' : 'Sense stance calls',
           },
           {
             label: 'Signals',
@@ -133,6 +136,78 @@ export default function OsSignalPage() {
         ) : null}
       </section>
 
+      {triage ? (
+        <section className="mb-8 rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface)] p-5">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+                Future-returns triage
+              </h2>
+              <p className="mt-1 text-xs text-[var(--muted)]">
+                Watch early · Paper-test cite-dense · Live-promote empty until Vera book-sign. Show ≠ Act.
+              </p>
+            </div>
+            <span className="os-stamp os-stamp--sense">Sense · not Act</span>
+          </div>
+          <div className="mb-4 flex flex-wrap gap-2">
+            <span className="rounded-full border border-[var(--border)] bg-black/20 px-3 py-1 font-mono text-xs text-foreground">
+              Watch {triage.watch.count}
+            </span>
+            <span className="rounded-full border border-[var(--status-ok)]/25 bg-[var(--status-ok)]/10 px-3 py-1 font-mono text-xs text-[var(--status-ok)]">
+              Paper-test {triage.paper_test.count}
+            </span>
+            <span className="rounded-full border border-[var(--border)] bg-white/[0.03] px-3 py-1 font-mono text-xs text-[var(--muted)]">
+              Live-promote {triage.live_promote.count}
+            </span>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+                Paper-test
+              </p>
+              <ul className="mt-2 flex flex-wrap gap-1.5">
+                {triage.paper_test.items.map((item) => (
+                  <li
+                    key={item}
+                    className="rounded-full border border-[var(--status-ok)]/25 bg-[var(--status-ok)]/10 px-2 py-0.5 font-mono text-[11px] text-[var(--status-ok)]"
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+                Live-promote
+              </p>
+              <p className="mt-2 text-xs text-[var(--muted)]">
+                {triage.live_promote.count === 0
+                  ? 'Empty — no path to Act from brief adoption alone.'
+                  : triage.live_promote.items.join(' · ')}
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 border-t border-[var(--border)] pt-4">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+              Watch · {triage.watch.count}
+            </p>
+            <ul className="mt-2 flex flex-wrap gap-1.5">
+              {triage.watch.items.map((item) => (
+                <li
+                  key={item}
+                  className="rounded-full border border-[var(--border)] bg-black/20 px-2 py-0.5 font-mono text-[11px] text-[var(--muted)]"
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          {triage.note ? (
+            <p className="mt-3 text-[11px] leading-relaxed text-[var(--muted)]">{triage.note}</p>
+          ) : null}
+        </section>
+      ) : null}
+
       <section className="mb-8">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
           <div>
@@ -140,7 +215,7 @@ export default function OsSignalPage() {
               Theme Sense-stances
             </h2>
             <p className="mt-1 text-xs text-[var(--muted)]">
-              OW / N / UW are Sense narrative stances — not investable ranks or book weights.
+              OW / N / UW are Sense narrative stances — Stage / Forward are future-returns labels, not book weights.
             </p>
           </div>
         </div>
@@ -161,9 +236,24 @@ export default function OsSignalPage() {
                   {senseStanceLabel(theme.stance)}
                 </span>
               </div>
-              <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
-                Sense stance
-              </p>
+              <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+                  Sense stance
+                </span>
+                {theme.stage ? (
+                  <span className="rounded-full border border-[var(--border)] bg-black/20 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[var(--muted)]">
+                    {theme.stage}
+                  </span>
+                ) : null}
+                {theme.confidence ? (
+                  <span className="rounded-full border border-[var(--border)] bg-white/[0.03] px-2 py-0.5 text-[10px] text-[var(--muted)]">
+                    {theme.confidence.replace(/_/g, ' ')}
+                  </span>
+                ) : null}
+              </div>
+              {theme.forward_thesis ? (
+                <p className="mt-3 text-xs leading-relaxed text-[var(--muted)]">{theme.forward_thesis}</p>
+              ) : null}
               <p className="mt-3 text-[11px] text-[var(--muted)]">
                 {theme.citation_count} citation{theme.citation_count === 1 ? '' : 's'}
               </p>

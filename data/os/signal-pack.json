@@ -1,7 +1,7 @@
 {
   "status": {
     "gate": "GATE_OPEN",
-    "as_of": "2026-09-14",
+    "as_of": "2026-09-19",
     "valid_until": "2026-09-21",
     "author_sense": "Sam Passive Blocks Signal",
     "adopted_by": "Diego Passive Blocks",
@@ -10,23 +10,29 @@
       "new Act needs Vera book-sign + theme_regime_brief_ref",
       "SPCX/TSLA/AI-chase do-not-add",
       "Tom Lee 2026-09-01 PARTIAL",
-      "copper is N (watch) \u2014 existing COPPER paper line stays HOLD (no mandated trim without Vera)",
+      "copper is N (watch) — existing COPPER paper line stays HOLD (no mandated trim without Vera)",
       "crypto OW is split-only with Howell falsifier #4 live"
     ],
-    "note": "Decide-adopted 2026-09-14 as ADOPT-AS-IS of 2026-09-10 locks (no material stance edits). New-wave: Jordi er5mqvbDQU8 (crypto bull thicken, AI N holds, duration UW holds, S&P call flip); Zeihan QfjQAvzAnn4 + FgarzZkGU1Q (energy context, thickens falsifier #2). Ignore Doomberg music stub and Lyn dupe. Paper HOLD. Signals n=176, generated 2026-09-10, latest 2026-09-09.",
+    "note": "Decide-adopted 2026-09-19 as ADOPT-AS-IS of 2026-09-14 locks (no material stance edits). Extension: future-returns Stage/Forward + Watch 15 / Paper-test 4 / Live-promote 0 + widened Show-map. Corpus unchanged (n=176, generated 2026-09-10, latest 2026-09-09 — no new extract wave since 09-14). Paper HOLD. Vera refuse-pass required same morning vs SEP21 checklist; Nora wires /os after Vera clear. OneDrive signals.json restored 2026-09-12T23:54:24Z (512221, browser Replace).",
     "signals_json": {
       "n_records": 176,
       "generated": "2026-09-10"
+    },
+    "reframe": {
+      "orientation": "future_returns",
+      "watch_count": 15,
+      "paper_test_count": 4,
+      "live_promote_count": 0
     }
   },
   "brief": {
-    "as_of": "2026-09-14",
-    "timezone": "Australia/Melbourne (AEST) / Sydney UTC+10",
+    "as_of": "2026-09-19",
+    "timezone": "Australia/Sydney UTC+10",
     "gate": "GATE_OPEN",
     "author": "Sense (Sam)",
     "adopted_by": "Diego Passive Blocks (Decide)",
-    "adopted_at": "2026-09-14T09:19:00+10:00",
-    "regime_one_liner": "Fiscal-dominance / hard-asset hedge still the frame. Gold is the only dense independent desk agree. Copper is supply narrative / company-pitch tape \u2014 not desk-cluster OW. Crypto rails stay OW only as a split (bulls not one call; Howell near-term bear unrebutted; Jordi 09-06 thickens the bull side only; ETF/stablecoin prints from the 9 Sep card do not adjudicate GLI). AI/semis N. Long duration UW. Booth/Mucha dropped as current seats. Zeihan energy geography = context not 6th theme. Jordi S&P bearish\u2192neutral = call not theme rewrite.",
+    "adopted_at": "2026-09-19T09:00:00+10:00",
+    "regime_one_liner": "Fiscal-dominance / hard-asset hedge still the frame. Gold is the only dense independent desk agree. Copper is supply narrative / company-pitch tape — not desk-cluster OW. Crypto rails stay OW only as a split (bulls not one call; Howell near-term bear unrebutted; Jordi 09-06 thickens the bull side only; ETF/stablecoin prints from the 9 Sep card do not adjudicate GLI). AI/semis N. Long duration UW. Booth/Mucha dropped as current seats. Zeihan energy geography = context not 6th theme. Jordi S&P bearish→neutral = call not theme rewrite.",
     "paper_book_action": "HOLD",
     "paper_book_implications": {
       "hold": [
@@ -61,13 +67,13 @@
         "CAT"
       ]
     },
-    "pending": "Vera book-sign required for any new Act lines; Tom Lee 2026-09-01 PARTIAL; copper N watch \u2014 COPPER paper HOLD no mandated trim; crypto split OW + falsifier #4 live",
+    "pending": "Vera book-sign required for any new Act lines; Vera refuse-pass same morning vs SEP21_REFRESH_REFUSE_CHECKLIST; Nora wires /os after Vera clear; Tom Lee 2026-09-01 PARTIAL; copper N watch — COPPER paper HOLD no mandated trim; crypto split OW + falsifier #4 live",
     "falsifiers": [
-      "Debasement break: durable USD strength + gold/silver trend failure / CB diversification stops \u2014 Live.",
-      "Hormuz normalization: sustained pre-war Gulf crude throughput without fiscal/inflation echo \u2014 Live. Zeihan QfjQAvzAnn4 (09-09) + FgarzZkGU1Q (09-08) thicken energy-crisis context; do not clear falsifier; context not 6th theme.",
-      "AI demand break: hyperscaler capex/backlog collapse or memory-bottleneck relief \u2014 Live.",
-      "Liquidity kill for crypto: Howell falling-liquidity momentum dominates debasement-crypto bid \u2014 Live (unrebutted voice). GLI cell INSUFFICIENT (Hole. Not zero.). ETF/stablecoin prints from liquidity-card-2026-09-09 do not adjudicate Howell. Jordi 09-06 crypto bull is not a Howell rebuttal.",
-      "Duration vindication: Warsh delivers clean disinflation + credible long-end bid rewarding TLT \u2014 Live. Booth/Mucha dropped as current supporting seats; Jordi 09-06 neutral \u2260 vindication"
+      "Debasement break: durable USD strength + gold/silver trend failure / CB diversification stops — Live.",
+      "Hormuz normalization: sustained pre-war Gulf crude throughput without fiscal/inflation echo — Live. Zeihan QfjQAvzAnn4 (09-09) + FgarzZkGU1Q (09-08) thicken energy-crisis context; do not clear falsifier; context not 6th theme",
+      "AI demand break: hyperscaler capex/backlog collapse or memory-bottleneck relief — Live.",
+      "Liquidity kill for crypto: Howell falling-liquidity momentum dominates debasement-crypto bid — Live (unrebutted voice). GLI cell INSUFFICIENT (Hole. Not zero.). ETF/stablecoin prints from liquidity-card-2026-09-09 do not adjudicate Howell. Jordi 09-06 crypto bull is not a Howell rebuttal.",
+      "Duration vindication: Warsh delivers clean disinflation + credible long-end bid rewarding TLT — Live. Booth/Mucha dropped as current supporting seats; Jordi 09-06 neutral ≠ vindication; Gromen 30Y TIPS is real-yield map under UW not nominal OW vindication"
     ],
     "themes": [
       {
@@ -82,7 +88,9 @@
           "onedrive-cache/signals.json|Arthur Hayes|2026-08-21|https://www.youtube.com/watch?v=0b_nJ53uiA0"
         ],
         "confidence": "high",
-        "change_vs_brief_2026_09_10": "holds"
+        "stage": "late",
+        "forward_thesis": "Densest multi-seat future hard-asset path under fiscal dominance — next dollar still prefers this sleeve over chase",
+        "change_vs_brief_2026_09_14": "holds"
       },
       {
         "name": "Hard-asset debasement (Silver)",
@@ -95,7 +103,9 @@
           "Matthew Piepenburg (guest, Jesse Day channel)|2026-08-27|https://www.youtube.com/watch?v=YClSbElOUtI"
         ],
         "confidence": "medium",
-        "change_vs_brief_2026_09_10": "holds_lower_confidence"
+        "stage": "mid",
+        "forward_thesis": "Same debasement frame with thinner seats; miner densify (AG/AYA/SIL) is the early edge inside the mid theme",
+        "change_vs_brief_2026_09_14": "holds_lower_confidence"
       },
       {
         "name": "Copper / critical minerals",
@@ -108,7 +118,9 @@
           "David Hunter (guest, Jesse Day channel)|2026-08-20|basket|https://www.youtube.com/watch?v=JKDkHIUcPx4"
         ],
         "confidence": "low_to_medium_narrative",
-        "change_vs_brief_2026_09_10": "holds (N from prior OW\u2192N)",
+        "stage": "early",
+        "forward_thesis": "Scarcity talk may be early future payoff if desks form — they have not; stay N; no desk OW",
+        "change_vs_brief_2026_09_14": "holds",
         "paper_line": "COPPER HOLD (already owned); do-not-add; discovery stays discovery; no mandated trim without Vera"
       },
       {
@@ -125,8 +137,10 @@
           "Michael Howell|2026-08-11|near-term crypto bear|https://www.youtube.com/watch?v=FPB4Z1KhE3s"
         ],
         "confidence": "low_to_medium",
-        "change_vs_brief_2026_09_10": "holds_only_as_split_OW; Jordi 09-06 thickens bull side",
-        "new_wave_note": "Jordi Visser|2026-09-06|er5mqvbDQU8 reiterates BTC/ETH/SOL/tokenization bullish/high \u2014 thickens bull side; does not rebut Howell",
+        "stage": "mid",
+        "forward_thesis": "Future rails/tokenization payoff remains split — bulls thicken; Howell near-term liquidity bear unrebutted",
+        "change_vs_brief_2026_09_14": "holds_only_as_split_OW; Howell falsifier #4 still live",
+        "new_wave_note": "Jordi Visser|2026-09-06|er5mqvbDQU8 reiterates BTC/ETH/SOL/tokenization bullish/high — thickens bull side; does not rebut Howell",
         "diego_fork": "Would go N if unrebutted-bear bar required with no GLI print; under continuing GATE language retained split OW + live falsifier #4"
       },
       {
@@ -142,8 +156,10 @@
           "Matthew Piepenburg (guest)|2026-08-27|https://www.youtube.com/watch?v=YClSbElOUtI"
         ],
         "confidence": "medium",
-        "change_vs_brief_2026_09_10": "holds",
-        "new_wave_note": "Jordi 09-06 NVDA bullish/high + thematic medium \u2014 cite faithfully; does not upgrade N\u2192OW"
+        "stage": "mid",
+        "forward_thesis": "Demand/thematic book asserted; price-regime future OW not agreed — hold_map / hold_no_add only",
+        "change_vs_brief_2026_09_14": "holds",
+        "new_wave_note": "Jordi 09-06 NVDA bullish/high + thematic medium — cite faithfully; does not upgrade N→OW"
       },
       {
         "name": "Long nominal duration (Treasuries/TLT)",
@@ -159,15 +175,73 @@
           "Jordi Visser|2026-09-06|duration neutral reiterated|https://www.youtube.com/watch?v=er5mqvbDQU8"
         ],
         "confidence": "medium",
-        "change_vs_brief_2026_09_10": "holds; drop Booth/Mucha as current supporting seats",
-        "new_wave_note": "Jordi 09-06 duration neutral/medium reiterated (bond-crash trap) \u2014 not OW; UW holds"
+        "stage": "mid",
+        "forward_thesis": "Future path still anti-nominal / higher-yield; map TIPS/wording under UW — not long-bond OW sneak-back",
+        "change_vs_brief_2026_09_14": "holds; drop Booth/Mucha as current supporting seats",
+        "new_wave_note": "Jordi 09-06 duration neutral/medium reiterated (bond-crash trap) — not OW; UW holds"
       }
     ],
+    "reframe": {
+      "orientation": "future_returns",
+      "watch_count": 15,
+      "paper_test_count": 4,
+      "live_promote_count": 0,
+      "note": "Watch wide early radar; Paper-test GOLD/SILVER/BTC/ETH cite-dense enough for Vera to consider; Live-promote empty until Vera book-sign"
+    },
+    "triage": {
+      "watch": {
+        "count": 15,
+        "items": [
+          "Uranium (commodity)",
+          "SMR / nuclear (theme)",
+          "AG",
+          "AYA",
+          "SIL/SLV expression",
+          "30Y TIPS",
+          "Duration wording map (10Y/30Y UST)",
+          "Defense primes wording",
+          "PLTR",
+          "HOOD",
+          "SOL",
+          "LLY",
+          "Humanoid robots (theme)",
+          "Orbital / space compute (theme)",
+          "CAT",
+          "Gold-miner densify BYN/IAUX/WRLG"
+        ]
+      },
+      "paper_test": {
+        "count": 4,
+        "items": [
+          "GOLD",
+          "SILVER",
+          "BTC",
+          "ETH"
+        ]
+      },
+      "live_promote": {
+        "count": 0,
+        "items": []
+      },
+      "note": "Watch wide early radar; Paper-test GOLD/SILVER/BTC/ETH cite-dense enough for Vera to consider; Live-promote empty until Vera book-sign"
+    },
+    "name_map_hygiene": {
+      "CAT": "show_watch_only",
+      "BE": "reject_not_book_eligible",
+      "GEV": "reject_not_book_eligible",
+      "CCJ": "hollow_not_book_eligible",
+      "HOOD": "discovery_only",
+      "SOL": "single_voice_will_not_size",
+      "TLT": "hollow_show_seat",
+      "zeihan_energy": "context_not_sixth_theme",
+      "humanoid_orbital_smr": "theme_string_watch_only_refuse_spcx_tsla"
+    },
     "signals_json_n": 176,
     "signals_json_generated": "2026-09-10",
-    "brief_md": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-14.md",
+    "brief_md": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-19.md",
     "valid_until": "2026-09-21",
-    "superseded_brief": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-10.md"
+    "superseded_brief": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-14.md",
+    "recommendation": "adopt_as_is"
   },
   "recent_signals": [
     {
@@ -177,7 +251,7 @@
       "date": "2026-09-04",
       "title": "Global Shipping Comes Under Attack || Peter Zeihan",
       "url": "https://www.youtube.com/watch?v=0hPG4-41iUo",
-      "summary": "Zeihan says Hormuz throughput is neither the admin's claimed ~9 Mbd nor Iran's near-zero \u2014 Western traffic trackers imply ~3\u20135 Mbd vs ~20\u201322 Mbd pre-war, still a multi-million-barrel shortfall and 'more than enough for an energy crisis.' US overwatch enabling Arab-side 'shadow fleet' transponder-off transfers is costly and unsustainable; no power can secure all eight global chokepoints, Bab el-Mandeb/Somali piracy is already returning \u2014 insecure seas are the new normal, while disruption remains asymmetrically easy.",
+      "summary": "Zeihan says Hormuz throughput is neither the admin's claimed ~9 Mbd nor Iran's near-zero — Western traffic trackers imply ~3–5 Mbd vs ~20–22 Mbd pre-war, still a multi-million-barrel shortfall and 'more than enough for an energy crisis.' US overwatch enabling Arab-side 'shadow fleet' transponder-off transfers is costly and unsustainable; no power can secure all eight global chokepoints, Bab el-Mandeb/Somali piracy is already returning — insecure seas are the new normal, while disruption remains asymmetrically easy.",
       "themes": [
         "Strait of Hormuz throughput",
         "energy crisis / crude shortfall",
@@ -206,9 +280,9 @@
       "org": "Zeihan on Geopolitics",
       "lane": "geopolitics/defense",
       "date": "2026-09-03",
-      "title": "China\u2019s Real Estate System Is Failing || Peter Zeihan",
+      "title": "China’s Real Estate System Is Failing || Peter Zeihan",
       "url": "https://www.youtube.com/watch?v=TU7KVw9j060",
-      "summary": "After Evergrande's ex-chair got life imprisonment, Zeihan frames China's property model as a completed bust: overbuilding by 4\u20135x plus a 35-year demographic collapse, new construction already \u221275% in five years with another ~20% drop expected this year, and official inflation-adjusted home values below 2005 boom-start levels. Citizens park ~$22T in deposits earning <1% rather than stocks; he calls Chinese equities a fool's errand because subsidized credit destroys equity returns, and capital controls block the only productive exit.",
+      "summary": "After Evergrande's ex-chair got life imprisonment, Zeihan frames China's property model as a completed bust: overbuilding by 4–5x plus a 35-year demographic collapse, new construction already −75% in five years with another ~20% drop expected this year, and official inflation-adjusted home values below 2005 boom-start levels. Citizens park ~$22T in deposits earning <1% rather than stocks; he calls Chinese equities a fool's errand because subsidized credit destroys equity returns, and capital controls block the only productive exit.",
       "themes": [
         "China property collapse",
         "Evergrande / local-government land finance",
@@ -279,7 +353,7 @@
       "org": "Commodity Culture",
       "lane": "metals/mining",
       "date": "2026-09-01",
-      "title": "GOLD Just Became a Real Alternative to the Dollar (Here\u2019s Why): Nick Campbell",
+      "title": "GOLD Just Became a Real Alternative to the Dollar (Here’s Why): Nick Campbell",
       "url": "https://www.youtube.com/watch?v=hrG7rtIRFIQ",
       "summary": "Phoenix Metals CEO Nick Campbell (self-described non-gold-bug) makes a structural long-term bull case for gold on dollar-diversification and for copper on electrification, AI and supply lags, while pitching Phoenix's Greenwood BC copper-gold district. Sponsored interview.",
       "themes": [
@@ -391,7 +465,7 @@
       "date": "2026-09-01",
       "title": "Why Tom Lee is Bullish on September",
       "url": "https://www.youtube.com/watch?v=y-ylpbC8zPk",
-      "summary": "PARTIAL transcript (~19 lines): Lee tees up five contrarian reasons for September upside despite negative seasonality, noting midterm-year Septembers since 1854 have only ~40% odds of being an up month \u2014 the worst single month historically. Full rationale list not present in captured text.",
+      "summary": "PARTIAL transcript (~19 lines): Lee tees up five contrarian reasons for September upside despite negative seasonality, noting midterm-year Septembers since 1854 have only ~40% odds of being an up month — the worst single month historically. Full rationale list not present in captured text.",
       "themes": [
         "September seasonality",
         "midterm election year",
@@ -570,7 +644,7 @@
       "date": "2026-08-28",
       "title": "Some quick thoughts on gold, BTC, and \"my framework\"",
       "url": "https://www.youtube.com/watch?v=R1VLmuXYU3o",
-      "summary": "In fiscal dominance, hiking or cutting both worsen the debt, so 'all roads lead to gold' \u2014 likely a US/China-aligned gold revaluation toward ~$22k as a neutral settlement asset. Notably, Gromen says the debt-debasement trade is back on and he is 'getting much more interested' in Bitcoin again after selling most of it.",
+      "summary": "In fiscal dominance, hiking or cutting both worsen the debt, so 'all roads lead to gold' — likely a US/China-aligned gold revaluation toward ~$22k as a neutral settlement asset. Notably, Gromen says the debt-debasement trade is back on and he is 'getting much more interested' in Bitcoin again after selling most of it.",
       "themes": [
         "gold revaluation",
         "fiscal dominance",
@@ -1079,7 +1153,7 @@
       "org": "Allianz / Queens' College",
       "lane": "macro (guest commentary)",
       "date": "2026-08-19",
-      "title": "Allianz\u2019s Mohamed El-Erian on the Treasury Department doubling the size of long-end bond buybacks",
+      "title": "Allianz’s Mohamed El-Erian on the Treasury Department doubling the size of long-end bond buybacks",
       "url": "https://www.youtube.com/watch?v=hLWzUoHwGx8",
       "summary": "El-Erian characterizes the Treasury's expanded long-end bond buybacks as de facto yield-curve control ('Operation Twist'), warning it offers only short-term relief with collateral damage rather than a durable fix for the underlying funding-vs-growth tension. He views the US economy as solidly growing but vulnerable to a leverage-driven financial accident.",
       "themes": [
@@ -1110,7 +1184,7 @@
       "org": "Farzad FM (independent)",
       "lane": "Tesla/EV/equities",
       "date": "2026-08-17",
-      "title": "History is About to be Made (it\u2019s WAY bigger than you think)",
+      "title": "History is About to be Made (it’s WAY bigger than you think)",
       "url": "https://www.youtube.com/watch?v=B2cJHxVjuf4",
       "summary": "Mesbahi argues that simultaneously collapsing costs of robotics, AI intelligence, solar-plus-battery power and autonomous logistics will reprice cheap undeveloped land by making it buildable, using a thought experiment of a 1,500-acre Wyoming parcel at ~$15,000/acre and a town of 500 people served by 2,000 robots. He frames Tesla FSD as proof that millions of fully autonomous robots already exist, and predicts a new company category that sells finished towns rather than houses.",
       "themes": [
@@ -1153,9 +1227,9 @@
       "org": "The Drive",
       "lane": "longevity/health-science",
       "date": "2026-08-17",
-      "title": "404 \u2012 Mental health beyond neurotransmitters: hormones in psychiatry, psychedelic therapies, & more",
+      "title": "404 ‒ Mental health beyond neurotransmitters: hormones in psychiatry, psychedelic therapies, & more",
       "url": "https://www.youtube.com/watch?v=fs89fhQCfj4",
-      "summary": "Attia interviews a veteran psychiatrist who pivoted after ~35 years toward integrating endocrinology (testosterone, estrogen, thyroid/T3, lithium) into psychiatric practice, plus an extended discussion of ketamine and psychedelics for treatment-resistant depression. Purely clinical content \u2014 no investment or market commentary.",
+      "summary": "Attia interviews a veteran psychiatrist who pivoted after ~35 years toward integrating endocrinology (testosterone, estrogen, thyroid/T3, lithium) into psychiatric practice, plus an extended discussion of ketamine and psychedelics for treatment-resistant depression. Purely clinical content — no investment or market commentary.",
       "themes": [
         "psychiatry",
         "hormones-in-psychiatry",
@@ -1424,7 +1498,7 @@
       "date": "2026-08-11",
       "title": "Doomberg: Energy, AI, and the Calls Nobody Else Made",
       "url": "https://www.youtube.com/watch?v=CxWZxbwQ_rI",
-      "summary": "Doomberg walks through operative mental models: hydrocarbon BTU-parity/arbitrage (US gas cheapest vs oil), China's coal/grid resilience and solar intermittency overshoot, Carney 'unsticking Alberta' still live via pipeline headlines, and 'human endeavor is infinite compute' for AI power. They pivoted off the consensus $150 Iran-war oil spike (actual ~$80\u201390) but, if pushed, stay somewhat oil-bullish while Hormuz remains contested; favor gas turbines/conversion kit over utility equities; warn sanctions force China into semis/DUV and that ASML-style moats erode (explicitly not a stock call).",
+      "summary": "Doomberg walks through operative mental models: hydrocarbon BTU-parity/arbitrage (US gas cheapest vs oil), China's coal/grid resilience and solar intermittency overshoot, Carney 'unsticking Alberta' still live via pipeline headlines, and 'human endeavor is infinite compute' for AI power. They pivoted off the consensus $150 Iran-war oil spike (actual ~$80–90) but, if pushed, stay somewhat oil-bullish while Hormuz remains contested; favor gas turbines/conversion kit over utility equities; warn sanctions force China into semis/DUV and that ASML-style moats erode (explicitly not a stock call).",
       "themes": [
         "hydrocarbon BTU parity / molecular arbitrage",
         "Iran war / Hormuz oil",
@@ -1470,9 +1544,9 @@
       "org": "The Drive",
       "lane": "longevity/health-science",
       "date": "2026-08-10",
-      "title": "403 \u2012 Peptides: separating scientific promise from marketing hype",
+      "title": "403 ‒ Peptides: separating scientific promise from marketing hype",
       "url": "https://www.youtube.com/watch?v=Km_01CLEkYU",
-      "summary": "Attia builds a framework for evaluating peptides \u2014 mechanism, human evidence, manufacturing/analytical control \u2014 and argues the wellness-peptide market is largely repackaging molecules the pharma industry already abandoned (CJC-1295 vs tesamorelin). He is explicitly unwilling to recommend non-approved, gray-market or compounded peptides including gray-market GLP-1 analogs.",
+      "summary": "Attia builds a framework for evaluating peptides — mechanism, human evidence, manufacturing/analytical control — and argues the wellness-peptide market is largely repackaging molecules the pharma industry already abandoned (CJC-1295 vs tesamorelin). He is explicitly unwilling to recommend non-approved, gray-market or compounded peptides including gray-market GLP-1 analogs.",
       "themes": [
         "peptides",
         "GLP-1-agonists",
