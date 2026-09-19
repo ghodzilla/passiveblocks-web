@@ -60,9 +60,6 @@ export default function OsHomePage() {
   const nav = typeof totals.nav === 'number' ? totals.nav : Number(totals.nav);
   const pnlUsd = typeof totals.pnl_usd === 'number' ? totals.pnl_usd : Number(totals.pnl_usd);
   const pnlPct = typeof totals.pnl_pct === 'number' ? totals.pnl_pct : Number(totals.pnl_pct);
-  const cashPct = totals.cash_pct;
-  const investedPct = totals.invested_pct;
-  const cashUsd = totals.cash_usd;
   const markAsOf = totals.latest_mark_as_of ?? '—';
   const tone = pnlTone(pnlPct);
 
@@ -90,6 +87,9 @@ export default function OsHomePage() {
   const partialLabel = paperPartial ? paperPartialActLabel(targetBook) : null;
   const bookCashPct = targetBook.cash_pct;
   const bookInvestedPct = targetBook.invested_pct;
+  const cashPct = bookCashPct;
+  const investedPct = bookInvestedPct;
+  const cashUsd = Math.round((paperMarks.notional_equity_usd ?? 100000) * bookCashPct) / 100;
 
   return (
     <OsShell
