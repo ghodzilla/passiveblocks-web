@@ -282,6 +282,10 @@ export type BookPosition = {
   theme_bucket: string;
   score: number;
   tier: string;
+  role?: string;
+  vera_book_eligible?: boolean;
+  vera_book_signed?: boolean;
+  asset_class?: string;
 };
 
 export const conviction = convictionJson as {
@@ -300,9 +304,16 @@ export const conviction = convictionJson as {
 };
 
 export const targetBook = targetBookJson as {
+  version?: number;
   as_of: string;
   mode: string;
   status: string;
+  theme_regime_brief_ref?: string;
+  vera_book_sign_attestation?: string;
+  lens?: string;
+  gate?: string;
+  brief_valid_until?: string;
+  live_promote?: number;
   cash_pct: number;
   invested_pct: number;
   theme_exposure_pct: Record<string, number>;
@@ -312,10 +323,19 @@ export const targetBook = targetBookJson as {
     max_single_name_pct: number;
     max_single_theme_pct: number;
     kill_switch: boolean;
+    name_cap_ok?: boolean;
+    theme_cap_ok?: boolean;
+    metals_pct?: number;
+    cash_plus_invested?: number;
   };
   vera_book_signed: boolean;
   vera_book_signed_by: string;
   vera_book_signed_at: string;
+  n_names?: number;
+  refused_from_vector?: string[];
+  excluded_confirmed?: string[];
+  full_top25_as_proposed?: boolean;
+  notes?: string;
   positions: BookPosition[];
 };
 
@@ -326,7 +346,7 @@ export const paperPortfolio = paperPortfolioJson as {
   equity: number;
   currency: string;
   updated: string;
-  last_fill_count: number;
+  last_fill_count?: number;
   nav?: number;
   pnl_usd?: number;
   pnl_pct?: number;
@@ -334,15 +354,32 @@ export const paperPortfolio = paperPortfolioJson as {
   mark_method?: string;
   entry_reconstructed?: boolean;
   max_dd_ceiling_pct?: number;
-  positions: Array<{
-    symbol: string;
-    weight_pct: number;
-    sleeve: string;
-    score: number;
-    instrument: string;
-    venue: string;
-    asset_class: string;
-  }>;
+  n_names?: number;
+  note?: string;
+  target_book_ref?: string;
+  vera_book_sign_attestation?: string;
+  /** Array (legacy) or symbol-keyed map (Vera PARTIAL feed). */
+  positions:
+    | Array<{
+        symbol: string;
+        weight_pct: number;
+        sleeve?: string;
+        score?: number;
+        instrument: string;
+        venue: string;
+        asset_class?: string;
+      }>
+    | Record<
+        string,
+        {
+          weight_pct: number;
+          instrument: string;
+          theme_bucket?: string;
+          tier?: string;
+          role?: string;
+          venue: string;
+        }
+      >;
 };
 
 export type PaperMarkPosition = {
@@ -439,6 +476,19 @@ export function hasLiveActBookSign(
   return true;
 }
 
+/**
+ * Paper PARTIAL Vera book-sign (Jordi densify) — show Act desk rows as Paper · not live.
+ * Does NOT flip live Act funding eligibility.
+ */
+export function hasPaperPartialActBook(
+  book: typeof targetBook = targetBook,
+): boolean {
+  if (!book?.vera_book_signed) return false;
+  if (book.mode !== 'paper') return false;
+  const status = String(book.status ?? '').toLowerCase();
+  return status.includes('partial');
+}
+
 /** True when a paper Act book exists (may still HOLD) — used only for empty-state copy. */
 export function hasPaperActBook(
   book: typeof targetBook = targetBook,
@@ -450,15 +500,29 @@ export function hasPaperActBook(
   return Array.isArray(show?.book_rows) && show.book_rows.length > 0;
 }
 
-/** brief_ref for live Act lines — never invent; only explicit theme_regime_brief_ref. */
+/** brief_ref for Act lines — never invent; prefer target-book, then pack. */
 export function liveActBriefRef(
   pack: typeof signalPack = signalPack,
+  book: typeof targetBook = targetBook,
 ): string | null {
+  if (book?.theme_regime_brief_ref) {
+    const ref = book.theme_regime_brief_ref;
+    const base = ref.split('/').pop() ?? ref;
+    return base.replace(/\.md$/i, '');
+  }
   const brief = pack?.brief as { theme_regime_brief_ref?: string } | undefined;
   if (brief?.theme_regime_brief_ref) return brief.theme_regime_brief_ref;
   const status = pack?.status as { theme_regime_brief_ref?: string } | undefined;
   if (status?.theme_regime_brief_ref) return status.theme_regime_brief_ref;
   return null;
+}
+
+/** Human label for paper PARTIAL Act desk / book strip. */
+export function paperPartialActLabel(
+  book: typeof targetBook = targetBook,
+): string {
+  const livePromote = book.live_promote ?? 0;
+  return `paper · Vera PARTIAL · Jordi densify-under-OW · Live-promote ${livePromote}`;
 }
 
 export function formatPct(n: number, digits = 1) {

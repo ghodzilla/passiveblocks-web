@@ -1,144 +1,277 @@
 {
+  "mode": "paper",
+  "live_blocked": true,
+  "cash_pct": 34.5,
+  "equity": 100000.0,
   "currency": "USD",
+  "updated": "2026-09-19T02:23:52.786531+00:00",
+  "last_fill_count": 16,
+  "instrument_map": {
+    "GOLD": {
+      "instrument": "GLD",
+      "venue": "paper",
+      "asset_class": "etf_proxy",
+      "note": "keep",
+      "weight_pct": 7.5
+    },
+    "BTC": {
+      "instrument": "BTC-USD",
+      "venue": "paper",
+      "asset_class": "crypto",
+      "note": "keep",
+      "weight_pct": 7.0
+    },
+    "ETH": {
+      "instrument": "ETH-USD",
+      "venue": "paper",
+      "asset_class": "crypto",
+      "note": "keep",
+      "weight_pct": 6.0
+    },
+    "SILVER": {
+      "instrument": "SLV",
+      "venue": "paper",
+      "asset_class": "etf_proxy",
+      "note": "keep",
+      "weight_pct": 5.5
+    },
+    "TSM": {
+      "instrument": "TSM",
+      "venue": "paper",
+      "asset_class": "equity",
+      "note": "keep",
+      "weight_pct": 5.0
+    },
+    "NVDA": {
+      "instrument": "NVDA",
+      "venue": "paper",
+      "asset_class": "equity",
+      "note": "keep_no_add",
+      "weight_pct": 5.0
+    },
+    "COPPER": {
+      "instrument": "CPER",
+      "venue": "paper",
+      "asset_class": "etf_proxy",
+      "note": "keep_hold",
+      "weight_pct": 4.0
+    },
+    "OIL": {
+      "instrument": "USO",
+      "venue": "paper",
+      "asset_class": "etf_proxy",
+      "note": "keep_trim_watch",
+      "weight_pct": 3.5
+    },
+    "FNV": {
+      "instrument": "FNV",
+      "venue": "paper",
+      "asset_class": "equity",
+      "note": "add_densify_gold_OW",
+      "weight_pct": 3.5
+    },
+    "WPM": {
+      "instrument": "WPM",
+      "venue": "paper",
+      "asset_class": "equity",
+      "note": "add_densify_gold_OW",
+      "weight_pct": 3.5
+    },
+    "AEM": {
+      "instrument": "AEM",
+      "venue": "paper",
+      "asset_class": "equity",
+      "note": "add_densify_gold_OW",
+      "weight_pct": 3.5
+    },
+    "GDX": {
+      "instrument": "GDX",
+      "venue": "paper",
+      "asset_class": "etf_proxy",
+      "note": "add_densify_gold_OW",
+      "weight_pct": 3.0
+    },
+    "AG": {
+      "instrument": "AG",
+      "venue": "paper",
+      "asset_class": "equity",
+      "note": "add_densify_silver_OW",
+      "weight_pct": 2.5
+    },
+    "AYA": {
+      "instrument": "AYA.TO",
+      "venue": "paper",
+      "asset_class": "equity",
+      "note": "add_densify_silver_OW",
+      "weight_pct": 2.0
+    },
+    "SIL": {
+      "instrument": "SIL",
+      "venue": "paper",
+      "asset_class": "etf_proxy",
+      "note": "add_densify_silver_OW",
+      "weight_pct": 2.0
+    },
+    "MSTR": {
+      "instrument": "MSTR",
+      "venue": "paper",
+      "asset_class": "equity",
+      "note": "add_densify_crypto_OW",
+      "weight_pct": 2.0
+    }
+  },
+  "positions": [
+    {
+      "symbol": "GOLD",
+      "weight_pct": 7.5,
+      "sleeve": "macro_hedge",
+      "score": 90.0,
+      "instrument": "GLD",
+      "venue": "paper",
+      "asset_class": "etf_proxy"
+    },
+    {
+      "symbol": "BTC",
+      "weight_pct": 7.0,
+      "sleeve": "crypto_beta",
+      "score": 84.0,
+      "instrument": "BTC-USD",
+      "venue": "paper",
+      "asset_class": "crypto"
+    },
+    {
+      "symbol": "ETH",
+      "weight_pct": 6.0,
+      "sleeve": "crypto_beta",
+      "score": 66.0,
+      "instrument": "ETH-USD",
+      "venue": "paper",
+      "asset_class": "crypto"
+    },
+    {
+      "symbol": "SILVER",
+      "weight_pct": 5.5,
+      "sleeve": "macro_hedge",
+      "score": 79.7,
+      "instrument": "SLV",
+      "venue": "paper",
+      "asset_class": "etf_proxy"
+    },
+    {
+      "symbol": "TSM",
+      "weight_pct": 5.0,
+      "sleeve": "equity_rails",
+      "score": 72.7,
+      "instrument": "TSM",
+      "venue": "paper",
+      "asset_class": "equity"
+    },
+    {
+      "symbol": "NVDA",
+      "weight_pct": 5.0,
+      "sleeve": "equity_rails",
+      "score": 66.5,
+      "instrument": "NVDA",
+      "venue": "paper",
+      "asset_class": "equity"
+    },
+    {
+      "symbol": "COPPER",
+      "weight_pct": 4.0,
+      "sleeve": "macro_hedge",
+      "score": 72.5,
+      "instrument": "CPER",
+      "venue": "paper",
+      "asset_class": "etf_proxy"
+    },
+    {
+      "symbol": "OIL",
+      "weight_pct": 3.5,
+      "sleeve": "macro_hedge",
+      "score": 61.6,
+      "instrument": "USO",
+      "venue": "paper",
+      "asset_class": "etf_proxy"
+    },
+    {
+      "symbol": "FNV",
+      "weight_pct": 3.5,
+      "sleeve": "macro_hedge",
+      "score": 78.0,
+      "instrument": "FNV",
+      "venue": "paper",
+      "asset_class": "equity"
+    },
+    {
+      "symbol": "WPM",
+      "weight_pct": 3.5,
+      "sleeve": "macro_hedge",
+      "score": 76.0,
+      "instrument": "WPM",
+      "venue": "paper",
+      "asset_class": "equity"
+    },
+    {
+      "symbol": "AEM",
+      "weight_pct": 3.5,
+      "sleeve": "macro_hedge",
+      "score": 75.0,
+      "instrument": "AEM",
+      "venue": "paper",
+      "asset_class": "equity"
+    },
+    {
+      "symbol": "GDX",
+      "weight_pct": 3.0,
+      "sleeve": "macro_hedge",
+      "score": 72.0,
+      "instrument": "GDX",
+      "venue": "paper",
+      "asset_class": "etf_proxy"
+    },
+    {
+      "symbol": "AG",
+      "weight_pct": 2.5,
+      "sleeve": "macro_hedge",
+      "score": 70.0,
+      "instrument": "AG",
+      "venue": "paper",
+      "asset_class": "equity"
+    },
+    {
+      "symbol": "AYA",
+      "weight_pct": 2.0,
+      "sleeve": "macro_hedge",
+      "score": 68.0,
+      "instrument": "AYA.TO",
+      "venue": "paper",
+      "asset_class": "equity"
+    },
+    {
+      "symbol": "SIL",
+      "weight_pct": 2.0,
+      "sleeve": "macro_hedge",
+      "score": 68.0,
+      "instrument": "SIL",
+      "venue": "paper",
+      "asset_class": "etf_proxy"
+    },
+    {
+      "symbol": "MSTR",
+      "weight_pct": 2.0,
+      "sleeve": "crypto_beta",
+      "score": 72.0,
+      "instrument": "MSTR",
+      "venue": "paper",
+      "asset_class": "equity"
+    }
+  ],
   "nav": 99373.72,
   "pnl_usd": -626.28,
   "pnl_pct": -0.6263,
+  "marked_at": "2026-09-13T01:49:40Z",
   "mark_method": "Entry RECONSTRUCTED from Yahoo public daily closes (fills were weights-only); marks = latest Yahoo daily close; cash ~30% explicit; paper only; Show\u2260Act",
-  "updated": "2026-09-19T02:23:52.787180+00:00",
-  "mode": "paper",
-  "cash_pct": 34.5,
-  "target_book_ref": "/workspace/passiveblocks/decide/target-book.json",
-  "vera_book_sign_attestation": "/workspace/passiveblocks/risk/signs/2026-09-19b-target-book-top25-paper-sign.json",
-  "positions": {
-    "GOLD": {
-      "weight_pct": 7.5,
-      "instrument": "GLD",
-      "theme_bucket": "metals",
-      "tier": "Core",
-      "role": "keep",
-      "venue": "paper"
-    },
-    "BTC": {
-      "weight_pct": 7.0,
-      "instrument": "BTC-USD",
-      "theme_bucket": "crypto",
-      "tier": "Core",
-      "role": "keep",
-      "venue": "paper"
-    },
-    "ETH": {
-      "weight_pct": 6.0,
-      "instrument": "ETH-USD",
-      "theme_bucket": "crypto",
-      "tier": "Core",
-      "role": "keep",
-      "venue": "paper"
-    },
-    "SILVER": {
-      "weight_pct": 5.5,
-      "instrument": "SLV",
-      "theme_bucket": "metals",
-      "tier": "Core",
-      "role": "keep",
-      "venue": "paper"
-    },
-    "TSM": {
-      "weight_pct": 5.0,
-      "instrument": "TSM",
-      "theme_bucket": "semis",
-      "tier": "Growth",
-      "role": "keep",
-      "venue": "paper"
-    },
-    "NVDA": {
-      "weight_pct": 5.0,
-      "instrument": "NVDA",
-      "theme_bucket": "semis",
-      "tier": "Growth",
-      "role": "keep_no_add",
-      "venue": "paper"
-    },
-    "COPPER": {
-      "weight_pct": 4.0,
-      "instrument": "CPER",
-      "theme_bucket": "copper",
-      "tier": "Growth",
-      "role": "keep_hold",
-      "venue": "paper"
-    },
-    "OIL": {
-      "weight_pct": 3.5,
-      "instrument": "USO",
-      "theme_bucket": "energy",
-      "tier": "Growth",
-      "role": "keep_trim_watch",
-      "venue": "paper"
-    },
-    "FNV": {
-      "weight_pct": 3.5,
-      "instrument": "FNV",
-      "theme_bucket": "metals",
-      "tier": "Growth",
-      "role": "add_densify_gold_OW",
-      "venue": "paper"
-    },
-    "WPM": {
-      "weight_pct": 3.5,
-      "instrument": "WPM",
-      "theme_bucket": "metals",
-      "tier": "Growth",
-      "role": "add_densify_gold_OW",
-      "venue": "paper"
-    },
-    "AEM": {
-      "weight_pct": 3.5,
-      "instrument": "AEM",
-      "theme_bucket": "metals",
-      "tier": "Growth",
-      "role": "add_densify_gold_OW",
-      "venue": "paper"
-    },
-    "GDX": {
-      "weight_pct": 3.0,
-      "instrument": "GDX",
-      "theme_bucket": "metals",
-      "tier": "Growth",
-      "role": "add_densify_gold_OW",
-      "venue": "paper"
-    },
-    "AG": {
-      "weight_pct": 2.5,
-      "instrument": "AG",
-      "theme_bucket": "metals",
-      "tier": "Growth",
-      "role": "add_densify_silver_OW",
-      "venue": "paper"
-    },
-    "AYA": {
-      "weight_pct": 2.0,
-      "instrument": "AYA.TO",
-      "theme_bucket": "metals",
-      "tier": "Growth",
-      "role": "add_densify_silver_OW",
-      "venue": "paper"
-    },
-    "SIL": {
-      "weight_pct": 2.0,
-      "instrument": "SIL",
-      "theme_bucket": "metals",
-      "tier": "Growth",
-      "role": "add_densify_silver_OW",
-      "venue": "paper"
-    },
-    "MSTR": {
-      "weight_pct": 2.0,
-      "instrument": "MSTR",
-      "theme_bucket": "crypto",
-      "tier": "Growth",
-      "role": "add_densify_crypto_OW",
-      "venue": "paper"
-    }
-  },
-  "n_names": 16,
-  "note": "Weights synced to Vera PARTIAL book-sign 16; paper fills/marks to follow"
+  "entry_reconstructed": true,
+  "max_dd_ceiling_pct": 15,
+  "note": "Paper book patched 2026-09-19 to Vera PARTIAL CLEAR (16 names, Jordi lens). Marks may lag until next mark pass."
 }
