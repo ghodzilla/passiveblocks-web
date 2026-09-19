@@ -10,8 +10,10 @@ import {
   formatPct,
   formatThemeLabel,
   briefAsOfLabel,
+  hasPaperPartialActBook,
   hasSignalStatus,
   paperMarks,
+  paperPartialActLabel,
   paperPortfolio,
   signalPack,
   targetBook,
@@ -84,6 +86,10 @@ export default function OsHomePage() {
   const paperLines = [...targetBook.positions].sort((a, b) => b.weight_pct - a.weight_pct).slice(0, 4);
   const topShow = [...convictionShow.show_rows].sort((a, b) => b.score - a.score).slice(0, 3);
   const ceilings = targetBook.risk_ceilings_ref;
+  const paperPartial = hasPaperPartialActBook(targetBook);
+  const partialLabel = paperPartial ? paperPartialActLabel(targetBook) : null;
+  const bookCashPct = targetBook.cash_pct;
+  const bookInvestedPct = targetBook.invested_pct;
 
   return (
     <OsShell
@@ -134,7 +140,9 @@ export default function OsHomePage() {
           Paper {paperAction}
           {asOfBrief ? ` · brief ${asOfBrief} post-wave` : ''}
           {' · '}
-          live Act empty until Vera book-sign + brief_ref
+          {paperPartial
+            ? `paper PARTIAL signed · live Act not fundable (Live-promote ${targetBook.live_promote ?? 0})`
+            : 'live Act empty until Vera book-sign + brief_ref'}
           {triage
             ? ` · triage ${triage.watch.count}/${triage.paper_test.count}/${triage.live_promote.count}`
             : ''}
@@ -187,6 +195,11 @@ export default function OsHomePage() {
             Full book →
           </Link>
         </div>
+        {partialLabel ? (
+          <p className="mb-2 text-[11px] font-semibold tracking-wide text-[var(--muted-foreground)]">
+            {partialLabel}
+          </p>
+        ) : null}
         <ul className="divide-y divide-[var(--border)]">
           {paperLines.map((row) => (
             <li key={row.symbol} className="flex items-center justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
@@ -201,7 +214,8 @@ export default function OsHomePage() {
           ))}
         </ul>
         <p className="mt-3 text-[11px] text-[var(--muted)]">
-          {targetBook.positions.length} Vera book-signed lines · cash {formatPct(cashPct, 0)} · not
+          {targetBook.positions.length} Vera book-signed lines · cash{' '}
+          {formatPct(bookCashPct, 1)} · invested {formatPct(bookInvestedPct, 1)} · not
           live-eligible funding.
         </p>
       </section>

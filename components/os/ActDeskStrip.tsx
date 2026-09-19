@@ -7,7 +7,9 @@ import {
   formatThemeLabel,
   hasLiveActBookSign,
   hasPaperActBook,
+  hasPaperPartialActBook,
   liveActBriefRef,
+  paperPartialActLabel,
   paperPortfolio,
   targetBook,
 } from '@/lib/os-data';
@@ -15,14 +17,69 @@ import {
 /**
  * Scarce Act desk — funding cue for real size.
  * Show ≠ Act. Paper book rows never appear here as live-eligible.
- * Hard empty until Vera live book-sign (+ brief_ref when rows render).
+ * Live path: hard empty until Vera live book-sign (+ brief_ref).
+ * Paper PARTIAL path: render signed paper rows with Paper · not live stamp.
  */
 export function ActDeskStrip() {
   const live = hasLiveActBookSign(targetBook, paperPortfolio);
+  const paperPartial = hasPaperPartialActBook(targetBook);
   const paperHold = hasPaperActBook(targetBook, convictionShow);
   const briefRef = liveActBriefRef();
   const asOf = targetBook.as_of || convictionShow.as_of;
   const ceilings = targetBook.risk_ceilings_ref;
+
+  // Paper PARTIAL Vera book-sign — show the 16 as Paper · not live (never live funding).
+  if (!live && paperPartial) {
+    const rows = [...targetBook.positions].sort((a, b) => b.weight_pct - a.weight_pct);
+    const label = paperPartialActLabel(targetBook);
+
+    return (
+      <section
+        className="mb-8 rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface)] p-5"
+        aria-label="Act desk"
+      >
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="os-stamp os-stamp--act">Paper · not live</span>
+            <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+              Act desk
+            </h2>
+          </div>
+          <div className="text-right font-mono text-[11px] text-[var(--muted)]">
+            <p>as of {formatAsOf(asOf)}</p>
+            <p className="mt-0.5">brief_ref · {briefRef ?? '—'}</p>
+          </div>
+        </div>
+        <p className="mb-1 text-[11px] font-semibold tracking-wide text-[var(--muted-foreground)]">
+          {label}
+        </p>
+        <p className="mb-3 text-[11px] text-[var(--muted)]">
+          Vera-signed paper PARTIAL · {rows.length} lines · invested{' '}
+          {formatPct(targetBook.invested_pct)} · cash {formatPct(targetBook.cash_pct)}. Name cap{' '}
+          {ceilings.max_single_name_pct}%. Not live funding · Live-promote{' '}
+          {targetBook.live_promote ?? 0}. Show ≠ Act.
+        </p>
+        <ul className="divide-y divide-[var(--border)]">
+          {rows.map((row) => (
+            <li
+              key={row.symbol}
+              className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0"
+            >
+              <div className="min-w-0">
+                <p className="font-semibold tracking-tight">{row.symbol}</p>
+                <p className="text-xs text-[var(--muted)]">
+                  {formatThemeLabel(row.theme_bucket)} · {row.instrument}
+                  {briefRef ? ` · ${briefRef}` : ''}
+                  {` · wt ${formatPct(row.weight_pct)}`}
+                </p>
+              </div>
+              <WeightBar pct={row.weight_pct} max={ceilings.max_single_name_pct} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    );
+  }
 
   if (!live) {
     const title = paperHold ? 'Live Act empty' : 'Waiting on Vera book-sign';
@@ -63,7 +120,7 @@ export function ActDeskStrip() {
           venue: p.venue,
           sleeve: p.sleeve,
           theme_bucket: p.theme_bucket,
-          score: p.score,
+          score: p.score ?? 0,
           tier: p.tier,
           vera_line_sign: null as string | null,
           vera_book_signed: true,
@@ -86,9 +143,7 @@ export function ActDeskStrip() {
         </div>
         <div className="text-right font-mono text-[11px] text-[var(--muted)]">
           <p>as of {formatAsOf(asOf)}</p>
-          <p className="mt-0.5">
-            brief_ref · {briefRef ?? '—'}
-          </p>
+          <p className="mt-0.5">brief_ref · {briefRef ?? '—'}</p>
         </div>
       </div>
       <p className="mb-3 text-[11px] text-[var(--muted)]">
