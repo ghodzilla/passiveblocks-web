@@ -87,6 +87,13 @@ export default function OsHomePage() {
   const partialLabel = paperPartial ? paperPartialActLabel(targetBook) : null;
   const bookCashPct = targetBook.cash_pct;
   const bookInvestedPct = targetBook.invested_pct;
+  const signalsJson = signalLive ? signalPack.status.signals_json : undefined;
+  const corpusMeta =
+    signalsJson?.n_records != null &&
+    signalsJson.generated &&
+    signalsJson.latest_signal_date
+      ? `corpus ${signalsJson.n_records} · generated ${signalsJson.generated} · latest ${signalsJson.latest_signal_date}`
+      : null;
   const cashPct = bookCashPct;
   const investedPct = bookInvestedPct;
   const cashUsd = Math.round((paperMarks.notional_equity_usd ?? 100000) * bookCashPct) / 100;
@@ -148,6 +155,11 @@ export default function OsHomePage() {
             : ''}
         </p>
       </div>
+      {corpusMeta ? (
+        <p className="mb-4 -mt-2 font-mono text-[11px] text-[var(--muted)]" data-os="corpus-meta">
+          {corpusMeta}
+        </p>
+      ) : null}
 
       {/* 3. Minimal pills */}
       <div className="mb-8 flex flex-wrap items-center gap-2">
