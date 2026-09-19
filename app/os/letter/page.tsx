@@ -169,7 +169,7 @@ export default function LetterPage() {
             The kill switch is still blank
           </h2>
           <p>
-            Falsifier #4, as locked since the 14 Sep brief (held 19 Sep):{' '}
+            Falsifier #4, as locked since the 14 Sep brief (held 19b post-wave):{' '}
             <span className="font-semibold">Liquidity kill for crypto</span> — Howell
             falling-liquidity momentum dominates the debasement-crypto bid. Status:{' '}
             <span className="font-semibold">Live — unrebutted voice; GLI cell INSUFFICIENT on card.</span>
@@ -289,19 +289,19 @@ export default function LetterPage() {
         <section className="space-y-5">
           <p className="text-xs text-[var(--muted)]">
             As-of stamps from <span className="font-mono">liquidity-card-2026-09-09.md</span> (+ live
-            evening twin where noted) and theme-regime-2026-09-19 only. No invented later prints.
+            evening twin where noted) and theme-regime-2026-09-19b only. No invented later prints.
           </p>
           <Fig04PulseTiles />
           <div className="grid gap-2 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/20 px-4 py-3 text-xs text-[var(--muted)] sm:grid-cols-3">
             <p>
               <span className="font-semibold text-foreground">Crypto theme stance</span>
               <br />
-              OW · split only · falsifier #4 live · 2026-09-19
+              OW · split only · falsifier #4 live · 2026-09-19b
             </p>
             <p>
               <span className="font-semibold text-foreground">Paper book</span>
               <br />
-              HOLD · 2026-09-19 · STATUS.json
+              HOLD · 2026-09-19b · STATUS.json
             </p>
             <p>
               <span className="font-semibold text-foreground">Gate</span>
@@ -323,10 +323,10 @@ export default function LetterPage() {
                 <li>decide/LETTER_CRAFT_SHAAN.md</li>
                 <li>decide/WEEKLY_LETTER.md</li>
                 <li>decide/briefs/STATUS.json</li>
-                <li>decide/briefs/theme-regime-2026-09-19.md</li>
+                <li>decide/briefs/theme-regime-2026-09-19b.md</li>
                 <li>signal-db/liquidity-card-2026-09-09.md</li>
                 <li>signal-db/liquidity-card-2026-09-09-live.md</li>
-                <li>signal-db/theme-regime-refresh-input-2026-09-19.md</li>
+                <li>signal-db/theme-regime-refresh-input-2026-09-19b.md</li>
                 <li>letters/2026-09-14.md · continuity only</li>
                 <li>risk/signs/…figures-clear.json · Vera</li>
               </ul>

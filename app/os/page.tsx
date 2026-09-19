@@ -9,6 +9,7 @@ import {
   formatAsOf,
   formatPct,
   formatThemeLabel,
+  briefAsOfLabel,
   hasSignalStatus,
   paperMarks,
   paperPortfolio,
@@ -71,7 +72,7 @@ export default function OsHomePage() {
       : 'HOLD';
   const horizon = signalLive ? signalPack.status.valid_until ?? null : null;
   const triage = signalLive ? signalPack.brief.triage : undefined;
-  const asOfBrief = signalLive ? signalPack.status.as_of ?? signalPack.brief.as_of : null;
+  const asOfBrief = signalLive ? briefAsOfLabel(signalPack) : null;
   const horizonLabel = horizon
     ? new Intl.DateTimeFormat('en-AU', {
         timeZone: 'Australia/Melbourne',
@@ -131,7 +132,7 @@ export default function OsHomePage() {
         </span>
         <p className="text-sm leading-snug text-foreground">
           Paper {paperAction}
-          {asOfBrief ? ` · brief ${asOfBrief}` : ''}
+          {asOfBrief ? ` · brief ${asOfBrief} post-wave` : ''}
           {' · '}
           live Act empty until Vera book-sign + brief_ref
           {triage

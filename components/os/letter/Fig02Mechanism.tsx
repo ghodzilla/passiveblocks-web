@@ -40,13 +40,13 @@ export function Fig02Mechanism() {
           <p className="mt-3 font-mono text-sm font-semibold text-foreground">
             OW · low_to_medium · split only
           </p>
-          <p className="mt-1 text-[11px] text-[var(--muted)]">Decide 2026-09-19</p>
+          <p className="mt-1 text-[11px] text-[var(--muted)]">Decide 2026-09-19b</p>
           <ul className="mt-4 space-y-2 text-xs text-[var(--muted)]">
             <li>
-              <span className="font-semibold text-foreground">New-wave thicken:</span> Jordi 09-06
-              (er5mqvbDQU8)
+              <span className="font-semibold text-foreground">Post-wave thicken:</span> Hayes×2 ·
+              Jordi 09-13 · Gromen 09-14
             </li>
-            <li>Prior: Visser · Gromen · Hayes · Lee</li>
+            <li>Prior: Visser · Gromen · Hayes · Lee — Howell unrebutted</li>
             <li className="text-[var(--muted-foreground)]">Stance/voice tiles — not fake % weights</li>
           </ul>
         </div>
@@ -58,7 +58,7 @@ export function Fig02Mechanism() {
           <p className="mt-3 text-sm font-semibold text-foreground">Howell · 11 Aug</p>
           <p className="mt-1 text-[11px] text-[var(--muted)]">Falsifier #4 · live unrebutted</p>
           <div className="mt-4 rounded-[var(--radius-md)] border border-dashed border-[var(--border-strong)] bg-black/20 px-3 py-3">
-            <p className="font-mono text-xs text-[var(--muted)]">Jordi 09-06 ≠ rebuttal</p>
+            <p className="font-mono text-xs text-[var(--muted)]">Hayes/Jordi bulls ≠ Howell rebuttal</p>
             <p className="mt-2 text-[11px] leading-relaxed text-[var(--muted)]">
               Falling-liquidity momentum vs debasement-crypto bid — voice still open.
             </p>

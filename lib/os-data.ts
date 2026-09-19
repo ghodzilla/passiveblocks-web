@@ -29,9 +29,18 @@ export type ThemeCall = {
   stage?: string;
   forward_thesis?: string;
   change_vs_brief_2026_09_14?: string;
+  change_vs_brief_2026_09_19?: string;
   paper_line?: string;
   new_wave_note?: string;
   diego_fork?: string;
+};
+
+/** Post-wave cite thicken — argument copy lanes, not process stamps. */
+export type CiteThickenLane = {
+  lane: string;
+  argument: string;
+  cite?: string;
+  cites?: string[];
 };
 
 export type FutureReturnsTriage = {
@@ -53,17 +62,26 @@ export const signalPack = signalPackJson as {
   status: {
     gate: string;
     as_of: string;
+    input_suffix?: string;
+    wave?: string;
     valid_until?: string;
     author_sense?: string;
     adopted_by?: string;
     paper_book_action?: string;
     conditions?: string[];
     note?: string;
-    signals_json?: { n_records?: number; generated?: string };
+    signals_json?: {
+      n_records?: number;
+      generated?: string;
+      latest_signal_date?: string;
+    };
     reframe?: FutureReturnsReframe;
+    superseded_brief?: string;
   };
   brief: {
     as_of: string;
+    input_suffix?: string;
+    wave?: string;
     timezone?: string;
     gate: string;
     author: string;
@@ -77,13 +95,19 @@ export const signalPack = signalPackJson as {
     themes: ThemeCall[];
     reframe?: FutureReturnsReframe;
     triage?: FutureReturnsTriage;
+    cite_thicken?: CiteThickenLane[];
+    name_map?: unknown;
     name_map_hygiene?: Record<string, string>;
+    hard_locks?: string[];
     signals_json_n?: number;
     signals_json_generated?: string;
+    signals_json_latest?: string;
     brief_md?: string;
     valid_until?: string;
     superseded_brief?: string;
     recommendation?: string;
+    material_cite_thickening?: boolean;
+    material_stance_label_edits?: boolean;
   };
   recent_signals: RecentSignal[];
 };
@@ -155,6 +179,18 @@ export function parseBriefCitation(raw: string): BriefCitation {
     };
   }
   return { raw, title: raw };
+}
+
+
+/** Display as_of with optional post-wave suffix (e.g. 2026-09-19b). */
+export function briefAsOfLabel(
+  pack: typeof signalPack | null | undefined = signalPack,
+): string | null {
+  if (!pack?.status?.as_of && !pack?.brief?.as_of) return null;
+  const base = pack.status?.as_of ?? pack.brief.as_of;
+  const suffix = pack.status?.input_suffix ?? pack.brief?.input_suffix;
+  if (suffix && !String(base).endsWith(suffix)) return `${base}${suffix}`;
+  return base;
 }
 
 export function hasSignalStatus(

@@ -5,6 +5,7 @@ import { OsShell } from '@/components/os/OsShell';
 import { RosterSplit } from '@/components/os/RosterSplit';
 import { StatStrip } from '@/components/os/StatStrip';
 import {
+  briefAsOfLabel,
   formatAsOf,
   formatDate,
   hasSignalStatus,
@@ -58,6 +59,8 @@ export default function OsSignalPage() {
   const falsifiers = brief.falsifiers ?? [];
   const implications = brief.paper_book_implications ?? {};
   const triage = brief.triage;
+  const citeThicken = brief.cite_thicken ?? [];
+  const briefLabel = briefAsOfLabel(signalPack);
   const signals = [...recent_signals].sort((a, b) => b.date.localeCompare(a.date));
   const asOf = status.as_of || brief.as_of;
 
@@ -77,8 +80,10 @@ export default function OsSignalPage() {
           },
           {
             label: 'As of',
-            value: formatDate(asOf),
-            hint: status.valid_until ? `valid → ${formatDate(status.valid_until)}` : 'Adopted pack',
+            value: briefLabel ?? formatDate(asOf),
+            hint: status.valid_until
+              ? `valid → ${formatDate(status.valid_until)}${status.wave ? ' · post-wave' : ''}`
+              : 'Adopted pack',
           },
           {
             label: 'Triage',
@@ -208,6 +213,33 @@ export default function OsSignalPage() {
         </section>
       ) : null}
 
+
+      {citeThicken.length > 0 ? (
+        <section className="mb-8 rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface)] p-5">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+                Cite thicken · argument
+              </h2>
+              <p className="mt-1 text-xs text-[var(--muted)]">
+                Post-wave Whisper densifies the adopted frame — argument copy, not process stamps. Stance labels unchanged.
+              </p>
+            </div>
+            <span className="os-stamp os-stamp--sense">Sense · not Act</span>
+          </div>
+          <ul className="space-y-3">
+            {citeThicken.map((lane) => (
+              <li key={lane.lane} className="border-t border-[var(--border)] pt-3 first:border-t-0 first:pt-0">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+                  {lane.lane}
+                </p>
+                <p className="mt-1.5 text-sm leading-relaxed text-[var(--muted)]">{lane.argument}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section className="mb-8">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
           <div>
@@ -253,6 +285,11 @@ export default function OsSignalPage() {
               </div>
               {theme.forward_thesis ? (
                 <p className="mt-3 text-xs leading-relaxed text-[var(--muted)]">{theme.forward_thesis}</p>
+              ) : null}
+              {theme.new_wave_note ? (
+                <p className="mt-2 text-[11px] leading-relaxed text-[var(--muted)]">
+                  {theme.new_wave_note}
+                </p>
               ) : null}
               <p className="mt-3 text-[11px] text-[var(--muted)]">
                 {theme.citation_count} citation{theme.citation_count === 1 ? '' : 's'}

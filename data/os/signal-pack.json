@@ -2,6 +2,8 @@
   "status": {
     "gate": "GATE_OPEN",
     "as_of": "2026-09-19",
+    "input_suffix": "b",
+    "wave": "post_priority_whisper",
     "valid_until": "2026-09-21",
     "author_sense": "Sam Passive Blocks Signal",
     "adopted_by": "Diego Passive Blocks",
@@ -9,30 +11,34 @@
     "conditions": [
       "new Act needs Vera book-sign + theme_regime_brief_ref",
       "SPCX/TSLA/AI-chase do-not-add",
-      "Tom Lee 2026-09-01 PARTIAL",
-      "copper is N (watch) — existing COPPER paper line stays HOLD (no mandated trim without Vera)",
-      "crypto OW is split-only with Howell falsifier #4 live"
+      "Tom Lee 2026-09-01 PARTIAL; Tom Lee mIInvdO7e_Y guest-only not desk cite",
+      "copper is N (watch) — Rule single desk ≠ cluster; existing COPPER paper line stays HOLD (no mandated trim without Vera)",
+      "crypto OW is split-only with Howell falsifier #4 live unrebutted (no Howell NEW)"
     ],
-    "note": "Decide-adopted 2026-09-19 as ADOPT-AS-IS of 2026-09-14 locks (no material stance edits). Extension: future-returns Stage/Forward + Watch 15 / Paper-test 4 / Live-promote 0 + widened Show-map. Corpus unchanged (n=176, generated 2026-09-10, latest 2026-09-09 — no new extract wave since 09-14). Paper HOLD. Vera refuse-pass required same morning vs SEP21 checklist; Nora wires /os after Vera clear. OneDrive signals.json restored 2026-09-12T23:54:24Z (512221, browser Replace).",
+    "note": "Decide-adopted 2026-09-19b POST-WAVE as ADOPT-AS-IS on classic six stance labels (material cite thickening). Supersedes morning theme-regime-2026-09-19. Corpus NOW n=191 / generated 2026-09-19 / latest 2026-09-18 (15 new Whisper rows). Triage reframe Watch 18 (+3 Franco densify / Japan VLA / Project Vault) / Paper-test 4 / Live-promote 0. Paper HOLD. Duration UW reinforced; Copper N despite Rule single-desk. Vera SEP21 refuse-pass required same morning; Nora re-wires /os after Vera clear.",
     "signals_json": {
-      "n_records": 176,
-      "generated": "2026-09-10"
+      "n_records": 191,
+      "generated": "2026-09-19",
+      "latest_signal_date": "2026-09-18"
     },
     "reframe": {
       "orientation": "future_returns",
-      "watch_count": 15,
+      "watch_count": 18,
       "paper_test_count": 4,
       "live_promote_count": 0
-    }
+    },
+    "superseded_brief": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-19.md"
   },
   "brief": {
     "as_of": "2026-09-19",
+    "input_suffix": "b",
+    "wave": "post_priority_whisper",
     "timezone": "Australia/Sydney UTC+10",
     "gate": "GATE_OPEN",
     "author": "Sense (Sam)",
     "adopted_by": "Diego Passive Blocks (Decide)",
-    "adopted_at": "2026-09-19T09:00:00+10:00",
-    "regime_one_liner": "Fiscal-dominance / hard-asset hedge still the frame. Gold is the only dense independent desk agree. Copper is supply narrative / company-pitch tape — not desk-cluster OW. Crypto rails stay OW only as a split (bulls not one call; Howell near-term bear unrebutted; Jordi 09-06 thickens the bull side only; ETF/stablecoin prints from the 9 Sep card do not adjudicate GLI). AI/semis N. Long duration UW. Booth/Mucha dropped as current seats. Zeihan energy geography = context not 6th theme. Jordi S&P bearish→neutral = call not theme rewrite.",
+    "adopted_at": "2026-09-19T10:48:00+10:00",
+    "regime_one_liner": "Fiscal-dominance / hard-asset hedge still the frame. Gold dense multi-seat agree thickened (Booth/Rule/Hayes/Gromen). Copper N despite Rule single-desk copper; Vault=context. Crypto split OW — bulls thicken (Hayes×2/Jordi/Gromen); Howell #4 unrebutted no NEW. AI N — Jordi NVDA reiterate ≠ price OW; Japan robots Watch only. Duration UW reinforced (Jordi bearish flip + Booth hiking + Gromen TLT-real). Booth restored; Mucha stale. Zeihan Vault/energy/Japan robots = context not 6th theme. Tom Lee mIInvdO7e_Y not desk cite.",
     "paper_book_action": "HOLD",
     "paper_book_implications": {
       "hold": [
@@ -67,136 +73,155 @@
         "CAT"
       ]
     },
-    "pending": "Vera book-sign required for any new Act lines; Vera refuse-pass same morning vs SEP21_REFRESH_REFUSE_CHECKLIST; Nora wires /os after Vera clear; Tom Lee 2026-09-01 PARTIAL; copper N watch — COPPER paper HOLD no mandated trim; crypto split OW + falsifier #4 live",
+    "pending": "Vera book-sign required for any new Act lines; Vera SEP21 refuse-pass same morning vs SEP21_REFRESH_REFUSE_CHECKLIST; Nora re-wires /os after Vera clear; Tom Lee 2026-09-01 PARTIAL; copper N watch — COPPER paper HOLD no mandated trim; Rule copper single desk ≠ cluster; crypto split OW + falsifier #4 live unrebutted",
     "falsifiers": [
-      "Debasement break: durable USD strength + gold/silver trend failure / CB diversification stops — Live.",
-      "Hormuz normalization: sustained pre-war Gulf crude throughput without fiscal/inflation echo — Live. Zeihan QfjQAvzAnn4 (09-09) + FgarzZkGU1Q (09-08) thicken energy-crisis context; do not clear falsifier; context not 6th theme",
+      "Debasement break: durable USD strength + gold/silver trend failure / CB diversification stops — Live. Gold thickened Booth/Rule/Hayes/Gromen",
+      "Hormuz normalization: sustained pre-war Gulf crude throughput without fiscal/inflation echo — Live. Doomberg rz8mwV7lJ8s (09-16) flips to war-premium / Hormuz-Red Sea risk bullish — thickens context; does not clear; Zeihan also thicken",
       "AI demand break: hyperscaler capex/backlog collapse or memory-bottleneck relief — Live.",
-      "Liquidity kill for crypto: Howell falling-liquidity momentum dominates debasement-crypto bid — Live (unrebutted voice). GLI cell INSUFFICIENT (Hole. Not zero.). ETF/stablecoin prints from liquidity-card-2026-09-09 do not adjudicate Howell. Jordi 09-06 crypto bull is not a Howell rebuttal.",
-      "Duration vindication: Warsh delivers clean disinflation + credible long-end bid rewarding TLT — Live. Booth/Mucha dropped as current supporting seats; Jordi 09-06 neutral ≠ vindication; Gromen 30Y TIPS is real-yield map under UW not nominal OW vindication"
+      "Liquidity kill for crypto: Howell falling-liquidity momentum dominates debasement-crypto bid — Live — unrebutted voice. Hole. Not zero. No Howell NEW. Latest Howell still 2026-08-11. Hayes/Jordi bulls are not Howell rebuttals. ETF/stablecoin prints from liquidity-card-2026-09-09 do not adjudicate. GLI cell INSUFFICIENT (Hole. Not zero.).",
+      "Duration vindication: Warsh delivers clean disinflation + credible long-end bid rewarding TLT — Live — further from clear. Booth Fed hiking flip + Jordi long-end bearish flip + Gromen TLT-real — anti-nominal thickened, not vindicated"
     ],
     "themes": [
       {
         "name": "Hard-asset debasement (Gold)",
         "stance": "OW",
-        "citation_count": 5,
+        "citation_count": 9,
         "citations": [
-          "onedrive-cache/signals.json|Luke Gromen|2026-08-28|https://www.youtube.com/watch?v=R1VLmuXYU3o",
-          "onedrive-cache/signals.json|Jordi Visser|2026-08-23|https://www.youtube.com/watch?v=FoSLsvUKvws",
-          "onedrive-cache/signals.json|Michael Howell|2026-08-11|https://www.youtube.com/watch?v=FPB4Z1KhE3s",
-          "onedrive-cache/signals.json|Rick Rule|2026-08-22|https://www.youtube.com/watch?v=-mxfxVtbqXc",
-          "onedrive-cache/signals.json|Arthur Hayes|2026-08-21|https://www.youtube.com/watch?v=0b_nJ53uiA0"
+          "Luke Gromen|2026-08-28|https://www.youtube.com/watch?v=R1VLmuXYU3o",
+          "Luke Gromen|2026-09-14|https://www.youtube.com/watch?v=DYnXTKFSg18",
+          "Jordi Visser|2026-08-23|https://www.youtube.com/watch?v=FoSLsvUKvws",
+          "Michael Howell|2026-08-11|https://www.youtube.com/watch?v=FPB4Z1KhE3s",
+          "Rick Rule|2026-08-22|https://www.youtube.com/watch?v=-mxfxVtbqXc",
+          "Rick Rule|2026-09-17|https://www.youtube.com/watch?v=K4KXbsvpKyo",
+          "Arthur Hayes|2026-08-21|https://www.youtube.com/watch?v=0b_nJ53uiA0",
+          "Arthur Hayes|2026-09-12|https://www.youtube.com/watch?v=k2a3kEgcijs",
+          "Danielle DiMartino Booth|2026-09-16|https://www.youtube.com/watch?v=_haB1Y5xh1k"
         ],
         "confidence": "high",
         "stage": "late",
-        "forward_thesis": "Densest multi-seat future hard-asset path under fiscal dominance — next dollar still prefers this sleeve over chase",
-        "change_vs_brief_2026_09_14": "holds"
+        "forward_thesis": "Future hard-asset bid under fiscal dominance / credit stress — densest multi-seat path",
+        "change_vs_brief_2026_09_19": "holds_thickened"
       },
       {
         "name": "Hard-asset debasement (Silver)",
         "stance": "OW",
-        "citation_count": 4,
+        "citation_count": 5,
         "citations": [
-          "onedrive-cache/signals.json|Jordi Visser|2026-08-23|https://www.youtube.com/watch?v=FoSLsvUKvws",
-          "onedrive-cache/signals.json|Michael Howell|2026-08-11|https://www.youtube.com/watch?v=FPB4Z1KhE3s",
-          "onedrive-cache/signals.json|Rick Rule|2026-08-22|https://www.youtube.com/watch?v=-mxfxVtbqXc",
+          "Jordi Visser|2026-08-23|https://www.youtube.com/watch?v=FoSLsvUKvws",
+          "Michael Howell|2026-08-11|https://www.youtube.com/watch?v=FPB4Z1KhE3s",
+          "Rick Rule|2026-08-22|https://www.youtube.com/watch?v=-mxfxVtbqXc",
+          "Rick Rule|2026-09-17|https://www.youtube.com/watch?v=K4KXbsvpKyo",
           "Matthew Piepenburg (guest, Jesse Day channel)|2026-08-27|https://www.youtube.com/watch?v=YClSbElOUtI"
         ],
         "confidence": "medium",
         "stage": "mid",
-        "forward_thesis": "Same debasement frame with thinner seats; miner densify (AG/AYA/SIL) is the early edge inside the mid theme",
-        "change_vs_brief_2026_09_14": "holds_lower_confidence"
+        "forward_thesis": "Same debasement future path with thinner seats; miner densify early edge; Rule 09-17 densifies",
+        "change_vs_brief_2026_09_19": "holds_thickened"
       },
       {
         "name": "Copper / critical minerals",
         "stance": "N",
-        "citation_count": 4,
+        "citation_count": 6,
         "citations": [
+          "Rick Rule|2026-09-17|Copper commodity single desk|https://www.youtube.com/watch?v=K4KXbsvpKyo",
+          "Peter Zeihan|2026-09-10|Project Vault context|https://www.youtube.com/watch?v=sj9GLylXmeo",
           "Crux Investor|2026-08-28|Selkirk CEO|https://www.youtube.com/watch?v=sEyT9WPM5Bo",
           "Crux Investor|2026-08-31|Olive scarcity|https://www.youtube.com/watch?v=HEnRn9p8c9w",
           "Nick Campbell (guest, Jesse Day channel)|2026-09-01|sponsored|https://www.youtube.com/watch?v=hrG7rtIRFIQ",
           "David Hunter (guest, Jesse Day channel)|2026-08-20|basket|https://www.youtube.com/watch?v=JKDkHIUcPx4"
         ],
-        "confidence": "low_to_medium_narrative",
+        "confidence": "low_to_medium_narrative_only",
         "stage": "early",
-        "forward_thesis": "Scarcity talk may be early future payoff if desks form — they have not; stay N; no desk OW",
-        "change_vs_brief_2026_09_14": "holds",
-        "paper_line": "COPPER HOLD (already owned); do-not-add; discovery stays discovery; no mandated trim without Vera"
+        "forward_thesis": "Scarcity / Vault processing talk may be early future payoff if desks form a cluster — they have not; stay N",
+        "change_vs_brief_2026_09_19": "holds_N_despite_Rule_single_desk",
+        "paper_line": "COPPER HOLD (already owned); do-not-add; discovery stays discovery; no mandated trim without Vera; Rule single desk ≠ cluster OW; Vault = context"
       },
       {
         "name": "Crypto rails / tokenization (BTC/ETH)",
         "stance": "OW",
-        "citation_count": 7,
+        "citation_count": 11,
         "citations": [
           "Jordi Visser|2026-08-23|https://www.youtube.com/watch?v=FoSLsvUKvws",
           "Jordi Visser|2026-08-30|https://www.youtube.com/watch?v=2FND8g-De8Y",
           "Jordi Visser|2026-09-06|https://www.youtube.com/watch?v=er5mqvbDQU8",
+          "Jordi Visser|2026-09-13|https://www.youtube.com/watch?v=VPuzUZlvk0U",
           "Luke Gromen|2026-08-28|https://www.youtube.com/watch?v=R1VLmuXYU3o",
+          "Luke Gromen|2026-09-14|https://www.youtube.com/watch?v=DYnXTKFSg18",
           "Arthur Hayes|2026-08-21|https://www.youtube.com/watch?v=0b_nJ53uiA0",
+          "Arthur Hayes|2026-09-12|https://www.youtube.com/watch?v=k2a3kEgcijs",
+          "Arthur Hayes|2026-09-14|https://www.youtube.com/watch?v=C2ahxun9Ryc",
           "Tom Lee|2026-09-02|https://www.youtube.com/watch?v=fOMlh1gq33g",
           "Michael Howell|2026-08-11|near-term crypto bear|https://www.youtube.com/watch?v=FPB4Z1KhE3s"
         ],
         "confidence": "low_to_medium",
         "stage": "mid",
-        "forward_thesis": "Future rails/tokenization payoff remains split — bulls thicken; Howell near-term liquidity bear unrebutted",
-        "change_vs_brief_2026_09_14": "holds_only_as_split_OW; Howell falsifier #4 still live",
-        "new_wave_note": "Jordi Visser|2026-09-06|er5mqvbDQU8 reiterates BTC/ETH/SOL/tokenization bullish/high — thickens bull side; does not rebut Howell",
+        "forward_thesis": "Future rails/tokenization payoff remains split — bulls thicken hard; Howell near-term liquidity bear unrebutted (no Howell NEW)",
+        "change_vs_brief_2026_09_19": "holds_split_OW; Howell falsifier #4 still live unrebutted",
+        "new_wave_note": "Hayes×2 + Jordi 09-13 + Gromen 09-14 thicken bull side; does not rebut Howell; no Howell NEW",
         "diego_fork": "Would go N if unrebutted-bear bar required with no GLI print; under continuing GATE language retained split OW + live falsifier #4"
       },
       {
         "name": "AI compute / semis infrastructure",
         "stance": "N",
-        "citation_count": 6,
+        "citation_count": 7,
         "citations": [
+          "Jordi Visser|2026-09-13|https://www.youtube.com/watch?v=VPuzUZlvk0U",
           "Jordi Visser|2026-09-06|https://www.youtube.com/watch?v=er5mqvbDQU8",
           "Jordi Visser|2026-08-30|https://www.youtube.com/watch?v=2FND8g-De8Y",
           "Tom Lee|2026-09-02|https://www.youtube.com/watch?v=fOMlh1gq33g",
           "Arthur Hayes|2026-08-21|https://www.youtube.com/watch?v=0b_nJ53uiA0",
           "Jensen Huang|2026-09-01|https://www.youtube.com/watch?v=UG36zbFOojw",
-          "Matthew Piepenburg (guest)|2026-08-27|https://www.youtube.com/watch?v=YClSbElOUtI"
+          "Peter Zeihan|2026-09-18|Japan VLA Watch only|https://www.youtube.com/watch?v=NQlL59f4OFY"
         ],
         "confidence": "medium",
         "stage": "mid",
         "forward_thesis": "Demand/thematic book asserted; price-regime future OW not agreed — hold_map / hold_no_add only",
-        "change_vs_brief_2026_09_14": "holds",
-        "new_wave_note": "Jordi 09-06 NVDA bullish/high + thematic medium — cite faithfully; does not upgrade N→OW"
+        "change_vs_brief_2026_09_19": "holds",
+        "new_wave_note": "Jordi 09-13 NVDA/agentic reiterate — cite faithfully; does not upgrade N→OW; Zeihan Japan robots Watch only"
       },
       {
         "name": "Long nominal duration (Treasuries/TLT)",
         "stance": "UW",
-        "citation_count": 7,
+        "citation_count": 8,
         "citations": [
+          "Jordi Visser|2026-09-13|long-end bearish flip|https://www.youtube.com/watch?v=VPuzUZlvk0U",
+          "Danielle DiMartino Booth|2026-09-16|Fed hiking + 10Y|https://www.youtube.com/watch?v=_haB1Y5xh1k",
+          "Luke Gromen|2026-09-14|TLT-real bearish|https://www.youtube.com/watch?v=DYnXTKFSg18",
           "Luke Gromen|2026-08-28|https://www.youtube.com/watch?v=R1VLmuXYU3o",
           "Matthew Piepenburg (guest)|2026-08-27|https://www.youtube.com/watch?v=YClSbElOUtI",
           "Michael Howell|2026-08-11|https://www.youtube.com/watch?v=FPB4Z1KhE3s",
           "Jim Bianco (guest, Raoul Pal channel)|2026-08-23|https://www.youtube.com/watch?v=lFpQuOEzGzc",
-          "Mohamed El-Erian|2026-08-19|https://www.youtube.com/watch?v=hLWzUoHwGx8",
-          "Jordi Visser|2026-08-23|long-end neutral flip|https://www.youtube.com/watch?v=FoSLsvUKvws",
-          "Jordi Visser|2026-09-06|duration neutral reiterated|https://www.youtube.com/watch?v=er5mqvbDQU8"
+          "Mohamed El-Erian|2026-08-19|https://www.youtube.com/watch?v=hLWzUoHwGx8"
         ],
-        "confidence": "medium",
+        "confidence": "medium_to_higher_path",
         "stage": "mid",
-        "forward_thesis": "Future path still anti-nominal / higher-yield; map TIPS/wording under UW — not long-bond OW sneak-back",
-        "change_vs_brief_2026_09_14": "holds; drop Booth/Mucha as current supporting seats",
-        "new_wave_note": "Jordi 09-06 duration neutral/medium reiterated (bond-crash trap) — not OW; UW holds"
+        "forward_thesis": "Future path still anti-nominal / higher-yield; Jordi bearish flip reinforces; map TIPS/wording under UW — not long-bond OW sneak-back",
+        "change_vs_brief_2026_09_19": "holds_reinforced",
+        "new_wave_note": "Jordi 09-13 long-end bearish/medium flip from neutral — reinforces UW; Booth Fed hiking + 10Y; Gromen TLT-real; Booth restored current; Mucha still stale"
       }
     ],
     "reframe": {
       "orientation": "future_returns",
-      "watch_count": 15,
+      "watch_count": 18,
       "paper_test_count": 4,
       "live_promote_count": 0,
-      "note": "Watch wide early radar; Paper-test GOLD/SILVER/BTC/ETH cite-dense enough for Vera to consider; Live-promote empty until Vera book-sign"
+      "watch_plus_3_vs_morning": [
+        "Highest-quality gold equities (Franco / Wheaton / Agnico)",
+        "Japan AI / VLA industrial robots (theme)",
+        "Project Vault / critical-materials processing (context)"
+      ],
+      "note": "Watch wide early radar +3; Paper-test GOLD/SILVER/BTC/ETH; Live-promote empty until Vera book-sign"
     },
     "triage": {
       "watch": {
-        "count": 15,
+        "count": 18,
         "items": [
           "Uranium (commodity)",
           "SMR / nuclear (theme)",
           "AG",
           "AYA",
           "SIL/SLV expression",
+          "Highest-quality gold equities (Franco / Wheaton / Agnico)",
           "30Y TIPS",
           "Duration wording map (10Y/30Y UST)",
           "Defense primes wording",
@@ -205,9 +230,10 @@
           "SOL",
           "LLY",
           "Humanoid robots (theme)",
+          "Japan AI / VLA industrial robots (theme)",
           "Orbital / space compute (theme)",
-          "CAT",
-          "Gold-miner densify BYN/IAUX/WRLG"
+          "Project Vault / critical-materials processing (context)",
+          "CAT"
         ]
       },
       "paper_test": {
@@ -223,8 +249,127 @@
         "count": 0,
         "items": []
       },
-      "note": "Watch wide early radar; Paper-test GOLD/SILVER/BTC/ETH cite-dense enough for Vera to consider; Live-promote empty until Vera book-sign"
+      "note": "Watch wide early radar +3; Paper-test GOLD/SILVER/BTC/ETH; Live-promote empty until Vera book-sign"
     },
+    "cite_thicken": [
+      {
+        "lane": "Booth Fed hiking flip",
+        "argument": "Booth Fed hiking flip restores Booth as a current seat — Fed funds path bearish vs prior cut expectation; precious metals bullish; 10Y bearish. Thickens Duration UW and gold densify.",
+        "cite": "Danielle DiMartino Booth|2026-09-16|https://www.youtube.com/watch?v=_haB1Y5xh1k"
+      },
+      {
+        "lane": "Doomberg Hormuz/crude war-premium",
+        "argument": "Doomberg flips to war-premium / Hormuz–Red Sea risk bullish — thickens falsifier #2 crisis context; does not clear Hormuz normalization.",
+        "cite": "Doomberg|2026-09-16|https://www.youtube.com/watch?v=rz8mwV7lJ8s"
+      },
+      {
+        "lane": "Jordi duration bearish flip",
+        "argument": "Jordi long-end Treasuries bearish/medium flip from neutral — reinforces Duration UW; anti-nominal thickened, not vindicated.",
+        "cite": "Jordi Visser|2026-09-13|https://www.youtube.com/watch?v=VPuzUZlvk0U"
+      },
+      {
+        "lane": "Rule metals densify + single-desk copper",
+        "argument": "Rule densifies gold/silver and Franco/Wheaton/Agnico watch; uranium commodity + enrichment. Copper commodity bullish/high = ONE desk — Copper theme stays N (not cluster OW).",
+        "cite": "Rick Rule|2026-09-17|https://www.youtube.com/watch?v=K4KXbsvpKyo"
+      },
+      {
+        "lane": "Hayes crypto",
+        "argument": "Hayes thickens crypto bull side of the split (ETH largest Maelstrom; BTC bullish; gold reiterated) — not a Howell rebuttal; falsifier #4 stays unrebutted.",
+        "cites": [
+          "Arthur Hayes|2026-09-14|https://www.youtube.com/watch?v=C2ahxun9Ryc",
+          "Arthur Hayes|2026-09-12|https://www.youtube.com/watch?v=k2a3kEgcijs"
+        ]
+      },
+      {
+        "lane": "Gromen fiscal / TLT-real",
+        "argument": "Gromen prefers gold+BTC duration vs TLT-real; fiscal dominance / debt-GDP devaluation; inflation through H1 2027 — thickens gold and Duration UW.",
+        "cite": "Luke Gromen|2026-09-14|https://www.youtube.com/watch?v=DYnXTKFSg18"
+      },
+      {
+        "lane": "Zeihan Vault = context",
+        "argument": "Zeihan Vault: stockpile ≠ processing fix; China ~70% processing — context/Watch under copper N, not a sixth theme or Copper OW.",
+        "cite": "Peter Zeihan|2026-09-10|https://www.youtube.com/watch?v=sj9GLylXmeo"
+      },
+      {
+        "lane": "Tom Lee guest #calls=0 not desk cite",
+        "argument": "Tom Lee mIInvdO7e_Y is guest tape (Anatoly / Sean Farrell host) with zero Tom Lee desk calls — not a Tom Lee desk cite.",
+        "cite": "Tom Lee|2026-09-10|https://www.youtube.com/watch?v=mIInvdO7e_Y"
+      }
+    ],
+    "name_map": [
+      {
+        "theme": "Hard-asset debasement (Gold)",
+        "stance": "OW",
+        "stage": "late",
+        "symbols": [
+          "GOLD"
+        ],
+        "densify_watch": [
+          "Franco/Wheaton/Agnico"
+        ]
+      },
+      {
+        "theme": "Hard-asset debasement (Silver)",
+        "stance": "OW",
+        "stage": "mid",
+        "symbols": [
+          "SILVER"
+        ],
+        "densify_watch": [
+          "AG",
+          "AYA",
+          "SIL/SLV expression"
+        ]
+      },
+      {
+        "theme": "Copper / critical minerals",
+        "stance": "N",
+        "stage": "early",
+        "symbols": [
+          "COPPER"
+        ],
+        "note": "held line under N; Rule single desk ≠ cluster; Vault context; CAT Show/watch not book OW"
+      },
+      {
+        "theme": "Crypto rails / tokenization (BTC/ETH)",
+        "stance": "OW",
+        "stage": "mid",
+        "symbols": [
+          "BTC",
+          "ETH"
+        ],
+        "watch": [
+          "MSTR"
+        ],
+        "single_voice_will_not_size": [
+          "SOL"
+        ],
+        "discovery_only": [
+          "HOOD"
+        ]
+      },
+      {
+        "theme": "AI compute / semis infrastructure",
+        "stance": "N",
+        "stage": "mid",
+        "symbols": [
+          "NVDA",
+          "TSM"
+        ]
+      },
+      {
+        "theme": "Long nominal duration (Treasuries/TLT)",
+        "stance": "UW",
+        "stage": "mid",
+        "symbols": [
+          "TLT"
+        ],
+        "map_under_uw": [
+          "30-year TIPS"
+        ],
+        "note": "hollow Show seat / will_not_size; map TIPS under UW not TLT OW"
+      }
+    ],
     "name_map_hygiene": {
       "CAT": "show_watch_only",
       "BE": "reject_not_book_eligible",
@@ -233,17 +378,915 @@
       "HOOD": "discovery_only",
       "SOL": "single_voice_will_not_size",
       "TLT": "hollow_show_seat",
-      "zeihan_energy": "context_not_sixth_theme",
-      "humanoid_orbital_smr": "theme_string_watch_only_refuse_spcx_tsla"
+      "zeihan_vault_energy": "context_not_sixth_theme",
+      "rule_copper": "single_desk_not_cluster_OW",
+      "tom_lee_mIInvdO7e_Y": "guest_only_not_desk_cite",
+      "humanoid_japan_vla_orbital_smr": "theme_string_watch_only_refuse_spcx_tsla"
     },
-    "signals_json_n": 176,
-    "signals_json_generated": "2026-09-10",
-    "brief_md": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-19.md",
+    "hard_locks": [
+      "Copper N",
+      "CAT Show-only",
+      "BE/GEV/CCJ hollow",
+      "Crypto split + Howell #4",
+      "AI N",
+      "Duration UW",
+      "Gold/Silver OW",
+      "Live-promote 0",
+      "Paper HOLD",
+      "Tom Lee mIInvdO7e_Y not desk cite",
+      "Rule copper ≠ multi-desk OW"
+    ],
+    "signals_json_n": 191,
+    "signals_json_generated": "2026-09-19",
+    "signals_json_latest": "2026-09-18",
+    "brief_md": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-19b.md",
     "valid_until": "2026-09-21",
-    "superseded_brief": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-14.md",
-    "recommendation": "adopt_as_is"
+    "superseded_brief": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-19.md",
+    "recommendation": "adopt_as_is",
+    "material_cite_thickening": true,
+    "material_stance_label_edits": false
   },
   "recent_signals": [
+    {
+      "figure": "Peter Zeihan",
+      "org": "Zeihan on Geopolitics",
+      "lane": "geopolitics/defense",
+      "date": "2026-09-18",
+      "title": "Can AI-Driven Robots Save Japan? || Peter Zeihan",
+      "url": "https://www.youtube.com/watch?v=NQlL59f4OFY",
+      "summary": "Whisper-base ASR (captured 2026-09-19): Zeihan on Japan's new gov program to build a vision-language-action model for industrial/ag/healthcare/logistics robots — buying ~27.5–28k NVIDIA Rubin GPUs into a custom ~140MW data center (far smaller than US hyperscalers). Model condensed onto on-robot simpler hardware for autonomous on-site operation (digital tether for training updates only, not inference lag). Timeline: Rubin production started June; TSMC stride July; US first in line; Japan chips ~Q2 next year; meaningful DC ops before end next year; finished model ~New Year → robot brains ~2027–2028 before reevaluation. Japan = world's oldest society, >11M worker shortage by 2030; already strong automation but need is huge; immigration ruled out (won't import Filipino/Indian/American labor) so AI/robots 'the only one.' Calls project 'very promising' / 'looks pretty promising' as merge of 40y Japanese automation with frontier AI — may, may, may be a partial fix for a global labor shortage as 100+ countries age out. No equity tickers called (NVDA/TSMC narrative only as GPU foundry/supplier).",
+      "themes": [
+        "Japan AI robot / VLA model",
+        "NVIDIA Rubin GPU allocation",
+        "Japan workforce shortage 2030",
+        "automation vs immigration",
+        "on-device robot inference",
+        "global aging / labor shortage"
+      ],
+      "calls": [
+        {
+          "asset": "Japan AI vision-language-action industrial/ag/healthcare robots",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Japan industrial workforce / labor supply through 2030",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Japan immigration as labor substitute",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Global advanced-economy labor supply (100+ aging countries)",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Peter Zeihan",
+      "org": "Zeihan on Geopolitics",
+      "lane": "geopolitics/defense",
+      "date": "2026-09-17",
+      "title": "What Is Zelensky's Political Future? || Peter Zeihan",
+      "url": "https://www.youtube.com/watch?v=z1YvlUVkjAs",
+      "summary": "Whisper-base ASR (captured 2026-09-19): Patreon Q from Yosemite on Zelensky's political future. Near-term: genuinely popular wartime leader — Zeihan has 'no doubt' he would win if fresh elections held. Real question is historical judgment, still playing out. Early-war Russian Chechen hit squad to assassinate him in Kyiv failed; Chechen forces since badly damaged / mostly back to Chechnya — gave Zelensky extra notoriety vs normal wartime leader. Four years on: second revolution in military affairs = digitizing warfare (people call it AI, but really more aggressive/novel use of existing hardware); Zelensky's name historically on that tech wave. Three equally-weighted outcomes: (1) Russia wins → Zelensky 'a dead man' (handing him over as contingency for any normal EU-Russia relations); (2) permanent stalemate until both Ukraine and Russia fail demographically over next 30–40 years → remembered as launching the tech revolution redefining war; (3) Ukraine reclaims most lost territory convincingly enough for EU and maybe NATO admission → revered as founder of modern Ukraine and a 'great European' alongside Helmut Kohl. 'A lot of wiggle room' — no answer this year, next year, or the year after. No equity tickers called.",
+      "themes": [
+        "Zelensky political future / historical legacy",
+        "Ukraine wartime leadership popularity",
+        "digitizing warfare / 2nd RMA",
+        "Russia-Ukraine war outcome scenarios",
+        "Ukraine EU/NATO accession path",
+        "Russia-Ukraine demographic attrition"
+      ],
+      "calls": [
+        {
+          "asset": "Zelensky near-term reelection / wartime popularity",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Zelensky historical legacy (contingent on war outcome)",
+          "stance": "mixed"
+        },
+        {
+          "asset": "Ukraine digitizing-warfare / 2nd RMA tech wave under Zelensky",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Zelensky survival if Russia wins the war",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Ukraine EU / possible NATO admission path",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Russia and Ukraine demographic sustainability (war attrition)",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Rick Rule",
+      "org": "Rule Investment Media",
+      "lane": "resources/metals",
+      "date": "2026-09-17",
+      "title": "Rick Rule: Unlocking the Power of Compounding in Resources and the Importance of Long-Term Thinking",
+      "url": "https://www.youtube.com/watch?v=K4KXbsvpKyo",
+      "summary": "Whisper-base ASR (captured 2026-09-19): Competent Investor interview (host Tom Bodrovics; calls = guest Rick Rule only). Long-term: 40T on-balance + 120T off-balance liabilities guarantee USD purchasing-power decline (1970s replay; OMB: USD lost 75% purchasing power in the 1970s) — inflate away obligations rather than honest default (deflationary). Near-term dichotomy: if Treasury/FOMC allow rates +25bp, USD can strengthen vs CAD/EUR for ~3–6m as foreign funds flow in — moderates gold/silver/bullion prices; Rule calls that a 'blessing' to accumulate. Gold = first line of defense (savings); highest-quality gold equities (Franco-Nevada, Wheaton Precious, Agnico Eagle) = second line historically ~2x bullion in 1970s without ops risk; speculative juniors = third line only for durable practitioners who do the work. Copper/oil-gas/fertilizer: decades of underinvestment → commodities rationed by price within ~5yrs absent global depression (Resolution AZ copper in permitting 28yrs). Uranium: 'absolutely' more upside from ~$85 spot; utility too high; Japan restarts (~70% poll support) can hit price in 2027; term-market offtake lowers producer cost of capital over time; short-term equity psychosis criticized. Silver mine-deficit narrative = misunderstanding (unknowable above-ground + recycling + byproduct); precious-metals bulls led by gold then leadership shifts to silver when generalists validate — saw that Nov/Dec 2025 → Jan 2026. Canadian O&G: still loves producers; Carney needs O&G cash flows for fiscal plans; near-term Keystone to US; longer-term LNG Far East/Europe (current LNG premium accruing to US). Skipped: Battlebank/Rule Classroom/symposium plugs (company pitches ≠ desk calls); Sprott Physical Uranium Trust hypothetical premium sale (not a market call).",
+      "themes": [
+        "USD purchasing-power decline / 1970s inflation replay",
+        "gold as savings / first line of defense",
+        "quality gold equities leverage",
+        "copper supply rationing / underinvestment",
+        "uranium energy security / Japan restarts",
+        "silver generalist rotation (not mine-deficit)",
+        "Canadian oil & gas / LNG diversification",
+        "compounding / long-term vs 90-day gold trading"
+      ],
+      "calls": [
+        {
+          "asset": "USD purchasing power (long-term)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "USD vs other fiat currencies (near-term)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Gold",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Highest-quality gold equities (Franco-Nevada / Wheaton Precious / Agnico Eagle)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Speculative / junior gold stocks",
+          "stance": "mixed"
+        },
+        {
+          "asset": "US interest rates (esp. long end)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Copper (commodity)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Natural-resource productive capacity (oil/gas, fertilizer, copper broad)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Uranium (commodity)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Uranium equities (short-term speculative hopes)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "US/Canada domestic uranium enrichment capacity",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Silver",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Canadian oil & gas producers",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Peter Zeihan",
+      "org": "Zeihan on Geopolitics",
+      "lane": "geopolitics/defense",
+      "date": "2026-09-16",
+      "title": "The Democrats Are Screwed, Too || Peter Zeihan",
+      "url": "https://www.youtube.com/watch?v=IMRHLq6hiiI",
+      "summary": "Whisper-base ASR (captured 2026-09-19): Follow-on to prior Trump critique — now 'take the whip to the Democrats.' US first-past-the-post: GOP strategy = most reliable (not largest) coalition of issue factions (business/military/abortion/fiscal don't overlap) — historically wins despite fewer voters; NOW failing under Trump who 'eviscerate[d] four of the main factions' — unclear enough left 'to vote for him to win anything ever again.' Dems = full big-tent / widest net — but includes mutually opposed factions (greens vs unions; coastal 'ivory tower' vs youth) so they can't talk policy without fracturing turnout. Technocrat/issues candidates (Hillary/Dukakis) lose; charisma paper-over candidates (Obama/Bill Clinton) win. This round two Dem problems: (1) no charisma, midterms, leaderless/rudderless/policy-less since Biden — program no more sophisticated than 'we hate Trump,' which failed last couple times; (2) big tent failed — Trump pulled Dem vote banks: under-30, Hispanics, organized labor split ~down middle (50–60y Dem banks). Only real hope for meaningful shift: old-school anti-MAGA Republicans stay home or act as swing voters → possible blowout in redistricted places (even chance). Even then: won't get 2/3 Senate blue → no impeachment; hung Congress; 'another two years of what we've had this last year.' No equity tickers called.",
+      "themes": [
+        "Democratic Party big-tent coalition failure",
+        "Republican reliable-coalition strategy under Trump",
+        "US midterms / Democratic charisma deficit",
+        "Dem youth/Hispanic/labor vote-bank erosion",
+        "old-school Republican swing / stay-home path",
+        "hung Congress / no 2/3 Senate impeachment path"
+      ],
+      "calls": [
+        {
+          "asset": "Democratic Party electoral coalition / big-tent strategy",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Democratic Party leadership / charisma bench (midterms)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Democratic youth / Hispanic / organized-labor vote banks",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Republican reliable-coalition strategy / Trump electoral base",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Old-school anti-MAGA Republican swing / stay-home midterm shift",
+          "stance": "mixed"
+        },
+        {
+          "asset": "US Senate 2/3 Democratic / Trump impeachment path",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Danielle DiMartino Booth",
+      "org": "QI Research",
+      "lane": "macro/rates",
+      "date": "2026-09-16",
+      "title": "Credit Stress Is Here And The Only Place Left To Hide Is Precious Metals | Danielle DiMartino Booth",
+      "url": "https://www.youtube.com/watch?v=_haB1Y5xh1k",
+      "summary": "Whisper-base ASR (captured 2026-09-19): Kitco NEWS FOMC-day interview (host Jeremy Szafron; calls = guest Danielle DiMartino Booth / QI Research only). Warsh delivered unanimous +25bp hike to 3.75–4% (first in 3yrs) after Jackson Hole forward guidance hooked to core PCE staying above 2%; characterizing it as removing a 'dose of accommodation' (not tightening) scared markets — chair gives no dot but effectively telegraphed another. Booth: decision was credibility payment on Jackson Hole more than fresh data; Oct 28 hike six days before midterms would be a 'suicide mission' (left hanging; Dec still live with three payrolls). Dot plot: one more hike this year, none in 2027, four members want 2027 cuts. Real retail weak (unit sales down; nominal sales up on price; airlines cutting capacity). Core inflation directionally better but Warsh cites oil pass-through. Fed vs Main Street split: small-business bankruptcies +64% YoY through Aug; 200+ company closures/month for five months; private-credit defaults record 6.3% with PIK/maturity extensions that usually end in bankruptcy — conditions not 'accommodative' for those borrowers. Retailers (Dollar General, Home Depot) can't pass freight/energy/diesel — margin squeeze → layoffs cycle. Households hit via credit cards, cash-out refis at higher rates (57% of Q2 cash-out refis accepted higher mortgage rate), 102-month auto norms; WTI not below $100; data centers lifting utility bills. Gold's >$130 reverse = likely quick reaction/margin calls; whenever credit stress + high rates, 'the only place that you can hide with any certainty is precious metals.' BLS seasonal adjustments 'clearly broken' vs ADP/NFIB/job postings/NY Fed household perceptions. If Fed erred, market itself breaks first via top-of-K high-income spending slowdown. Short-end T-bill-heavy Treasury financing makes Fed hikes raise Uncle Sam's interest bill (already ~18.5% of revenue). Skipped: host Jeremy framing/closing editorial; Warsh podium quotes as Booth calls; Bessent≠Bloom; no CAT basket.",
+      "themes": [
+        "Warsh FOMC hike / dose of accommodation",
+        "Jackson Hole core-PCE credibility",
+        "private credit stress / PIK defaults",
+        "small business bankruptcies",
+        "precious metals as credit-stress hedge",
+        "real retail / unit sales weakness",
+        "K-shaped high-income spending risk",
+        "broken BLS seasonal adjustments",
+        "WTI / household energy costs",
+        "T-bill financing / federal interest bill"
+      ],
+      "calls": [
+        {
+          "asset": "Fed funds (2026 path)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Precious metals (gold / bullion hedge)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Private credit / non-bank credit",
+          "stance": "bearish"
+        },
+        {
+          "asset": "US small business / Main Street credit conditions",
+          "stance": "bearish"
+        },
+        {
+          "asset": "WTI / household energy & utility costs",
+          "stance": "bullish"
+        },
+        {
+          "asset": "US real retail / unit sales (ex-price)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "US risk assets / equity wealth channel (top-of-K)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "10Y UST / long-end bond market",
+          "stance": "bearish"
+        },
+        {
+          "asset": "US federal interest bill / T-bill financing",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Official US payrolls / BLS seasonal adjustments",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Doomberg",
+      "org": "Doomberg",
+      "lane": "energy/commodities",
+      "date": "2026-09-16",
+      "title": "Doomberg: 'Mad Max Style' Great Reset, $150 Oil & 'On The Tipping Point' in Middle East",
+      "url": "https://www.youtube.com/watch?v=rz8mwV7lJ8s",
+      "summary": "Whisper-base ASR (captured 2026-09-19): Palisades Gold Radio interview (host Stijn Schmitz; calls = guest Doomberg only). FLIP vs 2026-05-08 'war basically over' / oil peace-trade bearish: Houthi strikes damaged Saudi East-West pipeline (~Red Sea egress artery that had dampened Hormuz-closure shock); Saudis postponed European September loadings (Bloomberg confirmatory). Doomberg: Hormuz alone was 'not enough' for the crisis many (incl. them) feared — markets told them that — but shutting Red Sea egress pushes an already-stressed system into the red; Brent ~$108–110 near demand-destruction; 'all bets are off' scenario from their Apr/May 'After Hormuz' Doom Zoom now looking operative; even they (previously dubious of $150 hyper-bull / manipulation claims) now in the 'meaningful crisis' camp if the valve stays shut. Deeper risk = metastable Arab Gulf states / House of Saud common-knowledge tipping point (Houthi roll-up of Saudi-backed Yemeni territory; Polymarket underpricing collapse odds ~3%→~25% hunch; MBS flee ≠ base case but long-shot with outsized consequence). Refined products: diesel ~$6.50/gal flyover US; crack spreads exploding; India refining at 108% nameplate (fire/sabotage risk); blowing Russian refineries perversely ceilings crude (demand destruction via bombs) while diesel soars — spread is two-armed. Pain-tolerance contest: West/US consumers << Iran/Houthis; Trump export-diesel diplomacy only lasts so long pre-midterms. Ukraine: Putin ordered energy-infrastructure devastation; US intel warned; Trump 'refinery truce' Truth Social dubious given overnight Russian-refinery hit + pattern recognition → megastrike (power/heat/water) teed up. Project Turtle / fortress North America option 'looks less silly every day' vs summer; US–Canada trade war ill-timed / unlikely to continue — Turtle fails if Carney cuts ~4–5 Mbd exports to US. China = 'opaque of demand'; Shanghai premiums positive → back in market; Xi Washington trip odds not certain / may cancel. Watching Alberta NG crown-corp vs TC Energy monopoly story (not a directional call yet). Skipped: host questions; Palisades Gold Corp / Made in America Gold ad reads (issuer pitches ≠ desk); Substack plug; disclaimer.",
+      "themes": [
+        "Saudi East-West pipeline / Red Sea crude egress crisis",
+        "Hormuz vs Red Sea — what actually prices oil",
+        "House of Saud / MBS metastable tipping point",
+        "Brent near demand-destruction / $150 Mad Max tail",
+        "diesel crack-spread explosion / refining stress",
+        "crude vs products two-armed spread (refinery destruction ceilings oil)",
+        "Iran/Houthi vs West pain-tolerance contest",
+        "Russia Ukraine energy megastrike",
+        "Project Turtle / fortress North America revival",
+        "US–Canada energy interdependence / Carney",
+        "China opaque-of-demand / Shanghai premiums",
+        "Alberta natural gas / TC Energy crown-corp watch"
+      ],
+      "calls": [
+        {
+          "asset": "Crude oil / Brent (global war-premium)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Iran war / Hormuz–Red Sea conflict risk",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Saudi East-West pipeline / Red Sea crude egress capacity",
+          "stance": "bearish"
+        },
+        {
+          "asset": "House of Saud / MBS regime stability",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Diesel / refined-products crack spreads",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Crude oil price ceiling from Russian-refinery attacks",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Europe energy / LNG-import security",
+          "stance": "bearish"
+        },
+        {
+          "asset": "North American energy self-sufficiency / Project Turtle fortress option",
+          "stance": "bullish"
+        },
+        {
+          "asset": "US–Canada energy trade / Canadian crude exports to US",
+          "stance": "bullish"
+        },
+        {
+          "asset": "China oil demand / 'opaque of demand' swing",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Ukraine energy infrastructure / grid & heat",
+          "stance": "bearish"
+        },
+        {
+          "asset": "US midterm / domestic diesel-pain political constraint",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Peter Zeihan",
+      "org": "Zeihan on Geopolitics",
+      "lane": "geopolitics/defense",
+      "date": "2026-09-15",
+      "title": "What Does Life After Donald Trump Look Like? || Peter Zeihan",
+      "url": "https://www.youtube.com/watch?v=W2lHnw6ofhE",
+      "summary": "Whisper-base ASR (captured 2026-09-19): Patreon Q — assume Trump gone tomorrow, then what? Leaves only via term-end or death (won't soft-relinquish like Biden). Least-competent cabinet (esp. natsec); JD Vance has no independent following — succession requires Trump day-to-day campaigning for heir while alive (won't while president). Third-term: disaster; SCOTUS would rule out. Core: GOP purged law-and-order/business/natsec/fiscal factions — what's left lacks votes for a real election; party of Trump ≠ party of Vance/Rubio. MAGA popularity doesn't translate; endorsement = loyalty test only (Mace/Cornyn/Hawley). Closed recruitment+policy arms → no policy papers/candidate training → 'absolutely unelectable' in general (if Dems offer a choice). Parallel to Xi (100k+ purge; no governance structure; Xi thought masturbation; broken vision) and Putin (KGB+crime hollow state; elite <120→inner 5; Wagner march proved hollowness). Personalist pattern: no institutions to outlast leader → succession change 'relatively catastrophic.' No equity tickers called.",
+      "themes": [
+        "Trump succession vacuum / no designated heir",
+        "GOP coalition purge / post-Trump unelectability",
+        "GOP institutional recruitment & policy hollowing",
+        "US governing-capacity collapse under personalism",
+        "Xi China personalist governance parallel",
+        "Putin Russia hollowed elite / Wagner lesson",
+        "personalist succession catastrophe risk"
+      ],
+      "calls": [
+        {
+          "asset": "Republican reliable-coalition strategy / Trump electoral base",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Trump succession / designated heir path (JD Vance et al.)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "GOP institutional recruitment / policy capacity",
+          "stance": "bearish"
+        },
+        {
+          "asset": "GOP post-Trump general-election electability",
+          "stance": "bearish"
+        },
+        {
+          "asset": "US governing / decision-making capacity under Trump personalism",
+          "stance": "bearish"
+        },
+        {
+          "asset": "China Xi personalist governance / decision-making capacity",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Russia Putin hollowed elite / state capacity",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Personalist-leader succession catastrophe risk (Trump/Xi/Putin)",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Peter Zeihan",
+      "org": "Zeihan on Geopolitics",
+      "lane": "geopolitics/defense",
+      "date": "2026-09-14",
+      "title": "Does the Trump Administration Know What's Going On? || Peter Zeihan",
+      "url": "https://www.youtube.com/watch?v=WQLRe8Jp4ZM",
+      "summary": "Whisper-base ASR (captured 2026-09-19): Patreon Q — any chance Trump admin is aware of demographics/geopolitics/trade/industrial policy path? Chances 'pretty low.' Piece 1 (normal): every admin inherits ~300k staff but brings personal orbit + business/academia/party hires with tunnel vision (Chevron CEO → energy/state ok, not HHS); Obama/Biden/Bush also unaware of Zeihan topics — not unique to liking/disliking the chair. Piece 2 (abnormal): Trump = real-estate mogul (only moderately successful) + reality-TV star; first term unexpected win → heavy GOP reliance → felt 'dumb person in the room' vs policy lifers → fired them; 3× cabinet secretaries vs any three two-term presidents. Out of power: took over GOP, destroyed public-policy arm → party now 'only an election vehicle,' no conservative roadmap/bench. Second term: only Wiles (CoS) + Miller (asst CoS) from orbit; Wright (Energy)/Burgum (Interior) for topics Trump doesn't care about; rest ideologues/incompetents (Hegseth = 'failed reservist' + culture war). Fired top ~6,000 federal posts, filled ~1,200 — vacant by design (slavish loyalty vs competence scarce); judicial appointments standstill (can't find law-degree loyalists; maligning own SCOTUS appointees signals would-be judges). Paying for full federal gov lacking WH interface layer — even if lower levels generate demography/trade/de-globalization intel, no assimilate/distill/present path. Tulsi Gabbard DNI year-1 critique; Wright Hormuz oil/LNG price truth publicly rejected by Trump. Bottom line: admin has no real idea on military affairs, economy, or else — remainder of term; next president inherits 'lobotomized' structure → +1–2 years just to restaff if they want to run (not lobotomize) government. 'Trump plus a year or two problem, best case.' No equity tickers called.",
+      "themes": [
+        "Trump admin situational awareness gap (demographics/geopolitics/trade)",
+        "Normal vs abnormal presidential staffing (tunnel vision vs loyalty purge)",
+        "GOP public-policy arm destruction / election-only vehicle",
+        "Federal senior appointee vacancy by design (~6000→~1200)",
+        "WH–bureaucracy information interface collapse",
+        "Post-Trump lobotomized government rebuild lag (+1–2y)"
+      ],
+      "calls": [
+        {
+          "asset": "US governing / decision-making capacity under Trump personalism",
+          "stance": "bearish"
+        },
+        {
+          "asset": "GOP institutional recruitment / policy capacity",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Trump administration situational awareness (demographics / geopolitics / trade / industrial policy)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "US federal senior political appointee fill / White House–bureaucracy interface",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Post-Trump US government capacity rebuild",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Trump second-term cabinet competence / national-security staffing quality",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Luke Gromen",
+      "org": "FFTT",
+      "lane": "macro/fiscal",
+      "date": "2026-09-14",
+      "title": "Medium-to-long term thoughts on LT USTs, etc.",
+      "url": "https://www.youtube.com/watch?v=DYnXTKFSg18",
+      "summary": "Whisper-base ASR (captured 2026-09-19; spoken ~Fri 2026-09-11 / upload 2026-09-14). Solo FFTT Q&A (Luke Gromen only). TLT/long Treasuries: gun-to-head 'better buy here on a nominal basis' (Bianco/McQuarrie: rolling 10y nominal UST returns worst in 233yrs) — but until US debt/GDP devalued ~120–125% → 70–80% via dollar devaluation, UST not sustainable without negative real rates; on a real basis does NOT like TLT — 'much rather own gold or Bitcoin as my duration.' 3–5y real-vs-nominal distinction critical. Rejects 'kill global economy / force long rates lower via crisis then term out' plan as failing spectacularly: Saudi exploring $8B USD debt (operating costs after Gulf damage), Japan selling Treasuries to defend yen, hyperscalers selling long bonds — all compete with Bessent as sellers; crush stocks → consumer spending (net cap gains + taxable IRA ~200% of annual consumer-spending growth; 2/3 GDP) can't rise; 4% on $40T debt → deficit blows out; long Western sovereign yields go higher (already seeing). Healthcare-AI cost-cut ledger: HC 18% GDP / biggest employer 38 states → cheaper care = unemployment/mortgage stress (Obama-era caution). OPEC physical-gold settlement: wait for Gulf BOP surplus return (war damage → deficits; gold selling when war/oil spiked); more bullish when oil-exporter surpluses again bid gold. Extreme shipping rates: secularly inflationary rest of 2026 into H1 2027 (inverse of late-1800s steam/rail deflation; Liaquat Ahamed '1873'). Inflation expectations unanchored (copper, CRB, logistics, $2T AI capex competing with Treasury for capital); Fed hike to re-anchor is paradoxically worse under fiscal dominance — +100bp on $40T = +$400B/yr to boomers with high MPC → inflation 'takes off like a scalded cat.' Wise path: cut aggressively, shift issuance to front end, ZIRP → slash interest expense, gold to the moon, then restructure/term out — but expects wrong thing (little/no cut yet). Skips: FFTT Tree Rings / fftt-llc.com product plug; host N/A (solo).",
+      "themes": [
+        "TLT nominal vs real returns / duration choice",
+        "fiscal dominance / EM-land",
+        "gold and Bitcoin as duration vs long Treasuries",
+        "debt/GDP devaluation via dollar",
+        "crisis term-out plan fails (Gulf/Japan/AI sellers)",
+        "secular shipping-rate inflation",
+        "unanchored inflation / rate-hike paradox",
+        "OPEC gold settlement waits on BOP surplus",
+        "Fed should ZIRP/front-end but likely won't cut yet"
+      ],
+      "calls": [
+        {
+          "asset": "Gold",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Bitcoin (BTC)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Long-term US Treasuries / TLT (real returns)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Long-term US Treasuries / TLT (nominal)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "US Dollar (USD)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Long-end US / Western sovereign yields",
+          "stance": "bullish"
+        },
+        {
+          "asset": "US inflation / inflation expectations",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Crude oil",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Arthur Hayes",
+      "org": "Maelstrom / BitMEX",
+      "lane": "crypto/macro",
+      "date": "2026-09-14",
+      "title": "Arthur Hayes: Why Ethereum Is My Biggest Position Right Now (Most Hated Mega Cap)",
+      "url": "https://www.youtube.com/watch?v=C2ahxun9Ryc",
+      "summary": "Whisper-base ASR (captured 2026-09-19; upload 2026-09-14; ~8.5m The Rollup clip). Arthur Hayes: Ethereum is Maelstrom's largest position into the liquidity rally — 'most hated mega cap shitcoin,' worst-performing mega-cap last cycle, never reclaimed 2021 $5k ATH → risk/reward great; also owns smaller EtherFi and Ethena in the same vein. BTC path to $250–500k requires Fed balance-sheet expansion that looks COVID/2009-like, not mere Bessent buyback signaling (BTC only ~63k→80k so far as BS rises modestly). Crisis cover: (1) yen/Japan — GPIF/Nomura/Mrs Watanabe forced sellers of US assets → US must lend/repo so they don't dump (yen up); (2) short-euro — French banks (BNP/Crédit Agricole/Société Générale) ~20% of US repo; Japan sells French OATs/bank debt first if US untouchable; France cannot legally print inside euro → soft Frexit / unilateral French QE vs ECB refusal if Le Pen/Mélenchon won't comply → Frexit-adjacent printed euros → French banks exit US repo → Fed must ramp reserve-management purchases (QE optics waived as 'technical'). EUR/JPY (e.g. 182→140/120) is the leading indicator of accelerated dollar-liquidity creation (second derivative). Host Rollup CTA/questions and Buffalo Bill Bessent nickname banter not attributed as desk calls.",
+      "themes": [
+        "ETH largest Maelstrom position / most hated mega-cap",
+        "liquidity rally / dollar debasement",
+        "EUR/JPY as leading indicator of dollar-liquidity acceleration",
+        "Fed balance sheet COVID/2009-style expansion needs crisis cover",
+        "Japan forced UST sellers (GPIF/Nomura) → yen/repo pillar",
+        "French banks 20% US repo / short-euro Frexit path",
+        "Bessent T-bill / reserve-management purchases as stealth QE",
+        "BTC $250–500k on printed-money crisis path not just signaling"
+      ],
+      "calls": [
+        {
+          "asset": "Ethereum (ETH)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Bitcoin (BTC)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "EtherFi",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Ethena",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Euro (EUR) / French banks & OATs",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Fed balance sheet / USD liquidity creation",
+          "stance": "bullish"
+        },
+        {
+          "asset": "EUR/JPY",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Jordi Visser",
+      "org": "22V Research / Visser Labs",
+      "lane": "macro/AI/crypto",
+      "date": "2026-09-13",
+      "title": "Linear vs. Exponential: AGI Has Arrived But Oil, Bonds and the Fed Oh My",
+      "url": "https://www.youtube.com/watch?v=VPuzUZlvk0U",
+      "summary": "Whisper-base ASR (captured 2026-09-19; spoken Fri 2026-09-11 / upload 2026-09-13; ~49m solo). Jordi: hot core CPI/PPI, Fed-hike odds ~90%, crude break, war worse — and S&P still up over two days — proves oil/bonds/Fed are linear-world noise; AI CapEx drives the economy and is not rate-sensitive. Big news: AGI has arrived (Jensen Huang on Astra; research agents 3.1 workdays/human-day; 10k agents cracked Navier-Stokes). AI thematic 10-name basket broke the 50DMA near August highs (structural CapEx bull); BTC flag/range; ETH/BTC breakout to highest since January — ETH should lead in a real bull via agentic network effects; crypto now ~30% of his focus because it is in a bull market. Robinhood framed as AI-crypto-macro epicenter (chain fees topping Solana; Bernstein ~+31%; Clarity Act / tokenization catalysts). NVDA/MU multiples compressing is healthy; H100 rentals flat vs 3y ago and +22% m/m validates Gavin Baker — hyperscaler FCF estimates too low / credit needs hundreds of billions smaller. Explicit: do not buy bonds; do not fight the AI trade. Amazon 1997→2013 (~27,000%) analogy for how to value ETH/crypto before tradfi 'gets it.' Solo channel — subscribe/22V/GitHub/subscriber-video plugs not desk calls; CapEx≠CAT; Bessent≠Bloom.",
+      "themes": [
+        "linear vs exponential / oil-bonds-Fed noise",
+        "AGI arrived (Astra / Jensen Huang)",
+        "AI CapEx not rate-sensitive",
+        "AI thematic 50DMA break / CapEx structural bull",
+        "crypto ~30% focus / bull market",
+        "ETH trust + Amazon valuation analogy",
+        "Robinhood AI-crypto-macro nexus / tokenization",
+        "H100 rental prices validate hyperscaler FCF",
+        "don't buy bonds / don't fade AI",
+        "Clarity Act / DC Freedom Tech"
+      ],
+      "calls": [
+        {
+          "asset": "Bitcoin (BTC)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Ethereum (ETH)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Crypto/tokenization theme",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Robinhood (HOOD)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "AI thematic portfolio (agentic 10/100)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Nvidia (NVDA)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Micron (MU)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Hyperscalers (MSFT/cloud compute)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "US long-end Treasuries / bonds",
+          "stance": "bearish"
+        },
+        {
+          "asset": "S&P 500 / public equities",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "figure": "Arthur Hayes",
+      "org": "Maelstrom / BitMEX",
+      "lane": "crypto/macro",
+      "date": "2026-09-12",
+      "title": "Why a Fed Rate Hike Won't Stop Bitcoin | Arthur Hayes Interview",
+      "url": "https://www.youtube.com/watch?v=k2a3kEgcijs",
+      "summary": "Whisper-base ASR (captured 2026-09-19; upload 2026-09-12; ~55m VirtualBacon interview). Arthur Hayes: BitMEX shutting Sep 23 on own terms (proud of perps legacy / no hack / customer funds returned). BTC local cycle bottom ~$58–60k (liquidation candle + 2–3 retests); $63k→$82k rip on Treasury buybacks + short-gamma cover from BTC covered-call products into Japan-style YCC expectation. Quantity-of-money > price-of-money: Warsh held rates despite 2y–EFF ~50–60bp hike signal + 7–8% NGDP (Fed not restrictive) while RMP buys T-bills = stealth QE; Bessent/Japan FIMA-repo path (remove $60bn/counterparty cap) + QRA buyback upsize (ops $2bn→$4bn, 10s–30s) = YCC ~5% on 10y without naming it. Fed hike would be almost irrelevant for BTC if balance sheet keeps expanding; under fiscal dominance hiking can be inflationary (hands income to T-bill-rich). Falling DXY / scarce BTC+gold on printed money. Alts: loves ETH (Robinhood chain / RWA / tokenization; most hated mega-cap, never past 2021 $5k ATH); Ethena (ENA) for basis-yield capture into bull — internal ~5x after 99% VC-overhang wipe; Uniswap as execution layer with buyback/burn — $7→break $20; HYPE best DEX/will beat CME but harder 5x from ~$85–90bn FDV vs Ethena R/R (US compliance may blunt degen product) — capital prefers smaller real-PMF names. Skeptical L2 tokens without fee→holder flow (Arbitrum unknown). Long FLOP/agentic-compute network pitch = Maelstrom/FLOP product (skipped as desk call). Host VirtualBacon CTA/questions not attributed.",
+      "themes": [
+        "quantity of money > Fed funds for BTC",
+        "Warsh hold + RMP T-bill buys = stealth QE",
+        "Bessent Japan FIMA-repo / YCC ~5% 10y path",
+        "Treasury buyback upsize + short-gamma BTC rip $63k→$82k",
+        "fiscal dominance: hikes can be inflationary",
+        "ETH most-hated mega-cap / Robinhood-chain RWA narrative",
+        "Ethena basis-yield 5x setup after 99% drawdown",
+        "Uniswap buyback-burn execution-layer trade",
+        "HYPE best product but poor incremental R/R at size",
+        "DXY weakness / gold+BTC scarce-asset debasement"
+      ],
+      "calls": [
+        {
+          "asset": "Bitcoin (BTC)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Ethereum (ETH)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Ethena (ENA)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Uniswap (UNI)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Hyperliquid (HYPE)",
+          "stance": "neutral"
+        },
+        {
+          "asset": "Gold",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Fed balance sheet / USD liquidity (RMP + YCC)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "US Dollar (DXY)",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Peter Zeihan",
+      "org": "Zeihan on Geopolitics",
+      "lane": "geopolitics/defense",
+      "date": "2026-09-11",
+      "title": "Back to the Glory Days of the Spice Trade || Peter Zeihan",
+      "url": "https://www.youtube.com/watch?v=ZpdSO-boHq4",
+      "summary": "Whisper-base ASR (captured 2026-09-19): From Adriatic promenade (ASR 'Aosto'), Zeihan maps spice-trade geopolitics as baseline for post-globalization trade. Pre-~1450: land/coastal micro-economies; East/SE Asian spices/silks/porcelains passed dozens–hundreds of middlemen via Central Asia → Ottoman Istanbul → coastal ship to Italian city-states (Venice, Genoa, Amalfi, Pisa) who 'made mad money' as Western Europe gateway, partnering with Islamic Turkey. Portuguese deep-water navigation (da Gama around Africa to India) cut out middlemen over centuries → Istanbul + Italian city-states went from wealthiest to cut off from primary funds. Today: 'technologies of globalization are failing'; deep-water nav stays but no country can protect sea lanes globally — US most powerful at intervening, none can protect → trade regionalizes/localizes and must militarize (shipping-company culture + Navy/military roles change). Single biggest impact: collapse of multi-step manufactured-goods / supply-chain trade (parts shoot back-and-forth thousands of times); goods that can't be produced locally or inside a network like the EU 'simply aren't going to be produced at all.' Baseline for economy in 5–10–15 years: 12th–14th century spice-trade / Adriatic sequestered-trade model. No equity tickers called.",
+      "themes": [
+        "spice trade / Adriatic model as post-globalization baseline",
+        "technologies of globalization failing",
+        "global sea-lane protection impossible",
+        "regionalized / localized / militarized trade",
+        "manufactured-goods multi-step supply-chain collapse",
+        "EU-like production networks as residual viable scale"
+      ],
+      "calls": [
+        {
+          "asset": "Globalization / deep-water global trade system",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Global sea-lane security / shipping risk",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Regionalized / sequestered trade (Adriatic / spice-trade model)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Global manufactured-goods / multi-step supply-chain trade",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Local / EU-network production viability",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Militarized shipping / naval role in commerce",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Peter Zeihan",
+      "org": "Zeihan on Geopolitics",
+      "lane": "geopolitics/defense",
+      "date": "2026-09-10",
+      "title": "Project Vault Doesn't Solve the Mineral Problem || Peter Zeihan",
+      "url": "https://www.youtube.com/watch?v=sj9GLylXmeo",
+      "summary": "Whisper-base ASR (captured 2026-09-19): Patreon Q on Project Vault — Trump-admin Feb program, ~$2bn to buy rare materials/rare earths (and broader criticals) via mining tailings and build a US stockpile. Zeihan is 'kind of glad this happened' / 'baby step in the right direction' but says it 'hardly doesn't deal with the core problem.' Digital-age materials (rare earths, gallium) are byproducts of other processing (e.g. silver-mine waste → rare earths; aluminum smelting → gallium). Concentrating feedstock in the US is only step one and 'not even the smart step'; smart step is build processing — ~70% of critical-materials processing is in China; US is effectively buying waste from Chinese processing and bringing it here. If China cuts off supply / disruption, US must build processing anyway or ship tailings back to China. Even finished-product / refined-metals reserves 'doesn't really take us too far' until processing exists. Raw-material sourcing is easy (Vault 'already filling up' / ASR 'project fault'). China-free system needs diplomacy with three robust mining sectors: Canada (stop '51st state'), Australia (stop 'not racist enough' rhetoric), Brazil (relations 'worst since at least the 1970s'). Without that diplomacy, rest is a 'rounding error' that continues Chinese dependence. No equity tickers called.",
+      "themes": [
+        "Project Vault / US mining-tailings critical-materials stockpile",
+        "rare earths / gallium as processing byproducts",
+        "China ~70% critical-materials processing chokehold",
+        "US domestic processing as the smart step vs feedstock stockpile",
+        "Canada / Australia / Brazil mining diplomacy for China-free system",
+        "Trump admin diplomacy damaging mineral-partner relations",
+        "refined-metals reserve insufficient without processing"
+      ],
+      "calls": [
+        {
+          "asset": "Project Vault / US mining-tailings critical-materials stockpile (as China-decoupling fix)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "China critical-materials processing dominance (~70%)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "US domestic critical-materials processing capacity",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Canada–Australia–Brazil mining partnership (China-free feedstock)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "US diplomatic relations with Canada / Australia / Brazil (mineral diplomacy)",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Refined-metals / finished-product reserve without domestic processing",
+          "stance": "bearish"
+        }
+      ]
+    },
+    {
+      "figure": "Tom Lee",
+      "org": "Fundstrat",
+      "lane": "macro/equities/crypto",
+      "date": "2026-09-10",
+      "title": "Solana's Co-Founder on the End State of Finance",
+      "url": "https://www.youtube.com/watch?v=mIInvdO7e_Y",
+      "summary": "Whisper-base ASR (captured 2026-09-19; upload 2026-09-10; ~62m). GUEST TAPE / Tom Lee ABSENT — do NOT count as Tom Lee or Fundstrat desk agreement. Host on tape: Sean Farrell (Fundstrat Head of Digital Asset Strategy). Guest: Anatoly Yakovenko (Solana co-founder / Solana Labs CEO). Disclaimer on tape: Solana Foundation is a Fundstrat client / commissioned research. Sean host color only (≠ Tom Lee): recounts post-2022 SOL $260→$8 'dead in the water' narrative and his own 'redemption arc' long-SOL view after talking to community/Toly — NOT attributed as Tom Lee desk. Guest Anatoly (≠ desk): Qualcomm→Solana origin (ETH/BTC fee pain; PoH/TDMA-inspired single-layer L1 vs modular/L2 roadmap); 'this single layer is probably the inevitable end state of finance' / single giant state machine; SOL value capture via priority fees / stake-scaled block production (not bips on Circle↔Tether transfers); neutral public protocol vs Coinbase/Robinhood (competitors+partners) and corpo payment chains (Arc/Tempo); wants Solana to win all trading / perps competitive with Hyperliquid; RWA+brokerage mint/burn via Backpack↔E*TRADE/IBKR; Solana Mobile/Seeker (~150k devices, ~100 apps) as crypto-native UX/security; post-quantum path (Squads Fuse / Circle mint-burn) by ~2030. Tom Lee host-only desk calls: NONE (0). PARTIAL hygiene applied — prior Tom Lee usable tape remains 2026-09-02; do not treat guest SOL bullishness or Sean framing as Lee/Fundstrat desk.",
+      "themes": [
+        "guest≠host hygiene (Anatoly ≠ Tom Lee desk)",
+        "Tom Lee absent from Fundstrat Solana webinar",
+        "Sean Farrell host ≠ Tom Lee",
+        "Solana Foundation Fundstrat-client disclosure",
+        "Anatoly guest: single-layer end state of finance",
+        "Anatoly guest: SOL priority-fee / stake value capture",
+        "Anatoly guest: RWA / Backpack brokerage bridge",
+        "Anatoly guest: Solana Mobile / Seeker",
+        "Anatoly guest: post-quantum / Circle path",
+        "PARTIAL / zero Tom Lee desk calls"
+      ],
+      "calls": []
+    },
+    {
+      "figure": "Peter Zeihan",
+      "org": "Zeihan on Geopolitics",
+      "lane": "geopolitics/defense",
+      "date": "2026-09-09",
+      "title": "Why a Russian-Chinese Pipeline Won't Happen || Peter Zeihan",
+      "url": "https://www.youtube.com/watch?v=QfjQAvzAnn4",
+      "summary": "Whisper-base ASR (captured 2026-09-10): Zeihan argues a Russia–China cross-continental oil/gas pipeline won't happen — mutual distrust, 7–8k mile geography with pumping costs 'well over $80 a gallon' plus tens of billions to build, Russian oil/gas mostly in NW Siberia (wrong place; E/W distribution networks barely connect), and nearer East Siberian options (Kovykta/Sakhalin per ASR Kovicta/Sakeland) stalled after Western majors left. Putin/Xi photo-op pipeline talk for ~30y with neither willing to pay. Only removing maritime transport entirely changes the conversation — and even then transit cost ≈ current oil prices.",
+      "themes": [
+        "Russia–China energy pipeline",
+        "geography / pumping costs",
+        "Russian oil & gas network split",
+        "Kovykta / Sakhalin technical capacity",
+        "Persian Gulf / maritime crude dependence",
+        "Putin–Xi infrastructure stalemate"
+      ],
+      "calls": [
+        {
+          "asset": "Russia–China cross-continental oil/gas pipeline",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Russian oil/gas large-volume pivot Europe→China",
+          "stance": "bearish"
+        },
+        {
+          "asset": "China Persian Gulf / maritime crude dependence",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Peter Zeihan",
+      "org": "Zeihan on Geopolitics",
+      "lane": "geopolitics/defense",
+      "date": "2026-09-08",
+      "title": "Ukraine Is Shooting Fish in a Barrel || Peter Zeihan",
+      "url": "https://www.youtube.com/watch?v=FgarzZkGU1Q",
+      "summary": "Whisper-base ASR (captured 2026-09-10): Zeihan says Ukraine has hit ~200 Russian shadow-fleet vessels on the Black Sea / Sea of Azov (ASR: Isav) in ~2 months and is near enough damage that the shadow fleet 'probably [will] stop functioning later this year,' ending Russia's presence as a significant oil exporter. After Trump admin pushback on strikes near Novorossiysk (ASR: Noverisseesk) — CPC terminus for Kazakhstan Tengiz crude operated by Chevron and Exxon, framed as American infrastructure — Ukraine asked every shipping company for ship names, transponders, courses, and ports, promising not to attack confirmed vessels; all comply except the shadow fleet (runs dark). Third-party hits are 'single digits' while shadow fleet takes a 'complete pounding'; Russian self-insurance not paying out; scrap-heap hulls mean global vessel supply barely hit, but once Russians cannot load grain/crude, ports fill and inland production cuts. 'We're getting there this year' with 'minor miracle' of sparing other Black Sea shipping; Persian Gulf contrasted as far less friendly. No equity tickers called (CVX/XOM narrative only as Tengiz operators).",
+      "themes": [
+        "Ukrainian strikes on Russian shadow fleet",
+        "Black Sea / Sea of Azov shipping targeting",
+        "Russia oil export capacity collapse",
+        "CPC / Novorossiysk / Tengiz (Chevron–Exxon) political cover",
+        "shadow fleet insurance / scrap hull churn",
+        "Black Sea commercial shipping spared vs Persian Gulf"
+      ],
+      "calls": [
+        {
+          "asset": "Russian Black Sea shadow fleet / seaborne oil export capacity",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Russia as significant oil exporter",
+          "stance": "bearish"
+        },
+        {
+          "asset": "Crude oil / energy crisis risk premium",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Black Sea commercial (non-shadow) shipping continuity",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Jordi Visser",
+      "org": "22V Research / Visser Labs",
+      "lane": "macro/AI/crypto",
+      "date": "2026-09-06",
+      "title": "The Bond Market “Crash” Is a Trap — AI Agents Are About to Ignite Crypto",
+      "url": "https://www.youtube.com/watch?v=er5mqvbDQU8",
+      "summary": "Visser frames bond-crash chatter as a trap (vol subdued, junk tight, Bessent/Japan coordinating to cap yields) and argues the real inflection is AI agents: Astra-class models and agent swarms make crypto/tokenization the killer-app rails for programmable money. He keeps crypto (BTC/ETH/SOL) as his primary weight, says the agentic-100 AI thematic is bottoming after mid-cycle mud, holds NVDA as a mud-phase relative-strength name, and softens his structural S&P bearishness to a tactical neutral while still preferring crypto for returns. Source is openai-whisper-base (caption-path alternate), not YouTube auto-subtitles — figures/phrasing may contain ASR artifacts.",
+      "themes": [
+        "bond-crash trap",
+        "AI agents / AGI inflection",
+        "crypto-tokenization rails",
+        "double debasement",
+        "AI thematic bottoming",
+        "silent IPO / third-wave crypto"
+      ],
+      "calls": [
+        {
+          "asset": "Bitcoin (BTC)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Ethereum (ETH)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Solana (SOL)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Crypto/tokenization theme",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Nvidia (NVDA)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "AI thematic portfolio (agentic 100)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Robinhood (HOOD)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Micron (MU)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "S&P 500 / public equities",
+          "stance": "neutral"
+        },
+        {
+          "asset": "US 10Y / long-end Treasuries",
+          "stance": "neutral"
+        }
+      ]
+    },
     {
       "figure": "Peter Zeihan",
       "org": "Zeihan on Geopolitics",
@@ -349,41 +1392,6 @@
       ]
     },
     {
-      "figure": "Jesse Day",
-      "org": "Commodity Culture",
-      "lane": "metals/mining",
-      "date": "2026-09-01",
-      "title": "GOLD Just Became a Real Alternative to the Dollar (Here’s Why): Nick Campbell",
-      "url": "https://www.youtube.com/watch?v=hrG7rtIRFIQ",
-      "summary": "Phoenix Metals CEO Nick Campbell (self-described non-gold-bug) makes a structural long-term bull case for gold on dollar-diversification and for copper on electrification, AI and supply lags, while pitching Phoenix's Greenwood BC copper-gold district. Sponsored interview.",
-      "themes": [
-        "gold as reserve alternative",
-        "dollar debasement",
-        "copper supply crunch",
-        "electrification/AI",
-        "deglobalization",
-        "junior mining (Phoenix Metals)"
-      ],
-      "calls": [
-        {
-          "asset": "Gold (XAU)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Copper (HG)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Phoenix Metals",
-          "stance": "bullish"
-        },
-        {
-          "asset": "US dollar (DXY)",
-          "stance": "bearish"
-        }
-      ]
-    },
-    {
       "figure": "Jensen Huang",
       "org": "NVIDIA (NVDA)",
       "lane": "AI-stack exec",
@@ -414,46 +1422,6 @@
         },
         {
           "asset": "OpenAI / Anthropic (Frontier Labs)",
-          "stance": "bullish"
-        }
-      ]
-    },
-    {
-      "figure": "Farzad Mesbahi",
-      "org": "Farzad FM (independent)",
-      "lane": "Tesla/EV/equities",
-      "date": "2026-09-01",
-      "title": "INTERNET BREAKS w/ Elon Musk Speech at G20",
-      "url": "https://www.youtube.com/watch?v=inEO2FaU20E",
-      "summary": "Farzad shares Elon Musk's G20 remarks: AI/robotics to hugely expand the global economy, 1B+ humanoid robots within a decade, and a looming power shortfall with SpaceX already leasing AI compute from its own power plants. David Sacks argues for light-touch AI regulation and behind-the-meter data-center power; Commonwealth Fusion's CEO targets fusion on the grid in the early 2030s.",
-      "themes": [
-        "humanoid robots / Optimus",
-        "Tesla FSD",
-        "AI productivity",
-        "power shortfall",
-        "SpaceX compute",
-        "fusion energy",
-        "AI regulation"
-      ],
-      "calls": [
-        {
-          "asset": "Tesla (TSLA)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Tesla Optimus / humanoid robots",
-          "stance": "bullish"
-        },
-        {
-          "asset": "SpaceX",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Power / energy sector",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Commonwealth Fusion Systems (private)",
           "stance": "bullish"
         }
       ]
@@ -518,24 +1486,6 @@
       ]
     },
     {
-      "figure": "Peter Attia",
-      "org": "The Drive",
-      "lane": "longevity/health-science",
-      "date": "2026-08-31",
-      "title": "406 - Migraine, cluster headache, and tension headache: symptoms, causes, prevention, and treatment",
-      "url": "https://www.youtube.com/watch?v=uiNEP8A34SE",
-      "summary": "Health-science episode with a headache specialist on migraine, tension, and cluster headaches: diagnosis, triggers, hormonal drivers and treatment. No direct investment signal.",
-      "themes": [
-        "migraine",
-        "cluster headache",
-        "tension headache",
-        "estrogen/hormones",
-        "headache diagnosis",
-        "neurology"
-      ],
-      "calls": []
-    },
-    {
       "figure": "Jordi Visser",
       "org": "22V Research / Visser Labs",
       "lane": "macro/AI/crypto",
@@ -591,49 +1541,6 @@
         {
           "asset": "Palantir (PLTR)",
           "stance": "bullish"
-        }
-      ]
-    },
-    {
-      "figure": "Raoul Pal",
-      "org": "Real Vision / Global Macro Investor",
-      "lane": "macro/crypto",
-      "date": "2026-08-30",
-      "title": "Why AI Could Trigger the Next Lithium Boom w/ Howard Klein and Matt Fernley of @RockStockChannel",
-      "url": "https://www.youtube.com/watch?v=IIsF8dmCJFY",
-      "summary": "A Real Vision guest segment (Howard Klein/Matt Fernley of RK Equity) arguing that AI compute, drone warfare and electricity affordability turn lithium/batteries into a structural US strategic need; lithium demand triples-plus over 10 years while depressed miner valuations don't reflect a stabilized ~$20k/ton price.",
-      "themes": [
-        "lithium",
-        "battery supply chain",
-        "AI power demand",
-        "critical minerals",
-        "energy dominance",
-        "mining equities"
-      ],
-      "calls": [
-        {
-          "asset": "Lithium (commodity)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Lithium mining equities (sector)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Lithium Argentina (LAR)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Levera / Piedmont Lithium (former)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Albemarle (ALB) / SQM",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Rare earths",
-          "stance": "neutral"
         }
       ]
     },
@@ -712,61 +1619,6 @@
       ]
     },
     {
-      "figure": "Jesse Day",
-      "org": "Commodity Culture",
-      "lane": "metals/mining",
-      "date": "2026-08-27",
-      "title": "Debit Spiral About to Implode and $20k Gold is the Only Way Out: Matthew Piepenburg",
-      "url": "https://www.youtube.com/watch?v=YClSbElOUtI",
-      "summary": "VonGreyerz's Matthew Piepenburg argues the US is in a terminal debt spiral with no auto-bid for Treasuries, and that a gold revaluation to $15-20k is inevitable as Washington debases the dollar. He is aggressively bullish gold and silver, bearish equities and long bonds.",
-      "themes": [
-        "sovereign debt crisis",
-        "de-dollarization",
-        "gold revaluation",
-        "dollar debasement",
-        "sound money",
-        "silver"
-      ],
-      "calls": [
-        {
-          "asset": "Gold (XAU)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Silver (XAG)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "US equities S&P500/Nasdaq (SPX)",
-          "stance": "bearish"
-        },
-        {
-          "asset": "Long-dated US Treasuries (30Y)",
-          "stance": "bearish"
-        },
-        {
-          "asset": "US dollar (DXY)",
-          "stance": "bearish"
-        },
-        {
-          "asset": "Gold & silver miners",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Private credit / private equity",
-          "stance": "bearish"
-        },
-        {
-          "asset": "Commodities / hard assets",
-          "stance": "bullish"
-        },
-        {
-          "asset": "AI / tech stocks",
-          "stance": "bearish"
-        }
-      ]
-    },
-    {
       "figure": "Jensen Huang",
       "org": "NVIDIA (NVDA)",
       "lane": "AI-stack exec",
@@ -800,24 +1652,6 @@
           "stance": "bullish"
         }
       ]
-    },
-    {
-      "figure": "Peter Attia",
-      "org": "The Drive",
-      "lane": "longevity/health-science",
-      "date": "2026-08-24",
-      "title": "Metabolic liver health: how to assess risk, catch dysfunction early, and more (AMA 88 sneak peek)",
-      "url": "https://www.youtube.com/watch?v=9FMwKc4DfSM",
-      "summary": "Health-science AMA on metabolic (MASLD/MASH) liver disease: drivers, four-stage progression, visceral fat, resistance training, alcohol and genetics. No direct investment signal.",
-      "themes": [
-        "metabolic liver disease",
-        "MASLD/MASH",
-        "insulin resistance",
-        "visceral fat",
-        "resistance training",
-        "alcohol and liver"
-      ],
-      "calls": []
     },
     {
       "figure": "Jordi Visser",
@@ -875,33 +1709,6 @@
         {
           "asset": "Crypto rails / stablecoins / tokenization",
           "stance": "bullish"
-        }
-      ]
-    },
-    {
-      "figure": "Raoul Pal",
-      "org": "Real Vision / Global Macro Investor",
-      "lane": "macro/crypto",
-      "date": "2026-08-23",
-      "title": "The Fed Just Changed the Rules for Investors with Jim Bianco & Andreas Steno",
-      "url": "https://www.youtube.com/watch?v=lFpQuOEzGzc",
-      "summary": "A Real Vision panel (Andreas Steno hosting Jim Bianco, on Raoul Pal's channel) argues the Warsh-led Fed has abandoned forward guidance and now operates as 12 independent voters, forcing investors to treat rate decisions as a high-uncertainty 'vote-telling' exercise, with inflation data displacing jobs data as the key signal.",
-      "themes": [
-        "fed-policy",
-        "forward-guidance",
-        "rate-uncertainty",
-        "inflation-vs-employment",
-        "kevin-warsh",
-        "regime-change"
-      ],
-      "calls": [
-        {
-          "asset": "Fed policy (US rates)",
-          "stance": "neutral"
-        },
-        {
-          "asset": "US Treasuries / bond yields",
-          "stance": "bearish"
         }
       ]
     },
@@ -977,41 +1784,6 @@
       ]
     },
     {
-      "figure": "Farzad Mesbahi",
-      "org": "Farzad FM (independent)",
-      "lane": "Tesla/EV/equities",
-      "date": "2026-08-21",
-      "title": "SpaceX's New Product Just Collapsed the Cost of Everything",
-      "url": "https://www.youtube.com/watch?v=TnaJyLkf8Jk",
-      "summary": "Farzad argues SpaceX has effectively solved the reusable Starship heat-shield problem (per Elon), collapsing launch costs by up to 99% and unleashing a self-reinforcing flywheel across Starlink, orbital AI compute, and the broader space economy.",
-      "themes": [
-        "spacex",
-        "starship",
-        "reusable-rockets",
-        "starlink",
-        "orbital-ai-compute",
-        "launch-cost"
-      ],
-      "calls": [
-        {
-          "asset": "SpaceX (private)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Starlink",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Orbital AI compute (space-based data centers)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Broader space industry / satellite hardware",
-          "stance": "bullish"
-        }
-      ]
-    },
-    {
       "figure": "Arthur Hayes",
       "org": "Maelstrom / BitMEX",
       "lane": "crypto/macro",
@@ -1051,104 +1823,6 @@
       ]
     },
     {
-      "figure": "Jesse Day",
-      "org": "Commodity Culture",
-      "lane": "metals/mining",
-      "date": "2026-08-20",
-      "title": "Global BUST Into Money Printing 'Like Never Before' - Then $20k Gold, $1k Silver: David Hunter",
-      "url": "https://www.youtube.com/watch?v=JKDkHIUcPx4",
-      "summary": "Jesse Day interviews macro strategist David Hunter of Contrarian Macro Advisors, who reiterates his two-stage roadmap: a parabolic melt-up in equities to S&P 10,000 this year, followed by a deflationary 'global bust' worse than 2008 and an 80% index drawdown. He then expects central banks to print roughly $20T (Fed alone), igniting a commodity-led inflation cycle with gold at $7,000 then $20,000 and silver at $200 then $1,000.",
-      "themes": [
-        "David Hunter",
-        "blowoff top",
-        "global bust / credit crisis",
-        "money printing",
-        "precious metals targets",
-        "secular leadership rotation"
-      ],
-      "calls": [
-        {
-          "asset": "US equities (S&P 500, Nasdaq, Dow, Russell)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "US equities (post-top global bust)",
-          "stance": "bearish"
-        },
-        {
-          "asset": "Silver",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Gold",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Long-dated US Treasuries",
-          "stance": "bullish"
-        },
-        {
-          "asset": "US dollar (DXY)",
-          "stance": "bearish"
-        },
-        {
-          "asset": "Japanese yen (JPY)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Crude oil",
-          "stance": "bearish"
-        },
-        {
-          "asset": "Financials (XLF)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Copper and old-industrial commodity producers (Caterpillar, Deere, gold/silver miners)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Private credit, private equity and commercial real estate",
-          "stance": "bearish"
-        }
-      ]
-    },
-    {
-      "figure": "Jesse Day",
-      "org": "Commodity Culture",
-      "lane": "metals/mining",
-      "date": "2026-08-19",
-      "title": "'The Growth is Incredible' - Why Phosphate and LFP Batteries Are Dominating",
-      "url": "https://www.youtube.com/watch?v=0FbORhEZQFY",
-      "summary": "Company-sourced and promotional: this is a First Phosphate-sponsored interview in which CEO John Passalacqua pitches igneous phosphate as a scarce critical mineral for LFP battery cathodes, citing a 91.1% conversion rate to purified phosphoric acid versus a small fraction for sedimentary rock. He frames the recent NASDAQ listing (PHOS), Quebec fast-track permitting status and G7 off-take letters from Danish and Italian entities as the de-risking catalysts ahead of a Q1 2027 feasibility study and 2029-30 mine start.",
-      "themes": [
-        "John Passalacqua",
-        "First Phosphate (PHOS)",
-        "LFP batteries",
-        "igneous phosphate",
-        "critical minerals reshoring",
-        "sponsored segment"
-      ],
-      "calls": [
-        {
-          "asset": "First Phosphate (PHOS)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "LFP batteries / lithium iron phosphate chemistry (theme)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Purified phosphoric acid / phosphate demand (theme)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "North American critical-minerals reshoring (theme)",
-          "stance": "bullish"
-        }
-      ]
-    },
-    {
       "figure": "Mohamed El-Erian",
       "org": "Allianz / Queens' College",
       "lane": "macro (guest commentary)",
@@ -1178,67 +1852,6 @@
           "stance": "neutral"
         }
       ]
-    },
-    {
-      "figure": "Farzad Mesbahi",
-      "org": "Farzad FM (independent)",
-      "lane": "Tesla/EV/equities",
-      "date": "2026-08-17",
-      "title": "History is About to be Made (it’s WAY bigger than you think)",
-      "url": "https://www.youtube.com/watch?v=B2cJHxVjuf4",
-      "summary": "Mesbahi argues that simultaneously collapsing costs of robotics, AI intelligence, solar-plus-battery power and autonomous logistics will reprice cheap undeveloped land by making it buildable, using a thought experiment of a 1,500-acre Wyoming parcel at ~$15,000/acre and a town of 500 people served by 2,000 robots. He frames Tesla FSD as proof that millions of fully autonomous robots already exist, and predicts a new company category that sells finished towns rather than houses.",
-      "themes": [
-        "land repricing",
-        "humanoid robots / autonomous machines",
-        "Tesla FSD and Optimus",
-        "solar plus storage",
-        "automated construction",
-        "AI cost deflation"
-      ],
-      "calls": [
-        {
-          "asset": "Cheap undeveloped US land (theme)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "TSLA (Tesla FSD and Optimus)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Humanoid robots and general-purpose robotics (theme)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Solar plus battery storage (theme)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "SpaceX / Starlink",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Automated construction / town-building companies (theme)",
-          "stance": "bullish"
-        }
-      ]
-    },
-    {
-      "figure": "Peter Attia",
-      "org": "The Drive",
-      "lane": "longevity/health-science",
-      "date": "2026-08-17",
-      "title": "404 ‒ Mental health beyond neurotransmitters: hormones in psychiatry, psychedelic therapies, & more",
-      "url": "https://www.youtube.com/watch?v=fs89fhQCfj4",
-      "summary": "Attia interviews a veteran psychiatrist who pivoted after ~35 years toward integrating endocrinology (testosterone, estrogen, thyroid/T3, lithium) into psychiatric practice, plus an extended discussion of ketamine and psychedelics for treatment-resistant depression. Purely clinical content — no investment or market commentary.",
-      "themes": [
-        "psychiatry",
-        "hormones-in-psychiatry",
-        "psychedelic-therapeutics",
-        "ketamine/treatment-resistant-depression",
-        "SSRIs",
-        "thyroid-T3-augmentation"
-      ],
-      "calls": []
     },
     {
       "figure": "Jordi Visser",
@@ -1296,80 +1909,6 @@
         {
           "asset": "US long-end Treasuries",
           "stance": "bearish"
-        }
-      ]
-    },
-    {
-      "figure": "Raoul Pal",
-      "org": "Real Vision / Global Macro Investor",
-      "lane": "macro/crypto",
-      "date": "2026-08-16",
-      "title": "Why the USD/JPY Could Hit 200 | Weston Nakamura & Ash Bennington",
-      "url": "https://www.youtube.com/watch?v=XFNk96CabCg",
-      "summary": "Raoul Pal does not appear in this Real Vision episode; host Ash Bennington interviews Tokyo-based guest Weston Nakamura (Across the Spread), who argues the August 2026 'joint' US-Japan yen intervention is largely theatre because the US Treasury has not actually executed in FX markets. Nakamura's view is that yen weakness is structural (Japanese household and institutional capital flight out of a large cash pile and out of JGBs), so USD/JPY 200 remains the more likely longer-term outcome.",
-      "themes": [
-        "yen intervention",
-        "USD/JPY",
-        "BOJ policy",
-        "Japan capital flight",
-        "JGB yields",
-        "US Treasury market"
-      ],
-      "calls": [
-        {
-          "asset": "USD/JPY",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Japanese yen (JPY)",
-          "stance": "bearish"
-        },
-        {
-          "asset": "Japanese government bonds (JGBs)",
-          "stance": "bearish"
-        },
-        {
-          "asset": "Long-dated US Treasuries",
-          "stance": "bullish"
-        }
-      ]
-    },
-    {
-      "figure": "Farzad Mesbahi",
-      "org": "Farzad FM (independent)",
-      "lane": "Tesla/EV/equities",
-      "date": "2026-08-13",
-      "title": "Tesla Makes The Biggest Bet In Car History",
-      "url": "https://www.youtube.com/watch?v=icQkryWczkQ",
-      "summary": "Farzad argues Tesla's FSD bet is inflecting - Q2 deliveries up ~25% YoY despite the US EV tax credit expiring and the broader US EV market falling, with ~1.48M active FSD subscriptions and a >55% FSD attach rate on new North American deliveries. He frames FSD, Robotaxi/Cyber Cab and Optimus as one compounding AI stack; note he is a dedicated Tesla-bull commentator, so framing is uniformly promotional and gives little weight to Model 3/Y concentration risk or Cybertruck weakness.",
-      "themes": [
-        "Tesla FSD",
-        "autonomy/robotaxi",
-        "EV demand post-tax-credit",
-        "Optimus/humanoids",
-        "legacy auto disruption",
-        "custom silicon"
-      ],
-      "calls": [
-        {
-          "asset": "TSLA (Tesla)",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Tesla FSD / Robotaxi & Cyber Cab",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Tesla Optimus / humanoid robots",
-          "stance": "bullish"
-        },
-        {
-          "asset": "Legacy automakers (Ford and other ICE incumbents)",
-          "stance": "bearish"
-        },
-        {
-          "asset": "SpaceX / Tesla (Terra chip JV, possible merger)",
-          "stance": "bullish"
         }
       ]
     },
@@ -1540,33 +2079,6 @@
       ]
     },
     {
-      "figure": "Peter Attia",
-      "org": "The Drive",
-      "lane": "longevity/health-science",
-      "date": "2026-08-10",
-      "title": "403 ‒ Peptides: separating scientific promise from marketing hype",
-      "url": "https://www.youtube.com/watch?v=Km_01CLEkYU",
-      "summary": "Attia builds a framework for evaluating peptides — mechanism, human evidence, manufacturing/analytical control — and argues the wellness-peptide market is largely repackaging molecules the pharma industry already abandoned (CJC-1295 vs tesamorelin). He is explicitly unwilling to recommend non-approved, gray-market or compounded peptides including gray-market GLP-1 analogs.",
-      "themes": [
-        "peptides",
-        "GLP-1-agonists",
-        "compounded/gray-market-pharma",
-        "FDA-approval-moat",
-        "CMC-manufacturing-quality",
-        "pharma-patent-strategy"
-      ],
-      "calls": [
-        {
-          "asset": "Gray-market / compounded peptide and GLP-1 vendors (theme)",
-          "stance": "bearish"
-        },
-        {
-          "asset": "Branded pharma peptide/GLP-1 franchises (patent & manufacturing moat)",
-          "stance": "bullish"
-        }
-      ]
-    },
-    {
       "figure": "Jordi Visser",
       "org": "22V Research / Visser Labs",
       "lane": "macro/AI/crypto",
@@ -1615,60 +2127,102 @@
       ]
     },
     {
-      "figure": "Daniel Lacalle (guest, via Real Vision/Raoul Pal channel)",
-      "org": "Tressis",
-      "lane": "macro (guest commentary)",
-      "date": "2026-08-09",
-      "title": "Why This Investor Thinks The Fed Is Making a Policy Mistake with Daniel Lacalle",
-      "url": "https://www.youtube.com/watch?v=U2WwLW-m-Qc",
-      "summary": "DATA QUALITY FLAG: this preview clip is an Ash Bennington interview with guest Daniel Lacalle (chief economist, Tressis) about the Fed holding rates after a soft Q2 GDP print; Raoul Pal does not speak or appear anywhere in the transcript despite the frontmatter attribution. Lacalle argues the GDP 'miss' is a government-spending statistical artifact, private-sector growth/investment is genuinely strong despite elevated rates, and the Fed is making a policy mistake by holding rates high in response to an energy-driven inflation spike rather than easing.",
+      "figure": "Jordi Visser",
+      "org": "22V Research / Visser Labs",
+      "lane": "macro/AI/crypto",
+      "date": "2026-08-02",
+      "title": "Situational Awareness, Hyperscaler Earnings and Warsh: A Bottom for AI Stocks?",
+      "url": "https://www.youtube.com/watch?v=VVfTS50v91I",
+      "summary": "Jordi details a historic momentum unwind tied to a large hedge fund ('Situational Awareness'/Leopold) liquidating roughly $45B of AI-heavy positions absorbed by Citadel/Millennium, which he reads as a likely 'cleansing event' near a bottom; hyperscaler earnings (Google, Amazon, Microsoft, Meta) all confirmed compute demand still outstrips supply (~$1.7T combined backlog), reinforcing his structurally bullish AI stance while he flags rising private-credit spread risk to watch.",
       "themes": [
-        "Fed policy mistake",
-        "US GDP",
-        "inflation composition",
-        "rate policy",
-        "data quality flag",
-        "yen weakness"
+        "hedge fund unwind/deleveraging",
+        "market structure/vol regime",
+        "hyperscaler capex demand",
+        "Micron/Marvell/AOI",
+        "credit spread risk"
       ],
       "calls": [
         {
-          "asset": "Fed funds rate path",
-          "stance": "bearish"
-        },
-        {
-          "asset": "US economy/private-sector GDP",
+          "asset": "Hyperscalers (GOOGL / AMZN / MSFT / META)",
           "stance": "bullish"
         },
         {
-          "asset": "Japanese yen",
-          "stance": "bearish"
+          "asset": "AI thematic portfolio (broad)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Micron (MU)",
+          "stance": "bullish"
+        },
+        {
+          "asset": "Marvell (MRVL)",
+          "stance": "bullish"
         }
       ]
     },
     {
-      "figure": "Farzad Mesbahi",
-      "org": "Farzad FM (independent)",
-      "lane": "Tesla/EV/equities",
-      "date": "2026-08-07",
-      "title": "AI Powered Robots Will Slash the Price of Everything",
-      "url": "https://www.youtube.com/watch?v=qvKatYJAdaI",
-      "summary": "Thematic essay-style video arguing mature humanoid robots will collapse the cost of physical labor (from a ~$46/hr US private-employer average toward roughly $2/hr), reshaping housing, healthcare, construction and geopolitics, and framing the video's Tesla-investor sponsor tie-in around this as the core case for Optimus-style humanoid economics.",
+      "figure": "Jim Bianco",
+      "org": "Bianco Research",
+      "lane": "rates/macro",
+      "date": "2026-07-30",
+      "title": "MacroVoices #543 Jim Bianco: Who Solves Inflation - The FED or The Market?",
+      "url": "https://www.youtube.com/watch?v=MXlfF5yYrJc",
+      "summary": "Bianco says the Fed's hawkish hold and new chair Warsh's rejection of forward guidance sent the 30-year Treasury yield to a 19-year high (5.20%), reiterates that yields must keep rising until either the Fed or the bond market itself stamps out sticky ~3-4% inflation, and remains 'fairly bullish' on AI as a transformative technology still in its build-out phase rather than an imminent bubble.",
       "themes": [
-        "humanoid robots",
-        "labor cost deflation",
-        "Tesla Optimus",
-        "housing/construction",
-        "geopolitics of automation",
-        "UBI/wage insurance"
+        "Fed independent voting / Warsh no-forward-guidance",
+        "inflation sticky 64 months above target",
+        "30Y yield at 19-year high",
+        "nominal GDP as rate driver",
+        "AI transformative but not yet a bubble",
+        "energy as the binding constraint on AI/China race"
       ],
       "calls": [
         {
-          "asset": "Humanoid robots (theme)",
+          "asset": "Fed funds rate",
+          "stance": "bearish"
+        },
+        {
+          "asset": "10Y/30Y UST yields",
+          "stance": "bearish"
+        },
+        {
+          "asset": "AI stocks",
+          "stance": "bullish"
+        }
+      ]
+    },
+    {
+      "figure": "Michael Howell",
+      "org": "CrossBorder Capital",
+      "lane": "global liquidity",
+      "date": "2026-07-27",
+      "title": "Michael Howell Global Liquidity: How Money Flows Move Asset Prices | Market Cycles Report 7/7/26",
+      "url": "https://www.youtube.com/watch?v=inlhgwUkhNo",
+      "summary": "Howell reiterates his 65-month global liquidity cycle is at/near its 2026 peak in a 'speculation' regime (high returns, high volatility, deteriorating quality), favors commodities over broad equities into the late-cycle phase, cites a bearish-flattening yield curve as a late-cycle warning sign, and continues to frame the elevated gold price as evidence of ongoing sovereign debt monetization (with the historical 20:1 gold-oil ratio implying a re-rating higher for oil if gold holds, though he stops short of forecasting that).",
+      "themes": [
+        "global liquidity cycle peak",
+        "speculation phase",
+        "gold-oil ratio",
+        "debt monetization",
+        "yield curve",
+        "buybacks vs IPOs"
+      ],
+      "calls": [
+        {
+          "asset": "Commodities (incl. oil/wheat)",
           "stance": "bullish"
         },
         {
-          "asset": "TSLA/Tesla Optimus",
+          "asset": "Gold",
           "stance": "bullish"
+        },
+        {
+          "asset": "10Y UST yield / bonds",
+          "stance": "bearish"
+        },
+        {
+          "asset": "US equities (ex-mega-cap/semis)",
+          "stance": "bearish"
         }
       ]
     }
