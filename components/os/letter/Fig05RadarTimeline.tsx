@@ -2,7 +2,7 @@
  * FIG-05 · Optional radar timeline — dated watches only, no invented events.
  */
 const WATCHES = [
-  { date: '2026-09-21', note: 'Brief refresh / valid_until' },
+  { date: '2026-09-29', note: 'Brief refresh / valid_until' },
   { date: 'Howell #4', note: 'Live unrebutted · GLI INSUFFICIENT' },
   { date: 'Copper N', note: 'Do-not-add · COPPER paper HOLD' },
   { date: 'Tom Lee 2026-09-01', note: 'PARTIAL (~19 lines) · gate condition' },
@@ -13,7 +13,7 @@ export function Fig05RadarTimeline() {
   return (
     <figure
       id="fig-05-radar-timeline"
-      aria-label="Timeline of dated watches including 21 Sep brief refresh, unrebutted Howell falsifier 4, copper neutral watch, and Tom Lee partial extract."
+      aria-label="Timeline of dated watches including 29 Sep brief refresh, unrebutted Howell falsifier 4, copper neutral watch, and Tom Lee partial extract."
       className="overflow-hidden rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface)]"
     >
       <figcaption className="border-b border-[var(--border)] px-5 py-4 sm:px-6">

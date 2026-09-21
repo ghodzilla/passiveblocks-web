@@ -40,7 +40,7 @@ export function Fig02Mechanism() {
           <p className="mt-3 font-mono text-sm font-semibold text-foreground">
             OW · low_to_medium · split only
           </p>
-          <p className="mt-1 text-[11px] text-[var(--muted)]">Decide 2026-09-19b</p>
+          <p className="mt-1 text-[11px] text-[var(--muted)]">Decide 2026-09-22</p>
           <ul className="mt-4 space-y-2 text-xs text-[var(--muted)]">
             <li>
               <span className="font-semibold text-foreground">Post-wave thicken:</span> Hayes×2 ·
