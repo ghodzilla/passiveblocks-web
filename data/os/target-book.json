@@ -4,7 +4,7 @@
   "mode": "paper",
   "status": "vera_book_signed_paper_partial_jordi",
   "theme_regime_brief_ref": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-22.md",
-  "vera_book_sign_attestation": "/workspace/passiveblocks/risk/signs/2026-09-19b-target-book-top25-paper-sign.json",
+  "vera_book_sign_attestation": "/workspace/passiveblocks/risk/signs/2026-09-23-target-book-partial16-retarget-paper-sign.json",
   "lens": "/workspace/passiveblocks/risk/JORDI_VISSER_LENS.md",
   "gate": "GATE_OPEN",
   "brief_valid_until": "2026-09-29",
@@ -284,5 +284,14 @@
   "vera_book_signed_at": "2026-09-19T02:23:29.470433+00:00",
   "vera_book_signed_by": "Vera Passive Blocks Risk",
   "full_top25_as_proposed": false,
-  "notes": "PARTIAL CLEAR under Jordi lens 2026-09-19 — 16 names. Refused ADD weight left in cash. Paper fills allowed only for book_signed_positions. · brief_ref retargeted → theme-regime-2026-09-22 / valid_until 2026-09-29 (weights/cash untouched)."
+  "notes": "PARTIAL CLEAR under Jordi lens 2026-09-19 \u2014 16 names. Refused ADD weight left in cash. Paper fills allowed only for book_signed_positions. \u00b7 brief_ref retargeted \u2192 theme-regime-2026-09-22 / valid_until 2026-09-29 (weights/cash untouched).",
+  "retarget": {
+    "retargeted_at": "2026-09-22T23:17:47.392492+00:00",
+    "from_brief_ref": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-22.md",
+    "from_attestation": "/workspace/passiveblocks/risk/signs/2026-09-19b-target-book-top25-paper-sign.json",
+    "to_brief_ref": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-22.md",
+    "to_attestation": "/workspace/passiveblocks/risk/signs/2026-09-23-target-book-partial16-retarget-paper-sign.json",
+    "weight_change": false,
+    "signed_by": "Vera Passive Blocks Risk"
+  }
 }
