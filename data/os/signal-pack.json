@@ -9,15 +9,15 @@
     "conditions": [
       "new Act needs Vera book-sign + theme_regime_brief_ref",
       "SPCX/TSLA/AI-chase do-not-add",
-      "copper is N (watch) — still <2 independent bullish desks; existing COPPER paper line stays HOLD (no mandated trim without Vera)",
+      "copper is N (watch) \u2014 still <2 independent bullish desks; existing COPPER paper line stays HOLD (no mandated trim without Vera)",
       "crypto OW is split-only with Howell falsifier #4 live unrebutted (no Howell NEW)",
       "CAT Show-only; BE/GEV/CCJ hollow off book"
     ],
-    "note": "Decide adopted Sam Sep 22 Sense INPUT as-is on live n=210. Vera CLEARED against refuse_bar. Paper HOLD. PARTIAL 16 stands until separate book-sign retargeting brief_ref → theme-regime-2026-09-22. Nora unblocked for /os Show wire.",
+    "note": "Decide adopted Sam Sep 22 Sense INPUT as-is on live n=210. Vera CLEARED against refuse_bar. Paper HOLD. PARTIAL 16 stands until separate book-sign retargeting brief_ref \u2192 theme-regime-2026-09-22. Nora unblocked for /os Show wire.",
     "signals_json": {
-      "n_records": 210,
-      "generated": "2026-09-21",
-      "latest_signal_date": "2026-09-20"
+      "n_records": 215,
+      "generated": "2026-09-24",
+      "latest_signal_date": "2026-09-23"
     },
     "reframe": {
       "orientation": "future_returns",
@@ -48,7 +48,7 @@
     "author": "Sense (Sam)",
     "adopted_by": "Diego Passive Blocks",
     "adopted_at": "2026-09-21T23:27:04.763294+00:00",
-    "regime_one_liner": "Fiscal-dominance / hard-asset hedge still the frame. Gold dense multi-seat OW; silver densified; Copper N (Rule single desk; Rozencwajg copper neutral ≠ 2nd bullish desk); crypto split OW with Howell #4 unrebutted (no Howell NEW); AI N (Jordi rotated weight out; Jensen company-sourced; TSLA refuse); Duration UW reinforced (Bianco Fed hawkish flip + 10Y bearish; Doomberg Treasuries bearish).",
+    "regime_one_liner": "Fiscal-dominance / hard-asset hedge still the frame. Gold dense multi-seat OW; silver densified; Copper N (Rule single desk; Rozencwajg copper neutral \u2260 2nd bullish desk); crypto split OW with Howell #4 unrebutted (no Howell NEW); AI N (Jordi rotated weight out; Jensen company-sourced; TSLA refuse); Duration UW reinforced (Bianco Fed hawkish flip + 10Y bearish; Doomberg Treasuries bearish).",
     "paper_book_action": "HOLD",
     "paper_book_implications": {
       "hold": [
@@ -85,11 +85,11 @@
     },
     "pending": "Vera book-sign required for any new Act / weight change; PARTIAL 16 stands until separate book-sign retargeting weights; Paper HOLD; Live-promote []; Copper N; CAT Show-only; BE/GEV/CCJ hollow; Howell #4 unrebutted; no SPCX/TSLA/AI-chase",
     "falsifiers": [
-      "#1 Debasement break: Gold agreed; silver densified; Lyn Alden gold/silver neutral = crowding caveat not clear — live",
-      "#2 Hormuz normalization: Thickened by Bianco crude flip + Doomberg 09-08 + Rozencwajg oil — not clear — live",
-      "#3 AI demand break: Jordi asserts demand but rotated weight out; price mud; N holds — live",
-      "#4 Liquidity kill for crypto (Howell): Latest Howell still 2026-08-11 FPB4Z1KhE3s; no Howell NEW in +19; GLI INSUFFICIENT — live_unrebutted",
-      "#5 Duration vindication: Bianco Fed hawkish flip + 10Y bearish + Doomberg Treasuries bearish thicken anti-nominal — live_further_from_clear"
+      "#1 Debasement break: Gold agreed; silver densified; Lyn Alden gold/silver neutral = crowding caveat not clear \u2014 live",
+      "#2 Hormuz normalization: Thickened by Bianco crude flip + Doomberg 09-08 + Rozencwajg oil \u2014 not clear \u2014 live",
+      "#3 AI demand break: Jordi asserts demand but rotated weight out; price mud; N holds \u2014 live",
+      "#4 Liquidity kill for crypto (Howell): Latest Howell still 2026-08-11 FPB4Z1KhE3s; no Howell NEW in +19; GLI INSUFFICIENT \u2014 live_unrebutted",
+      "#5 Duration vindication: Bianco Fed hawkish flip + 10Y bearish + Doomberg Treasuries bearish thicken anti-nominal \u2014 live_further_from_clear"
     ],
     "themes": [
       {
@@ -110,7 +110,7 @@
           "Ed Steer (guest, Jesse Day host)|2026-09-18|https://www.youtube.com/watch?v=msuUtpD93DU"
         ],
         "stage": "late",
-        "forward_thesis": "Future hard-asset bid under fiscal dominance / credit stress — densest multi-seat path",
+        "forward_thesis": "Future hard-asset bid under fiscal dominance / credit stress \u2014 densest multi-seat path",
         "confidence": "high",
         "change_vs_brief_2026_09_19": "holds_thickened"
       },
@@ -139,17 +139,17 @@
         "citation_count": 7,
         "citations": [
           "Rick Rule|2026-09-17|ONE independent bullish copper commodity desk|https://www.youtube.com/watch?v=K4KXbsvpKyo",
-          "Adam Rozencwajg|2026-09-03|copper neutral/low — NOT 2nd bullish desk|https://www.youtube.com/watch?v=5BdwMOdyqWs",
+          "Adam Rozencwajg|2026-09-03|copper neutral/low \u2014 NOT 2nd bullish desk|https://www.youtube.com/watch?v=5BdwMOdyqWs",
           "Doomberg|2023-04-15|copper neutral/low stale|https://www.youtube.com/watch?v=-BNDcB3M3qo",
-          "Peter Zeihan|2026-09-10|Vault context ≠ Copper OW|https://www.youtube.com/watch?v=sj9GLylXmeo",
+          "Peter Zeihan|2026-09-10|Vault context \u2260 Copper OW|https://www.youtube.com/watch?v=sj9GLylXmeo",
           "Crux Investor|2026-08-28|https://www.youtube.com/watch?v=sEyT9WPM5Bo",
           "Crux Investor|2026-08-31|https://www.youtube.com/watch?v=HEnRn9p8c9w",
           "Crux Investor|2026-09-18|Rua/antimony CEO promo|https://www.youtube.com/watch?v=zpjCNdCtNzI"
         ],
         "stage": "early",
-        "forward_thesis": "Scarcity/Vault talk may be early future payoff if ≥2 independent desks form clean copper cluster — they have not; stay N",
+        "forward_thesis": "Scarcity/Vault talk may be early future payoff if \u22652 independent desks form clean copper cluster \u2014 they have not; stay N",
         "copper_bar": {
-          "required": "≥2 independent desks with clean calls[].asset bullish copper",
+          "required": "\u22652 independent desks with clean calls[].asset bullish copper",
           "met": false,
           "independent_bullish_desks": [
             "Rick Rule 2026-09-17 Copper (commodity) bullish/high"
@@ -160,7 +160,7 @@
             "Crux CEO promos / Jesse Day guests = hygiene not cluster"
           ]
         },
-        "paper_line": "COPPER HOLD (already owned); do-not-add; discovery stays discovery; no mandated trim without Vera; Rule single desk ≠ cluster OW; Rozencwajg copper neutral ≠ 2nd bullish desk; Vault = context",
+        "paper_line": "COPPER HOLD (already owned); do-not-add; discovery stays discovery; no mandated trim without Vera; Rule single desk \u2260 cluster OW; Rozencwajg copper neutral \u2260 2nd bullish desk; Vault = context",
         "change_vs_brief_2026_09_19": "holds_N_bar_not_met"
       },
       {
@@ -183,7 +183,7 @@
           "Michael Howell|2026-08-11|falsifier #4 unrebutted; no NEW|https://www.youtube.com/watch?v=FPB4Z1KhE3s"
         ],
         "stage": "mid",
-        "forward_thesis": "Future rails/tokenization payoff remains split — bulls thicken hard (Jordi 09-20); Howell near-term liquidity bear unrebutted (no Howell NEW)",
+        "forward_thesis": "Future rails/tokenization payoff remains split \u2014 bulls thicken hard (Jordi 09-20); Howell near-term liquidity bear unrebutted (no Howell NEW)",
         "stance_qualifier": "split_only",
         "confidence": "low_to_medium",
         "new_wave_note": "Jordi 09-20 BTC/ETH/SOL + book rotation thickens bull side; does not rebut Howell; no Howell NEW",
@@ -195,20 +195,20 @@
         "stance": "N",
         "citation_count": 9,
         "citations": [
-          "Jordi Visser|2026-09-20|AI infra reiterated but book cut ~80%→~20%|https://www.youtube.com/watch?v=BkNzS8Ia-7k",
+          "Jordi Visser|2026-09-20|AI infra reiterated but book cut ~80%\u2192~20%|https://www.youtube.com/watch?v=BkNzS8Ia-7k",
           "Jordi Visser|2026-09-13|https://www.youtube.com/watch?v=VPuzUZlvk0U",
           "Jordi Visser|2026-09-06|https://www.youtube.com/watch?v=er5mqvbDQU8",
           "Tom Lee|2026-09-02|https://www.youtube.com/watch?v=fOMlh1gq33g",
-          "Jim Bianco|2026-09-10|AI/tech bullish; SaaS bearish — does not clear price OW|https://www.youtube.com/watch?v=0K9FfhUYERM",
+          "Jim Bianco|2026-09-10|AI/tech bullish; SaaS bearish \u2014 does not clear price OW|https://www.youtube.com/watch?v=0K9FfhUYERM",
           "Jensen Huang|2026-09-20|company-sourced|https://www.youtube.com/watch?v=tr9ldobfI6w",
           "Lisa Su|2024-02-10|old exec|https://www.youtube.com/watch?v=17gpM2wMf4Y",
           "Peter Zeihan|2026-09-18|Japan VLA Watch only|https://www.youtube.com/watch?v=NQlL59f4OFY",
-          "Farzad Mesbahi|2026-09-18|TSLA — refuse AI-chase|https://www.youtube.com/watch?v=dCyuuCN534k"
+          "Farzad Mesbahi|2026-09-18|TSLA \u2014 refuse AI-chase|https://www.youtube.com/watch?v=dCyuuCN534k"
         ],
         "stage": "mid",
-        "forward_thesis": "Demand asserted; price-regime future OW not agreed — Jordi cut AI weight; Jensen company-sourced; refuse SPCX/TSLA/AI-chase",
+        "forward_thesis": "Demand asserted; price-regime future OW not agreed \u2014 Jordi cut AI weight; Jensen company-sourced; refuse SPCX/TSLA/AI-chase",
         "confidence": "medium",
-        "new_wave_note": "Jordi 09-20 AI-weight cut ~80%→~20%; Jensen company-sourced; TSLA refuse; does not upgrade N→OW",
+        "new_wave_note": "Jordi 09-20 AI-weight cut ~80%\u2192~20%; Jensen company-sourced; TSLA refuse; does not upgrade N\u2192OW",
         "change_vs_brief_2026_09_19": "holds_rotation_reinforces_mud"
       },
       {
@@ -228,9 +228,9 @@
           "Mohamed El-Erian|2026-08-19|https://www.youtube.com/watch?v=hLWzUoHwGx8"
         ],
         "stage": "mid",
-        "forward_thesis": "Future path still anti-nominal / higher-yield; Bianco Fed hawkish flip + 10Y bearish thicken — map TIPS under UW not long-bond OW",
+        "forward_thesis": "Future path still anti-nominal / higher-yield; Bianco Fed hawkish flip + 10Y bearish thicken \u2014 map TIPS under UW not long-bond OW",
         "confidence": "medium_to_higher_path",
-        "new_wave_note": "Bianco Fed hawkish flip + 10Y bearish + Doomberg Treasuries bearish thicken anti-nominal — further from clear",
+        "new_wave_note": "Bianco Fed hawkish flip + 10Y bearish + Doomberg Treasuries bearish thicken anti-nominal \u2014 further from clear",
         "change_vs_brief_2026_09_19": "holds_reinforced_further"
       }
     ],
@@ -243,7 +243,7 @@
         "Outcrop Silver (OCG) / silver-junior densify",
         "ASEAN / Southern Cone / Argentina shale (geography)"
       ],
-      "note": "Watch 20 / Paper-test GOLD/SILVER/BTC/ETH / Live-promote 0 — Show ≠ Act"
+      "note": "Watch 20 / Paper-test GOLD/SILVER/BTC/ETH / Live-promote 0 \u2014 Show \u2260 Act"
     },
     "triage": {
       "watch": {
@@ -308,7 +308,7 @@
         "count": 0,
         "items": []
       },
-      "note": "Watch 20 · Paper-test 4 (GOLD/SILVER/BTC/ETH) · Live-promote 0"
+      "note": "Watch 20 \u00b7 Paper-test 4 (GOLD/SILVER/BTC/ETH) \u00b7 Live-promote 0"
     },
     "cite_thicken": [
       {
@@ -397,7 +397,7 @@
         "symbols": [
           "COPPER"
         ],
-        "note": "held line under N; Rule single desk ≠ cluster; Rozencwajg copper neutral ≠ 2nd bullish desk; Vault context; CAT Show/watch not book OW"
+        "note": "held line under N; Rule single desk \u2260 cluster; Rozencwajg copper neutral \u2260 2nd bullish desk; Vault context; CAT Show/watch not book OW"
       },
       {
         "theme": "Crypto rails / tokenization (BTC/ETH)",
@@ -466,12 +466,12 @@
       "Gold/Silver OW",
       "Live-promote 0",
       "Paper HOLD",
-      "Rozencwajg copper neutral ≠ 2nd bullish desk",
+      "Rozencwajg copper neutral \u2260 2nd bullish desk",
       "no SPCX/TSLA/AI-chase"
     ],
-    "signals_json_n": 210,
-    "signals_json_generated": "2026-09-21",
-    "signals_json_latest": "2026-09-20",
+    "signals_json_n": 215,
+    "signals_json_generated": "2026-09-24",
+    "signals_json_latest": "2026-09-23",
     "brief_md": "/workspace/passiveblocks/decide/briefs/theme-regime-2026-09-22.md",
     "brief_id": "theme-regime-2026-09-22",
     "valid_until": "2026-09-29",
@@ -484,14 +484,14 @@
     "material_cite_thickening": true,
     "material_stance_label_edits": false,
     "refuse_bar": [
-      "Copper N unless ≥2 independent desks with clean calls[].asset",
+      "Copper N unless \u22652 independent desks with clean calls[].asset",
       "CAT Show-only",
       "BE/GEV/CCJ hollow",
       "Howell #4 unrebutted unless new Howell row",
       "no SPCX/TSLA/AI-chase thinning",
       "no desk-cluster OW without cites",
-      "guest≠host",
-      "reject substring FPs (BE≠Bloom Energy)",
+      "guest\u2260host",
+      "reject substring FPs (BE\u2260Bloom Energy)",
       "empty/#calls=0 stubs never cites",
       "exact ticker match for book eligibility"
     ],
@@ -534,7 +534,7 @@
       "org": "22V Research / Visser Labs",
       "lane": "macro/AI/crypto",
       "date": "2026-09-20",
-      "title": "The Market Didn't Crash, Humanity Didn't Die — But Crypto Just Broke Out",
+      "title": "The Market Didn't Crash, Humanity Didn't Die \u2014 But Crypto Just Broke Out",
       "url": "https://www.youtube.com/watch?v=BkNzS8Ia-7k",
       "summary": "Visser argues crypto is now the single most important macro trade as AI agents drive on-chain adoption and tokenization, and has rotated the bulk of his book out of AI infrastructure (80% down to ~20%) into crypto and silver. He dismisses the week's bearish scares (AI-extinction fears, oil, higher rates, hawkish Fed hike) and says equities grind higher while people stay bearish, but expects only muted stock returns versus crypto's early-stage bull market.",
       "themes": [
@@ -957,7 +957,7 @@
       "date": "2026-09-18",
       "title": "Can AI-Driven Robots Save Japan? || Peter Zeihan",
       "url": "https://www.youtube.com/watch?v=NQlL59f4OFY",
-      "summary": "Whisper-base ASR (captured 2026-09-19): Zeihan on Japan's new gov program to build a vision-language-action model for industrial/ag/healthcare/logistics robots — buying ~27.5–28k NVIDIA Rubin GPUs into a custom ~140MW data center (far smaller than US hyperscalers). Model condensed onto on-robot simpler hardware for autonomous on-site operation (digital tether for training updates only, not inference lag). Timeline: Rubin production started June; TSMC stride July; US first in line; Japan chips ~Q2 next year; meaningful DC ops before end next year; finished model ~New Year → robot brains ~2027–2028 before reevaluation. Japan = world's oldest society, >11M worker shortage by 2030; already strong automation but need is huge; immigration ruled out (won't import Filipino/Indian/American labor) so AI/robots 'the only one.' Calls project 'very promising' / 'looks pretty promising' as merge of 40y Japanese automation with frontier AI — may, may, may be a partial fix for a global labor shortage as 100+ countries age out. No equity tickers called (NVDA/TSMC narrative only as GPU foundry/supplier).",
+      "summary": "Whisper-base ASR (captured 2026-09-19): Zeihan on Japan's new gov program to build a vision-language-action model for industrial/ag/healthcare/logistics robots \u2014 buying ~27.5\u201328k NVIDIA Rubin GPUs into a custom ~140MW data center (far smaller than US hyperscalers). Model condensed onto on-robot simpler hardware for autonomous on-site operation (digital tether for training updates only, not inference lag). Timeline: Rubin production started June; TSMC stride July; US first in line; Japan chips ~Q2 next year; meaningful DC ops before end next year; finished model ~New Year \u2192 robot brains ~2027\u20132028 before reevaluation. Japan = world's oldest society, >11M worker shortage by 2030; already strong automation but need is huge; immigration ruled out (won't import Filipino/Indian/American labor) so AI/robots 'the only one.' Calls project 'very promising' / 'looks pretty promising' as merge of 40y Japanese automation with frontier AI \u2014 may, may, may be a partial fix for a global labor shortage as 100+ countries age out. No equity tickers called (NVDA/TSMC narrative only as GPU foundry/supplier).",
       "themes": [
         "Japan AI robot / VLA model",
         "NVIDIA Rubin GPU allocation",
@@ -971,8 +971,8 @@
           "asset": "Japan AI vision-language-action industrial/ag/healthcare robots",
           "stance": "bullish",
           "conviction": "medium",
-          "horizon": "2027–2028+ / multi-year",
-          "rationale": "Gov program + ~28k Rubin GPUs into 140MW DC to train VLA model then pack onto autonomous on-site robots; Japan already ahead on automation; Zeihan calls it 'very promising' / 'looks pretty promising' IF it works — but chips ~Q2 next year and model/robot brains not until ~2027–2028.",
+          "horizon": "2027\u20132028+ / multi-year",
+          "rationale": "Gov program + ~28k Rubin GPUs into 140MW DC to train VLA model then pack onto autonomous on-site robots; Japan already ahead on automation; Zeihan calls it 'very promising' / 'looks pretty promising' IF it works \u2014 but chips ~Q2 next year and model/robot brains not until ~2027\u20132028.",
           "stance_change": "new"
         },
         {
@@ -988,7 +988,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "structural",
-          "rationale": "Unlike US/others tapping global talent, Japan 'like robots but they don't necessarily like Filipinos or Indians or even Americans' — AI/robot approach framed as the only path.",
+          "rationale": "Unlike US/others tapping global talent, Japan 'like robots but they don't necessarily like Filipinos or Indians or even Americans' \u2014 AI/robot approach framed as the only path.",
           "stance_change": "new"
         },
         {
@@ -1099,7 +1099,7 @@
       "date": "2026-09-17",
       "title": "What Is Zelensky's Political Future? || Peter Zeihan",
       "url": "https://www.youtube.com/watch?v=z1YvlUVkjAs",
-      "summary": "Whisper-base ASR (captured 2026-09-19): Patreon Q from Yosemite on Zelensky's political future. Near-term: genuinely popular wartime leader — Zeihan has 'no doubt' he would win if fresh elections held. Real question is historical judgment, still playing out. Early-war Russian Chechen hit squad to assassinate him in Kyiv failed; Chechen forces since badly damaged / mostly back to Chechnya — gave Zelensky extra notoriety vs normal wartime leader. Four years on: second revolution in military affairs = digitizing warfare (people call it AI, but really more aggressive/novel use of existing hardware); Zelensky's name historically on that tech wave. Three equally-weighted outcomes: (1) Russia wins → Zelensky 'a dead man' (handing him over as contingency for any normal EU-Russia relations); (2) permanent stalemate until both Ukraine and Russia fail demographically over next 30–40 years → remembered as launching the tech revolution redefining war; (3) Ukraine reclaims most lost territory convincingly enough for EU and maybe NATO admission → revered as founder of modern Ukraine and a 'great European' alongside Helmut Kohl. 'A lot of wiggle room' — no answer this year, next year, or the year after. No equity tickers called.",
+      "summary": "Whisper-base ASR (captured 2026-09-19): Patreon Q from Yosemite on Zelensky's political future. Near-term: genuinely popular wartime leader \u2014 Zeihan has 'no doubt' he would win if fresh elections held. Real question is historical judgment, still playing out. Early-war Russian Chechen hit squad to assassinate him in Kyiv failed; Chechen forces since badly damaged / mostly back to Chechnya \u2014 gave Zelensky extra notoriety vs normal wartime leader. Four years on: second revolution in military affairs = digitizing warfare (people call it AI, but really more aggressive/novel use of existing hardware); Zelensky's name historically on that tech wave. Three equally-weighted outcomes: (1) Russia wins \u2192 Zelensky 'a dead man' (handing him over as contingency for any normal EU-Russia relations); (2) permanent stalemate until both Ukraine and Russia fail demographically over next 30\u201340 years \u2192 remembered as launching the tech revolution redefining war; (3) Ukraine reclaims most lost territory convincingly enough for EU and maybe NATO admission \u2192 revered as founder of modern Ukraine and a 'great European' alongside Helmut Kohl. 'A lot of wiggle room' \u2014 no answer this year, next year, or the year after. No equity tickers called.",
       "themes": [
         "Zelensky political future / historical legacy",
         "Ukraine wartime leadership popularity",
@@ -1114,7 +1114,7 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "near-term / if elections held",
-          "rationale": "Genuinely popular wartime leader; Zeihan has 'no doubt' he would win reelection if fresh elections were held — but frames that as not the real question vs historical judgment.",
+          "rationale": "Genuinely popular wartime leader; Zeihan has 'no doubt' he would win reelection if fresh elections were held \u2014 but frames that as not the real question vs historical judgment.",
           "stance_change": "new"
         },
         {
@@ -1130,7 +1130,7 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "multi-year / historical credit",
-          "rationale": "Four years on, many new technologies developed under his watch; second revolution in military affairs = digitizing warfare (not really AI — novel use of existing hardware); Zelensky's name 'going to be on all of that' historically.",
+          "rationale": "Four years on, many new technologies developed under his watch; second revolution in military affairs = digitizing warfare (not really AI \u2014 novel use of existing hardware); Zelensky's name 'going to be on all of that' historically.",
           "stance_change": "new"
         },
         {
@@ -1138,7 +1138,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "contingent on Russian victory",
-          "rationale": "If Russians win, Zelensky is 'a dead man' — Russia will make handing him over the contingency for any sort of normal relations with European countries.",
+          "rationale": "If Russians win, Zelensky is 'a dead man' \u2014 Russia will make handing him over the contingency for any sort of normal relations with European countries.",
           "stance_change": "new"
         },
         {
@@ -1146,14 +1146,14 @@
           "stance": "bullish",
           "conviction": "low",
           "horizon": "multi-year / contingent on territorial reclaim",
-          "rationale": "Third scenario (not more or less likely than other two): Ukraine reclaims most lost territory convincingly enough that EU and maybe even NATO admit Ukraine — then Zelensky revered as founder of modern nation + great European. Explicitly uncertain timing/outcome.",
+          "rationale": "Third scenario (not more or less likely than other two): Ukraine reclaims most lost territory convincingly enough that EU and maybe even NATO admit Ukraine \u2014 then Zelensky revered as founder of modern nation + great European. Explicitly uncertain timing/outcome.",
           "stance_change": "new"
         },
         {
           "asset": "Russia and Ukraine demographic sustainability (war attrition)",
           "stance": "bearish",
           "conviction": "medium",
-          "horizon": "30–40 years / structural",
+          "horizon": "30\u201340 years / structural",
           "rationale": "Stalemate path: war continues until both Ukraine and Russia 'fail demographically,' which Zeihan says will happen the next 30 or 40 years regardless.",
           "stance_change": "new"
         }
@@ -1166,7 +1166,7 @@
       "date": "2026-09-17",
       "title": "Rick Rule: Unlocking the Power of Compounding in Resources and the Importance of Long-Term Thinking",
       "url": "https://www.youtube.com/watch?v=K4KXbsvpKyo",
-      "summary": "Whisper-base ASR (captured 2026-09-19): Competent Investor interview (host Tom Bodrovics; calls = guest Rick Rule only). Long-term: 40T on-balance + 120T off-balance liabilities guarantee USD purchasing-power decline (1970s replay; OMB: USD lost 75% purchasing power in the 1970s) — inflate away obligations rather than honest default (deflationary). Near-term dichotomy: if Treasury/FOMC allow rates +25bp, USD can strengthen vs CAD/EUR for ~3–6m as foreign funds flow in — moderates gold/silver/bullion prices; Rule calls that a 'blessing' to accumulate. Gold = first line of defense (savings); highest-quality gold equities (Franco-Nevada, Wheaton Precious, Agnico Eagle) = second line historically ~2x bullion in 1970s without ops risk; speculative juniors = third line only for durable practitioners who do the work. Copper/oil-gas/fertilizer: decades of underinvestment → commodities rationed by price within ~5yrs absent global depression (Resolution AZ copper in permitting 28yrs). Uranium: 'absolutely' more upside from ~$85 spot; utility too high; Japan restarts (~70% poll support) can hit price in 2027; term-market offtake lowers producer cost of capital over time; short-term equity psychosis criticized. Silver mine-deficit narrative = misunderstanding (unknowable above-ground + recycling + byproduct); precious-metals bulls led by gold then leadership shifts to silver when generalists validate — saw that Nov/Dec 2025 → Jan 2026. Canadian O&G: still loves producers; Carney needs O&G cash flows for fiscal plans; near-term Keystone to US; longer-term LNG Far East/Europe (current LNG premium accruing to US). Skipped: Battlebank/Rule Classroom/symposium plugs (company pitches ≠ desk calls); Sprott Physical Uranium Trust hypothetical premium sale (not a market call).",
+      "summary": "Whisper-base ASR (captured 2026-09-19): Competent Investor interview (host Tom Bodrovics; calls = guest Rick Rule only). Long-term: 40T on-balance + 120T off-balance liabilities guarantee USD purchasing-power decline (1970s replay; OMB: USD lost 75% purchasing power in the 1970s) \u2014 inflate away obligations rather than honest default (deflationary). Near-term dichotomy: if Treasury/FOMC allow rates +25bp, USD can strengthen vs CAD/EUR for ~3\u20136m as foreign funds flow in \u2014 moderates gold/silver/bullion prices; Rule calls that a 'blessing' to accumulate. Gold = first line of defense (savings); highest-quality gold equities (Franco-Nevada, Wheaton Precious, Agnico Eagle) = second line historically ~2x bullion in 1970s without ops risk; speculative juniors = third line only for durable practitioners who do the work. Copper/oil-gas/fertilizer: decades of underinvestment \u2192 commodities rationed by price within ~5yrs absent global depression (Resolution AZ copper in permitting 28yrs). Uranium: 'absolutely' more upside from ~$85 spot; utility too high; Japan restarts (~70% poll support) can hit price in 2027; term-market offtake lowers producer cost of capital over time; short-term equity psychosis criticized. Silver mine-deficit narrative = misunderstanding (unknowable above-ground + recycling + byproduct); precious-metals bulls led by gold then leadership shifts to silver when generalists validate \u2014 saw that Nov/Dec 2025 \u2192 Jan 2026. Canadian O&G: still loves producers; Carney needs O&G cash flows for fiscal plans; near-term Keystone to US; longer-term LNG Far East/Europe (current LNG premium accruing to US). Skipped: Battlebank/Rule Classroom/symposium plugs (company pitches \u2260 desk calls); Sprott Physical Uranium Trust hypothetical premium sale (not a market call).",
       "themes": [
         "USD purchasing-power decline / 1970s inflation replay",
         "gold as savings / first line of defense",
@@ -1191,7 +1191,7 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "3-6m",
-          "rationale": "If FOMC/Treasury allow rates +25bp, USD becomes relatively more attractive vs CAD/EUR; foreign funds flow in — 'easily' see USD appreciate vs other fiats over next ~6 months even while absolute purchasing power trends lower over 10 years.",
+          "rationale": "If FOMC/Treasury allow rates +25bp, USD becomes relatively more attractive vs CAD/EUR; foreign funds flow in \u2014 'easily' see USD appreciate vs other fiats over next ~6 months even while absolute purchasing power trends lower over 10 years.",
           "stance_change": "new"
         },
         {
@@ -1199,7 +1199,7 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "12m+ / 10yr",
-          "rationale": "First line of defense / savings asset keyed to 10yr USD purchasing-power path, not 30–90 day moves. Near-term rate/USD strength may moderate bullion 3–6m — Rule 'loves that' as chance to own more cheaper. Rejects prepper blow-up narrative; expects 1970s-style replay.",
+          "rationale": "First line of defense / savings asset keyed to 10yr USD purchasing-power path, not 30\u201390 day moves. Near-term rate/USD strength may moderate bullion 3\u20136m \u2014 Rule 'loves that' as chance to own more cheaper. Rejects prepper blow-up narrative; expects 1970s-style replay.",
           "stance_change": "reiterated"
         },
         {
@@ -1215,7 +1215,7 @@
           "stance": "mixed",
           "conviction": "medium",
           "horizon": "12m+",
-          "rationale": "Third line: likely outperform investment portfolio only 'in the hands of a good practitioner' with psychological/fiscal durability for 15–20%/week volatility and ops risk; speculative gains without work/risk 'not on offer'.",
+          "rationale": "Third line: likely outperform investment portfolio only 'in the hands of a good practitioner' with psychological/fiscal durability for 15\u201320%/week volatility and ops risk; speculative gains without work/risk 'not on offer'.",
           "stance_change": "new"
         },
         {
@@ -1231,7 +1231,7 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "~5yr",
-          "rationale": "Decades of underinvestment; cannot catch up with five years of spending. Absent synchronized global depression killing demand, copper will be 'rationed by price' ~5 years out. Resolution (AZ) cited: 3x world avg grade, infrastructure adjacent, in permitting 28 years. Baseline demand (incl. ~1B people gaining primary electricity over 20yrs) — not data-center hype.",
+          "rationale": "Decades of underinvestment; cannot catch up with five years of spending. Absent synchronized global depression killing demand, copper will be 'rationed by price' ~5 years out. Resolution (AZ) cited: 3x world avg grade, infrastructure adjacent, in permitting 28 years. Baseline demand (incl. ~1B people gaining primary electricity over 20yrs) \u2014 not data-center hype.",
           "stance_change": "new"
         },
         {
@@ -1239,15 +1239,15 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "multi-year",
-          "rationale": "Two–three decades underinvestment in productive capacity after 70s/80s overbuild; capital-intensive cyclical businesses cannot be fixed quickly. Geopolitical bloc competition for resources (China copying 1950s–70s Western playbook; Japan/Korea/Eurozone following) reinforces scarcity.",
+          "rationale": "Two\u2013three decades underinvestment in productive capacity after 70s/80s overbuild; capital-intensive cyclical businesses cannot be fixed quickly. Geopolitical bloc competition for resources (China copying 1950s\u201370s Western playbook; Japan/Korea/Eurozone following) reinforces scarcity.",
           "stance_change": "reiterated"
         },
         {
           "asset": "Uranium (commodity)",
           "stance": "bullish",
           "conviction": "high",
-          "horizon": "multi-year (Japan restarts → ~2027)",
-          "rationale": "'Absolutely' warrants more upside from ~$85 spot — 'utility associated with uranium is too high for the uranium price to stay here.' Fundamentals advance 'spectacular'; Japan restarts (poll ~70% positive) can impact 2027; global refueling + plant-life extensions; term offtake (TEPCO/Duke/Southern/CGN) lowers producer cost of capital over time. Near-term 3m/1yr not the point — compounding thesis.",
+          "horizon": "multi-year (Japan restarts \u2192 ~2027)",
+          "rationale": "'Absolutely' warrants more upside from ~$85 spot \u2014 'utility associated with uranium is too high for the uranium price to stay here.' Fundamentals advance 'spectacular'; Japan restarts (poll ~70% positive) can impact 2027; global refueling + plant-life extensions; term offtake (TEPCO/Duke/Southern/CGN) lowers producer cost of capital over time. Near-term 3m/1yr not the point \u2014 compounding thesis.",
           "stance_change": "reiterated"
         },
         {
@@ -1255,7 +1255,7 @@
           "stance": "bearish",
           "conviction": "medium",
           "horizon": "months",
-          "rationale": "Uranium 'wonderful place to be' but 'only thing wrong' is 'psychosis of the participants'; people expecting 500% escalations in a quarter 'need a psychologist.' Outlook extremely bright but does not match short-term speculative hopes. (Desk call on trader psychology/near-term equity hopes — not a company pitch.)",
+          "rationale": "Uranium 'wonderful place to be' but 'only thing wrong' is 'psychosis of the participants'; people expecting 500% escalations in a quarter 'need a psychologist.' Outlook extremely bright but does not match short-term speculative hopes. (Desk call on trader psychology/near-term equity hopes \u2014 not a company pitch.)",
           "stance_change": "reiterated"
         },
         {
@@ -1271,7 +1271,7 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "12m+ (generalist-validation dependent)",
-          "rationale": "Rejects persistent mine-production-deficit narrative as misnomer (unknowable above-ground inventories; recycling rises with price; mostly byproduct of Cu/Pb/Zn). Precious-metals bulls led by gold/fear; when generalists validate (physical ETF inflows), leadership shifts gold→silver — saw Nov/Dec 2025 into Jan 2026 explosion. History (late 70s, late 80s, 2000–06): silver often dramatically outperforms gold when generalists arrive. Timing/quantum of overperformance not forecast.",
+          "rationale": "Rejects persistent mine-production-deficit narrative as misnomer (unknowable above-ground inventories; recycling rises with price; mostly byproduct of Cu/Pb/Zn). Precious-metals bulls led by gold/fear; when generalists validate (physical ETF inflows), leadership shifts gold\u2192silver \u2014 saw Nov/Dec 2025 into Jan 2026 explosion. History (late 70s, late 80s, 2000\u201306): silver often dramatically outperforms gold when generalists arrive. Timing/quantum of overperformance not forecast.",
           "stance_change": "reiterated"
         },
         {
@@ -1279,7 +1279,7 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "12m+",
-          "rationale": "Prior 'love' for Canadian O&G intact. Carney 'can add and subtract' and needs O&G cash flows to finance fiscal plans despite anti-carbon stance. Near-term best fiscal move = Keystone to US market; longer-term diversify via LNG to Far East/Europe (today Canadian gas exits to US and LNG premium accrues to US producers — 'insane' from Canadian view).",
+          "rationale": "Prior 'love' for Canadian O&G intact. Carney 'can add and subtract' and needs O&G cash flows to finance fiscal plans despite anti-carbon stance. Near-term best fiscal move = Keystone to US market; longer-term diversify via LNG to Far East/Europe (today Canadian gas exits to US and LNG premium accrues to US producers \u2014 'insane' from Canadian view).",
           "stance_change": "reiterated"
         }
       ]
@@ -1291,7 +1291,7 @@
       "date": "2026-09-16",
       "title": "The Democrats Are Screwed, Too || Peter Zeihan",
       "url": "https://www.youtube.com/watch?v=IMRHLq6hiiI",
-      "summary": "Whisper-base ASR (captured 2026-09-19): Follow-on to prior Trump critique — now 'take the whip to the Democrats.' US first-past-the-post: GOP strategy = most reliable (not largest) coalition of issue factions (business/military/abortion/fiscal don't overlap) — historically wins despite fewer voters; NOW failing under Trump who 'eviscerate[d] four of the main factions' — unclear enough left 'to vote for him to win anything ever again.' Dems = full big-tent / widest net — but includes mutually opposed factions (greens vs unions; coastal 'ivory tower' vs youth) so they can't talk policy without fracturing turnout. Technocrat/issues candidates (Hillary/Dukakis) lose; charisma paper-over candidates (Obama/Bill Clinton) win. This round two Dem problems: (1) no charisma, midterms, leaderless/rudderless/policy-less since Biden — program no more sophisticated than 'we hate Trump,' which failed last couple times; (2) big tent failed — Trump pulled Dem vote banks: under-30, Hispanics, organized labor split ~down middle (50–60y Dem banks). Only real hope for meaningful shift: old-school anti-MAGA Republicans stay home or act as swing voters → possible blowout in redistricted places (even chance). Even then: won't get 2/3 Senate blue → no impeachment; hung Congress; 'another two years of what we've had this last year.' No equity tickers called.",
+      "summary": "Whisper-base ASR (captured 2026-09-19): Follow-on to prior Trump critique \u2014 now 'take the whip to the Democrats.' US first-past-the-post: GOP strategy = most reliable (not largest) coalition of issue factions (business/military/abortion/fiscal don't overlap) \u2014 historically wins despite fewer voters; NOW failing under Trump who 'eviscerate[d] four of the main factions' \u2014 unclear enough left 'to vote for him to win anything ever again.' Dems = full big-tent / widest net \u2014 but includes mutually opposed factions (greens vs unions; coastal 'ivory tower' vs youth) so they can't talk policy without fracturing turnout. Technocrat/issues candidates (Hillary/Dukakis) lose; charisma paper-over candidates (Obama/Bill Clinton) win. This round two Dem problems: (1) no charisma, midterms, leaderless/rudderless/policy-less since Biden \u2014 program no more sophisticated than 'we hate Trump,' which failed last couple times; (2) big tent failed \u2014 Trump pulled Dem vote banks: under-30, Hispanics, organized labor split ~down middle (50\u201360y Dem banks). Only real hope for meaningful shift: old-school anti-MAGA Republicans stay home or act as swing voters \u2192 possible blowout in redistricted places (even chance). Even then: won't get 2/3 Senate blue \u2192 no impeachment; hung Congress; 'another two years of what we've had this last year.' No equity tickers called.",
       "themes": [
         "Democratic Party big-tent coalition failure",
         "Republican reliable-coalition strategy under Trump",
@@ -1314,7 +1314,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "this midterm cycle",
-          "rationale": "No one with charisma; midterms without a president/presidential candidate to rally behind; since Biden (esp. after leaving) Dems 'leader-less, rudder-less, and policy-less' with a program no more sophisticated than 'we hate Trump' — which 'wasn't enough the last couple of times.'",
+          "rationale": "No one with charisma; midterms without a president/presidential candidate to rally behind; since Biden (esp. after leaving) Dems 'leader-less, rudder-less, and policy-less' with a program no more sophisticated than 'we hate Trump' \u2014 which 'wasn't enough the last couple of times.'",
           "stance_change": "new"
         },
         {
@@ -1322,7 +1322,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "near-term / multi-cycle",
-          "rationale": "Last election under-30, Hispanics, and organized labor each split almost right down the middle — three Dem vote banks going back 50–60 years eroded by Trump pulls.",
+          "rationale": "Last election under-30, Hispanics, and organized labor each split almost right down the middle \u2014 three Dem vote banks going back 50\u201360 years eroded by Trump pulls.",
           "stance_change": "new"
         },
         {
@@ -1330,7 +1330,7 @@
           "stance": "bearish",
           "conviction": "medium",
           "horizon": "multi-cycle under Trump",
-          "rationale": "Classic GOP reliable-faction coalition now failing because Trump 'gone out of his way to eviscerate four of the main factions' — 'not clear that there's enough left to vote for him to win anything ever again.'",
+          "rationale": "Classic GOP reliable-faction coalition now failing because Trump 'gone out of his way to eviscerate four of the main factions' \u2014 'not clear that there's enough left to vote for him to win anything ever again.'",
           "stance_change": "new"
         },
         {
@@ -1338,7 +1338,7 @@
           "stance": "mixed",
           "conviction": "medium",
           "horizon": "this midterm cycle",
-          "rationale": "Only real hope Zeihan sees for a meaningful shift: old-school Republicans who don't like MAGA stay home or act as swing voters → possible blowout in redistricted places; he gives this scenario 'an even chance' — contingent, not base case certainty.",
+          "rationale": "Only real hope Zeihan sees for a meaningful shift: old-school Republicans who don't like MAGA stay home or act as swing voters \u2192 possible blowout in redistricted places; he gives this scenario 'an even chance' \u2014 contingent, not base case certainty.",
           "stance_change": "new"
         },
         {
@@ -1346,7 +1346,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "next ~2 years",
-          "rationale": "Even in the even-chance blowout scenario, 'you're still not going to get two thirds of the Senate to be blue' — without that Congress stays hung, 'the president cannot be impeached,' and 'another two years of what we've had this last year.'",
+          "rationale": "Even in the even-chance blowout scenario, 'you're still not going to get two thirds of the Senate to be blue' \u2014 without that Congress stays hung, 'the president cannot be impeached,' and 'another two years of what we've had this last year.'",
           "stance_change": "new"
         }
       ]
@@ -1358,10 +1358,10 @@
       "date": "2026-09-16",
       "title": "Doomberg: 'Mad Max Style' Great Reset, $150 Oil & 'On The Tipping Point' in Middle East",
       "url": "https://www.youtube.com/watch?v=rz8mwV7lJ8s",
-      "summary": "Whisper-base ASR (captured 2026-09-19): Palisades Gold Radio interview (host Stijn Schmitz; calls = guest Doomberg only). FLIP vs 2026-05-08 'war basically over' / oil peace-trade bearish: Houthi strikes damaged Saudi East-West pipeline (~Red Sea egress artery that had dampened Hormuz-closure shock); Saudis postponed European September loadings (Bloomberg confirmatory). Doomberg: Hormuz alone was 'not enough' for the crisis many (incl. them) feared — markets told them that — but shutting Red Sea egress pushes an already-stressed system into the red; Brent ~$108–110 near demand-destruction; 'all bets are off' scenario from their Apr/May 'After Hormuz' Doom Zoom now looking operative; even they (previously dubious of $150 hyper-bull / manipulation claims) now in the 'meaningful crisis' camp if the valve stays shut. Deeper risk = metastable Arab Gulf states / House of Saud common-knowledge tipping point (Houthi roll-up of Saudi-backed Yemeni territory; Polymarket underpricing collapse odds ~3%→~25% hunch; MBS flee ≠ base case but long-shot with outsized consequence). Refined products: diesel ~$6.50/gal flyover US; crack spreads exploding; India refining at 108% nameplate (fire/sabotage risk); blowing Russian refineries perversely ceilings crude (demand destruction via bombs) while diesel soars — spread is two-armed. Pain-tolerance contest: West/US consumers << Iran/Houthis; Trump export-diesel diplomacy only lasts so long pre-midterms. Ukraine: Putin ordered energy-infrastructure devastation; US intel warned; Trump 'refinery truce' Truth Social dubious given overnight Russian-refinery hit + pattern recognition → megastrike (power/heat/water) teed up. Project Turtle / fortress North America option 'looks less silly every day' vs summer; US–Canada trade war ill-timed / unlikely to continue — Turtle fails if Carney cuts ~4–5 Mbd exports to US. China = 'opaque of demand'; Shanghai premiums positive → back in market; Xi Washington trip odds not certain / may cancel. Watching Alberta NG crown-corp vs TC Energy monopoly story (not a directional call yet). Skipped: host questions; Palisades Gold Corp / Made in America Gold ad reads (issuer pitches ≠ desk); Substack plug; disclaimer.",
+      "summary": "Whisper-base ASR (captured 2026-09-19): Palisades Gold Radio interview (host Stijn Schmitz; calls = guest Doomberg only). FLIP vs 2026-05-08 'war basically over' / oil peace-trade bearish: Houthi strikes damaged Saudi East-West pipeline (~Red Sea egress artery that had dampened Hormuz-closure shock); Saudis postponed European September loadings (Bloomberg confirmatory). Doomberg: Hormuz alone was 'not enough' for the crisis many (incl. them) feared \u2014 markets told them that \u2014 but shutting Red Sea egress pushes an already-stressed system into the red; Brent ~$108\u2013110 near demand-destruction; 'all bets are off' scenario from their Apr/May 'After Hormuz' Doom Zoom now looking operative; even they (previously dubious of $150 hyper-bull / manipulation claims) now in the 'meaningful crisis' camp if the valve stays shut. Deeper risk = metastable Arab Gulf states / House of Saud common-knowledge tipping point (Houthi roll-up of Saudi-backed Yemeni territory; Polymarket underpricing collapse odds ~3%\u2192~25% hunch; MBS flee \u2260 base case but long-shot with outsized consequence). Refined products: diesel ~$6.50/gal flyover US; crack spreads exploding; India refining at 108% nameplate (fire/sabotage risk); blowing Russian refineries perversely ceilings crude (demand destruction via bombs) while diesel soars \u2014 spread is two-armed. Pain-tolerance contest: West/US consumers << Iran/Houthis; Trump export-diesel diplomacy only lasts so long pre-midterms. Ukraine: Putin ordered energy-infrastructure devastation; US intel warned; Trump 'refinery truce' Truth Social dubious given overnight Russian-refinery hit + pattern recognition \u2192 megastrike (power/heat/water) teed up. Project Turtle / fortress North America option 'looks less silly every day' vs summer; US\u2013Canada trade war ill-timed / unlikely to continue \u2014 Turtle fails if Carney cuts ~4\u20135 Mbd exports to US. China = 'opaque of demand'; Shanghai premiums positive \u2192 back in market; Xi Washington trip odds not certain / may cancel. Watching Alberta NG crown-corp vs TC Energy monopoly story (not a directional call yet). Skipped: host questions; Palisades Gold Corp / Made in America Gold ad reads (issuer pitches \u2260 desk); Substack plug; disclaimer.",
       "themes": [
         "Saudi East-West pipeline / Red Sea crude egress crisis",
-        "Hormuz vs Red Sea — what actually prices oil",
+        "Hormuz vs Red Sea \u2014 what actually prices oil",
         "House of Saud / MBS metastable tipping point",
         "Brent near demand-destruction / $150 Mad Max tail",
         "diesel crack-spread explosion / refining stress",
@@ -1369,7 +1369,7 @@
         "Iran/Houthi vs West pain-tolerance contest",
         "Russia Ukraine energy megastrike",
         "Project Turtle / fortress North America revival",
-        "US–Canada energy interdependence / Carney",
+        "US\u2013Canada energy interdependence / Carney",
         "China opaque-of-demand / Shanghai premiums",
         "Alberta natural gas / TC Energy crown-corp watch"
       ],
@@ -1378,16 +1378,16 @@
           "asset": "Crude oil / Brent (global war-premium)",
           "stance": "bullish",
           "conviction": "high",
-          "horizon": "near-term weeks–months / crisis path",
-          "rationale": "FLIP vs 2026-05-08 peace-trade bearish ('war basically over'): East-West pipeline damage + Saudi EU September loading postponements push stressed post-Hormuz system into red; Brent ~$108–110 near demand-destruction; Apr/May 'all bets are off if Red Sea egress shut' axiom now looking operative — previously dubious of $150 hyper-bull, now in meaningful-crisis camp if valve stays shut.",
+          "horizon": "near-term weeks\u2013months / crisis path",
+          "rationale": "FLIP vs 2026-05-08 peace-trade bearish ('war basically over'): East-West pipeline damage + Saudi EU September loading postponements push stressed post-Hormuz system into red; Brent ~$108\u2013110 near demand-destruction; Apr/May 'all bets are off if Red Sea egress shut' axiom now looking operative \u2014 previously dubious of $150 hyper-bull, now in meaningful-crisis camp if valve stays shut.",
           "stance_change": "flipped"
         },
         {
-          "asset": "Iran war / Hormuz–Red Sea conflict risk",
+          "asset": "Iran war / Hormuz\u2013Red Sea conflict risk",
           "stance": "bullish",
           "conviction": "high",
           "horizon": "near-term / structural Middle East",
-          "rationale": "FLIP vs 2026-05-08 conflict-risk bearish: Hormuz closure alone was 'not enough' (markets told them that; they own the surprise), but Houthi precision hits on undefended East-West pipeline + ability to re-hit make repair economics irrelevant — 'all bets are looking to be off now.'",
+          "rationale": "FLIP vs 2026-05-08 conflict-risk bearish: Hormuz closure alone was 'not enough' (markets told them that; they own the surprise), but Houthi precision hits on undefended East-West pipeline + ability to re-hit make repair economics irrelevant \u2014 'all bets are looking to be off now.'",
           "stance_change": "flipped"
         },
         {
@@ -1395,7 +1395,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "near-term repair window + re-attack risk",
-          "rationale": "Primary new Middle East egress artery to China/Red Sea damaged; no air defense; Houthis demonstrated precision capability — cost/time to repair >> cost to destroy again; Bloomberg: Saudis informed European customers September loadings postponed.",
+          "rationale": "Primary new Middle East egress artery to China/Red Sea damaged; no air defense; Houthis demonstrated precision capability \u2014 cost/time to repair >> cost to destroy again; Bloomberg: Saudis informed European customers September loadings postponed.",
           "stance_change": "new"
         },
         {
@@ -1411,7 +1411,7 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "near-term",
-          "rationale": "Flyover US diesel ~$6.50/gal (premium gasoline ~$5.90); crack spreads exploding; India refining at 108% nameplate — fire/deferred-maintenance risk; 'tremendous / unparalleled' tightness in products; farmers on razor's edge into harvest.",
+          "rationale": "Flyover US diesel ~$6.50/gal (premium gasoline ~$5.90); crack spreads exploding; India refining at 108% nameplate \u2014 fire/deferred-maintenance risk; 'tremendous / unparalleled' tightness in products; farmers on razor's edge into harvest.",
           "stance_change": "new"
         },
         {
@@ -1419,7 +1419,7 @@
           "stance": "bearish",
           "conviction": "medium",
           "horizon": "while refinery destruction continues",
-          "rationale": "Perverse mechanics: only customers for crude are refineries — blowing Russian refineries = demand destruction via bombs, partially offsets East-West crude-supply loss; oil gets cheaper relative while diesel gets more expensive (two-armed spread). Not a peace-trade; a products-vs-crude nuance inside the crisis.",
+          "rationale": "Perverse mechanics: only customers for crude are refineries \u2014 blowing Russian refineries = demand destruction via bombs, partially offsets East-West crude-supply loss; oil gets cheaper relative while diesel gets more expensive (two-armed spread). Not a peace-trade; a products-vs-crude nuance inside the crisis.",
           "stance_change": "new"
         },
         {
@@ -1435,15 +1435,15 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "contingent crisis / multi-year",
-          "rationale": "March Project Turtle (close up NA: oil/gas/coal/power/nuke/fertilizer/ports) 'looked silly over the summer' as worst-case didn't envelop — 'less silly every day' as Middle East + Ukraine spiral; option exists only if Canada–US energy relationship stays fluent.",
+          "rationale": "March Project Turtle (close up NA: oil/gas/coal/power/nuke/fertilizer/ports) 'looked silly over the summer' as worst-case didn't envelop \u2014 'less silly every day' as Middle East + Ukraine spiral; option exists only if Canada\u2013US energy relationship stays fluent.",
           "stance_change": "reiterated"
         },
         {
-          "asset": "US–Canada energy trade / Canadian crude exports to US",
+          "asset": "US\u2013Canada energy trade / Canadian crude exports to US",
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "near-term policy path",
-          "rationale": "Current US–Canada trade war 'very ill-timed and therefore in our view unlikely to continue'; ~4–5 Mbd Canadian exports to US are key element of US energy dominance — Turtle fails if Carney cuts them. Canadian anti-Trump hysteria flagged as dangerous for Canadians (Trump temporary).",
+          "rationale": "Current US\u2013Canada trade war 'very ill-timed and therefore in our view unlikely to continue'; ~4\u20135 Mbd Canadian exports to US are key element of US energy dominance \u2014 Turtle fails if Carney cuts them. Canadian anti-Trump hysteria flagged as dangerous for Canadians (Trump temporary).",
           "stance_change": "new"
         },
         {
@@ -1451,15 +1451,15 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "near-term weeks",
-          "rationale": "Shanghai premiums positive last week = strong sign China back in market; proves China can control oil price as 'opaque of demand'; may be stockpiling ahead of Houthi move or signaling Trump ahead of alleged Xi Washington visit (trip odds not certain — may cancel).",
+          "rationale": "Shanghai premiums positive last week = strong sign China back in market; proves China can control oil price as 'opaque of demand'; may be stockpiling ahead of Houthi move or signaling Trump ahead of alleged Xi Washington visit (trip odds not certain \u2014 may cancel).",
           "stance_change": "new"
         },
         {
           "asset": "Ukraine energy infrastructure / grid & heat",
           "stance": "bearish",
           "conviction": "high",
-          "horizon": "immediate days–weeks",
-          "rationale": "Russian Defense Ministry publicly ordered devastation of Ukraine energy infrastructure; US intel warned of ~14-day campaign; Trump 'refinery truce' Truth Social highly dubious given overnight Russian-refinery hit after Zelensky was told to stop — pattern recognition → megastrike on electricity/heat/water 'teed up'; Doomberg would be shocked if it didn't begin imminently.",
+          "horizon": "immediate days\u2013weeks",
+          "rationale": "Russian Defense Ministry publicly ordered devastation of Ukraine energy infrastructure; US intel warned of ~14-day campaign; Trump 'refinery truce' Truth Social highly dubious given overnight Russian-refinery hit after Zelensky was told to stop \u2014 pattern recognition \u2192 megastrike on electricity/heat/water 'teed up'; Doomberg would be shocked if it didn't begin imminently.",
           "stance_change": "new"
         },
         {
@@ -1479,7 +1479,7 @@
       "date": "2026-09-16",
       "title": "Credit Stress Is Here And The Only Place Left To Hide Is Precious Metals | Danielle DiMartino Booth",
       "url": "https://www.youtube.com/watch?v=_haB1Y5xh1k",
-      "summary": "Whisper-base ASR (captured 2026-09-19): Kitco NEWS FOMC-day interview (host Jeremy Szafron; calls = guest Danielle DiMartino Booth / QI Research only). Warsh delivered unanimous +25bp hike to 3.75–4% (first in 3yrs) after Jackson Hole forward guidance hooked to core PCE staying above 2%; characterizing it as removing a 'dose of accommodation' (not tightening) scared markets — chair gives no dot but effectively telegraphed another. Booth: decision was credibility payment on Jackson Hole more than fresh data; Oct 28 hike six days before midterms would be a 'suicide mission' (left hanging; Dec still live with three payrolls). Dot plot: one more hike this year, none in 2027, four members want 2027 cuts. Real retail weak (unit sales down; nominal sales up on price; airlines cutting capacity). Core inflation directionally better but Warsh cites oil pass-through. Fed vs Main Street split: small-business bankruptcies +64% YoY through Aug; 200+ company closures/month for five months; private-credit defaults record 6.3% with PIK/maturity extensions that usually end in bankruptcy — conditions not 'accommodative' for those borrowers. Retailers (Dollar General, Home Depot) can't pass freight/energy/diesel — margin squeeze → layoffs cycle. Households hit via credit cards, cash-out refis at higher rates (57% of Q2 cash-out refis accepted higher mortgage rate), 102-month auto norms; WTI not below $100; data centers lifting utility bills. Gold's >$130 reverse = likely quick reaction/margin calls; whenever credit stress + high rates, 'the only place that you can hide with any certainty is precious metals.' BLS seasonal adjustments 'clearly broken' vs ADP/NFIB/job postings/NY Fed household perceptions. If Fed erred, market itself breaks first via top-of-K high-income spending slowdown. Short-end T-bill-heavy Treasury financing makes Fed hikes raise Uncle Sam's interest bill (already ~18.5% of revenue). Skipped: host Jeremy framing/closing editorial; Warsh podium quotes as Booth calls; Bessent≠Bloom; no CAT basket.",
+      "summary": "Whisper-base ASR (captured 2026-09-19): Kitco NEWS FOMC-day interview (host Jeremy Szafron; calls = guest Danielle DiMartino Booth / QI Research only). Warsh delivered unanimous +25bp hike to 3.75\u20134% (first in 3yrs) after Jackson Hole forward guidance hooked to core PCE staying above 2%; characterizing it as removing a 'dose of accommodation' (not tightening) scared markets \u2014 chair gives no dot but effectively telegraphed another. Booth: decision was credibility payment on Jackson Hole more than fresh data; Oct 28 hike six days before midterms would be a 'suicide mission' (left hanging; Dec still live with three payrolls). Dot plot: one more hike this year, none in 2027, four members want 2027 cuts. Real retail weak (unit sales down; nominal sales up on price; airlines cutting capacity). Core inflation directionally better but Warsh cites oil pass-through. Fed vs Main Street split: small-business bankruptcies +64% YoY through Aug; 200+ company closures/month for five months; private-credit defaults record 6.3% with PIK/maturity extensions that usually end in bankruptcy \u2014 conditions not 'accommodative' for those borrowers. Retailers (Dollar General, Home Depot) can't pass freight/energy/diesel \u2014 margin squeeze \u2192 layoffs cycle. Households hit via credit cards, cash-out refis at higher rates (57% of Q2 cash-out refis accepted higher mortgage rate), 102-month auto norms; WTI not below $100; data centers lifting utility bills. Gold's >$130 reverse = likely quick reaction/margin calls; whenever credit stress + high rates, 'the only place that you can hide with any certainty is precious metals.' BLS seasonal adjustments 'clearly broken' vs ADP/NFIB/job postings/NY Fed household perceptions. If Fed erred, market itself breaks first via top-of-K high-income spending slowdown. Short-end T-bill-heavy Treasury financing makes Fed hikes raise Uncle Sam's interest bill (already ~18.5% of revenue). Skipped: host Jeremy framing/closing editorial; Warsh podium quotes as Booth calls; Bessent\u2260Bloom; no CAT basket.",
       "themes": [
         "Warsh FOMC hike / dose of accommodation",
         "Jackson Hole core-PCE credibility",
@@ -1514,7 +1514,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "months",
-          "rationale": "Private-credit defaults at record 6.3%; ~45% of Aug stress events are maturity extensions; nearly half of last-year defaults involve borrowers stopping cash interest (PIK). Extensions buy time; S&P/Moody's/Fitch say stopgaps more often land in bankruptcy — refinance at these rates often impossible.",
+          "rationale": "Private-credit defaults at record 6.3%; ~45% of Aug stress events are maturity extensions; nearly half of last-year defaults involve borrowers stopping cash interest (PIK). Extensions buy time; S&P/Moody's/Fitch say stopgaps more often land in bankruptcy \u2014 refinance at these rates often impossible.",
           "stance_change": "reiterated"
         },
         {
@@ -1522,7 +1522,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "near-term",
-          "rationale": "Small-business bankruptcies +64% YoY through August; >200 company closures/month for five months running; hours cut; many cannot refinance — only bankruptcy or close doors. Rejects Warsh 'accommodative' label for these borrowers.",
+          "rationale": "Small-business bankruptcies +64% YoY through August; >200 company closures/month for five months running; hours cut; many cannot refinance \u2014 only bankruptcy or close doors. Rejects Warsh 'accommodative' label for these borrowers.",
           "stance_change": "new"
         },
         {
@@ -1530,7 +1530,7 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "near-term",
-          "rationale": "WTI not dipping below $100; energy costs 'prohibitively high'; data centers continue raising household utility bills — one blow after another alongside more expensive debt. Warsh also flagged oil pass-through to broader inflation.",
+          "rationale": "WTI not dipping below $100; energy costs 'prohibitively high'; data centers continue raising household utility bills \u2014 one blow after another alongside more expensive debt. Warsh also flagged oil pass-through to broader inflation.",
           "stance_change": "reiterated"
         },
         {
@@ -1538,7 +1538,7 @@
           "stance": "bearish",
           "conviction": "medium",
           "horizon": "near-term",
-          "rationale": "Nominal retail sales up on price, not units; unit sales falling; United/American pulling capacity as ticket volume drops (profits from full-fare business seats). Dollar General/Home Depot cannot fully pass freight/energy/diesel — margin squeeze → cost cuts/layoffs cycle.",
+          "rationale": "Nominal retail sales up on price, not units; unit sales falling; United/American pulling capacity as ticket volume drops (profits from full-fare business seats). Dollar General/Home Depot cannot fully pass freight/energy/diesel \u2014 margin squeeze \u2192 cost cuts/layoffs cycle.",
           "stance_change": "new"
         },
         {
@@ -1546,15 +1546,15 @@
           "stance": "bearish",
           "conviction": "medium",
           "horizon": "near-term through Dec FOMC",
-          "rationale": "If Fed mistook the trend, 'the market itself would certainly be the biggest thing to break' — high-income consumer sentiment already softening; if top-of-K slows spending, 'Katie bar the door' because concentrated wealth/spending has held up the economy.",
+          "rationale": "If Fed mistook the trend, 'the market itself would certainly be the biggest thing to break' \u2014 high-income consumer sentiment already softening; if top-of-K slows spending, 'Katie bar the door' because concentrated wealth/spending has held up the economy.",
           "stance_change": "new"
         },
         {
           "asset": "10Y UST / long-end bond market",
           "stance": "bearish",
           "conviction": "medium",
-          "horizon": "weeks–months",
-          "rationale": "10Y back near 5% after trading 4.94% on hopes of a more dovish FOMC; markets read Warsh as less 'interested' in Treasury/Bessent long-end rate management than prior meetings — bond market 'fell out of bed.'",
+          "horizon": "weeks\u2013months",
+          "rationale": "10Y back near 5% after trading 4.94% on hopes of a more dovish FOMC; markets read Warsh as less 'interested' in Treasury/Bessent long-end rate management than prior meetings \u2014 bond market 'fell out of bed.'",
           "stance_change": "reiterated"
         },
         {
@@ -1562,7 +1562,7 @@
           "stance": "bearish",
           "conviction": "medium",
           "horizon": "ongoing while short-end heavy",
-          "rationale": "Fighting inflation with rate hikes raises Uncle Sam's interest bill (~18.5% of revenue) because Treasury is borrowing closer to the bill rate than the 30Y — short end directly hit by Fed policy.",
+          "rationale": "Fighting inflation with rate hikes raises Uncle Sam's interest bill (~18.5% of revenue) because Treasury is borrowing closer to the bill rate than the 30Y \u2014 short end directly hit by Fed policy.",
           "stance_change": "new"
         },
         {
@@ -1582,7 +1582,7 @@
       "date": "2026-09-15",
       "title": "What Does Life After Donald Trump Look Like? || Peter Zeihan",
       "url": "https://www.youtube.com/watch?v=W2lHnw6ofhE",
-      "summary": "Whisper-base ASR (captured 2026-09-19): Patreon Q — assume Trump gone tomorrow, then what? Leaves only via term-end or death (won't soft-relinquish like Biden). Least-competent cabinet (esp. natsec); JD Vance has no independent following — succession requires Trump day-to-day campaigning for heir while alive (won't while president). Third-term: disaster; SCOTUS would rule out. Core: GOP purged law-and-order/business/natsec/fiscal factions — what's left lacks votes for a real election; party of Trump ≠ party of Vance/Rubio. MAGA popularity doesn't translate; endorsement = loyalty test only (Mace/Cornyn/Hawley). Closed recruitment+policy arms → no policy papers/candidate training → 'absolutely unelectable' in general (if Dems offer a choice). Parallel to Xi (100k+ purge; no governance structure; Xi thought masturbation; broken vision) and Putin (KGB+crime hollow state; elite <120→inner 5; Wagner march proved hollowness). Personalist pattern: no institutions to outlast leader → succession change 'relatively catastrophic.' No equity tickers called.",
+      "summary": "Whisper-base ASR (captured 2026-09-19): Patreon Q \u2014 assume Trump gone tomorrow, then what? Leaves only via term-end or death (won't soft-relinquish like Biden). Least-competent cabinet (esp. natsec); JD Vance has no independent following \u2014 succession requires Trump day-to-day campaigning for heir while alive (won't while president). Third-term: disaster; SCOTUS would rule out. Core: GOP purged law-and-order/business/natsec/fiscal factions \u2014 what's left lacks votes for a real election; party of Trump \u2260 party of Vance/Rubio. MAGA popularity doesn't translate; endorsement = loyalty test only (Mace/Cornyn/Hawley). Closed recruitment+policy arms \u2192 no policy papers/candidate training \u2192 'absolutely unelectable' in general (if Dems offer a choice). Parallel to Xi (100k+ purge; no governance structure; Xi thought masturbation; broken vision) and Putin (KGB+crime hollow state; elite <120\u2192inner 5; Wagner march proved hollowness). Personalist pattern: no institutions to outlast leader \u2192 succession change 'relatively catastrophic.' No equity tickers called.",
       "themes": [
         "Trump succession vacuum / no designated heir",
         "GOP coalition purge / post-Trump unelectability",
@@ -1606,7 +1606,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "through next federal election cycle",
-          "rationale": "JD Vance = junior senator, mid-sized state, 'no independent following'; only succession path is Trump making someone the actual successor and campaigning day-to-day while alive — 'not going to happen while he's still president.' Bottom line: 'Trump has no successor and he doesn't have a plan to have one.'",
+          "rationale": "JD Vance = junior senator, mid-sized state, 'no independent following'; only succession path is Trump making someone the actual successor and campaigning day-to-day while alive \u2014 'not going to happen while he's still president.' Bottom line: 'Trump has no successor and he doesn't have a plan to have one.'",
           "stance_change": "new"
         },
         {
@@ -1614,7 +1614,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "structural / multi-cycle",
-          "rationale": "Out of power Trump closed recruitment arm then policy arm so 'no independent ideas' and recruitment = personal loyalty only. Party 'no longer generates policy papers or trains candidates or looks for candidates' — only magical endorsement based on perceived loyalty (Mace/Cornyn/Hawley-style one-issue purge).",
+          "rationale": "Out of power Trump closed recruitment arm then policy arm so 'no independent ideas' and recruitment = personal loyalty only. Party 'no longer generates policy papers or trains candidates or looks for candidates' \u2014 only magical endorsement based on perceived loyalty (Mace/Cornyn/Hawley-style one-issue purge).",
           "stance_change": "new"
         },
         {
@@ -1622,7 +1622,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "next general election (contingent on Dem option)",
-          "rationale": "Trump MAGA popularity 'does not translate to other candidates'; endorsement matters but nothing else. Fast-forward: GOP 'absolutely unelectable' beyond primaries — 'I don't think that's something that what he has set up can do' in a general. Caveat: fully true only if Dems offer a choosable option (deferred to other video).",
+          "rationale": "Trump MAGA popularity 'does not translate to other candidates'; endorsement matters but nothing else. Fast-forward: GOP 'absolutely unelectable' beyond primaries \u2014 'I don't think that's something that what he has set up can do' in a general. Caveat: fully true only if Dems offer a choosable option (deferred to other video).",
           "stance_change": "new"
         },
         {
@@ -1630,7 +1630,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "near-term / through Trump tenure",
-          "rationale": "'Least competent cabinet we've ever had' esp. national security; loyalty-catering not competence. Parallel to Xi path = 'complete collapse of decision-making and governing capacity' — US lacks even China's (broken) bureaucratic vision for local officials to execute.",
+          "rationale": "'Least competent cabinet we've ever had' esp. national security; loyalty-catering not competence. Parallel to Xi path = 'complete collapse of decision-making and governing capacity' \u2014 US lacks even China's (broken) bureaucratic vision for local officials to execute.",
           "stance_change": "new"
         },
         {
@@ -1638,7 +1638,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "structural under Xi",
-          "rationale": "Broad purge (>100k) of regional pols/bureaucracy/media/academia for personal loyalty; last good advisor disposed ~8y ago; Xi locked in writing 'Xi Jinping thought'; little governance structure left — joint-chiefs equiv = Xi + inquisitor; smallest cabinet ever. Has a vision, but one that 'will lead them into broken hell.'",
+          "rationale": "Broad purge (>100k) of regional pols/bureaucracy/media/academia for personal loyalty; last good advisor disposed ~8y ago; Xi locked in writing 'Xi Jinping thought'; little governance structure left \u2014 joint-chiefs equiv = Xi + inquisitor; smallest cabinet ever. Has a vision, but one that 'will lead them into broken hell.'",
           "stance_change": "new"
         },
         {
@@ -1646,7 +1646,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "structural / war-contingent",
-          "rationale": "State hollow at top: intel+organized-crime (Tambov/St. Petersburg) alliance; normal statehood tools unavailable. Elite <120 at Ukraine-war start, shrinking, can't onboard; inner circle ~5 with only 2 competent. Wagner/Prigozhin march on Moscow (Rostov→Moscow, no one stopped him) showed hollowness. Stability-for-no-politics deal held until Ukraine 'turning south this year.'",
+          "rationale": "State hollow at top: intel+organized-crime (Tambov/St. Petersburg) alliance; normal statehood tools unavailable. Elite <120 at Ukraine-war start, shrinking, can't onboard; inner circle ~5 with only 2 competent. Wagner/Prigozhin march on Moscow (Rostov\u2192Moscow, no one stopped him) showed hollowness. Stability-for-no-politics deal held until Ukraine 'turning south this year.'",
           "stance_change": "new"
         },
         {
@@ -1654,7 +1654,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "on leadership change",
-          "rationale": "Putin/Xi/Trump 'not built up any institution to outlast them' — governance is them; when change comes 'expect that change to be relatively catastrophic' / 'it'll go quick and it'll go completely.' Pattern also noted in parts of LatAm and Turkey.",
+          "rationale": "Putin/Xi/Trump 'not built up any institution to outlast them' \u2014 governance is them; when change comes 'expect that change to be relatively catastrophic' / 'it'll go quick and it'll go completely.' Pattern also noted in parts of LatAm and Turkey.",
           "stance_change": "new"
         }
       ]
@@ -1666,7 +1666,7 @@
       "date": "2026-09-14",
       "title": "Medium-to-long term thoughts on LT USTs, etc.",
       "url": "https://www.youtube.com/watch?v=DYnXTKFSg18",
-      "summary": "Whisper-base ASR (captured 2026-09-19; spoken ~Fri 2026-09-11 / upload 2026-09-14). Solo FFTT Q&A (Luke Gromen only). TLT/long Treasuries: gun-to-head 'better buy here on a nominal basis' (Bianco/McQuarrie: rolling 10y nominal UST returns worst in 233yrs) — but until US debt/GDP devalued ~120–125% → 70–80% via dollar devaluation, UST not sustainable without negative real rates; on a real basis does NOT like TLT — 'much rather own gold or Bitcoin as my duration.' 3–5y real-vs-nominal distinction critical. Rejects 'kill global economy / force long rates lower via crisis then term out' plan as failing spectacularly: Saudi exploring $8B USD debt (operating costs after Gulf damage), Japan selling Treasuries to defend yen, hyperscalers selling long bonds — all compete with Bessent as sellers; crush stocks → consumer spending (net cap gains + taxable IRA ~200% of annual consumer-spending growth; 2/3 GDP) can't rise; 4% on $40T debt → deficit blows out; long Western sovereign yields go higher (already seeing). Healthcare-AI cost-cut ledger: HC 18% GDP / biggest employer 38 states → cheaper care = unemployment/mortgage stress (Obama-era caution). OPEC physical-gold settlement: wait for Gulf BOP surplus return (war damage → deficits; gold selling when war/oil spiked); more bullish when oil-exporter surpluses again bid gold. Extreme shipping rates: secularly inflationary rest of 2026 into H1 2027 (inverse of late-1800s steam/rail deflation; Liaquat Ahamed '1873'). Inflation expectations unanchored (copper, CRB, logistics, $2T AI capex competing with Treasury for capital); Fed hike to re-anchor is paradoxically worse under fiscal dominance — +100bp on $40T = +$400B/yr to boomers with high MPC → inflation 'takes off like a scalded cat.' Wise path: cut aggressively, shift issuance to front end, ZIRP → slash interest expense, gold to the moon, then restructure/term out — but expects wrong thing (little/no cut yet). Skips: FFTT Tree Rings / fftt-llc.com product plug; host N/A (solo).",
+      "summary": "Whisper-base ASR (captured 2026-09-19; spoken ~Fri 2026-09-11 / upload 2026-09-14). Solo FFTT Q&A (Luke Gromen only). TLT/long Treasuries: gun-to-head 'better buy here on a nominal basis' (Bianco/McQuarrie: rolling 10y nominal UST returns worst in 233yrs) \u2014 but until US debt/GDP devalued ~120\u2013125% \u2192 70\u201380% via dollar devaluation, UST not sustainable without negative real rates; on a real basis does NOT like TLT \u2014 'much rather own gold or Bitcoin as my duration.' 3\u20135y real-vs-nominal distinction critical. Rejects 'kill global economy / force long rates lower via crisis then term out' plan as failing spectacularly: Saudi exploring $8B USD debt (operating costs after Gulf damage), Japan selling Treasuries to defend yen, hyperscalers selling long bonds \u2014 all compete with Bessent as sellers; crush stocks \u2192 consumer spending (net cap gains + taxable IRA ~200% of annual consumer-spending growth; 2/3 GDP) can't rise; 4% on $40T debt \u2192 deficit blows out; long Western sovereign yields go higher (already seeing). Healthcare-AI cost-cut ledger: HC 18% GDP / biggest employer 38 states \u2192 cheaper care = unemployment/mortgage stress (Obama-era caution). OPEC physical-gold settlement: wait for Gulf BOP surplus return (war damage \u2192 deficits; gold selling when war/oil spiked); more bullish when oil-exporter surpluses again bid gold. Extreme shipping rates: secularly inflationary rest of 2026 into H1 2027 (inverse of late-1800s steam/rail deflation; Liaquat Ahamed '1873'). Inflation expectations unanchored (copper, CRB, logistics, $2T AI capex competing with Treasury for capital); Fed hike to re-anchor is paradoxically worse under fiscal dominance \u2014 +100bp on $40T = +$400B/yr to boomers with high MPC \u2192 inflation 'takes off like a scalded cat.' Wise path: cut aggressively, shift issuance to front end, ZIRP \u2192 slash interest expense, gold to the moon, then restructure/term out \u2014 but expects wrong thing (little/no cut yet). Skips: FFTT Tree Rings / fftt-llc.com product plug; host N/A (solo).",
       "themes": [
         "TLT nominal vs real returns / duration choice",
         "fiscal dominance / EM-land",
@@ -1692,7 +1692,7 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "3-5y",
-          "rationale": "Explicitly prefers Bitcoin alongside gold as duration holding vs TLT for the next ~3–5 years where real vs nominal returns matter most.",
+          "rationale": "Explicitly prefers Bitcoin alongside gold as duration holding vs TLT for the next ~3\u20135 years where real vs nominal returns matter most.",
           "stance_change": "reiterated"
         },
         {
@@ -1700,7 +1700,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "3-5y",
-          "rationale": "On a real basis does not like TLT here: until US debt/GDP falls from ~120–125% to 70–80% via dollar devaluation, UST path requires negative real rates — prefers gold/BTC duration instead.",
+          "rationale": "On a real basis does not like TLT here: until US debt/GDP falls from ~120\u2013125% to 70\u201380% via dollar devaluation, UST path requires negative real rates \u2014 prefers gold/BTC duration instead.",
           "stance_change": "reiterated"
         },
         {
@@ -1708,7 +1708,7 @@
           "stance": "bullish",
           "conviction": "low",
           "horizon": "medium",
-          "rationale": "Gun-to-head: TLT 'probably a better buy here on a nominal basis' after worst rolling 10-year nominal UST returns in 233 years (Bianco citing McQuarrie) — still subordinate to gold/BTC preference and real-return bearishness.",
+          "rationale": "Gun-to-head: TLT 'probably a better buy here on a nominal basis' after worst rolling 10-year nominal UST returns in 233 years (Bianco citing McQuarrie) \u2014 still subordinate to gold/BTC preference and real-return bearishness.",
           "stance_change": "new"
         },
         {
@@ -1716,7 +1716,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "12m+",
-          "rationale": "Debt/GDP repair framed as dollar devaluation (120–125% → 70–80%); wise ZIRP/front-end path also weakens dollar temporarily. Fiscal-dominance / EM-land frame.",
+          "rationale": "Debt/GDP repair framed as dollar devaluation (120\u2013125% \u2192 70\u201380%); wise ZIRP/front-end path also weakens dollar temporarily. Fiscal-dominance / EM-land frame.",
           "stance_change": "reiterated"
         },
         {
@@ -1724,7 +1724,7 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "months",
-          "rationale": "If 'kill the economy to force long rates lower then term out' is the plan, it fails: Gulf/Japan/AI all sellers of long bonds competing with Bessent; crush equities → spending/GDP math breaks; long Western sovereign yields go higher — 'exactly what we're seeing.'",
+          "rationale": "If 'kill the economy to force long rates lower then term out' is the plan, it fails: Gulf/Japan/AI all sellers of long bonds competing with Bessent; crush equities \u2192 spending/GDP math breaks; long Western sovereign yields go higher \u2014 'exactly what we're seeing.'",
           "stance_change": "new"
         },
         {
@@ -1732,7 +1732,7 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "through H1 2027",
-          "rationale": "Extreme shipping rates + disrupted energy = secularly inflationary into H1 2027; copper/CRB/logistics/$2T AI capex vs Treasury for capital → unanchored inflation. Fed hikes to re-anchor paradoxically worsen via +interest income to high-MPC boomers on $40T debt.",
+          "rationale": "Extreme shipping rates + disrupted energy = secularly inflationary into H1 2027; copper/CRB/logistics/$2T AI capex vs Treasury for capital \u2192 unanchored inflation. Fed hikes to re-anchor paradoxically worsen via +interest income to high-MPC boomers on $40T debt.",
           "stance_change": "new"
         },
         {
@@ -1740,7 +1740,7 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "months",
-          "rationale": "Crisis/kill-economy path → 'higher oil'; Gulf producers need oil high enough / war end to restore BOP surplus before recycling into gold. War damage already pushed Saudis into borrowing for operating budget.",
+          "rationale": "Crisis/kill-economy path \u2192 'higher oil'; Gulf producers need oil high enough / war end to restore BOP surplus before recycling into gold. War damage already pushed Saudis into borrowing for operating budget.",
           "stance_change": "new"
         }
       ]
@@ -1752,14 +1752,14 @@
       "date": "2026-09-14",
       "title": "Does the Trump Administration Know What's Going On? || Peter Zeihan",
       "url": "https://www.youtube.com/watch?v=WQLRe8Jp4ZM",
-      "summary": "Whisper-base ASR (captured 2026-09-19): Patreon Q — any chance Trump admin is aware of demographics/geopolitics/trade/industrial policy path? Chances 'pretty low.' Piece 1 (normal): every admin inherits ~300k staff but brings personal orbit + business/academia/party hires with tunnel vision (Chevron CEO → energy/state ok, not HHS); Obama/Biden/Bush also unaware of Zeihan topics — not unique to liking/disliking the chair. Piece 2 (abnormal): Trump = real-estate mogul (only moderately successful) + reality-TV star; first term unexpected win → heavy GOP reliance → felt 'dumb person in the room' vs policy lifers → fired them; 3× cabinet secretaries vs any three two-term presidents. Out of power: took over GOP, destroyed public-policy arm → party now 'only an election vehicle,' no conservative roadmap/bench. Second term: only Wiles (CoS) + Miller (asst CoS) from orbit; Wright (Energy)/Burgum (Interior) for topics Trump doesn't care about; rest ideologues/incompetents (Hegseth = 'failed reservist' + culture war). Fired top ~6,000 federal posts, filled ~1,200 — vacant by design (slavish loyalty vs competence scarce); judicial appointments standstill (can't find law-degree loyalists; maligning own SCOTUS appointees signals would-be judges). Paying for full federal gov lacking WH interface layer — even if lower levels generate demography/trade/de-globalization intel, no assimilate/distill/present path. Tulsi Gabbard DNI year-1 critique; Wright Hormuz oil/LNG price truth publicly rejected by Trump. Bottom line: admin has no real idea on military affairs, economy, or else — remainder of term; next president inherits 'lobotomized' structure → +1–2 years just to restaff if they want to run (not lobotomize) government. 'Trump plus a year or two problem, best case.' No equity tickers called.",
+      "summary": "Whisper-base ASR (captured 2026-09-19): Patreon Q \u2014 any chance Trump admin is aware of demographics/geopolitics/trade/industrial policy path? Chances 'pretty low.' Piece 1 (normal): every admin inherits ~300k staff but brings personal orbit + business/academia/party hires with tunnel vision (Chevron CEO \u2192 energy/state ok, not HHS); Obama/Biden/Bush also unaware of Zeihan topics \u2014 not unique to liking/disliking the chair. Piece 2 (abnormal): Trump = real-estate mogul (only moderately successful) + reality-TV star; first term unexpected win \u2192 heavy GOP reliance \u2192 felt 'dumb person in the room' vs policy lifers \u2192 fired them; 3\u00d7 cabinet secretaries vs any three two-term presidents. Out of power: took over GOP, destroyed public-policy arm \u2192 party now 'only an election vehicle,' no conservative roadmap/bench. Second term: only Wiles (CoS) + Miller (asst CoS) from orbit; Wright (Energy)/Burgum (Interior) for topics Trump doesn't care about; rest ideologues/incompetents (Hegseth = 'failed reservist' + culture war). Fired top ~6,000 federal posts, filled ~1,200 \u2014 vacant by design (slavish loyalty vs competence scarce); judicial appointments standstill (can't find law-degree loyalists; maligning own SCOTUS appointees signals would-be judges). Paying for full federal gov lacking WH interface layer \u2014 even if lower levels generate demography/trade/de-globalization intel, no assimilate/distill/present path. Tulsi Gabbard DNI year-1 critique; Wright Hormuz oil/LNG price truth publicly rejected by Trump. Bottom line: admin has no real idea on military affairs, economy, or else \u2014 remainder of term; next president inherits 'lobotomized' structure \u2192 +1\u20132 years just to restaff if they want to run (not lobotomize) government. 'Trump plus a year or two problem, best case.' No equity tickers called.",
       "themes": [
         "Trump admin situational awareness gap (demographics/geopolitics/trade)",
         "Normal vs abnormal presidential staffing (tunnel vision vs loyalty purge)",
         "GOP public-policy arm destruction / election-only vehicle",
-        "Federal senior appointee vacancy by design (~6000→~1200)",
-        "WH–bureaucracy information interface collapse",
-        "Post-Trump lobotomized government rebuild lag (+1–2y)"
+        "Federal senior appointee vacancy by design (~6000\u2192~1200)",
+        "WH\u2013bureaucracy information interface collapse",
+        "Post-Trump lobotomized government rebuild lag (+1\u20132y)"
       ],
       "calls": [
         {
@@ -1775,7 +1775,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "structural / multi-cycle",
-          "rationale": "Reiterates 2026-09-15: out of power Trump 'destroyed the public policy arm' so 'no longer a roadmap' for conservatives to learn the world and serve; GOP now 'only an election vehicle' → 'no Republican bench to tap' for second-term staffing.",
+          "rationale": "Reiterates 2026-09-15: out of power Trump 'destroyed the public policy arm' so 'no longer a roadmap' for conservatives to learn the world and serve; GOP now 'only an election vehicle' \u2192 'no Republican bench to tap' for second-term staffing.",
           "stance_change": "reiterated"
         },
         {
@@ -1787,18 +1787,18 @@
           "stance_change": "new"
         },
         {
-          "asset": "US federal senior political appointee fill / White House–bureaucracy interface",
+          "asset": "US federal senior political appointee fill / White House\u2013bureaucracy interface",
           "stance": "bearish",
           "conviction": "high",
           "horizon": "through Trump tenure / structural while vacancies persist",
-          "rationale": "Top ~6,000 positions 'basically fired' after first-term fury at being shown up; ~1,200 filled because few can be 'slavishly loyal' and also know something. Judicial pipeline standstill (can't find law-degree loyalists; maligning own SCOTUS appointees). Paying for full federal government that 'lacks a leadership that would interface with the president by design' — no layer to assimilate/distill/present lower-level intel.",
+          "rationale": "Top ~6,000 positions 'basically fired' after first-term fury at being shown up; ~1,200 filled because few can be 'slavishly loyal' and also know something. Judicial pipeline standstill (can't find law-degree loyalists; maligning own SCOTUS appointees). Paying for full federal government that 'lacks a leadership that would interface with the president by design' \u2014 no layer to assimilate/distill/present lower-level intel.",
           "stance_change": "new"
         },
         {
           "asset": "Post-Trump US government capacity rebuild",
           "stance": "bearish",
           "conviction": "high",
-          "horizon": "Trump + 1–2 years best case",
+          "horizon": "Trump + 1\u20132 years best case",
           "rationale": "Next president inherits 'lobotomized government structure'; even if successor wants to run (not lobotomize) government, 'a couple of years just to find the people' to make it function again. 'Not just a Trump problem, it's a Trump plus a year or two problem, best case scenario.'",
           "stance_change": "new"
         },
@@ -1807,7 +1807,7 @@
           "stance": "bearish",
           "conviction": "medium-high",
           "horizon": "remainder of Trump term",
-          "rationale": "Orbit brought only Wiles (CoS) + Miller (asst CoS); Wright/Burgum elicited for topics Trump 'didn't overly care about'; 'everyone else was an ideologue and probably an incompetent' — Hegseth at Defense framed as 'failed reservist' + culture war. First-term precedent: 3× cabinet churn vs any three two-term presidents.",
+          "rationale": "Orbit brought only Wiles (CoS) + Miller (asst CoS); Wright/Burgum elicited for topics Trump 'didn't overly care about'; 'everyone else was an ideologue and probably an incompetent' \u2014 Hegseth at Defense framed as 'failed reservist' + culture war. First-term precedent: 3\u00d7 cabinet churn vs any three two-term presidents.",
           "stance_change": "new"
         }
       ]
@@ -1819,16 +1819,16 @@
       "date": "2026-09-14",
       "title": "Arthur Hayes: Why Ethereum Is My Biggest Position Right Now (Most Hated Mega Cap)",
       "url": "https://www.youtube.com/watch?v=C2ahxun9Ryc",
-      "summary": "Whisper-base ASR (captured 2026-09-19; upload 2026-09-14; ~8.5m The Rollup clip). Arthur Hayes: Ethereum is Maelstrom's largest position into the liquidity rally — 'most hated mega cap shitcoin,' worst-performing mega-cap last cycle, never reclaimed 2021 $5k ATH → risk/reward great; also owns smaller EtherFi and Ethena in the same vein. BTC path to $250–500k requires Fed balance-sheet expansion that looks COVID/2009-like, not mere Bessent buyback signaling (BTC only ~63k→80k so far as BS rises modestly). Crisis cover: (1) yen/Japan — GPIF/Nomura/Mrs Watanabe forced sellers of US assets → US must lend/repo so they don't dump (yen up); (2) short-euro — French banks (BNP/Crédit Agricole/Société Générale) ~20% of US repo; Japan sells French OATs/bank debt first if US untouchable; France cannot legally print inside euro → soft Frexit / unilateral French QE vs ECB refusal if Le Pen/Mélenchon won't comply → Frexit-adjacent printed euros → French banks exit US repo → Fed must ramp reserve-management purchases (QE optics waived as 'technical'). EUR/JPY (e.g. 182→140/120) is the leading indicator of accelerated dollar-liquidity creation (second derivative). Host Rollup CTA/questions and Buffalo Bill Bessent nickname banter not attributed as desk calls.",
+      "summary": "Whisper-base ASR (captured 2026-09-19; upload 2026-09-14; ~8.5m The Rollup clip). Arthur Hayes: Ethereum is Maelstrom's largest position into the liquidity rally \u2014 'most hated mega cap shitcoin,' worst-performing mega-cap last cycle, never reclaimed 2021 $5k ATH \u2192 risk/reward great; also owns smaller EtherFi and Ethena in the same vein. BTC path to $250\u2013500k requires Fed balance-sheet expansion that looks COVID/2009-like, not mere Bessent buyback signaling (BTC only ~63k\u219280k so far as BS rises modestly). Crisis cover: (1) yen/Japan \u2014 GPIF/Nomura/Mrs Watanabe forced sellers of US assets \u2192 US must lend/repo so they don't dump (yen up); (2) short-euro \u2014 French banks (BNP/Cr\u00e9dit Agricole/Soci\u00e9t\u00e9 G\u00e9n\u00e9rale) ~20% of US repo; Japan sells French OATs/bank debt first if US untouchable; France cannot legally print inside euro \u2192 soft Frexit / unilateral French QE vs ECB refusal if Le Pen/M\u00e9lenchon won't comply \u2192 Frexit-adjacent printed euros \u2192 French banks exit US repo \u2192 Fed must ramp reserve-management purchases (QE optics waived as 'technical'). EUR/JPY (e.g. 182\u2192140/120) is the leading indicator of accelerated dollar-liquidity creation (second derivative). Host Rollup CTA/questions and Buffalo Bill Bessent nickname banter not attributed as desk calls.",
       "themes": [
         "ETH largest Maelstrom position / most hated mega-cap",
         "liquidity rally / dollar debasement",
         "EUR/JPY as leading indicator of dollar-liquidity acceleration",
         "Fed balance sheet COVID/2009-style expansion needs crisis cover",
-        "Japan forced UST sellers (GPIF/Nomura) → yen/repo pillar",
+        "Japan forced UST sellers (GPIF/Nomura) \u2192 yen/repo pillar",
         "French banks 20% US repo / short-euro Frexit path",
         "Bessent T-bill / reserve-management purchases as stealth QE",
-        "BTC $250–500k on printed-money crisis path not just signaling"
+        "BTC $250\u2013500k on printed-money crisis path not just signaling"
       ],
       "calls": [
         {
@@ -1836,7 +1836,7 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "liquidity-rally / cycle",
-          "rationale": "Maelstrom's largest position into the liquidity rally: 'most hated mega-cap shitcoin,' worst-performing mega-cap last cycle, never past 2021 $5k ATH — best risk/reward outside Bitcoin without overnight protocol-dump risk.",
+          "rationale": "Maelstrom's largest position into the liquidity rally: 'most hated mega-cap shitcoin,' worst-performing mega-cap last cycle, never past 2021 $5k ATH \u2014 best risk/reward outside Bitcoin without overnight protocol-dump risk.",
           "stance_change": "reiterated"
         },
         {
@@ -1844,7 +1844,7 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "12m+",
-          "rationale": "Path to $250–500k BTC requires Fed money-printing that looks COVID/2009-like once euro/yen crisis forces balance-sheet expansion — not Bessent talk alone (current modest BS rise only moved BTC ~63k→80k).",
+          "rationale": "Path to $250\u2013500k BTC requires Fed money-printing that looks COVID/2009-like once euro/yen crisis forces balance-sheet expansion \u2014 not Bessent talk alone (current modest BS rise only moved BTC ~63k\u219280k).",
           "stance_change": "reiterated"
         },
         {
@@ -1868,7 +1868,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "months",
-          "rationale": "Short-euro crisis path: French banks are ~20% of US repo; Japan sells French OATs/bank debt first; France cannot legally print inside euro → soft Frexit / unilateral French QE clash with ECB → Frexit-adjacent printed money and French-bank retreat from US repo.",
+          "rationale": "Short-euro crisis path: French banks are ~20% of US repo; Japan sells French OATs/bank debt first; France cannot legally print inside euro \u2192 soft Frexit / unilateral French QE clash with ECB \u2192 Frexit-adjacent printed money and French-bank retreat from US repo.",
           "stance_change": "new"
         },
         {
@@ -1876,7 +1876,7 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "months",
-          "rationale": "Both yen-pillar (lend so Japan doesn't dump USTs) and short-euro pillar force Fed to increase money very quickly via repo backstop / reserve-management purchases — optics waived as 'technical' not QE; EUR/JPY collapse (182→140/120) is the leading indicator of that acceleration.",
+          "rationale": "Both yen-pillar (lend so Japan doesn't dump USTs) and short-euro pillar force Fed to increase money very quickly via repo backstop / reserve-management purchases \u2014 optics waived as 'technical' not QE; EUR/JPY collapse (182\u2192140/120) is the leading indicator of that acceleration.",
           "stance_change": "reiterated"
         },
         {
@@ -1914,7 +1914,7 @@
       "date": "2026-09-13",
       "title": "Linear vs. Exponential: AGI Has Arrived But Oil, Bonds and the Fed Oh My",
       "url": "https://www.youtube.com/watch?v=VPuzUZlvk0U",
-      "summary": "Whisper-base ASR (captured 2026-09-19; spoken Fri 2026-09-11 / upload 2026-09-13; ~49m solo). Jordi: hot core CPI/PPI, Fed-hike odds ~90%, crude break, war worse — and S&P still up over two days — proves oil/bonds/Fed are linear-world noise; AI CapEx drives the economy and is not rate-sensitive. Big news: AGI has arrived (Jensen Huang on Astra; research agents 3.1 workdays/human-day; 10k agents cracked Navier-Stokes). AI thematic 10-name basket broke the 50DMA near August highs (structural CapEx bull); BTC flag/range; ETH/BTC breakout to highest since January — ETH should lead in a real bull via agentic network effects; crypto now ~30% of his focus because it is in a bull market. Robinhood framed as AI-crypto-macro epicenter (chain fees topping Solana; Bernstein ~+31%; Clarity Act / tokenization catalysts). NVDA/MU multiples compressing is healthy; H100 rentals flat vs 3y ago and +22% m/m validates Gavin Baker — hyperscaler FCF estimates too low / credit needs hundreds of billions smaller. Explicit: do not buy bonds; do not fight the AI trade. Amazon 1997→2013 (~27,000%) analogy for how to value ETH/crypto before tradfi 'gets it.' Solo channel — subscribe/22V/GitHub/subscriber-video plugs not desk calls; CapEx≠CAT; Bessent≠Bloom.",
+      "summary": "Whisper-base ASR (captured 2026-09-19; spoken Fri 2026-09-11 / upload 2026-09-13; ~49m solo). Jordi: hot core CPI/PPI, Fed-hike odds ~90%, crude break, war worse \u2014 and S&P still up over two days \u2014 proves oil/bonds/Fed are linear-world noise; AI CapEx drives the economy and is not rate-sensitive. Big news: AGI has arrived (Jensen Huang on Astra; research agents 3.1 workdays/human-day; 10k agents cracked Navier-Stokes). AI thematic 10-name basket broke the 50DMA near August highs (structural CapEx bull); BTC flag/range; ETH/BTC breakout to highest since January \u2014 ETH should lead in a real bull via agentic network effects; crypto now ~30% of his focus because it is in a bull market. Robinhood framed as AI-crypto-macro epicenter (chain fees topping Solana; Bernstein ~+31%; Clarity Act / tokenization catalysts). NVDA/MU multiples compressing is healthy; H100 rentals flat vs 3y ago and +22% m/m validates Gavin Baker \u2014 hyperscaler FCF estimates too low / credit needs hundreds of billions smaller. Explicit: do not buy bonds; do not fight the AI trade. Amazon 1997\u21922013 (~27,000%) analogy for how to value ETH/crypto before tradfi 'gets it.' Solo channel \u2014 subscribe/22V/GitHub/subscriber-video plugs not desk calls; CapEx\u2260CAT; Bessent\u2260Bloom.",
       "themes": [
         "linear vs exponential / oil-bonds-Fed noise",
         "AGI arrived (Astra / Jensen Huang)",
@@ -1933,7 +1933,7 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "6-12m",
-          "rationale": "Flag/range consolidation inside the crypto bull he is overweighting (~30% focus); still the structural AI/agent-economy hedge alongside ETH — not an exit signal.",
+          "rationale": "Flag/range consolidation inside the crypto bull he is overweighting (~30% focus); still the structural AI/agent-economy hedge alongside ETH \u2014 not an exit signal.",
           "stance_change": "reiterated"
         },
         {
@@ -1941,7 +1941,7 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "12m+",
-          "rationale": "ETH/BTC broke out to highest since January; argues ETH should outperform BTC in a true bull via ecosystem/network effects (agentic/Astra). Frames ETH as the trust model for RWAs/tokenization (Amazon 1997–2013 ~27,000% lesson — by the time PE 'makes sense' you've missed the move).",
+          "rationale": "ETH/BTC broke out to highest since January; argues ETH should outperform BTC in a true bull via ecosystem/network effects (agentic/Astra). Frames ETH as the trust model for RWAs/tokenization (Amazon 1997\u20132013 ~27,000% lesson \u2014 by the time PE 'makes sense' you've missed the move).",
           "stance_change": "reiterated"
         },
         {
@@ -1949,7 +1949,7 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "12m+",
-          "rationale": "Now ~30% of his attention because 'this is in a bull market'; AI agents make crypto/stablecoin rails the killer app; Clarity Act / pension credibility + tradfi (Nasdaq–Kraken, US Bank stablecoin tests, Visa, EU banks on ETH) as near-term catalysts; tokenization bridge from linear to exponential world.",
+          "rationale": "Now ~30% of his attention because 'this is in a bull market'; AI agents make crypto/stablecoin rails the killer app; Clarity Act / pension credibility + tradfi (Nasdaq\u2013Kraken, US Bank stablecoin tests, Visa, EU banks on ETH) as near-term catalysts; tokenization bridge from linear to exponential world.",
           "stance_change": "reiterated"
         },
         {
@@ -1965,7 +1965,7 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "12m+",
-          "rationale": "Concentrated 10-name basket broke the 50DMA and is approaching August highs after low-vol consolidation; 100-name CapEx/infrastructure universe still framed as a multi-year structural bull (not another first-quarter crash). Prefers ROC/ATR reset→coil→ignition timing over buy-and-hold multi-baggers as multiples compress.",
+          "rationale": "Concentrated 10-name basket broke the 50DMA and is approaching August highs after low-vol consolidation; 100-name CapEx/infrastructure universe still framed as a multi-year structural bull (not another first-quarter crash). Prefers ROC/ATR reset\u2192coil\u2192ignition timing over buy-and-hold multi-baggers as multiples compress.",
           "stance_change": "reiterated"
         },
         {
@@ -1973,7 +1973,7 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "6-12m",
-          "rationale": "Cheap/compressing PE is a feature of shorter corporate duration, not a fade; H100 rental prices ~unchanged vs 3 years ago and +22% m/m prove insatiable GPU demand (Rubin next). Still a core CapEx beneficiary — but expects most days flat/down with a handful of rip days carrying the year, so rate-of-change timing matters.",
+          "rationale": "Cheap/compressing PE is a feature of shorter corporate duration, not a fade; H100 rental prices ~unchanged vs 3 years ago and +22% m/m prove insatiable GPU demand (Rubin next). Still a core CapEx beneficiary \u2014 but expects most days flat/down with a handful of rip days carrying the year, so rate-of-change timing matters.",
           "stance_change": "reiterated"
         },
         {
@@ -1981,7 +1981,7 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "6-12m",
-          "rationale": "Grouped with NVDA on healthy multiple compression; mid-cycle slowdown was when he exited before the top — now wants ATR coil/reset then ignition inside the structural AI uptrend rather than another straight five-bagger.",
+          "rationale": "Grouped with NVDA on healthy multiple compression; mid-cycle slowdown was when he exited before the top \u2014 now wants ATR coil/reset then ignition inside the structural AI uptrend rather than another straight five-bagger.",
           "stance_change": "reiterated"
         },
         {
@@ -1989,7 +1989,7 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "12m+",
-          "rationale": "Gavin Baker thesis validated: GPU rental strength → cloud/hyperscaler cash-flow estimates too low and expected credit needs could shrink by hundreds of billions; Microsoft reiterated data-center capacity shortage. Supports staying with the AI CapEx receivers rather than fading on depreciation scare.",
+          "rationale": "Gavin Baker thesis validated: GPU rental strength \u2192 cloud/hyperscaler cash-flow estimates too low and expected credit needs could shrink by hundreds of billions; Microsoft reiterated data-center capacity shortage. Supports staying with the AI CapEx receivers rather than fading on depreciation scare.",
           "stance_change": "reiterated"
         },
         {
@@ -1997,7 +1997,7 @@
           "stance": "bearish",
           "conviction": "medium",
           "horizon": "tactical",
-          "rationale": "Explicit: 'You don't have to go buy bonds because that to me is not a good idea' even while agreeing not to fight Bessent/Trump/Warsh on the rates path; bond buybacks getting sold, HYG/IEF and bond vol say credit/equities don't care — prefers exponential AI/crypto over bonds.",
+          "rationale": "Explicit: 'You don't have to go buy bonds because that to me is not a good idea' even while agreeing not to fight Bessent/Trump/Warsh on the rates path; bond buybacks getting sold, HYG/IEF and bond vol say credit/equities don't care \u2014 prefers exponential AI/crypto over bonds.",
           "stance_change": "flip"
         },
         {
@@ -2005,7 +2005,7 @@
           "stance": "neutral",
           "conviction": "medium",
           "horizon": "months",
-          "rationale": "Holding 50DMA / flag after highs; barely up since June 2nd and can grind if earnings hold; PEG cheapest in ~30y with rising revisions/margins — constructive internals, but he still prefers crypto for returns and treats oil/bonds/Fed agita as linear noise rather than a pound-the-table SPX long.",
+          "rationale": "Holding 50DMA / flag after highs; barely up since June 2nd and can grind if earnings hold; PEG cheapest in ~30y with rising revisions/margins \u2014 constructive internals, but he still prefers crypto for returns and treats oil/bonds/Fed agita as linear noise rather than a pound-the-table SPX long.",
           "stance_change": "reiterated"
         }
       ]
@@ -2017,12 +2017,12 @@
       "date": "2026-09-12",
       "title": "Why a Fed Rate Hike Won't Stop Bitcoin | Arthur Hayes Interview",
       "url": "https://www.youtube.com/watch?v=k2a3kEgcijs",
-      "summary": "Whisper-base ASR (captured 2026-09-19; upload 2026-09-12; ~55m VirtualBacon interview). Arthur Hayes: BitMEX shutting Sep 23 on own terms (proud of perps legacy / no hack / customer funds returned). BTC local cycle bottom ~$58–60k (liquidation candle + 2–3 retests); $63k→$82k rip on Treasury buybacks + short-gamma cover from BTC covered-call products into Japan-style YCC expectation. Quantity-of-money > price-of-money: Warsh held rates despite 2y–EFF ~50–60bp hike signal + 7–8% NGDP (Fed not restrictive) while RMP buys T-bills = stealth QE; Bessent/Japan FIMA-repo path (remove $60bn/counterparty cap) + QRA buyback upsize (ops $2bn→$4bn, 10s–30s) = YCC ~5% on 10y without naming it. Fed hike would be almost irrelevant for BTC if balance sheet keeps expanding; under fiscal dominance hiking can be inflationary (hands income to T-bill-rich). Falling DXY / scarce BTC+gold on printed money. Alts: loves ETH (Robinhood chain / RWA / tokenization; most hated mega-cap, never past 2021 $5k ATH); Ethena (ENA) for basis-yield capture into bull — internal ~5x after 99% VC-overhang wipe; Uniswap as execution layer with buyback/burn — $7→break $20; HYPE best DEX/will beat CME but harder 5x from ~$85–90bn FDV vs Ethena R/R (US compliance may blunt degen product) — capital prefers smaller real-PMF names. Skeptical L2 tokens without fee→holder flow (Arbitrum unknown). Long FLOP/agentic-compute network pitch = Maelstrom/FLOP product (skipped as desk call). Host VirtualBacon CTA/questions not attributed.",
+      "summary": "Whisper-base ASR (captured 2026-09-19; upload 2026-09-12; ~55m VirtualBacon interview). Arthur Hayes: BitMEX shutting Sep 23 on own terms (proud of perps legacy / no hack / customer funds returned). BTC local cycle bottom ~$58\u201360k (liquidation candle + 2\u20133 retests); $63k\u2192$82k rip on Treasury buybacks + short-gamma cover from BTC covered-call products into Japan-style YCC expectation. Quantity-of-money > price-of-money: Warsh held rates despite 2y\u2013EFF ~50\u201360bp hike signal + 7\u20138% NGDP (Fed not restrictive) while RMP buys T-bills = stealth QE; Bessent/Japan FIMA-repo path (remove $60bn/counterparty cap) + QRA buyback upsize (ops $2bn\u2192$4bn, 10s\u201330s) = YCC ~5% on 10y without naming it. Fed hike would be almost irrelevant for BTC if balance sheet keeps expanding; under fiscal dominance hiking can be inflationary (hands income to T-bill-rich). Falling DXY / scarce BTC+gold on printed money. Alts: loves ETH (Robinhood chain / RWA / tokenization; most hated mega-cap, never past 2021 $5k ATH); Ethena (ENA) for basis-yield capture into bull \u2014 internal ~5x after 99% VC-overhang wipe; Uniswap as execution layer with buyback/burn \u2014 $7\u2192break $20; HYPE best DEX/will beat CME but harder 5x from ~$85\u201390bn FDV vs Ethena R/R (US compliance may blunt degen product) \u2014 capital prefers smaller real-PMF names. Skeptical L2 tokens without fee\u2192holder flow (Arbitrum unknown). Long FLOP/agentic-compute network pitch = Maelstrom/FLOP product (skipped as desk call). Host VirtualBacon CTA/questions not attributed.",
       "themes": [
         "quantity of money > Fed funds for BTC",
         "Warsh hold + RMP T-bill buys = stealth QE",
         "Bessent Japan FIMA-repo / YCC ~5% 10y path",
-        "Treasury buyback upsize + short-gamma BTC rip $63k→$82k",
+        "Treasury buyback upsize + short-gamma BTC rip $63k\u2192$82k",
         "fiscal dominance: hikes can be inflationary",
         "ETH most-hated mega-cap / Robinhood-chain RWA narrative",
         "Ethena basis-yield 5x setup after 99% drawdown",
@@ -2036,7 +2036,7 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "cycle / 12m+",
-          "rationale": "Local cycle bottom ~$58–60k after liquidation candle + retests; $63k→$82k on buyback/YCC signaling + covered-call short-gamma squeeze. Quantity of money (RMP/YCC/FIMA) dominates Fed funds — a hike won't stop BTC if the balance sheet keeps expanding; fiscal-dominance can even make hikes inflationary.",
+          "rationale": "Local cycle bottom ~$58\u201360k after liquidation candle + retests; $63k\u2192$82k on buyback/YCC signaling + covered-call short-gamma squeeze. Quantity of money (RMP/YCC/FIMA) dominates Fed funds \u2014 a hike won't stop BTC if the balance sheet keeps expanding; fiscal-dominance can even make hikes inflationary.",
           "stance_change": "reiterated"
         },
         {
@@ -2044,7 +2044,7 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "liquidity-rally / cycle",
-          "rationale": "Favorite alt narrative: Robinhood chain / RWA / tokenization activity on ETH L2s; most hated mega-cap that never reclaimed 2021 $5k ATH — perfect narrative+perception setup; ETH as security layer for tokenized S&P (not valued on L1 gas alone).",
+          "rationale": "Favorite alt narrative: Robinhood chain / RWA / tokenization activity on ETH L2s; most hated mega-cap that never reclaimed 2021 $5k ATH \u2014 perfect narrative+perception setup; ETH as security layer for tokenized S&P (not valued on L1 gas alone).",
           "stance_change": "reiterated"
         },
         {
@@ -2060,7 +2060,7 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "months",
-          "rationale": "Execution layer for Robinhood/meme/RWA flow; finally has buyback-and-burn from fees — durable-trend bet from ~$7 toward breaking $20 if more capital believes the fee-to-holder path is durable.",
+          "rationale": "Execution layer for Robinhood/meme/RWA flow; finally has buyback-and-burn from fees \u2014 durable-trend bet from ~$7 toward breaking $20 if more capital believes the fee-to-holder path is durable.",
           "stance_change": "new"
         },
         {
@@ -2068,7 +2068,7 @@
           "stance": "neutral",
           "conviction": "medium",
           "horizon": "12m+",
-          "rationale": "Still best-run DEX / believes it beats CME long-term and loves the team, but at ~$85–90bn FDV harder to make as much money as on Ethena (down 99%); US compliant expansion may blunt the permissionless 100x degen product — capital prefers smaller real-PMF names for number-go-up.",
+          "rationale": "Still best-run DEX / believes it beats CME long-term and loves the team, but at ~$85\u201390bn FDV harder to make as much money as on Ethena (down 99%); US compliant expansion may blunt the permissionless 100x degen product \u2014 capital prefers smaller real-PMF names for number-go-up.",
           "stance_change": "reiterated"
         },
         {
@@ -2076,7 +2076,7 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "YCC / debasement path",
-          "rationale": "With YCC into rising oil/commodities/food, need scarce assets — gold alongside Bitcoin as the debasement/YCC hedge; falling DXY supportive.",
+          "rationale": "With YCC into rising oil/commodities/food, need scarce assets \u2014 gold alongside Bitcoin as the debasement/YCC hedge; falling DXY supportive.",
           "stance_change": "reiterated"
         },
         {
@@ -2084,7 +2084,7 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "months",
-          "rationale": "RMP buying T-bills = definition of money printing; Warsh held vs hike signal; Bessent pushing uncapped FIMA repo so Japan can strengthen yen without dumping USTs; QRA buyback upsize = YCC (~5% 10y) without saying the level — supply of money is definitely going up.",
+          "rationale": "RMP buying T-bills = definition of money printing; Warsh held vs hike signal; Bessent pushing uncapped FIMA repo so Japan can strengthen yen without dumping USTs; QRA buyback upsize = YCC (~5% 10y) without saying the level \u2014 supply of money is definitely going up.",
           "stance_change": "reiterated"
         },
         {
@@ -2092,7 +2092,7 @@
           "stance": "bearish",
           "conviction": "medium",
           "horizon": "YCC / months",
-          "rationale": "Choosing to control Treasury yields means you cannot control the currency — BOJ lesson (¥100→160); Trump/export revitalization requires weaker USD vs JPY/EUR/CNY; falling DXY good for BTC and gold.",
+          "rationale": "Choosing to control Treasury yields means you cannot control the currency \u2014 BOJ lesson (\u00a5100\u2192160); Trump/export revitalization requires weaker USD vs JPY/EUR/CNY; falling DXY good for BTC and gold.",
           "stance_change": "new"
         }
       ]
@@ -2120,7 +2120,7 @@
       "date": "2026-09-11",
       "title": "Back to the Glory Days of the Spice Trade || Peter Zeihan",
       "url": "https://www.youtube.com/watch?v=ZpdSO-boHq4",
-      "summary": "Whisper-base ASR (captured 2026-09-19): From Adriatic promenade (ASR 'Aosto'), Zeihan maps spice-trade geopolitics as baseline for post-globalization trade. Pre-~1450: land/coastal micro-economies; East/SE Asian spices/silks/porcelains passed dozens–hundreds of middlemen via Central Asia → Ottoman Istanbul → coastal ship to Italian city-states (Venice, Genoa, Amalfi, Pisa) who 'made mad money' as Western Europe gateway, partnering with Islamic Turkey. Portuguese deep-water navigation (da Gama around Africa to India) cut out middlemen over centuries → Istanbul + Italian city-states went from wealthiest to cut off from primary funds. Today: 'technologies of globalization are failing'; deep-water nav stays but no country can protect sea lanes globally — US most powerful at intervening, none can protect → trade regionalizes/localizes and must militarize (shipping-company culture + Navy/military roles change). Single biggest impact: collapse of multi-step manufactured-goods / supply-chain trade (parts shoot back-and-forth thousands of times); goods that can't be produced locally or inside a network like the EU 'simply aren't going to be produced at all.' Baseline for economy in 5–10–15 years: 12th–14th century spice-trade / Adriatic sequestered-trade model. No equity tickers called.",
+      "summary": "Whisper-base ASR (captured 2026-09-19): From Adriatic promenade (ASR 'Aosto'), Zeihan maps spice-trade geopolitics as baseline for post-globalization trade. Pre-~1450: land/coastal micro-economies; East/SE Asian spices/silks/porcelains passed dozens\u2013hundreds of middlemen via Central Asia \u2192 Ottoman Istanbul \u2192 coastal ship to Italian city-states (Venice, Genoa, Amalfi, Pisa) who 'made mad money' as Western Europe gateway, partnering with Islamic Turkey. Portuguese deep-water navigation (da Gama around Africa to India) cut out middlemen over centuries \u2192 Istanbul + Italian city-states went from wealthiest to cut off from primary funds. Today: 'technologies of globalization are failing'; deep-water nav stays but no country can protect sea lanes globally \u2014 US most powerful at intervening, none can protect \u2192 trade regionalizes/localizes and must militarize (shipping-company culture + Navy/military roles change). Single biggest impact: collapse of multi-step manufactured-goods / supply-chain trade (parts shoot back-and-forth thousands of times); goods that can't be produced locally or inside a network like the EU 'simply aren't going to be produced at all.' Baseline for economy in 5\u201310\u201315 years: 12th\u201314th century spice-trade / Adriatic sequestered-trade model. No equity tickers called.",
       "themes": [
         "spice trade / Adriatic model as post-globalization baseline",
         "technologies of globalization failing",
@@ -2134,8 +2134,8 @@
           "asset": "Globalization / deep-water global trade system",
           "stance": "bearish",
           "conviction": "high",
-          "horizon": "5–15 years / structural",
-          "rationale": "Technologies of globalization are failing; system that let the whole world go wherever and access any product is breaking down — must return to sequestered/regional trade.",
+          "horizon": "5\u201315 years / structural",
+          "rationale": "Technologies of globalization are failing; system that let the whole world go wherever and access any product is breaking down \u2014 must return to sequestered/regional trade.",
           "stance_change": "new"
         },
         {
@@ -2143,22 +2143,22 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "multi-year / structural",
-          "rationale": "Deep-water navigation isn't going away, but no single country can protect sea lanes on a global basis; US is most powerful at intervening in routes but none can actually protect them — most trade regionalizes/localizes and must militarize.",
+          "rationale": "Deep-water navigation isn't going away, but no single country can protect sea lanes on a global basis; US is most powerful at intervening in routes but none can actually protect them \u2014 most trade regionalizes/localizes and must militarize.",
           "stance_change": "reiterated"
         },
         {
           "asset": "Regionalized / sequestered trade (Adriatic / spice-trade model)",
           "stance": "bullish",
           "conviction": "medium",
-          "horizon": "5–15 years / structural baseline",
-          "rationale": "Adriatic/spice-trade model is 'probably the best one we have to understand what's coming'; 12th–14th century spice trade is a 'great baseline' for the economy of 5, 10, 15 years.",
+          "horizon": "5\u201315 years / structural baseline",
+          "rationale": "Adriatic/spice-trade model is 'probably the best one we have to understand what's coming'; 12th\u201314th century spice trade is a 'great baseline' for the economy of 5, 10, 15 years.",
           "stance_change": "new"
         },
         {
           "asset": "Global manufactured-goods / multi-step supply-chain trade",
           "stance": "bearish",
           "conviction": "high",
-          "horizon": "5–15 years",
+          "horizon": "5\u201315 years",
           "rationale": "Single biggest impact of the shift: collapse of manufactured-goods trade built on thousands of multi-country supply-chain steps with intermediate parts shooting back and forth many times; that entire model collapses.",
           "stance_change": "new"
         },
@@ -2166,8 +2166,8 @@
           "asset": "Local / EU-network production viability",
           "stance": "bullish",
           "conviction": "medium",
-          "horizon": "5–15 years / relative",
-          "rationale": "Things that can't be produced relatively locally or within a network like the European Union simply aren't going to be produced at all — implies residual viability for local and EU-scale production networks vs globalized multi-hop chains.",
+          "horizon": "5\u201315 years / relative",
+          "rationale": "Things that can't be produced relatively locally or within a network like the European Union simply aren't going to be produced at all \u2014 implies residual viability for local and EU-scale production networks vs globalized multi-hop chains.",
           "stance_change": "new"
         },
         {
@@ -2175,7 +2175,7 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "multi-year structural",
-          "rationale": "Trade must militarize a lot of it — changes culture of what it means to be a shipping company and the nature of military/Navy; structural demand for militarized commercial protection as global protection fails.",
+          "rationale": "Trade must militarize a lot of it \u2014 changes culture of what it means to be a shipping company and the nature of military/Navy; structural demand for militarized commercial protection as global protection fails.",
           "stance_change": "new"
         }
       ]
@@ -2270,11 +2270,11 @@
       "date": "2026-09-10",
       "title": "Solana's Co-Founder on the End State of Finance",
       "url": "https://www.youtube.com/watch?v=mIInvdO7e_Y",
-      "summary": "Whisper-base ASR (captured 2026-09-19; upload 2026-09-10; ~62m). GUEST TAPE / Tom Lee ABSENT — do NOT count as Tom Lee or Fundstrat desk agreement. Host on tape: Sean Farrell (Fundstrat Head of Digital Asset Strategy). Guest: Anatoly Yakovenko (Solana co-founder / Solana Labs CEO). Disclaimer on tape: Solana Foundation is a Fundstrat client / commissioned research. Sean host color only (≠ Tom Lee): recounts post-2022 SOL $260→$8 'dead in the water' narrative and his own 'redemption arc' long-SOL view after talking to community/Toly — NOT attributed as Tom Lee desk. Guest Anatoly (≠ desk): Qualcomm→Solana origin (ETH/BTC fee pain; PoH/TDMA-inspired single-layer L1 vs modular/L2 roadmap); 'this single layer is probably the inevitable end state of finance' / single giant state machine; SOL value capture via priority fees / stake-scaled block production (not bips on Circle↔Tether transfers); neutral public protocol vs Coinbase/Robinhood (competitors+partners) and corpo payment chains (Arc/Tempo); wants Solana to win all trading / perps competitive with Hyperliquid; RWA+brokerage mint/burn via Backpack↔E*TRADE/IBKR; Solana Mobile/Seeker (~150k devices, ~100 apps) as crypto-native UX/security; post-quantum path (Squads Fuse / Circle mint-burn) by ~2030. Tom Lee host-only desk calls: NONE (0). PARTIAL hygiene applied — prior Tom Lee usable tape remains 2026-09-02; do not treat guest SOL bullishness or Sean framing as Lee/Fundstrat desk.",
+      "summary": "Whisper-base ASR (captured 2026-09-19; upload 2026-09-10; ~62m). GUEST TAPE / Tom Lee ABSENT \u2014 do NOT count as Tom Lee or Fundstrat desk agreement. Host on tape: Sean Farrell (Fundstrat Head of Digital Asset Strategy). Guest: Anatoly Yakovenko (Solana co-founder / Solana Labs CEO). Disclaimer on tape: Solana Foundation is a Fundstrat client / commissioned research. Sean host color only (\u2260 Tom Lee): recounts post-2022 SOL $260\u2192$8 'dead in the water' narrative and his own 'redemption arc' long-SOL view after talking to community/Toly \u2014 NOT attributed as Tom Lee desk. Guest Anatoly (\u2260 desk): Qualcomm\u2192Solana origin (ETH/BTC fee pain; PoH/TDMA-inspired single-layer L1 vs modular/L2 roadmap); 'this single layer is probably the inevitable end state of finance' / single giant state machine; SOL value capture via priority fees / stake-scaled block production (not bips on Circle\u2194Tether transfers); neutral public protocol vs Coinbase/Robinhood (competitors+partners) and corpo payment chains (Arc/Tempo); wants Solana to win all trading / perps competitive with Hyperliquid; RWA+brokerage mint/burn via Backpack\u2194E*TRADE/IBKR; Solana Mobile/Seeker (~150k devices, ~100 apps) as crypto-native UX/security; post-quantum path (Squads Fuse / Circle mint-burn) by ~2030. Tom Lee host-only desk calls: NONE (0). PARTIAL hygiene applied \u2014 prior Tom Lee usable tape remains 2026-09-02; do not treat guest SOL bullishness or Sean framing as Lee/Fundstrat desk.",
       "themes": [
-        "guest≠host hygiene (Anatoly ≠ Tom Lee desk)",
+        "guest\u2260host hygiene (Anatoly \u2260 Tom Lee desk)",
         "Tom Lee absent from Fundstrat Solana webinar",
-        "Sean Farrell host ≠ Tom Lee",
+        "Sean Farrell host \u2260 Tom Lee",
         "Solana Foundation Fundstrat-client disclosure",
         "Anatoly guest: single-layer end state of finance",
         "Anatoly guest: SOL priority-fee / stake value capture",
@@ -2292,7 +2292,7 @@
       "date": "2026-09-10",
       "title": "Project Vault Doesn't Solve the Mineral Problem || Peter Zeihan",
       "url": "https://www.youtube.com/watch?v=sj9GLylXmeo",
-      "summary": "Whisper-base ASR (captured 2026-09-19): Patreon Q on Project Vault — Trump-admin Feb program, ~$2bn to buy rare materials/rare earths (and broader criticals) via mining tailings and build a US stockpile. Zeihan is 'kind of glad this happened' / 'baby step in the right direction' but says it 'hardly doesn't deal with the core problem.' Digital-age materials (rare earths, gallium) are byproducts of other processing (e.g. silver-mine waste → rare earths; aluminum smelting → gallium). Concentrating feedstock in the US is only step one and 'not even the smart step'; smart step is build processing — ~70% of critical-materials processing is in China; US is effectively buying waste from Chinese processing and bringing it here. If China cuts off supply / disruption, US must build processing anyway or ship tailings back to China. Even finished-product / refined-metals reserves 'doesn't really take us too far' until processing exists. Raw-material sourcing is easy (Vault 'already filling up' / ASR 'project fault'). China-free system needs diplomacy with three robust mining sectors: Canada (stop '51st state'), Australia (stop 'not racist enough' rhetoric), Brazil (relations 'worst since at least the 1970s'). Without that diplomacy, rest is a 'rounding error' that continues Chinese dependence. No equity tickers called.",
+      "summary": "Whisper-base ASR (captured 2026-09-19): Patreon Q on Project Vault \u2014 Trump-admin Feb program, ~$2bn to buy rare materials/rare earths (and broader criticals) via mining tailings and build a US stockpile. Zeihan is 'kind of glad this happened' / 'baby step in the right direction' but says it 'hardly doesn't deal with the core problem.' Digital-age materials (rare earths, gallium) are byproducts of other processing (e.g. silver-mine waste \u2192 rare earths; aluminum smelting \u2192 gallium). Concentrating feedstock in the US is only step one and 'not even the smart step'; smart step is build processing \u2014 ~70% of critical-materials processing is in China; US is effectively buying waste from Chinese processing and bringing it here. If China cuts off supply / disruption, US must build processing anyway or ship tailings back to China. Even finished-product / refined-metals reserves 'doesn't really take us too far' until processing exists. Raw-material sourcing is easy (Vault 'already filling up' / ASR 'project fault'). China-free system needs diplomacy with three robust mining sectors: Canada (stop '51st state'), Australia (stop 'not racist enough' rhetoric), Brazil (relations 'worst since at least the 1970s'). Without that diplomacy, rest is a 'rounding error' that continues Chinese dependence. No equity tickers called.",
       "themes": [
         "Project Vault / US mining-tailings critical-materials stockpile",
         "rare earths / gallium as processing byproducts",
@@ -2307,8 +2307,8 @@
           "asset": "Project Vault / US mining-tailings critical-materials stockpile (as China-decoupling fix)",
           "stance": "bearish",
           "conviction": "high",
-          "horizon": "near–medium / policy",
-          "rationale": "Glad it happened / baby step, but 'hardly doesn't deal with the core problem'; without processing + diplomacy the rest is a 'rounding error' that continues Chinese dependence — title thesis: doesn't solve the mineral problem.",
+          "horizon": "near\u2013medium / policy",
+          "rationale": "Glad it happened / baby step, but 'hardly doesn't deal with the core problem'; without processing + diplomacy the rest is a 'rounding error' that continues Chinese dependence \u2014 title thesis: doesn't solve the mineral problem.",
           "stance_change": "new"
         },
         {
@@ -2316,7 +2316,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "structural / multi-year",
-          "rationale": "~70% on average of critical-materials processing is done in China; US currently buying waste product from Chinese processing and bringing it here — chokehold persists until domestic processing is built.",
+          "rationale": "~70% on average of critical-materials processing is done in China; US currently buying waste product from Chinese processing and bringing it here \u2014 chokehold persists until domestic processing is built.",
           "stance_change": "new"
         },
         {
@@ -2324,15 +2324,15 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "multi-year / structural priority",
-          "rationale": "'The smart step would just be to build the processing'; until you build that processing, feedstock stockpiles and even refined-metals reserves don't really matter — if China cuts off supply you must build it anyway.",
+          "rationale": "'The smart step would just be to build the processing'; until you build that processing, feedstock stockpiles and even refined-metals reserves don't really matter \u2014 if China cuts off supply you must build it anyway.",
           "stance_change": "new"
         },
         {
-          "asset": "Canada–Australia–Brazil mining partnership (China-free feedstock)",
+          "asset": "Canada\u2013Australia\u2013Brazil mining partnership (China-free feedstock)",
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "multi-year / diplomatic-structural",
-          "rationale": "For a Chinese-free system, focus on three countries with robust mining sectors: Canada, Australia, Brazil — feedstock partners that matter more than Vault stockpiling alone.",
+          "rationale": "For a Chinese-free system, focus on three countries with robust mining sectors: Canada, Australia, Brazil \u2014 feedstock partners that matter more than Vault stockpiling alone.",
           "stance_change": "new"
         },
         {
@@ -2340,14 +2340,14 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "near-term / Trump-admin",
-          "rationale": "Stop calling Canada the 51st state; stop saying Australia is 'not racist enough'; Brazil relations 'worst since at least the 1970s' — without a little diplomacy to secure these, rest of mineral policy is a rounding error.",
+          "rationale": "Stop calling Canada the 51st state; stop saying Australia is 'not racist enough'; Brazil relations 'worst since at least the 1970s' \u2014 without a little diplomacy to secure these, rest of mineral policy is a rounding error.",
           "stance_change": "new"
         },
         {
           "asset": "Refined-metals / finished-product reserve without domestic processing",
           "stance": "bearish",
           "conviction": "medium",
-          "horizon": "near–medium",
+          "horizon": "near\u2013medium",
           "rationale": "Even building a reserve of the finished product / refined metals 'doesn't really take us too far down the road' because processing is still done in China until US builds it.",
           "stance_change": "new"
         }
@@ -2360,30 +2360,30 @@
       "date": "2026-09-09",
       "title": "Why a Russian-Chinese Pipeline Won't Happen || Peter Zeihan",
       "url": "https://www.youtube.com/watch?v=QfjQAvzAnn4",
-      "summary": "Whisper-base ASR (captured 2026-09-10): Zeihan argues a Russia–China cross-continental oil/gas pipeline won't happen — mutual distrust, 7–8k mile geography with pumping costs 'well over $80 a gallon' plus tens of billions to build, Russian oil/gas mostly in NW Siberia (wrong place; E/W distribution networks barely connect), and nearer East Siberian options (Kovykta/Sakhalin per ASR Kovicta/Sakeland) stalled after Western majors left. Putin/Xi photo-op pipeline talk for ~30y with neither willing to pay. Only removing maritime transport entirely changes the conversation — and even then transit cost ≈ current oil prices.",
+      "summary": "Whisper-base ASR (captured 2026-09-10): Zeihan argues a Russia\u2013China cross-continental oil/gas pipeline won't happen \u2014 mutual distrust, 7\u20138k mile geography with pumping costs 'well over $80 a gallon' plus tens of billions to build, Russian oil/gas mostly in NW Siberia (wrong place; E/W distribution networks barely connect), and nearer East Siberian options (Kovykta/Sakhalin per ASR Kovicta/Sakeland) stalled after Western majors left. Putin/Xi photo-op pipeline talk for ~30y with neither willing to pay. Only removing maritime transport entirely changes the conversation \u2014 and even then transit cost \u2248 current oil prices.",
       "themes": [
-        "Russia–China energy pipeline",
+        "Russia\u2013China energy pipeline",
         "geography / pumping costs",
         "Russian oil & gas network split",
         "Kovykta / Sakhalin technical capacity",
         "Persian Gulf / maritime crude dependence",
-        "Putin–Xi infrastructure stalemate"
+        "Putin\u2013Xi infrastructure stalemate"
       ],
       "calls": [
         {
-          "asset": "Russia–China cross-continental oil/gas pipeline",
+          "asset": "Russia\u2013China cross-continental oil/gas pipeline",
           "stance": "bearish",
           "conviction": "high",
           "horizon": "multi-year / structural",
-          "rationale": "7–8k miles between population cores; pumping costs likely >$80/gal on top of tens of billions to build; neither side will fund; cultural distrust means collaboration is reactive only — same stalled talk for ~30 years.",
+          "rationale": "7\u20138k miles between population cores; pumping costs likely >$80/gal on top of tens of billions to build; neither side will fund; cultural distrust means collaboration is reactive only \u2014 same stalled talk for ~30 years.",
           "stance_change": "new"
         },
         {
-          "asset": "Russian oil/gas large-volume pivot Europe→China",
+          "asset": "Russian oil/gas large-volume pivot Europe\u2192China",
           "stance": "bearish",
           "conviction": "high",
           "horizon": "ongoing / structural",
-          "rationale": "Resource base concentrated in NW Siberia (farther from China than European Russia); Eastern and Western Russian energy distribution networks barely connect — claimed large-volume reorientation is 'mostly bullshit' on capacity.",
+          "rationale": "Resource base concentrated in NW Siberia (farther from China than European Russia); Eastern and Western Russian energy distribution networks barely connect \u2014 claimed large-volume reorientation is 'mostly bullshit' on capacity.",
           "stance_change": "new"
         },
         {
@@ -2391,7 +2391,7 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "multi-year",
-          "rationale": "Pipeline cluster won't displace Gulf exposure under current economics; only total loss of maritime transport forces the land route — still tens of billions capex and transit costs about equal to oil prices ('nasty change in circumstances').",
+          "rationale": "Pipeline cluster won't displace Gulf exposure under current economics; only total loss of maritime transport forces the land route \u2014 still tens of billions capex and transit costs about equal to oil prices ('nasty change in circumstances').",
           "stance_change": "new"
         }
       ]
@@ -2403,12 +2403,12 @@
       "date": "2026-09-08",
       "title": "Ukraine Is Shooting Fish in a Barrel || Peter Zeihan",
       "url": "https://www.youtube.com/watch?v=FgarzZkGU1Q",
-      "summary": "Whisper-base ASR (captured 2026-09-10): Zeihan says Ukraine has hit ~200 Russian shadow-fleet vessels on the Black Sea / Sea of Azov (ASR: Isav) in ~2 months and is near enough damage that the shadow fleet 'probably [will] stop functioning later this year,' ending Russia's presence as a significant oil exporter. After Trump admin pushback on strikes near Novorossiysk (ASR: Noverisseesk) — CPC terminus for Kazakhstan Tengiz crude operated by Chevron and Exxon, framed as American infrastructure — Ukraine asked every shipping company for ship names, transponders, courses, and ports, promising not to attack confirmed vessels; all comply except the shadow fleet (runs dark). Third-party hits are 'single digits' while shadow fleet takes a 'complete pounding'; Russian self-insurance not paying out; scrap-heap hulls mean global vessel supply barely hit, but once Russians cannot load grain/crude, ports fill and inland production cuts. 'We're getting there this year' with 'minor miracle' of sparing other Black Sea shipping; Persian Gulf contrasted as far less friendly. No equity tickers called (CVX/XOM narrative only as Tengiz operators).",
+      "summary": "Whisper-base ASR (captured 2026-09-10): Zeihan says Ukraine has hit ~200 Russian shadow-fleet vessels on the Black Sea / Sea of Azov (ASR: Isav) in ~2 months and is near enough damage that the shadow fleet 'probably [will] stop functioning later this year,' ending Russia's presence as a significant oil exporter. After Trump admin pushback on strikes near Novorossiysk (ASR: Noverisseesk) \u2014 CPC terminus for Kazakhstan Tengiz crude operated by Chevron and Exxon, framed as American infrastructure \u2014 Ukraine asked every shipping company for ship names, transponders, courses, and ports, promising not to attack confirmed vessels; all comply except the shadow fleet (runs dark). Third-party hits are 'single digits' while shadow fleet takes a 'complete pounding'; Russian self-insurance not paying out; scrap-heap hulls mean global vessel supply barely hit, but once Russians cannot load grain/crude, ports fill and inland production cuts. 'We're getting there this year' with 'minor miracle' of sparing other Black Sea shipping; Persian Gulf contrasted as far less friendly. No equity tickers called (CVX/XOM narrative only as Tengiz operators).",
       "themes": [
         "Ukrainian strikes on Russian shadow fleet",
         "Black Sea / Sea of Azov shipping targeting",
         "Russia oil export capacity collapse",
-        "CPC / Novorossiysk / Tengiz (Chevron–Exxon) political cover",
+        "CPC / Novorossiysk / Tengiz (Chevron\u2013Exxon) political cover",
         "shadow fleet insurance / scrap hull churn",
         "Black Sea commercial shipping spared vs Persian Gulf"
       ],
@@ -2426,7 +2426,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "this year / YE2026",
-          "rationale": "Zeihan: shadow-fleet failure 'is going to end Russia's presence as a significant oil exporter'; path is either fleet destruction or port-storage backlog cutting inland crude/grain output — 'we're getting there this year.'",
+          "rationale": "Zeihan: shadow-fleet failure 'is going to end Russia's presence as a significant oil exporter'; path is either fleet destruction or port-storage backlog cutting inland crude/grain output \u2014 'we're getting there this year.'",
           "stance_change": "new"
         },
         {
@@ -2434,7 +2434,7 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "months / through YE2026",
-          "rationale": "Removal of Russia as a significant seaborne oil exporter later this year tightens global crude supply on top of prior Hormuz/chokepoint stress — reinforces energy-crisis risk premium.",
+          "rationale": "Removal of Russia as a significant seaborne oil exporter later this year tightens global crude supply on top of prior Hormuz/chokepoint stress \u2014 reinforces energy-crisis risk premium.",
           "stance_change": "reiterated"
         },
         {
@@ -2442,7 +2442,7 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "near-term / while ID system holds",
-          "rationale": "Ukraine's ship-ID/transponder/course/port registry has universal commercial compliance except shadow fleet; third-party hits in single digits vs shadow fleet 'complete pounding' — described as a 'minor miracle' of sparing other Black Sea shipping (Persian Gulf contrasted as worse).",
+          "rationale": "Ukraine's ship-ID/transponder/course/port registry has universal commercial compliance except shadow fleet; third-party hits in single digits vs shadow fleet 'complete pounding' \u2014 described as a 'minor miracle' of sparing other Black Sea shipping (Persian Gulf contrasted as worse).",
           "stance_change": "new"
         }
       ]
@@ -2519,9 +2519,9 @@
       "org": "22V Research / Visser Labs",
       "lane": "macro/AI/crypto",
       "date": "2026-09-06",
-      "title": "The Bond Market “Crash” Is a Trap — AI Agents Are About to Ignite Crypto",
+      "title": "The Bond Market \u201cCrash\u201d Is a Trap \u2014 AI Agents Are About to Ignite Crypto",
       "url": "https://www.youtube.com/watch?v=er5mqvbDQU8",
-      "summary": "Visser frames bond-crash chatter as a trap (vol subdued, junk tight, Bessent/Japan coordinating to cap yields) and argues the real inflection is AI agents: Astra-class models and agent swarms make crypto/tokenization the killer-app rails for programmable money. He keeps crypto (BTC/ETH/SOL) as his primary weight, says the agentic-100 AI thematic is bottoming after mid-cycle mud, holds NVDA as a mud-phase relative-strength name, and softens his structural S&P bearishness to a tactical neutral while still preferring crypto for returns. Source is openai-whisper-base (caption-path alternate), not YouTube auto-subtitles — figures/phrasing may contain ASR artifacts.",
+      "summary": "Visser frames bond-crash chatter as a trap (vol subdued, junk tight, Bessent/Japan coordinating to cap yields) and argues the real inflection is AI agents: Astra-class models and agent swarms make crypto/tokenization the killer-app rails for programmable money. He keeps crypto (BTC/ETH/SOL) as his primary weight, says the agentic-100 AI thematic is bottoming after mid-cycle mud, holds NVDA as a mud-phase relative-strength name, and softens his structural S&P bearishness to a tactical neutral while still preferring crypto for returns. Source is openai-whisper-base (caption-path alternate), not YouTube auto-subtitles \u2014 figures/phrasing may contain ASR artifacts.",
       "themes": [
         "bond-crash trap",
         "AI agents / AGI inflection",
@@ -2544,7 +2544,7 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "6-12m",
-          "rationale": "200-day MA turned up; QTD ~+56% vs S&P ~+3%; history after 200-day turn favors staying involved — one of his three crypto horsemen.",
+          "rationale": "200-day MA turned up; QTD ~+56% vs S&P ~+3%; history after 200-day turn favors staying involved \u2014 one of his three crypto horsemen.",
           "stance_change": "reiterated"
         },
         {
@@ -2584,7 +2584,7 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "months",
-          "rationale": "Named inside his 46-name crypto portfolio; multiple Street upgrades tied to new L2/chain and stock-token trading — early public-market proxy for tokenization rails.",
+          "rationale": "Named inside his 46-name crypto portfolio; multiple Street upgrades tied to new L2/chain and stock-token trading \u2014 early public-market proxy for tokenization rails.",
           "stance_change": "new"
         },
         {
@@ -2592,7 +2592,7 @@
           "stance": "bullish",
           "conviction": "low",
           "horizon": "12m+",
-          "rationale": "Still thinks it can roughly double into next year, but stresses 'all kinds of risk' and that the 10x phase of the trade has already happened — deprioritized vs crypto.",
+          "rationale": "Still thinks it can roughly double into next year, but stresses 'all kinds of risk' and that the 10x phase of the trade has already happened \u2014 deprioritized vs crypto.",
           "stance_change": "reiterated"
         },
         {
@@ -2608,7 +2608,7 @@
           "stance": "neutral",
           "conviction": "medium",
           "horizon": "months",
-          "rationale": "Bond-crash narrative is a trap: bond vol not crisis-elevated, junk spreads near tights, inflation swaps asleep near ~2.5%; yields could tag ~5.5% but Bessent/Japan coordination aims to keep them in check — not a trade he wants to press either way.",
+          "rationale": "Bond-crash narrative is a trap: bond vol not crisis-elevated, junk spreads near tights, inflation swaps asleep near ~2.5%; yields could tag ~5.5% but Bessent/Japan coordination aims to keep them in check \u2014 not a trade he wants to press either way.",
           "stance_change": "reiterated"
         }
       ]
@@ -2620,7 +2620,7 @@
       "date": "2026-09-04",
       "title": "Global Shipping Comes Under Attack || Peter Zeihan",
       "url": "https://www.youtube.com/watch?v=0hPG4-41iUo",
-      "summary": "Zeihan says Hormuz throughput is neither the admin's claimed ~9 Mbd nor Iran's near-zero — Western traffic trackers imply ~3–5 Mbd vs ~20–22 Mbd pre-war, still a multi-million-barrel shortfall and 'more than enough for an energy crisis.' US overwatch enabling Arab-side 'shadow fleet' transponder-off transfers is costly and unsustainable; no power can secure all eight global chokepoints, Bab el-Mandeb/Somali piracy is already returning — insecure seas are the new normal, while disruption remains asymmetrically easy.",
+      "summary": "Zeihan says Hormuz throughput is neither the admin's claimed ~9 Mbd nor Iran's near-zero \u2014 Western traffic trackers imply ~3\u20135 Mbd vs ~20\u201322 Mbd pre-war, still a multi-million-barrel shortfall and 'more than enough for an energy crisis.' US overwatch enabling Arab-side 'shadow fleet' transponder-off transfers is costly and unsustainable; no power can secure all eight global chokepoints, Bab el-Mandeb/Somali piracy is already returning \u2014 insecure seas are the new normal, while disruption remains asymmetrically easy.",
       "themes": [
         "Strait of Hormuz throughput",
         "energy crisis / crude shortfall",
@@ -2635,7 +2635,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "ongoing / structural while conflict persists",
-          "rationale": "Independent trackers ~3–5 Mbd vs 20–22 Mbd pre-war; even with bypass pipes full, still ~4–10 Mbd short — enough for an energy crisis.",
+          "rationale": "Independent trackers ~3\u20135 Mbd vs 20\u201322 Mbd pre-war; even with bypass pipes full, still ~4\u201310 Mbd short \u2014 enough for an energy crisis.",
           "stance_change": "new"
         },
         {
@@ -2651,7 +2651,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "multi-year",
-          "rationale": "US can maybe cover 2–3 of eight major chokepoints; Bab el-Mandeb already under Yemeni/Somali pressure — no coalition can keep seas safe; interrupting flows is easy.",
+          "rationale": "US can maybe cover 2\u20133 of eight major chokepoints; Bab el-Mandeb already under Yemeni/Somali pressure \u2014 no coalition can keep seas safe; interrupting flows is easy.",
           "stance_change": "new"
         }
       ]
@@ -2661,9 +2661,9 @@
       "org": "Zeihan on Geopolitics",
       "lane": "geopolitics/defense",
       "date": "2026-09-03",
-      "title": "China’s Real Estate System Is Failing || Peter Zeihan",
+      "title": "China\u2019s Real Estate System Is Failing || Peter Zeihan",
       "url": "https://www.youtube.com/watch?v=TU7KVw9j060",
-      "summary": "After Evergrande's ex-chair got life imprisonment, Zeihan frames China's property model as a completed bust: overbuilding by 4–5x plus a 35-year demographic collapse, new construction already −75% in five years with another ~20% drop expected this year, and official inflation-adjusted home values below 2005 boom-start levels. Citizens park ~$22T in deposits earning <1% rather than stocks; he calls Chinese equities a fool's errand because subsidized credit destroys equity returns, and capital controls block the only productive exit.",
+      "summary": "After Evergrande's ex-chair got life imprisonment, Zeihan frames China's property model as a completed bust: overbuilding by 4\u20135x plus a 35-year demographic collapse, new construction already \u221275% in five years with another ~20% drop expected this year, and official inflation-adjusted home values below 2005 boom-start levels. Citizens park ~$22T in deposits earning <1% rather than stocks; he calls Chinese equities a fool's errand because subsidized credit destroys equity returns, and capital controls block the only productive exit.",
       "themes": [
         "China property collapse",
         "Evergrande / local-government land finance",
@@ -2677,7 +2677,7 @@
           "stance": "bearish",
           "conviction": "high",
           "horizon": "multi-year",
-          "rationale": "New construction −75% over five years through end-2025 with another ~20% decline expected this year; homes worth less vs 2005 in official inflation terms.",
+          "rationale": "New construction \u221275% over five years through end-2025 with another ~20% decline expected this year; homes worth less vs 2005 in official inflation terms.",
           "stance_change": "new"
         },
         {
@@ -2811,7 +2811,7 @@
           "stance": "bullish",
           "conviction": "high",
           "horizon": "weeks (September)",
-          "rationale": "Contrarian: markets down, oil/yields up, seasonality fear, and AAII/margin debt still cautious — wall of worry is buyable; bottom may already be in.",
+          "rationale": "Contrarian: markets down, oil/yields up, seasonality fear, and AAII/margin debt still cautious \u2014 wall of worry is buyable; bottom may already be in.",
           "stance_change": "new"
         },
         {
@@ -2843,7 +2843,7 @@
           "stance": "bullish",
           "conviction": "medium",
           "horizon": "12m+",
-          "rationale": "Multiple stuck in high-teens/low-20s as sentiment barometer; argues recurring-revenue AI centrality deserves higher multiple vs Cisco-like S&P re-rate path — still early.",
+          "rationale": "Multiple stuck in high-teens/low-20s as sentiment barometer; argues recurring-revenue AI centrality deserves higher multiple vs Cisco-like S&P re-rate path \u2014 still early.",
           "stance_change": "new"
         },
         {
@@ -2863,7 +2863,7 @@
       "date": "2026-09-01",
       "title": "Why Tom Lee is Bullish on September",
       "url": "https://www.youtube.com/watch?v=y-ylpbC8zPk",
-      "summary": "PARTIAL transcript (~19 lines): Lee tees up five contrarian reasons for September upside despite negative seasonality, noting midterm-year Septembers since 1854 have only ~40% odds of being an up month — the worst single month historically. Full rationale list not present in captured text.",
+      "summary": "PARTIAL transcript (~19 lines): Lee tees up five contrarian reasons for September upside despite negative seasonality, noting midterm-year Septembers since 1854 have only ~40% odds of being an up month \u2014 the worst single month historically. Full rationale list not present in captured text.",
       "themes": [
         "September seasonality",
         "midterm election year",
@@ -2996,7 +2996,7 @@
       "org": "Commodity Culture",
       "lane": "metals/mining",
       "date": "2026-09-01",
-      "title": "GOLD Just Became a Real Alternative to the Dollar (Here’s Why): Nick Campbell",
+      "title": "GOLD Just Became a Real Alternative to the Dollar (Here\u2019s Why): Nick Campbell",
       "url": "https://www.youtube.com/watch?v=hrG7rtIRFIQ",
       "summary": "Phoenix Metals CEO Nick Campbell (self-described non-gold-bug) makes a structural long-term bull case for gold on dollar-diversification and for copper on electrification, AI and supply lags, while pitching Phoenix's Greenwood BC copper-gold district. Sponsored interview.",
       "themes": [
