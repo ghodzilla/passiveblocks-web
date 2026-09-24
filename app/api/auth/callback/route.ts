@@ -8,7 +8,11 @@ export const runtime = 'nodejs';
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
-  const next = searchParams.get('next') ?? '/tax';
+  const rawNext = searchParams.get('next') ?? '/tax';
+  // Only allow same-origin relative paths (blocks //evil.com and @evil.com redirects).
+  const next = rawNext.startsWith('/') && !rawNext.startsWith('//') && !rawNext.includes('\\')
+    ? rawNext
+    : '/tax';
 
   if (code) {
     const supabase = createClient();
@@ -18,5 +22,5 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.redirect(`${origin}/login?error=auth_failed`);
+  return NextResponse.redirect(`${origin}/login?error=auth_failed&next=${encodeURIComponent(next)}`);
 }
