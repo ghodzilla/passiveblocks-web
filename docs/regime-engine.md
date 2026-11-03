@@ -15,6 +15,7 @@ Set these in Vercel (Production and Preview). Do not commit values. This change 
 | `FRED_API_KEY` | Yes, for live scores | Free key from https://fred.stlouisfed.org/docs/api/api_key.html |
 | `CRON_SECRET` | Yes, for the scheduled refresh | Long random string. Vercel sends it as `Authorization: Bearer $CRON_SECRET` on the cron request. It does not unlock the HTML page. |
 | `REGIME_ALLOWED_IPS` | No | Optional comma-separated IPs that can open the page without a password. This is **not** `ALLOWED_IPS`. Leave it unset to require the password. |
+| `REGIME_WATCHLIST` | No | Comma-separated stock symbols that replace the default watchlist (US megacaps and a liquid ASX 20 slice). Example: `AAPL,BHP.AX`. Leave unset for the built-in list. An empty value shows no stocks. No price API key is required. |
 
 `REGIME_OWNER_EMAILS` is no longer read. A Supabase session does not open `/private/regime`.
 
@@ -46,13 +47,23 @@ Failed passwords are counted in memory per IP: 5 failures in 15 minutes locks th
 
 The snapshot cache is Next.js `unstable_cache` (Vercel runtime cache, tag `regime-snapshot`, one hour). It is not Supabase. FRED and CFTC fetches are `no-store`.
 
+Daily ETF and stock prices use the same tag. The source is the Yahoo chart endpoint (`query1` / `query2`, adjusted close, two-year daily range). It does not need a paid key. Stooq’s CSV is behind a browser check from this host, so it is not used. A symbol that fails is recorded as a gap. Prices are never filled in or invented.
+
+## Macro plays and stock ideas
+
+The owner page adds a playbook for the current regime: preferred and avoid expressions across equity sectors and factors, duration, USD and AUD, gold, and cash. Tickers are liquid US-listed and ASX-listed ETFs (sector SPDRs, TLT/IEF/SHY, GLD, UUP, FXA, VAS/VGS/IOZ, AAA/BILL, and the ASX gold ETF).
+
+Each candidate is marked Confirmed only when this print prefers it and three daily signals agree: 12–1 month momentum above zero, price above the 200-day average, and a 5-session return z-score below 1.5. Otherwise the row is Watch or Avoid. Cash ETFs do not need an uptrend. Suggested max weight is the regime vol target divided by 20-day annualised volatility, capped at 20% for a tactical ETF and 2% for a watchlist stock, then scaled so the book stays inside the gross and net budget. A name that is not Confirmed is not sized. Each row shows the invalidation (200-day break, momentum flip, or regime/action change) and the bar date.
+
+When the regime action is do nothing or reduce risk, that banner is repeated and candidates are limited to defensive and cash expressions. The stock watchlist is stood down.
+
 ## Scheduled refresh
 
 `vercel.json` registers a daily cron at 13:15 UTC:
 
 `GET /api/regime/refresh`
 
-The route is denied unless the caller has a regime session, an allowlisted IP, or presents `CRON_SECRET`. The cron drops the `regime-snapshot` tag and rebuilds.
+The route is denied unless the caller has a regime session, an allowlisted IP, or presents `CRON_SECRET`. The cron drops the `regime-snapshot` tag and rebuilds the regime snapshot and the price book.
 
 Hobby Vercel accounts only allow a cron that runs once per day. This schedule is once per day so it can be deployed without a plan change. This repo does not change the Vercel project settings.
 
