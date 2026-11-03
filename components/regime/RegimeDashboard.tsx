@@ -142,9 +142,16 @@ export function RegimeDashboard({ snapshot }: { snapshot: RegimeSnapshot }) {
               Owner only
             </span>
           </div>
-          <Link href="/" className="text-xs text-[var(--muted)] transition-colors hover:text-foreground">
-            Public site
-          </Link>
+          <div className="flex items-center gap-4">
+            <form method="POST" action="/api/regime/logout">
+              <button type="submit" className="text-xs text-[var(--muted)] transition-colors hover:text-foreground">
+                Log out
+              </button>
+            </form>
+            <Link href="/" className="text-xs text-[var(--muted)] transition-colors hover:text-foreground">
+              Public site
+            </Link>
+          </div>
         </div>
       </header>
 

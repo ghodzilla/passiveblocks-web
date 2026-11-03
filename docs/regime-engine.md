@@ -2,22 +2,49 @@
 
 Owner-only page at `/private/regime`. It scores liquidity, policy path, credit, the US−AU growth differential, and CFTC positioning, then maps the regime to a risk budget. It is an educational research tool, not financial advice, and it is not linked from the public nav, the OS nav, or the sitemap.
 
-The access gate reuses the existing Supabase magic-link session and the deny-by-default middleware used by `/os` and `/drafts`. The allowlists are separate, so an email that can open the OS does not automatically open this page.
+`/private/regime` does not use Supabase. The owner signs in with a password at `/private/login`. `/os` and `/drafts` still use the Supabase magic-link login and `OS_ALLOWED_EMAILS` / `ALLOWED_IPS`. Those lists do not open this page.
 
 ## Required environment variables
 
-Set these in Vercel (Production and Preview). Do not commit values.
+Set these in Vercel (Production and Preview). Do not commit values. This change does not edit Vercel settings.
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `REGIME_OWNER_EMAILS` | Yes, for sign-in access | Comma-separated owner emails. Only these signed-in Supabase users can open the page. Example shape: `you@example.com` |
-| `NEXT_PUBLIC_SUPABASE_URL` | Yes, for sign-in access | Already used by the site. |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes, for sign-in access | Already used by the site. |
+| `REGIME_PASSWORD_HASH` | Yes, for password sign-in | scrypt hash of the owner password. See the command below. |
+| `REGIME_SESSION_SECRET` | Yes, for password sign-in | HMAC key for the session cookie. At least 32 characters. `openssl rand -base64 32` |
 | `FRED_API_KEY` | Yes, for live scores | Free key from https://fred.stlouisfed.org/docs/api/api_key.html |
-| `CRON_SECRET` | Yes, for the scheduled refresh | Long random string. Vercel sends it as `Authorization: Bearer $CRON_SECRET` on the cron request. |
-| `REGIME_ALLOWED_IPS` | No | Optional comma-separated IPs that can open the page without a session. This is **not** `ALLOWED_IPS`. Leave it unset to require the owner email. |
+| `CRON_SECRET` | Yes, for the scheduled refresh | Long random string. Vercel sends it as `Authorization: Bearer $CRON_SECRET` on the cron request. It does not unlock the HTML page. |
+| `REGIME_ALLOWED_IPS` | No | Optional comma-separated IPs that can open the page without a password. This is **not** `ALLOWED_IPS`. Leave it unset to require the password. |
 
-If `REGIME_OWNER_EMAILS` is empty and `REGIME_ALLOWED_IPS` does not match, every request is a 404. That is the default.
+`REGIME_OWNER_EMAILS` is no longer read. A Supabase session does not open `/private/regime`.
+
+If `REGIME_PASSWORD_HASH` or `REGIME_SESSION_SECRET` is missing or malformed, and `REGIME_ALLOWED_IPS` does not match, every regime page and API is a 404. The login form is not shown. That is the default.
+
+### Generate the password hash
+
+The hash format is `scrypt$16384$8$1$<salt>$<hash>` (scrypt N=16384, r=8, p=1, 16-byte salt, 32-byte key). The script prints the hash on stdout and does not store the password.
+
+```bash
+REGIME_PASSWORD='choose-a-long-password' npm run regime:hash-password
+```
+
+The password must be at least 12 characters. Copy the printed line into `REGIME_PASSWORD_HASH`, then unset `REGIME_PASSWORD`.
+
+Generate the session secret separately:
+
+```bash
+openssl rand -base64 32
+```
+
+Put that value in `REGIME_SESSION_SECRET`.
+
+## Session
+
+A successful login sets `pb_regime_session`. The cookie is `httpOnly`, `Secure`, `SameSite=Strict`, and expires after 12 hours (absolute expiry inside the signed payload). The signature is HMAC-SHA256. Logout is `POST /api/regime/logout`, which clears the cookie.
+
+Failed passwords are counted in memory per IP: 5 failures in 15 minutes locks that IP for 15 minutes, and a correct password during the lock is still rejected. Each serverless instance keeps its own counter.
+
+The snapshot cache is Next.js `unstable_cache` (Vercel runtime cache, tag `regime-snapshot`, one hour). It is not Supabase. FRED and CFTC fetches are `no-store`.
 
 ## Scheduled refresh
 
@@ -25,18 +52,17 @@ If `REGIME_OWNER_EMAILS` is empty and `REGIME_ALLOWED_IPS` does not match, every
 
 `GET /api/regime/refresh`
 
-The route is denied unless the caller is an owner or presents `CRON_SECRET`. The snapshot is cached for one hour (`regime-snapshot` tag). The cron drops that tag and rebuilds. FRED and CFTC calls themselves are not cached.
+The route is denied unless the caller has a regime session, an allowlisted IP, or presents `CRON_SECRET`. The cron drops the `regime-snapshot` tag and rebuilds.
 
 Hobby Vercel accounts only allow a cron that runs once per day. This schedule is once per day so it can be deployed without a plan change. This repo does not change the Vercel project settings.
 
 ## Verify it is inaccessible when signed out
 
-Against a deployed environment where `REGIME_OWNER_EMAILS` is set:
+Against a deployed environment where `REGIME_PASSWORD_HASH` and `REGIME_SESSION_SECRET` are set:
 
 ```bash
-# Signed out. Expect a redirect (307) to /login?next=%2Fprivate%2Fregime
-# The body must not contain scores. A signed-in email that is not on
-# REGIME_OWNER_EMAILS gets 404 instead of the redirect.
+# Signed out. Expect a redirect (307) to /private/login?next=%2Fprivate%2Fregime
+# The body must not contain scores.
 curl -sI https://www.passiveblocks.io/private/regime
 
 # API never redirects. Expect 404 Not Found.
@@ -51,12 +77,16 @@ curl -s https://www.passiveblocks.io/robots.txt | grep private
 curl -s https://www.passiveblocks.io/sitemap.xml | grep private || echo "absent from sitemap"
 ```
 
-A signed-in account that is not in `REGIME_OWNER_EMAILS` receives 404, not the dashboard.
+`/os` and `/drafts` are unchanged: they still 404 or redirect to `/login` based on `ALLOWED_IPS` and `OS_ALLOWED_EMAILS`.
 
 Locally, with the dev server:
 
 ```bash
-REGIME_OWNER_EMAILS=owner@example.com \
+REGIME_PASSWORD='choose-a-long-password' npm run regime:hash-password
+# put the printed hash and a session secret in the environment, then:
+
+REGIME_PASSWORD_HASH='scrypt$16384$8$1$...' \
+REGIME_SESSION_SECRET="$(openssl rand -base64 32)" \
 REGIME_ALLOWED_IPS=203.0.113.8 \
 CRON_SECRET=local-only \
 FRED_API_KEY=... \
@@ -65,7 +95,7 @@ npm run dev
 
 ```bash
 curl -sI http://localhost:3000/private/regime
-# 302
+# 307 to /private/login
 
 curl -sI -H 'x-forwarded-for: 203.0.113.8' http://localhost:3000/private/regime
 # 200
@@ -76,6 +106,8 @@ curl -sI http://localhost:3000/api/regime/refresh
 curl -sI -H 'Authorization: Bearer local-only' http://localhost:3000/api/regime/refresh
 # 200
 ```
+
+The session cookie is `Secure`. `curl` against `http://` may not store it; send the `Cookie` header explicitly when replaying a session. Chrome treats `localhost` as a secure context and will store it.
 
 Without `FRED_API_KEY` the page still renders for an authorised caller and tells them to do nothing / reduce risk. It does not invent market levels.
 
