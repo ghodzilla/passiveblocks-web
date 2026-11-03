@@ -215,7 +215,7 @@ export function RegimeDashboard({ snapshot, ideas }: { snapshot: RegimeSnapshot;
 
         <section className="mt-10">
           <h2 className="text-lg font-bold tracking-tight">History</h2>
-          <p className="mt-1 text-sm text-[var(--muted)]">Weekly spine, causal z-scores, hysteresis applied in order. Bands are the regime on that print.</p>
+          <p className="mt-1 text-sm text-[var(--muted)]">Weekly spine, causal z-scores, hysteresis applied in order. The AI column is the point-in-time blend. The live card drops a price leg older than 10 days.</p>
           <div className="mt-4 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 p-3 sm:p-4">
             <HistoryChart points={snapshot.history} />
             <ul className="mt-3 flex flex-wrap gap-3 text-[11px] uppercase tracking-wider text-[var(--muted)]">
@@ -229,7 +229,7 @@ export function RegimeDashboard({ snapshot, ideas }: { snapshot: RegimeSnapshot;
           </div>
           {recent.length > 0 ? (
             <div className="mt-4 overflow-x-auto">
-              <table className="w-full min-w-[640px] text-left text-sm">
+              <table className="w-full min-w-[720px] text-left text-sm">
                 <caption className="sr-only">Recent composite prints</caption>
                 <thead className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
                   <tr>
@@ -240,7 +240,8 @@ export function RegimeDashboard({ snapshot, ideas }: { snapshot: RegimeSnapshot;
                     <th className="py-2 pr-3 font-bold">Policy</th>
                     <th className="py-2 pr-3 font-bold">Credit</th>
                     <th className="py-2 pr-3 font-bold">Growth</th>
-                    <th className="py-2 font-bold">Pos</th>
+                    <th className="py-2 pr-3 font-bold">Pos</th>
+                    <th className="py-2 font-bold">AI</th>
                   </tr>
                 </thead>
                 <tbody className="font-mono text-xs os-tabular">
@@ -253,7 +254,8 @@ export function RegimeDashboard({ snapshot, ideas }: { snapshot: RegimeSnapshot;
                       <td className="py-2 pr-3">{formatZ(point.policy)}</td>
                       <td className="py-2 pr-3">{formatZ(point.credit)}</td>
                       <td className="py-2 pr-3">{formatZ(point.growth)}</td>
-                      <td className="py-2">{formatZ(point.positioning)}</td>
+                      <td className="py-2 pr-3">{formatZ(point.positioning)}</td>
+                      <td className="py-2">{formatZ(point.ai)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -314,7 +316,10 @@ export function RegimeDashboard({ snapshot, ideas }: { snapshot: RegimeSnapshot;
             <div>No-edge band: |composite| &lt; {THRESHOLDS.weakAbsComposite} means do nothing.</div>
             <div>Budgets: risk-on {pct(MODEL_BUDGET.risk_on.volTarget)} / {pct(MODEL_BUDGET.risk_on.maxGross)} / {pct(MODEL_BUDGET.risk_on.maxNet)}. Transitional {pct(MODEL_BUDGET.transitional.volTarget)}. Tightening {pct(MODEL_BUDGET.tightening.volTarget)}. Crisis {pct(MODEL_BUDGET.crisis.volTarget)}.</div>
             <div>Missing components are dropped and the remaining weights are renormalised. A missing core series blocks action.</div>
+            <div>AI capex and concentration has an 8% base weight. It is not required for a print. Concentration (SPY versus RSP) is sign-flipped.</div>
             <div>A tactical idea is sized only when Confirmed, and never above 20% of the book. A watchlist stock is capped at 2%. The sum stays inside the gross and net budget.</div>
+            <div>Average pairwise correlation above 0.55 scales non-cash weights down, to half at 0.70. Confirmed AI/megacap names share a 25% group cap.</div>
+            <div>A signal with a negative 20-day information coefficient and a hit rate under 48% is retired. Unknown health keeps the default gates.</div>
           </dl>
         </section>
 

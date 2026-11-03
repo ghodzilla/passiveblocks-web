@@ -1,20 +1,33 @@
 /**
- * Macro regime rules, version regime-v1.
+ * Macro regime rules, version regime-v2.
  * Positive composite = easier liquidity / risk-on. Negative = stress.
  * Weights are the base weights. Missing components are renormalised.
+ * The AI gauge is 8%. The other five keep their regime-v1 proportions on the rest.
  */
 
-export const RULES_VERSION = 'regime-v1';
+export const RULES_VERSION = 'regime-v2';
 
-export const COMPONENT_IDS = ['liquidity', 'policy', 'credit', 'growth', 'positioning'] as const;
+export const COMPONENT_IDS = ['liquidity', 'policy', 'credit', 'growth', 'positioning', 'ai'] as const;
 export type ComponentId = (typeof COMPONENT_IDS)[number];
 
+const PRIOR_SCALE = 0.92;
+
 export const BASE_WEIGHTS: Record<ComponentId, number> = {
-  liquidity: 0.3,
-  policy: 0.2,
-  credit: 0.25,
-  growth: 0.15,
-  positioning: 0.1,
+  liquidity: 0.3 * PRIOR_SCALE,
+  policy: 0.2 * PRIOR_SCALE,
+  credit: 0.25 * PRIOR_SCALE,
+  growth: 0.15 * PRIOR_SCALE,
+  positioning: 0.1 * PRIOR_SCALE,
+  ai: 0.08,
+};
+
+export const COMPONENT_LABEL: Record<ComponentId, string> = {
+  liquidity: 'Liquidity',
+  policy: 'Policy path',
+  credit: 'Credit',
+  growth: 'Growth differential',
+  positioning: 'Positioning extremes',
+  ai: 'AI capex & concentration',
 };
 
 export const WINDOWS = {
@@ -93,6 +106,7 @@ export const FRED_SERIES = {
   curve: 'T10Y2Y',
   usCli: 'USALOLITOAASTSAM',
   auCli: 'AUSLOLITOAASTSAM',
+  capex: 'IPG3344S',
 } as const;
 
 export const FRED_OBSERVATION_START = '2012-01-01';

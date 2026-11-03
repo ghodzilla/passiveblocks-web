@@ -1,7 +1,9 @@
+import { aiAt, prepareAi } from './ai';
 import { actionFor, budgetsFor, classifyRegime, regimeLabel } from './classify';
 import {
   BASE_WEIGHTS,
   COMPONENT_IDS,
+  COMPONENT_LABEL,
   HISTORY_WEEKS,
   RULES_VERSION,
   THRESHOLDS,
@@ -29,6 +31,12 @@ export interface ModelInput {
   growthDiff: SeriesPoint[];
   usMomentum: SeriesPoint[];
   positioning: PositioningInput[];
+  /** log(SPY/RSP). Empty when either price series is missing. */
+  concentration?: SeriesPoint[];
+  /** log(SMH/SPY). Empty when either price series is missing. */
+  semis?: SeriesPoint[];
+  /** FRED IPG3344S level. Empty when the series was not fetched. */
+  capex?: SeriesPoint[];
   levels: {
     liquidityChangeMillions: number | null;
     policyGapPp: number | null;
@@ -53,10 +61,13 @@ interface Scored {
   asOf: Partial<Record<ComponentId, string | null>>;
   gaps: Partial<Record<ComponentId, string | null>>;
   positioningNote: string | null;
+  aiReading: string;
 }
 
 function emptyWeights(): Record<ComponentId, number> {
-  return { liquidity: 0, policy: 0, credit: 0, growth: 0, positioning: 0 };
+  const weights = {} as Record<ComponentId, number>;
+  for (const id of COMPONENT_IDS) weights[id] = 0;
+  return weights;
 }
 
 export function weightedComposite(values: Partial<Record<ComponentId, number | null>>): {
@@ -108,6 +119,7 @@ interface Prepared {
   growthDiff: ReturnType<typeof prepare>;
   usMomentum: ReturnType<typeof prepare>;
   positioning: { input: PositioningInput; prepared: ReturnType<typeof prepare> }[];
+  ai: ReturnType<typeof prepareAi>;
 }
 
 function scoreAt(prepared: Prepared, input: ModelInput, date: string): Scored {
@@ -178,6 +190,8 @@ function scoreAt(prepared: Prepared, input: ModelInput, date: string): Scored {
     }
   }
 
+  const ai = aiAt(prepared.ai, date);
+
   return {
     z: {
       liquidity: liquidity.z,
@@ -185,6 +199,7 @@ function scoreAt(prepared: Prepared, input: ModelInput, date: string): Scored {
       credit: credit.z,
       growth: growthZ,
       positioning: positioningZ,
+      ai: ai.z,
     },
     asOf: {
       liquidity: liquidity.asOf,
@@ -192,6 +207,7 @@ function scoreAt(prepared: Prepared, input: ModelInput, date: string): Scored {
       credit: credit.asOf,
       growth: oldestDate(growthDates),
       positioning: oldestDate(posDates),
+      ai: ai.asOf,
     },
     gaps: {
       liquidity: liquidity.z == null ? 'Liquidity impulse does not have enough history for a z-score.' : null,
@@ -199,8 +215,10 @@ function scoreAt(prepared: Prepared, input: ModelInput, date: string): Scored {
       credit: credit.z == null ? 'Credit spreads do not have enough history for a z-score.' : null,
       growth: growthGap,
       positioning: positioningGap,
+      ai: ai.gap,
     },
     positioningNote,
+    aiReading: ai.reading,
   };
 }
 
@@ -224,6 +242,9 @@ function spineDates(input: ModelInput): string[] {
     input.growthDiff,
     input.usMomentum,
     ...input.positioning.map((contract) => contract.netOi),
+    input.concentration ?? [],
+    input.semis ?? [],
+    input.capex ?? [],
   ]
     .map((series) => series[series.length - 1]?.date)
     .filter((date): date is string => Boolean(date))
@@ -264,6 +285,8 @@ const DETAIL: Record<ComponentId, string> = {
     'Equal blend of the Treasury curve (T10Y2Y) and the US−AU OECD CLI differential (USALOLITOAASTSAM − AUSLOLITOAASTSAM) when both exist. Positive means a steeper curve and US leading indicators ahead of Australia versus their own history.',
   positioning:
     'Contrarian z-score of CFTC legacy futures-only non-commercial net position / open interest (E-mini S&P, 10-year note, euro FX, WTI). Positive means specs are shorter than usual. This is not dealer inventory, and it is not TFF leveraged-money versus asset-manager split.',
+  ai:
+    'Modest 8% weight. Equal blend of the legs that have a z-score, trailing 252 observations (126 minimum), winsorised at ±3. Concentration is log(SPY/RSP), sign-flipped, so cap-weight beating equal-weight lowers the composite. Semiconductors are log(SMH/SPY); a rise is risk-on. Capex, when FRED returns it, is IPG3344S industrial production of semiconductors and other electronic components. Dollar hyperscaler capex is not a separate series. Data-center electricity demand is omitted. This component is not required for a regime print: a missing gauge is dropped and the other weights are renormalised.',
 };
 
 export function buildModel(input: ModelInput): RegimeSnapshot {
@@ -278,6 +301,11 @@ export function buildModel(input: ModelInput): RegimeSnapshot {
       input: contract,
       prepared: prepare(contract.netOi, WINDOWS.positioning.window, WINDOWS.positioning.min),
     })),
+    ai: prepareAi({
+      concentration: input.concentration ?? [],
+      semis: input.semis ?? [],
+      capex: input.capex ?? [],
+    }),
   };
 
   const dates = spineDates(input);
@@ -303,6 +331,7 @@ export function buildModel(input: ModelInput): RegimeSnapshot {
         credit: scored.z.credit ?? null,
         growth: scored.z.growth ?? null,
         positioning: scored.z.positioning ?? null,
+        ai: scored.z.ai ?? null,
       },
       scored,
     });
@@ -312,7 +341,15 @@ export function buildModel(input: ModelInput): RegimeSnapshot {
     [...walked].reverse().find((step) => step.point.composite != null) ??
     walked[walked.length - 1] ??
     null;
-  const liveScored = liveStep?.scored ?? scoreAt(prepared, input, input.today);
+  const walkedLive = liveStep?.scored ?? scoreAt(prepared, input, input.today);
+  const liveAi = aiAt(prepared.ai, input.today, { today: input.today, dropStale: true });
+  const liveScored: Scored = {
+    ...walkedLive,
+    z: { ...walkedLive.z, ai: liveAi.z },
+    asOf: { ...walkedLive.asOf, ai: liveAi.asOf },
+    gaps: { ...walkedLive.gaps, ai: liveAi.gap },
+    aiReading: liveAi.reading,
+  };
   const livePoint = liveStep?.point;
   const ready = coreReady(liveScored.z);
   const { composite, weights } = weightedComposite(ready ? liveScored.z : {});
@@ -326,7 +363,16 @@ export function buildModel(input: ModelInput): RegimeSnapshot {
   };
   const actionable = liquidityOk && policyOk && creditOk && zOk('liquidity') && zOk('policy') && zOk('credit') && composite != null;
   const weak = composite != null && Math.abs(composite) < THRESHOLDS.weakAbsComposite;
-  const regime = livePoint?.regime ?? null;
+  let regime = livePoint?.regime ?? null;
+  if (liveAi.z !== walkedLive.z.ai) {
+    const prior = [...walked].reverse().find((step) => livePoint != null && step.point.date < livePoint.date && step.point.regime)?.point.regime ?? null;
+    regime = classifyRegime({
+      composite,
+      liquidityZ: liveScored.z.liquidity ?? null,
+      creditZ: liveScored.z.credit ?? null,
+      previous: prior,
+    });
+  }
   const decision = actionFor({ actionable, weak, regime });
   const budget = budgetsFor(regime, decision.action);
 
@@ -336,6 +382,7 @@ export function buildModel(input: ModelInput): RegimeSnapshot {
     credit: input.levels.hyOas == null ? 'HY OAS —' : `HY OAS ${input.levels.hyOas.toFixed(2)}%`,
     growth: `Curve ${formatSigned(input.levels.curvePp, 2, ' pp')} · US−AU CLI ${formatSigned(input.levels.growthDiff, 2, '')}`,
     positioning: liveScored.positioningNote ?? 'No positioning print',
+    ai: liveScored.aiReading,
   };
 
   const components: ComponentScore[] = COMPONENT_IDS.map((id) => {
@@ -343,16 +390,7 @@ export function buildModel(input: ModelInput): RegimeSnapshot {
     const included = ready && z != null && Number.isFinite(z);
     return {
       id,
-      label:
-        id === 'liquidity'
-          ? 'Liquidity'
-          : id === 'policy'
-            ? 'Policy path'
-            : id === 'credit'
-              ? 'Credit'
-              : id === 'growth'
-                ? 'Growth differential'
-                : 'Positioning extremes',
+      label: COMPONENT_LABEL[id],
       z: included ? z : null,
       included,
       weight: weights[id],
@@ -375,7 +413,7 @@ export function buildModel(input: ModelInput): RegimeSnapshot {
     if (!gaps.includes(line)) gaps.push(line);
   }
   if (!ready) {
-    const line = 'Composite withheld until liquidity, policy, and credit all have a z-score. A positioning or growth print alone cannot set the regime.';
+    const line = 'Composite withheld until liquidity, policy, and credit all have a z-score. A positioning, growth, or AI print alone cannot set the regime.';
     if (!gaps.includes(line)) gaps.push(line);
   }
   const stalePositioning = input.freshness.filter((row) => row.id.startsWith('CFTC-') && row.stale);

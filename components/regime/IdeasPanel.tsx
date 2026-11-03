@@ -1,3 +1,4 @@
+import { CORR_WARN, DISPERSION_WINDOW } from '@/lib/regime/correlation';
 import type { IdeasReport, IdeaStatus } from '@/lib/regime/ideas';
 
 function pct(value: number | null, digits = 0): string {
@@ -47,6 +48,43 @@ export function IdeasPanel({ ideas }: { ideas: IdeasReport }) {
       <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">
         The regime map names liquid US and ASX ETFs an Australian investor can actually trade. A name is Confirmed only when this print prefers it and the daily signals agree: positive 12–1 month momentum, price above the 200-day average, and a 5-session return that is not stretched. Otherwise it is Watch or Avoid. Suggested weights are the regime vol target divided by 20-day annualised volatility, then capped at {pct(ideas.singlePositionCap)} for a tactical idea and {pct(ideas.systematicCap)} for a watchlist stock. Nothing is sized unless it is Confirmed.
       </p>
+
+      {ideas.crowding.warning ? (
+        <div className="mt-4 rounded-[var(--radius-xl)] border border-amber-300/50 bg-amber-400/15 px-5 py-4">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-amber-100">Crowding and correlation</p>
+          <p className="mt-2 text-base font-semibold leading-relaxed text-white">{ideas.crowding.warning}</p>
+        </div>
+      ) : (
+        <p className="mt-4 text-sm text-[var(--muted)]">
+          {ideas.crowding.average == null
+            ? ideas.crowding.gap
+            : `Average pairwise correlation ${ideas.crowding.average.toFixed(2)} across ${ideas.crowding.names} names. At or below ${CORR_WARN.toFixed(2)}, so suggested weights are not scaled.`}
+          {ideas.crowding.dispersion != null ? ` ${DISPERSION_WINDOW}-day dispersion ${(ideas.crowding.dispersion * 100).toFixed(1)}%.` : ''}
+        </p>
+      )}
+
+      {ideas.overlap.groups.length > 0 ? (
+        <div className="mt-4 rounded-[var(--radius-lg)] border border-amber-300/40 bg-black/25 px-4 py-4">
+          <h3 className="text-sm font-bold">Overlap</h3>
+          <p className="mt-1 text-sm text-[var(--muted)]">
+            Confirmed ideas that are the same AI or megacap exposure, or whose correlation is at least 0.80, are capped together at {pct(ideas.overlap.cap)}.
+          </p>
+          <ul className="mt-3 space-y-2 text-sm">
+            {ideas.overlap.groups.map((group) => (
+              <li key={group.symbols.join('-')}>
+                <span className="font-mono text-xs">{group.symbols.join(' · ')}</span>
+                <span className="ml-2 text-[var(--muted)]">
+                  combined {pct(group.combinedBefore, 1)} → {pct(group.combinedAfter, 1)}
+                </span>
+                <p className="text-xs text-[var(--muted)]">{group.reason}</p>
+              </li>
+            ))}
+          </ul>
+          {ideas.overlap.gap ? <p className="mt-2 text-xs text-[var(--status-warn)]">{ideas.overlap.gap}</p> : null}
+        </div>
+      ) : ideas.overlap.gap ? (
+        <p className="mt-3 text-xs text-[var(--status-warn)]">{ideas.overlap.gap}</p>
+      ) : null}
 
       {ideas.defensiveOnly ? (
         <div className="mt-4 rounded-[var(--radius-xl)] border border-rose-400/40 bg-rose-500/10 px-5 py-4">
@@ -137,6 +175,39 @@ export function IdeasPanel({ ideas }: { ideas: IdeasReport }) {
           </ul>
         </div>
       ) : null}
+
+      <div className="mt-6">
+        <h3 className="text-sm font-bold">Signal health</h3>
+        <p className="mt-1 max-w-3xl text-sm text-[var(--muted)]">
+          Cross-sectional information coefficient and hit rate, sampled every 5th date, keeping up to 120 samples of a 20-day forward return. Fewer than 40 samples stays unknown and the default gates remain. A retired signal drops out of the blend and stops being a confirmation gate. If both 12–1 momentum and the 200-day trend are retired, nothing new is confirmed.
+        </p>
+        <div className="mt-3 overflow-x-auto">
+          <table className="w-full min-w-[520px] text-left text-sm">
+            <thead className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
+              <tr>
+                <th className="py-2 pr-3 font-bold">Signal</th>
+                <th className="py-2 pr-3 font-bold">IC</th>
+                <th className="py-2 pr-3 font-bold">Hit rate</th>
+                <th className="py-2 pr-3 font-bold">Samples</th>
+                <th className="py-2 font-bold">Health</th>
+              </tr>
+            </thead>
+            <tbody className="font-mono text-xs">
+              {ideas.signalHealth.map((signal) => (
+                <tr key={signal.id} className="border-t border-[var(--border)]">
+                  <td className="py-2 pr-3 font-sans">{signal.label}</td>
+                  <td className="py-2 pr-3">{num(signal.ic, 2)}</td>
+                  <td className="py-2 pr-3">{signal.hitRate == null ? '—' : pct(signal.hitRate, 0)}</td>
+                  <td className="py-2 pr-3">{signal.samples}</td>
+                  <td className={`py-2 font-sans text-[11px] font-bold uppercase tracking-wider ${signal.status === 'retired' ? 'text-rose-200' : signal.status === 'degraded' ? 'text-amber-100' : signal.status === 'healthy' ? 'text-emerald-200' : 'text-[var(--muted)]'}`}>
+                    {signal.status}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {ideas.gaps.length > 0 ? (
         <ul className="mt-4 space-y-1 text-sm text-[var(--status-warn)]">

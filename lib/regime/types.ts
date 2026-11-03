@@ -34,6 +34,7 @@ export interface HistoryPoint {
   credit: number | null;
   growth: number | null;
   positioning: number | null;
+  ai: number | null;
 }
 
 export interface RegimeSnapshot {

@@ -15,7 +15,7 @@ const TAG = 'regime-snapshot';
  */
 export const getCachedRegimeSnapshot = unstable_cache(
   async () => buildRegimeSnapshot(new Date()),
-  ['regime-snapshot-v1'],
+  ['regime-snapshot-v2'],
   { revalidate: 60 * 60, tags: [TAG] },
 );
 

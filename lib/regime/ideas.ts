@@ -1,5 +1,9 @@
 import type { ActionId } from './classify';
 import type { ComponentId, RegimeId } from './constants';
+import { crowdingReport, pairTable, type CrowdingReport } from './correlation';
+import { evaluateSignalHealth, type SignalHealth } from './health';
+import type { OverlapGroup } from './overlap';
+import { applyOverlapCaps, OVERLAP_GROUP_CAP } from './overlap';
 import type { QuantSignals } from './signals';
 import { computeSignals, quantAgrees, signalStrength } from './signals';
 import type { ComponentScore, RegimeSnapshot } from './types';
@@ -67,6 +71,9 @@ export interface IdeasReport {
   pricesFetchedAt: string | null;
   singlePositionCap: number;
   systematicCap: number;
+  crowding: CrowdingReport;
+  overlap: { groups: OverlapGroup[]; gap: string | null; cap: number };
+  signalHealth: SignalHealth[];
 }
 
 export function defensiveOnly(action: ActionId): boolean {
@@ -196,6 +203,8 @@ export function buildIdeas(input: {
 
   const equity = EXPRESSIONS.find((expression) => expression.id === 'equity-beta') as Expression;
   const stocksLive = !standDown && printStance(equity, input.snapshot.regime, false) === 'prefer';
+  const health = evaluateSignalHealth(input.book.series.map((series) => ({ symbol: series.symbol, bars: series.bars })));
+  const crowding = crowdingReport(input.book.series.map((series) => ({ symbol: series.symbol, bars: series.bars })));
 
   const drafted: {
     instrument: Instrument;
@@ -220,7 +229,7 @@ export function buildIdeas(input: {
     const series = bySymbol.get(instrument.symbol);
     const signals = computeSignals(series?.bars ?? []);
     const fresh = priceIsFresh(signals.asOf, input.snapshot.today);
-    const agreed = quantAgrees(instrument.role, signals);
+    const agreed = quantAgrees(instrument.role, signals, health);
     const status = decideStatus(stance, agreed, fresh);
     const drivers = expression
       ? driverText(expression.drivers, input.snapshot.components)
@@ -233,7 +242,7 @@ export function buildIdeas(input: {
       sleeve: expression?.label ?? 'Watchlist',
       signals,
       status,
-      strength: signalStrength(signals),
+      strength: signalStrength(signals, health),
       rationale,
       drivers,
       priceStale: signals.asOf != null && !fresh,
@@ -247,7 +256,24 @@ export function buildIdeas(input: {
       ? volTargetWeight(input.snapshot.effectiveBudget.volTarget, row.signals.annVol20, row.instrument.role)
       : 0,
   }));
-  const weights = scaleWeights(raw, input.snapshot.effectiveBudget.maxGross, input.snapshot.effectiveBudget.maxNet);
+  const budgeted = scaleWeights(raw, input.snapshot.effectiveBudget.maxGross, input.snapshot.effectiveBudget.maxNet);
+  const crowded = budgeted.map((weight, index) => {
+    if (drafted[index].instrument.role === 'cash') return weight;
+    return Math.round(weight * crowding.scale * 1e6) / 1e6;
+  });
+  const confirmedSymbols = drafted
+    .filter((row) => row.status === 'confirmed')
+    .map((row) => row.instrument.symbol);
+  const pairResult = pairTable(input.book.series, confirmedSymbols);
+  const pairs = pairResult.unavailable ? null : pairResult.pairs;
+  const overlap = applyOverlapCaps(
+    drafted.map((row, index) => ({
+      symbol: row.instrument.symbol,
+      status: row.status,
+      weight: crowded[index],
+    })),
+    pairs,
+  );
 
   const rows: IdeaRow[] = drafted.map((row, index) => ({
     symbol: row.instrument.symbol,
@@ -261,7 +287,7 @@ export function buildIdeas(input: {
     status: row.status,
     strength: row.strength,
     signals: row.signals,
-    maxWeight: weights[index],
+    maxWeight: overlap.weights[index],
     rationale: row.rationale,
     drivers: row.drivers,
     invalidation: invalidationText({
@@ -298,5 +324,8 @@ export function buildIdeas(input: {
     pricesFetchedAt: input.book.fetchedAt,
     singlePositionCap: SINGLE_POSITION_CAP,
     systematicCap: SYSTEMATIC_CAP,
+    crowding,
+    overlap: { groups: overlap.groups, gap: overlap.gap, cap: OVERLAP_GROUP_CAP },
+    signalHealth: health,
   };
 }

@@ -1,6 +1,6 @@
 # Macro Regime Engine (phase 1)
 
-Owner-only page at `/private/regime`. It scores liquidity, policy path, credit, the US−AU growth differential, and CFTC positioning, then maps the regime to a risk budget. It is an educational research tool, not financial advice, and it is not linked from the public nav, the OS nav, or the sitemap.
+Owner-only page at `/private/regime`. It scores liquidity, policy path, credit, the US−AU growth differential, CFTC positioning, and an AI capex and concentration gauge, then maps the regime to a risk budget. It is an educational research tool, not financial advice, and it is not linked from the public nav, the OS nav, or the sitemap.
 
 `/private/regime` does not use Supabase. The owner signs in with a password at `/private/login`. `/os` and `/drafts` still use the Supabase magic-link login and `OS_ALLOWED_EMAILS` / `ALLOWED_IPS`. Those lists do not open this page.
 
@@ -12,10 +12,12 @@ Set these in Vercel (Production and Preview). Do not commit values. This change 
 | --- | --- | --- |
 | `REGIME_PASSWORD_HASH` | Yes, for password sign-in | scrypt hash of the owner password. See the command below. |
 | `REGIME_SESSION_SECRET` | Yes, for password sign-in | HMAC key for the session cookie. At least 32 characters. `openssl rand -base64 32` |
-| `FRED_API_KEY` | Yes, for live scores | Free key from https://fred.stlouisfed.org/docs/api/api_key.html |
+| `FRED_API_KEY` | Yes, for live scores | Free key from https://fred.stlouisfed.org/docs/api/api_key.html. The same key fetches IPG3344S for the capex leg. |
 | `CRON_SECRET` | Yes, for the scheduled refresh | Long random string. Vercel sends it as `Authorization: Bearer $CRON_SECRET` on the cron request. It does not unlock the HTML page. |
 | `REGIME_ALLOWED_IPS` | No | Optional comma-separated IPs that can open the page without a password. This is **not** `ALLOWED_IPS`. Leave it unset to require the password. |
 | `REGIME_WATCHLIST` | No | Comma-separated stock symbols that replace the default watchlist (US megacaps and a liquid ASX 20 slice). Example: `AAPL,BHP.AX`. Leave unset for the built-in list. An empty value shows no stocks. No price API key is required. |
+
+No new environment variable is required for the AI gauge, the crowding alarm, overlap, or signal health. SPY, RSP, and SMH come from the same Yahoo chart endpoint as the playbook. IPG3344S is skipped, and the gap is labeled, when `FRED_API_KEY` is unset.
 
 `REGIME_OWNER_EMAILS` is no longer read. A Supabase session does not open `/private/regime`.
 
@@ -56,6 +58,47 @@ The owner page adds a playbook for the current regime: preferred and avoid expre
 Each candidate is marked Confirmed only when this print prefers it and three daily signals agree: 12–1 month momentum above zero, price above the 200-day average, and a 5-session return z-score below 1.5. Otherwise the row is Watch or Avoid. Cash ETFs do not need an uptrend. Suggested max weight is the regime vol target divided by 20-day annualised volatility, capped at 20% for a tactical ETF and 2% for a watchlist stock, then scaled so the book stays inside the gross and net budget. A name that is not Confirmed is not sized. Each row shows the invalidation (200-day break, momentum flip, or regime/action change) and the bar date.
 
 When the regime action is do nothing or reduce risk, that banner is repeated and candidates are limited to defensive and cash expressions. The stock watchlist is stood down.
+
+## AI capex and concentration
+
+Rules version `regime-v2` adds a sixth component, base weight **8%**. The other five keep their previous proportions on the remaining 92% (liquidity 0.276, policy 0.184, credit 0.230, growth 0.138, positioning 0.092). A missing leg is dropped and the rest are renormalised. The gauge is not part of the core: liquidity, policy, and credit still have to exist before a composite is published, and a missing AI print does not block the regime.
+
+The blend is the equal average of whichever legs have a trailing z-score (252 observations, 126 minimum, winsorised at ±3):
+
+| Leg | Series | Sign |
+| --- | --- | --- |
+| Index concentration | log(SPY / RSP), adjusted close | Sign-flipped. Cap-weight beating equal-weight is fragility, so a high raw z lowers the composite. |
+| Semiconductors | log(SMH / SPY) | A rise versus the market is risk-on. |
+| Hardware capex proxy | FRED `IPG3344S`, industrial production of semiconductors and other electronic components | A rise is risk-on. Omitted, with a labeled gap, when the fetch fails. |
+
+Dollar hyperscaler capex is not a separate series. Data-center electricity demand is omitted: no free series isolates it, and utilities (XLU) are not used as a stand-in. A price leg older than 10 days is left out of the live print. Capex uses the 75-day monthly stale limit. The history column keeps the point-in-time blend.
+
+Because the weight is 8%, a full ±3 concentration spike on an otherwise flat book stays inside the |composite| < 0.35 no-edge band.
+
+## Crowding, overlap, and signal health
+
+Average pairwise correlation uses the last 60 overlapping daily log returns across the price book (playbook ETFs and the watchlist). It is unknown, and weights are not scaled, until at least 8 series produce at least 28 pairs. Dispersion is the cross-sectional standard deviation of 20-day returns. It is shown and does not scale weights a second time.
+
+| Average correlation | Risk-weight scale |
+| --- | --- |
+| At or below 0.55 | 1 |
+| Between 0.55 and 0.70 | Linear from 1 down to 0.50 |
+| At or above 0.70 | 0.50 |
+
+Cash is not scaled. The scale is applied after the gross and net budget, and it only reduces weights.
+
+Confirmed ideas in the AI/megacap cluster share one group cap of **25%**: QQQ, XLK, XLC, SMH, NVDA, MSFT, AAPL, AMZN, GOOGL, META, AVGO, TSLA, and VGS.AX. SPY is not in that list. Confirmed pairs with a 60-day correlation of at least 0.80 are grouped the same way. The page shows combined weight before and after the cap. If pairwise correlation cannot be computed, the identity cap still applies and the gap says so.
+
+Signal health is a cross-sectional information coefficient and a sign hit rate on the 20-day forward return. Dates are sampled every 5th observation, up to 120 samples. Fewer than 40 samples stays **unknown**, and the default confirmation rules remain. Momentum uses the 12–1 value, trend is +1/−1 versus the 200-day average, and the reversion signal is the sign-flipped 5-session z.
+
+| Health | Rule |
+| --- | --- |
+| Healthy | IC ≥ 0 and hit rate ≥ 48% |
+| Degraded | IC < 0 or hit rate < 48%, but not both. That signal keeps half of its blend weight and remains a gate. |
+| Retired | IC < 0 and hit rate < 48%. It drops out of the blend and is no longer a confirmation gate. |
+| Unknown | Not enough pairs. No change. |
+
+If both 12–1 momentum and the 200-day trend are retired, reversion alone cannot confirm a name. The row stays Watch.
 
 ## Scheduled refresh
 
@@ -124,7 +167,7 @@ Without `FRED_API_KEY` the page still renders for an authorised caller and tells
 
 ## Rule summary
 
-Rules version `regime-v1`. Positive z is risk-on. Each component is a trailing z-score, winsorised at ±3. Base weights: liquidity 0.30, policy 0.20, credit 0.25, growth 0.15, positioning 0.10. Missing components are renormalised.
+Rules version `regime-v2`. Positive z is risk-on. Each component is a trailing z-score, winsorised at ±3. Base weights: liquidity 0.276, policy 0.184, credit 0.230, growth 0.138, positioning 0.092, AI capex and concentration 0.08. Missing components are renormalised. The AI leg is not required for a print.
 
 | Regime | Entry | Vol / max gross / max net |
 | --- | --- | --- |
