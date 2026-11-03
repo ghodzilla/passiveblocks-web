@@ -8,8 +8,8 @@ export const maxDuration = 60;
 
 export async function GET() {
   if (!(await regimeApiAllowed(true))) return regimeDenied();
-  const snapshot = await refreshRegimeSnapshot();
-  return NextResponse.json(snapshot, {
+  const payload = await refreshRegimeSnapshot();
+  return NextResponse.json(payload, {
     headers: {
       'cache-control': 'private, no-store',
       'x-robots-tag': 'noindex, nofollow',

@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { IdeasPanel } from '@/components/regime/IdeasPanel';
 import { MODEL_BUDGET, REGIME_LABEL, THRESHOLDS, type RegimeId } from '@/lib/regime/constants';
+import type { IdeasReport } from '@/lib/regime/ideas';
 import type { HistoryPoint, RegimeSnapshot } from '@/lib/regime/types';
 
 function formatZ(z: number | null): string {
@@ -101,7 +103,7 @@ function ZBar({ z }: { z: number | null }) {
   );
 }
 
-export function RegimeDashboard({ snapshot }: { snapshot: RegimeSnapshot }) {
+export function RegimeDashboard({ snapshot, ideas }: { snapshot: RegimeSnapshot; ideas: IdeasReport }) {
   const generated = new Intl.DateTimeFormat('en-AU', {
     timeZone: 'Australia/Melbourne',
     dateStyle: 'medium',
@@ -301,6 +303,8 @@ export function RegimeDashboard({ snapshot }: { snapshot: RegimeSnapshot }) {
           ) : null}
         </section>
 
+        <IdeasPanel ideas={ideas} />
+
         <section className="mt-10 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/20 px-4 py-4">
           <h2 className="text-lg font-bold tracking-tight">Rules that bind</h2>
           <dl className="mt-3 grid gap-2 text-sm text-[var(--muted)] sm:grid-cols-2">
@@ -310,11 +314,12 @@ export function RegimeDashboard({ snapshot }: { snapshot: RegimeSnapshot }) {
             <div>No-edge band: |composite| &lt; {THRESHOLDS.weakAbsComposite} means do nothing.</div>
             <div>Budgets: risk-on {pct(MODEL_BUDGET.risk_on.volTarget)} / {pct(MODEL_BUDGET.risk_on.maxGross)} / {pct(MODEL_BUDGET.risk_on.maxNet)}. Transitional {pct(MODEL_BUDGET.transitional.volTarget)}. Tightening {pct(MODEL_BUDGET.tightening.volTarget)}. Crisis {pct(MODEL_BUDGET.crisis.volTarget)}.</div>
             <div>Missing components are dropped and the remaining weights are renormalised. A missing core series blocks action.</div>
+            <div>A tactical idea is sized only when Confirmed, and never above 20% of the book. A watchlist stock is capped at 2%. The sum stays inside the gross and net budget.</div>
           </dl>
         </section>
 
         <p className="mt-10 max-w-3xl text-xs leading-relaxed text-[var(--muted)]">
-          Educational research tool for the owner. Not financial advice, not a solicitation to buy or sell any instrument, and not a forecast. The regime sets a risk budget. It does not size a trade, and it does not override a missing edge. Cash is a valid output. Quantitative signals and the hybrid book are later phases and are not on this page.
+          Educational research tool for the owner. Not financial advice, not a solicitation to buy or sell any instrument, and not a forecast. The regime sets a risk budget. A Confirmed idea is a research label, not an order. Cash is a valid output.
         </p>
       </main>
     </div>
