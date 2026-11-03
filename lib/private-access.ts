@@ -1,9 +1,10 @@
 /**
- * Shared deny-by-default access policy for private surfaces.
+ * Deny-by-default access policy for /os and /drafts.
+ * The regime dashboard does not use this. See lib/regime/access.ts.
  * Edge-safe: middleware imports this file. No Node-only APIs.
  */
 
-export type AccessSurface = 'os' | 'regime-page' | 'regime-api';
+export type AccessSurface = 'os';
 export type AccessDecision = 'allow' | 'deny' | 'login';
 
 export function parseList(raw: string | undefined): string[] {
@@ -60,13 +61,12 @@ export function isCronAuthorized(
 }
 
 /**
- * Fail closed.
- * - IP allowlist short-circuits (the list is per surface).
- * - Cron bearer authorises only the regime API refresh route. Caller must
- *   pass cronAuthorized=false for pages so the secret cannot unlock HTML.
- * - Signed-out browsers on pages are sent to login only when Supabase and
- *   the email allowlist are both configured. Otherwise 404.
- * - API routes never redirect; anonymous and wrong-email callers get deny.
+ * Fail closed for /os and /drafts.
+ * - ALLOWED_IPS short-circuits without a Supabase session.
+ * - Signed-out browsers are sent to the magic-link login only when Supabase
+ *   and OS_ALLOWED_EMAILS are both configured. Otherwise 404.
+ * - A signed-in email that is not on the list is denied.
+ * - cronAuthorized is ignored. CRON_SECRET cannot open these pages.
  */
 export function decideAccess(input: {
   surface: AccessSurface;
@@ -77,13 +77,13 @@ export function decideAccess(input: {
   emailsConfigured: boolean;
   supabaseConfigured: boolean;
 }): AccessDecision {
-  if (input.surface === 'regime-api' && input.cronAuthorized) return 'allow';
+  void input.surface;
+  void input.cronAuthorized;
   if (input.ipAllowed) return 'allow';
 
   const canUseEmail = input.supabaseConfigured && input.emailsConfigured;
   if (!canUseEmail) return 'deny';
   if (input.email && input.emailAllowed) return 'allow';
   if (input.email) return 'deny';
-  if (input.surface === 'regime-api') return 'deny';
   return 'login';
 }

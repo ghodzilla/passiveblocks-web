@@ -52,48 +52,29 @@ describe('decideAccess', () => {
 
   it('fails closed when nothing is configured', () => {
     assert.equal(decideAccess({ ...closed, surface: 'os' }), 'deny');
-    assert.equal(decideAccess({ ...closed, surface: 'regime-page' }), 'deny');
-    assert.equal(decideAccess({ ...closed, surface: 'regime-api' }), 'deny');
   });
 
   it('lets an allowlisted IP through and does not let the cron secret open a page', () => {
-    assert.equal(decideAccess({ ...closed, surface: 'regime-page', ipAllowed: true }), 'allow');
     assert.equal(decideAccess({ ...closed, surface: 'os', ipAllowed: true }), 'allow');
-    assert.equal(decideAccess({ ...closed, surface: 'regime-page', cronAuthorized: true }), 'deny');
     assert.equal(decideAccess({ ...closed, surface: 'os', cronAuthorized: true }), 'deny');
-    assert.equal(decideAccess({ ...closed, surface: 'regime-api', cronAuthorized: true }), 'allow');
   });
 
-  it('sends anonymous page viewers to login and hides the API', () => {
+  it('sends anonymous page viewers to login when Supabase and the email list are set', () => {
     const ready = { ...closed, emailsConfigured: true, supabaseConfigured: true };
-    assert.equal(decideAccess({ ...ready, surface: 'regime-page' }), 'login');
     assert.equal(decideAccess({ ...ready, surface: 'os' }), 'login');
-    assert.equal(decideAccess({ ...ready, surface: 'regime-api' }), 'deny');
   });
 
   it('allows only the owner email and denies everyone else who is signed in', () => {
     const ready = { ...closed, emailsConfigured: true, supabaseConfigured: true };
     assert.equal(decideAccess({
       ...ready,
-      surface: 'regime-page',
+      surface: 'os',
       email: 'owner@example.com',
       emailAllowed: true,
     }), 'allow');
     assert.equal(decideAccess({
       ...ready,
-      surface: 'regime-api',
-      email: 'owner@example.com',
-      emailAllowed: true,
-    }), 'allow');
-    assert.equal(decideAccess({
-      ...ready,
-      surface: 'regime-page',
-      email: 'guest@example.com',
-      emailAllowed: false,
-    }), 'deny');
-    assert.equal(decideAccess({
-      ...ready,
-      surface: 'regime-api',
+      surface: 'os',
       email: 'guest@example.com',
       emailAllowed: false,
     }), 'deny');
@@ -109,14 +90,22 @@ describe('regime stays out of public surfaces', () => {
     assert.match(robots, /\/private\//);
     assert.equal(sitemap.includes('/private'), false);
     assert.equal(home.includes('/private/regime'), false);
+    assert.equal(home.includes('/private/login'), false);
     assert.equal(osNav.includes('/private/regime'), false);
+    assert.equal(osNav.includes('/private/login'), false);
   });
 
-  it('protects the page and the API in middleware', () => {
+  it('protects the page and the API in middleware without Supabase for regime', () => {
     const middleware = src('middleware.ts');
+    const guard = src('lib/regime/guard.ts');
     assert.match(middleware, /\/private\/:path\*/);
     assert.match(middleware, /\/api\/regime\/:path\*/);
-    assert.match(middleware, /REGIME_OWNER_EMAILS/);
+    assert.match(middleware, /REGIME_PASSWORD_HASH/);
+    assert.match(middleware, /REGIME_SESSION_SECRET/);
     assert.match(middleware, /REGIME_ALLOWED_IPS/);
+    assert.equal(middleware.includes('REGIME_OWNER_EMAILS'), false);
+    assert.equal((middleware.match(/getUser\(/g) ?? []).length, 2);
+    assert.equal(guard.includes('supabase'), false);
+    assert.equal(src('lib/regime/load.ts').includes('supabase'), false);
   });
 });
