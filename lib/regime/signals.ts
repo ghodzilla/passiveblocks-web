@@ -3,6 +3,8 @@ import { clamp, mean, sampleStdev } from './stats';
 export interface Bar {
   date: string;
   close: number;
+  high?: number;
+  low?: number;
 }
 
 /** Skip the most recent month (21 sessions) and measure the year before that. */

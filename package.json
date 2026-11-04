@@ -7,13 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "tsx --test lib/private-access.test.ts lib/regime/model.test.ts lib/regime/auth.test.ts lib/regime/ideas.test.ts lib/regime/upgrades.test.ts",
+    "test": "tsx --test lib/private-access.test.ts lib/regime/model.test.ts lib/regime/auth.test.ts lib/regime/ideas.test.ts lib/regime/upgrades.test.ts lib/regime/extensions.test.ts",
     "regime:hash-password": "tsx scripts/regime-password-hash.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.105.4",
     "@vercel/analytics": "^2.0.1",
+    "@vercel/blob": "^2.0.0",
     "gray-matter": "^4.0.3",
     "next": "14.2.35",
     "react": "^18",
