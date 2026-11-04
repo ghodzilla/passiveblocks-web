@@ -17,7 +17,7 @@ Set these in Vercel (Production and Preview). Do not commit values. This change 
 | `REGIME_ALLOWED_IPS` | No | Optional comma-separated IPs that can open the page without a password. This is **not** `ALLOWED_IPS`. Leave it unset to require the password. |
 | `REGIME_WATCHLIST` | No | Comma-separated stock symbols that replace the default watchlist (US megacaps and a liquid ASX 20 slice). Example: `AAPL,BHP.AX`. Leave unset for the built-in list. An empty value shows no stocks. No price API key is required. |
 | `REGIME_CAPITAL` | No | Paper-portfolio capital in dollars. Default `100000`. A value saved on the owner page wins over this. |
-| `REGIME_TARGET_CAGR` | No | Aspiration return as a decimal, default `0.30` (30% a year). It is labeled an aspiration, not a forecast. A saved page value wins. |
+| `REGIME_TARGET_CAGR` | No | Aspiration return as a decimal, default `0.66` (66% a year). The panel labels it “Aspiration (Medallion gross ceiling 1988-2018) — not a forecast”. A saved page value wins. It does not change risk limits. |
 | `BLOB_READ_WRITE_TOKEN` | No | When set with `REGIME_SESSION_SECRET`, the paper journal is encrypted and stored in Vercel Blob. Without it, the journal stays on the local instance and the page says so. |
 | `REGIME_JOURNAL_PATH` | No | Optional file path for the local journal. Default is a temp file. Do not commit it. |
 
@@ -124,7 +124,7 @@ Quantity is `(capital × risk%) / (entry − stop)`. Risk percent must sit betwe
 
 Pyramiding adds only after the open paper position is up at least 1R from its original entry. A price at or below that entry is a loser: do not add. The original entry and the original R stay when an add is allowed.
 
-The paper portfolio starts as cash equal to capital (`REGIME_CAPITAL`, default $100,000, or the amount saved by the owner session). The daily refresh marks it. After a 10% drawdown from the peak, no new entries are taken. Adds to winners that are already up 1R can still be considered; a brand-new line is zero. The 30% aspiration does not override the halt. With no marks yet, the halt is not invented.
+The paper portfolio starts as cash equal to capital (`REGIME_CAPITAL`, default $100,000, or the amount saved by the owner session). The daily refresh marks it. After a 10% drawdown from the peak, no new entries are taken. Adds to winners that are already up 1R can still be considered; a brand-new line is zero. The 66% aspiration does not override the halt. With no marks yet, the halt is not invented.
 
 **Buy the dip — confirmed** is a flag, not an order. It appears only when the regime is Risk-On or Transitional, the theme is on, the close is 10–20% below the 60-day high, and the close is back above the 20-day average. It does not appear in Tightening/Stress or Crisis, and it does not appear while the drawdown halt is active.
 
@@ -140,7 +140,7 @@ The journal is version 1 JSON. With `BLOB_READ_WRITE_TOKEN` and `REGIME_SESSION_
 
 It is denied unless the caller has a regime session, an allowlisted IP, or presents `CRON_SECRET`. The job walks three out-of-sample folds and reports information coefficient where the signal log has it, plus hit rate, Sharpe, max drawdown, and CAGR for each tunable rule and for the stop system versus SPY and a 60/40 mix of SPY and IEF. A parameter moves only when the candidate improves Sharpe, or ties Sharpe and improves Calmar, on at least 2 of the 3 folds. Full-sample return is not a reason to accept. One parameter change per rule per calendar month. Bounds: ATR k 1.5–4 step 0.5, risk percent 0.5–1% step 0.25%, momentum lookback 189–315 step 21, dip floor 5–15% step 5%, dip ceiling 15–30% step 5%, and the floor stays below the ceiling. Risk percent is scored on the unscaled path. Raising it is leverage, and that does not count as a better rule. The owner sets it. The 10% drawdown halt still blocks new entries whatever the aspiration says.
 
-The Improvement panel shows the target (default 30% a year, explicitly an aspiration), realised CAGR once the paper curve has 30 daily marks, the last backtested CAGR and max drawdown, the gap to the target, and which rules were promoted, demoted, or retired in the last seven days. A negative out-of-sample Sharpe is labeled demoted and is not given more risk. Drawdown limits always win over chasing the target.
+The Improvement panel shows the target (default 66% a year, labeled “Aspiration (Medallion gross ceiling 1988-2018) — not a forecast”), realised CAGR once the paper curve has 30 daily marks, the last backtested CAGR and max drawdown, the gap to the target, and which rules were promoted, demoted, or retired in the last seven days. A negative out-of-sample Sharpe is labeled demoted and is not given more risk. The target is not an input to the optimizer. Drawdown halt, the 0.5–1% risk band, the caps, and the out-of-sample acceptance rule stay fixed. The job never loosens those bounds to close the gap.
 
 The owner session can save capital and the aspiration on the page (`POST /api/regime/settings`). The cron secret cannot.
 

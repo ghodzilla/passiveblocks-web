@@ -3,14 +3,28 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { applyPaperDay, type Desk, type RiskLine } from './desk';
 import { dipSignal } from './dip';
-import { changeAllowed, chooseTweak, neighbors, snapToBound, type FoldMetric } from './improve';
+import { changeAllowed, chooseTweak, neighbors, PARAM_BOUNDS, snapToBound, type FoldMetric } from './improve';
 import { emptyJournal, openJournal, sealJournal } from './journal';
 import type { Bar } from './signals';
 import { reviewBook } from './weekly';
 import type { IdeasReport } from './ideas';
 import { priceUniverse } from './load';
-import { applyOverlapCaps } from './overlap';
-import { drawdownState, pyramidState, resolveCapital, riskSize, roleCap } from './sizing';
+import { applyOverlapCaps, OVERLAP_GROUP_CAP } from './overlap';
+import { SINGLE_POSITION_CAP, SYSTEMATIC_CAP } from './ideas';
+import {
+  ASPIRATION_LABEL,
+  DEFAULT_TARGET_CAGR,
+  DRAWDOWN_HALT,
+  MAX_RISK_PCT,
+  MIN_RISK_PCT,
+  THEME_WEIGHT_CAP,
+  drawdownState,
+  pyramidState,
+  resolveCapital,
+  resolveTargetCagr,
+  riskSize,
+  roleCap,
+} from './sizing';
 import { evaluateThemes } from './themes';
 import { THEME_CHANGELOG, THEME_CONFIG_VERSION, THEMES } from './themes.config';
 
@@ -242,6 +256,72 @@ describe('walk-forward acceptance', () => {
       nowIso: '2026-11-04T22:00:00.000Z',
     });
     assert.equal(reviewed.changes.some((change) => change.ruleId === 'risk-pct'), false);
+  });
+
+  it('does not loosen risk bounds when the aspiration gap widens', () => {
+    assert.equal(resolveTargetCagr(undefined, null), 0.66);
+    assert.equal(DEFAULT_TARGET_CAGR, 0.66);
+    assert.equal(Math.round(DEFAULT_TARGET_CAGR * 100), 66);
+    assert.equal(ASPIRATION_LABEL, 'Aspiration (Medallion gross ceiling 1988-2018) — not a forecast');
+    assert.equal(DRAWDOWN_HALT, 0.1);
+    assert.equal(MIN_RISK_PCT, 0.005);
+    assert.equal(MAX_RISK_PCT, 0.01);
+    assert.equal(THEME_WEIGHT_CAP, 0.2);
+    assert.equal(SINGLE_POSITION_CAP, 0.2);
+    assert.equal(SYSTEMATIC_CAP, 0.02);
+    assert.equal(OVERLAP_GROUP_CAP, 0.25);
+    assert.equal(roleCap('stock'), SYSTEMATIC_CAP);
+    assert.equal(roleCap('etf'), SINGLE_POSITION_CAP);
+    const riskBound = PARAM_BOUNDS.find((bound) => bound.id === 'risk-pct');
+    assert.equal(riskBound?.min, MIN_RISK_PCT);
+    assert.equal(riskBound?.max, MAX_RISK_PCT);
+    assert.equal(snapToBound(0.0125, riskBound!), null);
+    assert.equal(drawdownState(80, 100, DRAWDOWN_HALT).halted, true);
+
+    const bars: Bar[] = [];
+    let price = 100;
+    for (let i = 0; i < 420; i++) {
+      price *= 1.001;
+      const date = new Date(Date.UTC(2020, 0, 1) + i * 86_400_000).toISOString().slice(0, 10);
+      bars.push({ date, close: price, high: price * 1.01, low: price * 0.99 });
+    }
+    const run = (target: number) => {
+      const journal = emptyJournal();
+      journal.settings.targetCagr = target;
+      return reviewBook({
+        journal,
+        spyBars: bars,
+        sixty: [],
+        ideas: { signalHealth: [] } as unknown as IdeasReport,
+        nowIso: '2026-11-04T22:00:00.000Z',
+      });
+    };
+    const tight = run(0.01);
+    const aspiration = run(DEFAULT_TARGET_CAGR);
+    const widest = run(2);
+    assert.deepEqual(aspiration.journal.params, tight.journal.params);
+    assert.deepEqual(widest.journal.params, tight.journal.params);
+    assert.deepEqual(aspiration.changes, tight.changes);
+    assert.ok(aspiration.journal.params.riskPct >= MIN_RISK_PCT);
+    assert.ok(aspiration.journal.params.riskPct <= MAX_RISK_PCT);
+    for (const change of aspiration.changes) {
+      if (change.to == null) continue;
+      const bound = PARAM_BOUNDS.find((item) => item.id === change.ruleId);
+      assert.ok(bound);
+      assert.ok(change.to >= bound.min);
+      assert.ok(change.to <= bound.max);
+    }
+
+    const weekly = readFileSync('lib/regime/weekly.ts', 'utf8');
+    const improve = readFileSync('lib/regime/improve.ts', 'utf8');
+    const desk = readFileSync('lib/regime/desk.ts', 'utf8');
+    const panel = readFileSync('components/regime/DeskPanels.tsx', 'utf8');
+    assert.equal(weekly.includes('targetCagr'), false);
+    assert.equal(weekly.includes('gapToTarget'), false);
+    assert.equal(improve.includes('targetCagr'), false);
+    assert.equal(improve.includes('gapToTarget'), false);
+    assert.match(desk, /drawdownState\(equity, peak\)/);
+    assert.match(panel, /\{ASPIRATION_LABEL\}/);
   });
 });
 

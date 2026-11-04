@@ -1,4 +1,5 @@
 import type { Desk } from '@/lib/regime/desk';
+import { ASPIRATION_LABEL } from '@/lib/regime/sizing';
 
 function pct(value: number | null, digits = 1): string {
   if (value == null || !Number.isFinite(value)) return '—';
@@ -58,7 +59,7 @@ export function DeskPanels({ desk }: { desk: Desk }) {
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Improvement</p>
         <h2 className="text-lg font-bold tracking-tight">Aspiration, then the record</h2>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">
-          The target return is an aspiration, not a forecast. Drawdown limits always win over chasing it. A parameter moves only when it improves out-of-sample Sharpe or Calmar on at least 2 of 3 walk-forward folds, and only once per rule per month.
+          {ASPIRATION_LABEL}. Drawdown limits always win over chasing it. A parameter moves only when it improves out-of-sample Sharpe or Calmar on at least 2 of 3 walk-forward folds, and only once per rule per month. The gap does not loosen the drawdown halt, the 0.5–1% risk band, or the position caps.
         </p>
         {desk.halted ? (
           <div className="mt-4 rounded-[var(--radius-xl)] border border-rose-400/40 bg-rose-500/10 px-5 py-4">
@@ -70,9 +71,8 @@ export function DeskPanels({ desk }: { desk: Desk }) {
         ) : null}
         <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
           <article className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">Target (aspiration)</p>
+            <p className="text-[11px] font-bold leading-snug text-[var(--muted-foreground)]">{ASPIRATION_LABEL}</p>
             <p className="mt-2 font-mono text-2xl font-bold">{pct(desk.targetCagr, 0)}</p>
-            <p className="mt-2 text-[11px] text-[var(--muted)]">Not a forecast</p>
           </article>
           <article className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4">
             <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">Realised CAGR</p>
