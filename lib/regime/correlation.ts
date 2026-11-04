@@ -130,7 +130,7 @@ export function crowdingReport(series: { symbol: string; bars: Bar[] }[]): Crowd
   let warning: string | null = null;
   if (average != null && average > CORR_WARN) {
     const dispText = dispersion == null ? 'Cross-sectional dispersion is unavailable.' : `Cross-sectional ${DISPERSION_WINDOW}-day dispersion is ${(dispersion * 100).toFixed(1)}%.`;
-    warning = `Crowding alarm: average pairwise correlation is ${average.toFixed(2)} across ${usable.length} names (${pairs} pairs). Suggested risk weights are scaled by ${scale.toFixed(2)}. Cash is not scaled. ${dispText}`;
+    warning = `Crowding alarm: these holdings are moving together. Average correlation is ${average.toFixed(2)} across ${usable.length} names (${pairs} pairs). Suggested sizes are scaled by ${scale.toFixed(2)}. Cash is not reduced. ${dispText}`;
   }
 
   return {

@@ -3,6 +3,8 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { actionFor, budgetsFor } from './classify';
 import { auditRegime } from './consistency';
+import { plainZ, regimeWaitCopy, todayInOneLine, waitingOnRegime } from './plain';
+import { selfCheckFromReport } from './selfcheck';
 import { buildDesk } from './desk';
 import { ideaGates, verdictFromGates } from './gates';
 import { buildIdeas } from './ideas';
@@ -77,6 +79,18 @@ describe('idea gates', () => {
       pyramid: 'new',
     });
     assert.equal(verdictFromGates(both, null), 'Watching: the Crypto and Scarcity themes are off.');
+    const preferred = ideaGates({
+      themes: [{ id: 'ai-infrastructure', label: 'AI infrastructure', on: false }],
+      stance: 'prefer',
+      regimeOpen: false,
+      role: 'tactical',
+      today: '2026-11-03',
+      signals: signals({}),
+      halted: false,
+      pyramid: 'new',
+    });
+    assert.equal(preferred.find((gate) => gate.id === 'theme')?.pass, true);
+    assert.match(preferred.find((gate) => gate.id === 'theme')?.detail ?? '', /not a block/);
   });
 
   it('says a bond has no theme instead of blaming a switch', () => {
@@ -216,6 +230,69 @@ describe('published regime view', () => {
     };
     const breach = auditRegime(broken);
     assert.equal(breach.rules.find((rule) => rule.id === 'tag-size')?.pass, false);
+
+    const confirmedAtZero = auditRegime({
+      snapshot,
+      ideas: view.ideas,
+      desk: {
+        ...view.desk,
+        lines: view.desk.lines.map((line) => (
+          line.symbol === 'GLD'
+            ? { ...line, dip: 'Buy the dip — confirmed. 12.5% below the 60-day high and back above the 20-day average.', weight: 0, status: 'watch' as const }
+            : line
+        )),
+      },
+    });
+    assert.equal(confirmedAtZero.rules.find((rule) => rule.id === 'dip-label')?.pass, false);
+  });
+});
+
+describe('plain English', () => {
+  it('turns a liquidity z-score into a short phrase and keeps the number', () => {
+    assert.equal(plainZ('Liquidity', -0.38), 'Liquidity: slightly tight (-0.38)');
+  });
+
+  it('lists names waiting only on the regime, and says what has to change', () => {
+    const gates = (passTheme: boolean, failRegime: boolean) => [
+      { id: 'theme', pass: passTheme, detail: passTheme ? 'Crypto is on.' : 'the Crypto theme is off.' },
+      { id: 'regime', pass: !failRegime, detail: failRegime ? 'the market score does not allow a new buy yet' : 'The market score allows a new buy.' },
+      { id: 'trend', pass: true, detail: 'Price is above its 200-day average.' },
+    ];
+    const lines = [
+      { symbol: 'ETH-USD', name: 'Ether', role: 'tactical' as const, weight: 0, verdict: 'Watching', gates: gates(true, true) },
+      { symbol: 'GLD', name: 'Gold', role: 'tactical' as const, weight: 0, verdict: 'Watching', gates: [
+        { id: 'theme', pass: true, detail: 'Scarcity is on.' },
+        { id: 'regime', pass: true, detail: 'Today’s lean includes this group.' },
+        { id: 'trend', pass: false, detail: 'price is below its 200-day average' },
+      ] },
+      { symbol: 'AAA.AX', name: 'Cash', role: 'cash' as const, weight: 0.1, verdict: 'Confirmed', gates: gates(true, false) },
+    ];
+    assert.deepEqual(waitingOnRegime(lines).map((line) => line.symbol), ['ETH-USD']);
+    const line = todayInOneLine({
+      action: 'do_nothing',
+      actionable: true,
+      lines,
+      themes: [
+        { id: 'crypto', label: 'Crypto', on: true, lines: [{ weight: 0 }] },
+        { id: 'scarcity', label: 'Scarcity', on: true, lines: [{ weight: 0 }] },
+      ],
+    });
+    assert.match(line, /^Sit tight: hold cash and T-bills\./);
+    assert.match(line, /Crypto and gold are on watch/);
+    assert.match(regimeWaitCopy({ action: 'do_nothing', actionable: true, weak: true, regimeLabel: 'Transitional' }), /above \+0\.35 into Risk-On/);
+    assert.match(regimeWaitCopy({ action: 'do_nothing', actionable: true, weak: true, regimeLabel: 'Transitional' }), /Transitional/);
+  });
+
+  it('stores a failed daily self-check as not ok', () => {
+    const record = selfCheckFromReport({
+      rules: [
+        { id: 'dip-label', pass: false, detail: 'A dip says confirmed without a size.' },
+        { id: 'tag-size', pass: true, detail: 'ok' },
+      ],
+    }, '2026-11-04T13:15:00.000Z');
+    assert.equal(record.ok, false);
+    assert.equal(record.failures.length, 1);
+    assert.equal(record.asOf, '2026-11-04T13:15:00.000Z');
   });
 });
 

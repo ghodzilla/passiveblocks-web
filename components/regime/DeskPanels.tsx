@@ -1,4 +1,5 @@
 import type { Desk } from '@/lib/regime/desk';
+import { checklistLines } from '@/lib/regime/plain';
 import { ASPIRATION_LABEL } from '@/lib/regime/sizing';
 import { melbourneClock } from '@/lib/regime/time';
 
@@ -16,9 +17,9 @@ export function DeskPanels({ desk }: { desk: Desk }) {
     <>
       <section className="mt-10" id="themes">
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Themes</p>
-        <h2 className="text-lg font-bold tracking-tight">Objective switches, version {desk.configVersion}</h2>
+        <h2 className="text-lg font-bold tracking-tight">Theme switches, version {desk.configVersion}</h2>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">
-          Each basket is on or off from a written rule. The list is reviewed by a person once a quarter. The weekly improvement job does not rewrite these switches.
+          Each basket is on or off from a written rule. A person reviews the list once a quarter. The weekly job does not rewrite these switches. A theme being on is not a buy. The sentence under each name says what is in the way, and 0% means it is not sized.
         </p>
         <div className="mt-4 grid gap-3">
           {desk.themes.map((theme) => (
@@ -36,9 +37,13 @@ export function DeskPanels({ desk }: { desk: Desk }) {
                   <li key={`${theme.id}-${line.symbol}`} className="text-sm">
                     <span className="font-mono text-xs">{line.symbol}</span>
                     <span className="ml-2 text-[var(--muted)]">{line.name}</span>
-                    <span className="ml-2 font-mono text-xs">{pct(line.weight)}</span>
-                    {line.dip ? <span className="ml-2 text-xs font-semibold text-emerald-200">{line.dip}</span> : null}
+                    <span className="ml-2 font-mono text-xs" title="Share of the paper book. 0% is not a buy.">{pct(line.weight)}</span>
+                    {line.dip ? <span className={`ml-2 text-xs font-semibold ${line.dip.includes('blocked') ? 'text-amber-100' : 'text-emerald-200'}`}>{line.dip}</span> : null}
                     <p className="text-xs text-[var(--muted)]">{line.verdict}</p>
+                    <details>
+                      <summary className="cursor-pointer text-xs text-[var(--accent-soft)]">Why?</summary>
+                      <p className="whitespace-pre-line text-xs text-white/70">{checklistLines(line.gates)}</p>
+                    </details>
                   </li>
                 ))}
               </ul>
@@ -59,15 +64,15 @@ export function DeskPanels({ desk }: { desk: Desk }) {
 
       <section className="mt-10" id="improvement">
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Improvement</p>
-        <h2 className="text-lg font-bold tracking-tight">Aspiration, then the record</h2>
+        <h2 className="text-lg font-bold tracking-tight">The aim, then the record</h2>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">
-          {ASPIRATION_LABEL}. Drawdown limits always win over chasing it. A parameter moves only when it improves out-of-sample Sharpe or Calmar on at least 2 of 3 walk-forward folds, and only once per rule per month. The gap does not loosen the drawdown halt, the 0.5–1% risk band, or the position caps.
+          {ASPIRATION_LABEL}. A loss limit always beats chasing that aim. A setting changes only when the out-of-sample test is better on at least 2 of 3 past periods, and only once a month. The gap does not loosen the loss halt, the 0.5–1% risk per idea, or the size caps.
         </p>
         {desk.halted ? (
           <div className="mt-4 rounded-[var(--radius-xl)] border border-rose-400/40 bg-rose-500/10 px-5 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-white/50">Drawdown halt</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-white/50">Loss halt</p>
             <p className="mt-2 text-base font-semibold leading-relaxed text-white">
-              The paper portfolio is {pct(desk.drawdown, 1)} below its peak. No new entries until it recovers. The {pct(desk.targetCagr, 0)} a year aspiration does not override this.
+              The paper portfolio is {pct(desk.drawdown, 1)} below its peak. No new buys until it recovers. The {pct(desk.targetCagr, 0)} a year aim does not override this.
             </p>
           </div>
         ) : null}
@@ -77,23 +82,23 @@ export function DeskPanels({ desk }: { desk: Desk }) {
             <p className="mt-2 font-mono text-2xl font-bold">{pct(desk.targetCagr, 0)}</p>
           </article>
           <article className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">Realised CAGR</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]" title="Compound annual growth of the paper book.">Paper return so far</p>
             <p className="mt-2 font-mono text-2xl font-bold">{desk.realisedText}</p>
             <p className="mt-2 text-[11px] text-[var(--muted)]">{desk.equity == null ? 'No paper marks yet' : `Equity ${money(desk.equity)}`}</p>
           </article>
           <article className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">Backtested CAGR</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]" title="Compound annual growth from the last weekly test.">Tested return</p>
             <p className="mt-2 font-mono text-2xl font-bold">{desk.backtestedText}</p>
-            <p className="mt-2 text-[11px] text-[var(--muted)]">Last weekly review, vs SPY and 60/40</p>
+            <p className="mt-2 text-[11px] text-[var(--muted)]">Last weekly review, versus the US share market and a 60/40 mix</p>
           </article>
           <article className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">Gap to target</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]" title="How far the paper return sits from the aspiration. It does not change the risk rules.">Gap to the aim</p>
             <p className="mt-2 font-mono text-2xl font-bold">{desk.gapText}</p>
-            <p className="mt-2 text-[11px] text-[var(--muted)]">Max drawdown {desk.maxDrawdownText}</p>
+            <p className="mt-2 text-[11px] text-[var(--muted)]">Worst peak-to-trough loss {desk.maxDrawdownText}</p>
           </article>
         </div>
         <p className="mt-3 text-sm text-[var(--muted)]">
-          Paper capital {money(desk.capital)}. Risk per idea {(desk.params.riskPct * 100).toFixed(2)}%. ATR multiple {desk.params.atrK}. Dip band {(desk.params.dipLow * 100).toFixed(0)}–{(desk.params.dipHigh * 100).toFixed(0)}% below the 60-day high.
+          Paper capital {money(desk.capital)}. Risk per idea {(desk.params.riskPct * 100).toFixed(2)}% of capital. The stop uses {desk.params.atrK} times the average daily range. A dip is {(desk.params.dipLow * 100).toFixed(0)}–{(desk.params.dipHigh * 100).toFixed(0)}% below the 60-day high.
         </p>
         <form method="POST" action="/api/regime/settings" className="mt-4 flex flex-wrap items-end gap-3">
           <label className="text-xs text-[var(--muted)]">

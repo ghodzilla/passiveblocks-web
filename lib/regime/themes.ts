@@ -80,8 +80,8 @@ export function evaluateThemes(input: {
         theme,
         rising,
         rising
-          ? `On. AI capex z moved from ${formatZ(input.aiPrior as number)} to ${formatZ(input.aiLatest as number)}.`
-          : `Off. AI capex z is ${formatZ(input.aiLatest as number)}, not above the prior print of ${formatZ(input.aiPrior as number)}.`,
+          ? `On. The AI spending score moved from ${formatZ(input.aiPrior as number)} to ${formatZ(input.aiLatest as number)}.`
+          : `Off. The AI spending score is ${formatZ(input.aiLatest as number)}, not above the prior print of ${formatZ(input.aiPrior as number)}.`,
       );
     }
     if (theme.id === 'crypto') {
@@ -96,8 +96,8 @@ export function evaluateThemes(input: {
       const on = input.btcAbove200 && rising;
       const btc = input.btcAbove200 ? 'Bitcoin is above its 200-day average' : 'Bitcoin is not above its 200-day average';
       const liq = rising
-        ? `liquidity z rose from ${formatZ(input.liquidityPrior as number)} to ${formatZ(input.liquidityLatest as number)}`
-        : `liquidity z is ${formatZ(input.liquidityLatest as number)}, not above ${formatZ(input.liquidityPrior as number)}`;
+        ? `liquidity improved from ${formatZ(input.liquidityPrior as number)} to ${formatZ(input.liquidityLatest as number)}`
+        : `liquidity is ${formatZ(input.liquidityLatest as number)}, not above ${formatZ(input.liquidityPrior as number)}`;
       return verdict(theme, on, on ? `On. ${btc}, and ${liq}.` : `Off. ${btc}, and ${liq}.`);
     }
     if (theme.id === 'scarcity') {

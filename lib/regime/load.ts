@@ -7,6 +7,7 @@ import { buildRegimeSnapshot } from './engine';
 import { fetchFredSeries } from './fred';
 import { buildIdeas, type IdeasReport } from './ideas';
 import { readJournal, writeJournal, type Journal } from './journal';
+import { selfCheckFromReport, writeSelfCheck } from './selfcheck';
 import { fetchPriceBook, type PriceBook } from './prices';
 import type { SeriesPoint } from './series';
 import { THEMES } from './themes.config';
@@ -139,6 +140,11 @@ export async function refreshRegimeSnapshot() {
     await writeJournal(rolled);
   } catch {
     view.desk.gaps.push('The paper journal was not saved on this refresh.');
+  }
+  try {
+    await writeSelfCheck(selfCheckFromReport(view.consistency, view.snapshot.generatedAt));
+  } catch {
+    view.desk.gaps.push('The daily self-check was not saved.');
   }
   return { ...view.snapshot, ideas: view.ideas, desk: view.desk };
 }

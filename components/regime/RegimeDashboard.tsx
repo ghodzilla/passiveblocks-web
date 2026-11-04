@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { DeskPanels } from '@/components/regime/DeskPanels';
 import { IdeasPanel } from '@/components/regime/IdeasPanel';
 import { MODEL_BUDGET, REGIME_LABEL, THRESHOLDS, type RegimeId } from '@/lib/regime/constants';
+import { plainBanner, plainZ, regimeWaitCopy, todayInOneLine, waitingOnRegime } from '@/lib/regime/plain';
+import type { SelfCheckRecord } from '@/lib/regime/selfcheck';
 import { melbourneClock } from '@/lib/regime/time';
 import type { RegimeView } from '@/lib/regime/view';
 import type { HistoryPoint } from '@/lib/regime/types';
@@ -105,10 +107,18 @@ function ZBar({ z }: { z: number | null }) {
   );
 }
 
-export function RegimeDashboard({ view }: { view: RegimeView }) {
+export function RegimeDashboard({ view, selfCheck }: { view: RegimeView; selfCheck: SelfCheckRecord | null }) {
   const { snapshot, ideas, desk, consistency } = view;
   const generated = melbourneClock(snapshot.generatedAt);
   const failedRules = consistency.rules.filter((rule) => !rule.pass);
+  const banner = plainBanner(snapshot);
+  const oneLine = todayInOneLine({
+    action: snapshot.action,
+    actionable: snapshot.actionable,
+    lines: desk.lines,
+    themes: desk.themes,
+  });
+  const waiting = waitingOnRegime(desk.lines);
   const bannerClass =
     snapshot.action === 'reduce_risk'
       ? 'border-rose-400/40 bg-rose-500/10'
@@ -158,27 +168,58 @@ export function RegimeDashboard({ view }: { view: RegimeView }) {
       </header>
 
       <main className="relative mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12" data-regime={snapshot.regime ?? 'unavailable'} data-action={snapshot.action}>
-        <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Macro regime engine</p>
+        {selfCheck && !selfCheck.ok ? (
+          <div className="mb-6 rounded-[var(--radius-xl)] border border-rose-400/50 bg-rose-500/15 px-5 py-4" data-selfcheck="fail">
+            <p className="text-sm font-semibold text-rose-50">
+              Daily self-check failed{selfCheck.asOf ? ` · ${melbourneClock(selfCheck.asOf)} Australia/Melbourne` : ''}.
+            </p>
+            <ul className="mt-2 space-y-1 text-sm text-rose-50">
+              {selfCheck.failures.map((failure) => (
+                <li key={failure.id}>{failure.detail}</li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+        <p className="text-base font-semibold leading-relaxed text-white sm:text-lg" data-today-line>{oneLine}</p>
+        <p className="mb-2 mt-6 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Macro regime engine</p>
         <h1 className={`text-3xl font-extrabold tracking-tight sm:text-4xl ${regimeTone(snapshot.regime)}`}>
           {snapshot.regimeLabel}
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--muted)] sm:text-base">
-          Phase 1 risk-budget switch. Positive composite is easier than the trailing window. The label uses hysteresis so it does not flip inside the hold band.
+          This page says whether to sit tight or allow new buys. A positive market score means conditions are easier than usual. The label changes slowly so it does not flip every week.
         </p>
 
         <section className={`mt-8 rounded-[var(--radius-xl)] border px-5 py-4 ${bannerClass}`}>
           <p className="text-[10px] font-bold uppercase tracking-widest text-white/50">What to do</p>
-          <p className="mt-2 text-base font-semibold leading-relaxed text-white sm:text-lg">{snapshot.message}</p>
-          {!snapshot.actionable ? (
-            <p className="mt-2 text-sm text-white/70">Shown scores are the last complete print. They are not a license to add risk while a core series is missing or stale.</p>
-          ) : null}
+          <p className="mt-2 text-base font-semibold leading-relaxed text-white sm:text-lg">{banner.headline}</p>
+          <p className="mt-2 text-sm text-white/75">{banner.note}</p>
+          <details className="mt-2">
+            <summary className="cursor-pointer text-xs text-white/50">Technical wording</summary>
+            <p className="mt-1 text-xs text-white/60">{snapshot.message}</p>
+          </details>
         </section>
 
+        {waiting.length > 0 ? (
+          <section className="mt-4 rounded-[var(--radius-xl)] border border-amber-300/40 bg-amber-400/10 px-5 py-4" id="waiting-on-regime">
+            <h2 className="text-sm font-bold">Waiting on the regime</h2>
+            <p className="mt-2 text-sm leading-relaxed text-white/80">{regimeWaitCopy(snapshot)}</p>
+            <ul className="mt-3 space-y-2 text-sm">
+              {waiting.map((line) => (
+                <li key={line.symbol}>
+                  <span className="font-mono text-xs">{line.symbol}</span>
+                  <span className="ml-2 text-white/80">{line.name}</span>
+                  <span className="ml-2 text-white/55">{line.verdict}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+
         <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <Tile label="Composite" value={formatZ(snapshot.composite)} meta={snapshot.weak ? 'Inside the no-edge band' : 'Winsorised trailing z'} />
-          <Tile label="Vol target" value={pct(snapshot.effectiveBudget.volTarget)} meta={snapshot.budgetOverridden ? 'Effective · overridden' : 'Effective annual vol'} />
-          <Tile label="Max gross" value={pct(snapshot.effectiveBudget.maxGross)} meta="Effective exposure cap" />
-          <Tile label="Max net" value={pct(snapshot.effectiveBudget.maxNet)} meta={snapshot.effectiveBudget.maxNet === 0 ? 'No new net risk' : 'Effective net cap'} />
+          <Tile label="Market score" tip="Composite score. Positive means easier than the trailing window. The quiet band is within 0.35 of zero." value={formatZ(snapshot.composite)} meta={snapshot.weak ? 'In the quiet band (within 0.35 of zero)' : 'Easier or tighter than usual'} />
+          <Tile label="Swing budget" tip="Annualised volatility target for the paper book." value={pct(snapshot.effectiveBudget.volTarget)} meta={snapshot.budgetOverridden ? 'Tightened for this day' : 'Annual swing target'} />
+          <Tile label="Largest book" tip="Maximum gross weight, including cash." value={pct(snapshot.effectiveBudget.maxGross)} meta="Cap on the whole paper book" />
+          <Tile label="Largest non-cash" tip="Maximum weight outside cash and T-bills." value={pct(snapshot.effectiveBudget.maxNet)} meta={snapshot.effectiveBudget.maxNet === 0 ? 'No new non-cash size' : 'Cap outside cash'} />
         </div>
 
         {failedRules.length === 0 ? (
@@ -210,13 +251,13 @@ export function RegimeDashboard({ view }: { view: RegimeView }) {
               <article key={component.id} className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <h3 className="text-sm font-bold">{component.label}</h3>
-                  <p className="font-mono text-sm os-tabular text-foreground">
-                    {formatZ(component.z)}
-                    <span className="ml-3 text-xs text-[var(--muted)]">weight {Math.round(component.weight * 100)}%</span>
+                  <p className="text-sm text-foreground" title="A negative reading is tighter or less supportive than this series usually is. A positive reading is easier. The number in brackets is the z-score.">
+                    {plainZ(component.label, component.z)}
+                    <span className="ml-3 text-xs text-[var(--muted)]">share of the score {Math.round(component.weight * 100)}%</span>
                   </p>
                 </div>
                 <ZBar z={component.z} />
-                <p className="mt-3 text-sm text-[var(--muted)]">{component.reading}</p>
+                <p className="mt-3 text-sm text-[var(--muted)]" title="The raw series behind the score.">{component.reading}</p>
                 <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">{component.detail}</p>
                 <p className="mt-2 text-[11px] uppercase tracking-wider text-white/35">
                   {component.included ? 'In composite' : 'Excluded'}
@@ -329,21 +370,21 @@ export function RegimeDashboard({ view }: { view: RegimeView }) {
         <DeskPanels desk={desk} />
 
         <section className="mt-10 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/20 px-4 py-4">
-          <h2 className="text-lg font-bold tracking-tight">Rules that bind</h2>
+          <h2 className="text-lg font-bold tracking-tight">Rules, in plain English</h2>
           <dl className="mt-3 grid gap-2 text-sm text-[var(--muted)] sm:grid-cols-2">
-            <div>Risk-on entry: composite ≥ {THRESHOLDS.riskOnEnter} and liquidity z ≥ {THRESHOLDS.riskOnLiquidityMin}. Exit below {THRESHOLDS.riskOnExit} or liquidity z below {THRESHOLDS.riskOnLiquidityExit}.</div>
-            <div>Tightening entry: composite ≤ {THRESHOLDS.tightEnter}. Hold until composite &gt; {THRESHOLDS.tightExit}.</div>
-            <div>Crisis entry: composite ≤ {THRESHOLDS.crisisEnter}, or credit z ≤ {THRESHOLDS.crisisCreditEnter} with composite ≤ {THRESHOLDS.crisisCompositeConfirm}.</div>
-            <div>No-edge band: |composite| &lt; {THRESHOLDS.weakAbsComposite} means do nothing.</div>
-            <div>Budgets: risk-on {pct(MODEL_BUDGET.risk_on.volTarget)} / {pct(MODEL_BUDGET.risk_on.maxGross)} / {pct(MODEL_BUDGET.risk_on.maxNet)}. Transitional {pct(MODEL_BUDGET.transitional.volTarget)}. Tightening {pct(MODEL_BUDGET.tightening.volTarget)}. Crisis {pct(MODEL_BUDGET.crisis.volTarget)}.</div>
-            <div>Missing components are dropped and the remaining weights are renormalised. A missing core series blocks action.</div>
-            <div>AI capex and concentration has an 8% base weight. It is not required for a print. Concentration (SPY versus RSP) is sign-flipped.</div>
-            <div>A tactical idea is sized only when Confirmed, and never above 20% of the book. A watchlist stock is capped at 2%. The sum stays inside the gross and net budget.</div>
-            <div>Average pairwise correlation above 0.55 scales non-cash weights down, to half at 0.70. Confirmed AI/megacap names share a 25% group cap.</div>
-            <div>A signal with a negative 20-day information coefficient and a hit rate under 48% is retired. Unknown health keeps the default gates.</div>
-            <div>Themes (AI infrastructure, crypto, scarcity) switch on from written rules in a versioned config. A person reviews that list quarterly. The weekly job does not edit it.</div>
-            <div>Risk size uses ATR(20). Stop is entry minus k times ATR (default k 2.5). Quantity is capital times 0.75% divided by the distance to the stop. Add only after +1R. A 10% paper drawdown blocks new entries.</div>
-            <div>Buy the dip — confirmed only in Risk-On or Transitional, with the theme on, 10–20% below the 60-day high, and back above the 20-day average. Never in Tightening or Crisis, and never during the drawdown halt.</div>
+            <div title="Risk-on entry: composite ≥ the enter band and liquidity still easy.">Risk-On starts when the market score is at least {THRESHOLDS.riskOnEnter} and liquidity is still easy (at least {THRESHOLDS.riskOnLiquidityMin}). It ends if the score falls below {THRESHOLDS.riskOnExit} or liquidity turns tight.</div>
+            <div>Tightening starts at a score of {THRESHOLDS.tightEnter} or lower, and holds until the score is back above {THRESHOLDS.tightExit}.</div>
+            <div>Crisis starts at {THRESHOLDS.crisisEnter} or lower, or when credit is very tight and the score is also weak.</div>
+            <div>Quiet band: a score within {THRESHOLDS.weakAbsComposite} of zero means sit tight. No new share, crypto, or theme buys.</div>
+            <div title="Vol / gross / net.">Size limits: Risk-On {pct(MODEL_BUDGET.risk_on.volTarget)} swing, {pct(MODEL_BUDGET.risk_on.maxGross)} of the book, {pct(MODEL_BUDGET.risk_on.maxNet)} outside cash. Transitional swing {pct(MODEL_BUDGET.transitional.volTarget)}. Tightening {pct(MODEL_BUDGET.tightening.volTarget)}. Crisis {pct(MODEL_BUDGET.crisis.volTarget)}.</div>
+            <div>A missing piece is left out and the others share its weight. Missing liquidity, policy, or credit blocks new buys.</div>
+            <div>The AI spending gauge is 8% of the score. The page still works without it.</div>
+            <div>A name is given a size only when it is Confirmed, and never more than 20% of the book. One stock is capped at 2%.</div>
+            <div title="Average pairwise correlation.">When holdings move together (average correlation above 0.55), non-cash sizes shrink, down to half at 0.70. Related AI and crypto names share a 25% cap.</div>
+            <div>A signal that has been wrong on both its score and its hit rate is retired and stops blocking or confirming. If both the past-year move and the 200-day trend are retired, nothing new is confirmed.</div>
+            <div>AI infrastructure, crypto, and gold/scarcity switch on from written rules. A person reviews that list each quarter. The weekly job does not edit it.</div>
+            <div title="ATR is the average true range. 1R is the original cash risk on the trade.">The stop sits 2.5 average daily ranges below the price. The size risks 0.75% of capital to that stop. Add only after the trade is ahead by that original risk. A 10% paper loss from the peak blocks new buys.</div>
+            <div>A dip is called confirmed only when the name would actually be sized. Otherwise it says “Dip spotted — blocked” and names the first thing in the way. The price pattern is 10–20% under the 60-day high and back above the 20-day average, with the theme on, and never in Tightening, Crisis, or a loss halt.</div>
           </dl>
         </section>
 
@@ -355,9 +396,9 @@ export function RegimeDashboard({ view }: { view: RegimeView }) {
   );
 }
 
-function Tile({ label, value, meta }: { label: string; value: string; meta: string }) {
+function Tile({ label, value, meta, tip }: { label: string; value: string; meta: string; tip: string }) {
   return (
-    <article className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4">
+    <article className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4" title={tip}>
       <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">{label}</p>
       <p className="mt-2 font-mono text-2xl font-bold tracking-tight os-tabular">{value}</p>
       <p className="mt-2 text-[11px] text-[var(--muted)]">{meta}</p>
