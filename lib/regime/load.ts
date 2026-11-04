@@ -1,6 +1,8 @@
 import { revalidateTag, unstable_cache } from 'next/cache';
 import { FRED_OBSERVATION_START } from './constants';
 import { applyPaperDay, buildDesk, settleForward, type Desk } from './desk';
+import type { ConsistencyReport } from './consistency';
+import { publishRegime } from './view';
 import { buildRegimeSnapshot } from './engine';
 import { fetchFredSeries } from './fred';
 import { buildIdeas, type IdeasReport } from './ideas';
@@ -95,7 +97,7 @@ export async function getRegimeWithIdeas(): Promise<{ snapshot: RegimeSnapshot; 
   };
 }
 
-export async function getRegimeDesk(): Promise<{ snapshot: RegimeSnapshot; ideas: IdeasReport; book: PriceBook; desk: Desk; journal: Journal }> {
+export async function getRegimeDesk(): Promise<{ snapshot: RegimeSnapshot; ideas: IdeasReport; book: PriceBook; desk: Desk; journal: Journal; consistency: ConsistencyReport }> {
   const [{ snapshot, ideas, book }, macro, journal] = await Promise.all([
     getRegimeWithIdeas(),
     getCachedThemeMacro().catch(() => ({ realYield: [] as SeriesPoint[], dollar: [] as SeriesPoint[] })),
@@ -111,7 +113,8 @@ export async function getRegimeDesk(): Promise<{ snapshot: RegimeSnapshot; ideas
     envCapital: process.env.REGIME_CAPITAL,
     envTarget: process.env.REGIME_TARGET_CAGR,
   });
-  return { snapshot, ideas, book, desk, journal };
+  const published = publishRegime({ snapshot, ideas, desk });
+  return { snapshot, ideas: published.ideas, book, desk, journal, consistency: published.consistency };
 }
 
 export async function refreshRegimeSnapshot() {

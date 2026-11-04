@@ -112,9 +112,11 @@ The Themes panel is a written overlay, not a second opinion model. The list live
 | --- | --- | --- |
 | AI infrastructure | SMH, XLU (power), EQIX, DLR | The AI capex component z-score is strictly higher than the prior print. Missing prints stay off. |
 | Crypto | BTC-USD, ETH-USD, SOL-USD | Bitcoin is above its 200-day average **and** the liquidity z-score is rising. Both are required. |
-| Scarcity | GLD, SLV, BTC-USD | The 10-year real yield (`DFII10`) is falling, **or** the trade-weighted dollar (`DTWEXBGS`) is weakening. One true leg is enough. Both unknown stays off. |
+| Scarcity | GLD, GOLD.AX, SLV, BTC-USD | The 10-year real yield (`DFII10`) is falling, **or** the trade-weighted dollar (`DTWEXBGS`) is weakening. One true leg is enough. Both unknown stays off. |
 
-An equal print is not a rise. A series older than 10 days is unknown. Bitcoin sits in both the crypto basket and the scarcity basket, and it counts toward both 20% theme caps. A name that is already in the playbook (SMH, XLU, GLD) keeps one weight.
+An equal print is not a rise. A series older than 10 days is unknown. Bitcoin sits in both the crypto basket and the scarcity basket, and it counts toward both 20% theme caps. A name that is already in the playbook (SMH, XLU, GLD, GOLD.AX) keeps one weight. Bonds such as IEF and VAF.AX are not in a theme. The idea note says “No theme” and does not blame a switch.
+
+Every section of the page reads one published view. The ideas table status and weight are copied from the sizing book after the gates, the crowding scale, and the overlap and theme caps. The page then runs the same invariant checks as `lib/regime/consistency.test.ts` and prints “Consistency check: all N rules pass”, or the rules that failed. Snapshot and fetch clocks use Australia/Melbourne. Exchange and FRED as-of values stay session dates. An unmeasured improvement number says “Not enough history yet”.
 
 ## Risk size, pyramids, and the dip
 

@@ -2,6 +2,11 @@ import { ageInDays } from './stats';
 import type { SeriesPoint } from './series';
 import { THEMES, type ThemeConfig } from './themes.config';
 
+/** Baskets that contain this symbol, in config order. Empty when the sleeve has no theme. */
+export function themesForSymbol(symbol: string): ThemeConfig[] {
+  return THEMES.filter((theme) => theme.symbols.some((item) => item.symbol === symbol));
+}
+
 export type SeriesDirection = 'falling' | 'rising' | 'flat' | 'unknown';
 
 export function seriesDirection(points: SeriesPoint[], today: string, staleAfterDays = 10): SeriesDirection {
