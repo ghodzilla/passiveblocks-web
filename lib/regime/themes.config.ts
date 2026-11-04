@@ -2,7 +2,7 @@
  * Visser overlay. Quarterly human review only.
  * The improvement loop is not allowed to edit this file or flip these switches.
  */
-export const THEME_CONFIG_VERSION = '2026-Q4.1';
+export const THEME_CONFIG_VERSION = '2026-Q4.2';
 
 export interface ThemeChangelogEntry {
   version: string;
@@ -15,6 +15,11 @@ export const THEME_CHANGELOG: ThemeChangelogEntry[] = [
     version: '2026-Q4.1',
     date: '2026-11-04',
     note: 'Initial three baskets: AI infrastructure, crypto, and scarcity. Switches are objective rules, reviewed by a human once a quarter. The weekly improvement job may tune ATR k, risk percent, momentum lookback, and dip thresholds inside fixed bounds. It may not rewrite this list.',
+  },
+  {
+    version: '2026-Q4.2',
+    date: '2026-11-04',
+    note: 'Scarcity now includes GOLD.AX with GLD and SLV, so the ASX gold ETF reads the same live switch as the US listing. Bonds such as IEF and VAF.AX stay outside every theme. The weekly job still cannot edit this list.',
   },
 ];
 
@@ -66,6 +71,7 @@ export const THEMES: ThemeConfig[] = [
     objective: 'On when the 10-year real yield (FRED DFII10) is falling, or the trade-weighted dollar (FRED DTWEXBGS) is weakening. Either one is enough.',
     symbols: [
       { symbol: 'GLD', name: 'Gold', yahoo: 'GLD', kind: 'etf' },
+      { symbol: 'GOLD.AX', name: 'ASX physical gold', yahoo: 'GOLD.AX', kind: 'etf' },
       { symbol: 'SLV', name: 'Silver', yahoo: 'SLV', kind: 'etf' },
       { symbol: 'BTC-USD', name: 'Bitcoin', yahoo: 'BTC-USD', kind: 'crypto' },
     ],

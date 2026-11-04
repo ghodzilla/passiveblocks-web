@@ -7,6 +7,6 @@ export const runtime = 'nodejs';
 
 export default async function RegimePage() {
   await enforceRegimePage();
-  const { snapshot, ideas, desk } = await getRegimeDesk();
-  return <RegimeDashboard snapshot={snapshot} ideas={ideas} desk={desk} />;
+  const { snapshot, ideas, desk, consistency } = await getRegimeDesk();
+  return <RegimeDashboard view={{ snapshot, ideas, desk, consistency }} />;
 }

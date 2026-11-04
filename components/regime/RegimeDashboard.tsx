@@ -2,10 +2,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { DeskPanels } from '@/components/regime/DeskPanels';
 import { IdeasPanel } from '@/components/regime/IdeasPanel';
-import type { Desk } from '@/lib/regime/desk';
 import { MODEL_BUDGET, REGIME_LABEL, THRESHOLDS, type RegimeId } from '@/lib/regime/constants';
-import type { IdeasReport } from '@/lib/regime/ideas';
-import type { HistoryPoint, RegimeSnapshot } from '@/lib/regime/types';
+import { melbourneClock } from '@/lib/regime/time';
+import type { RegimeView } from '@/lib/regime/view';
+import type { HistoryPoint } from '@/lib/regime/types';
 
 function formatZ(z: number | null): string {
   if (z == null || !Number.isFinite(z)) return '—';
@@ -105,12 +105,10 @@ function ZBar({ z }: { z: number | null }) {
   );
 }
 
-export function RegimeDashboard({ snapshot, ideas, desk }: { snapshot: RegimeSnapshot; ideas: IdeasReport; desk?: Desk }) {
-  const generated = new Intl.DateTimeFormat('en-AU', {
-    timeZone: 'Australia/Melbourne',
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(new Date(snapshot.generatedAt));
+export function RegimeDashboard({ view }: { view: RegimeView }) {
+  const { snapshot, ideas, desk, consistency } = view;
+  const generated = melbourneClock(snapshot.generatedAt);
+  const failedRules = consistency.rules.filter((rule) => !rule.pass);
   const bannerClass =
     snapshot.action === 'reduce_risk'
       ? 'border-rose-400/40 bg-rose-500/10'
@@ -183,8 +181,25 @@ export function RegimeDashboard({ snapshot, ideas, desk }: { snapshot: RegimeSna
           <Tile label="Max net" value={pct(snapshot.effectiveBudget.maxNet)} meta={snapshot.effectiveBudget.maxNet === 0 ? 'No new net risk' : 'Effective net cap'} />
         </div>
 
+        {failedRules.length === 0 ? (
+          <p className="mt-4 text-sm text-[var(--status-ok)]" data-consistency="pass">
+            Consistency check: all {consistency.rules.length} rules pass
+          </p>
+        ) : (
+          <div className="mt-4 rounded-[var(--radius-lg)] border border-rose-400/40 bg-rose-500/10 px-4 py-3" data-consistency="fail">
+            <p className="text-sm font-semibold text-rose-100">
+              Consistency check: {failedRules.length} of {consistency.rules.length} rules failed
+            </p>
+            <ul className="mt-2 space-y-1 text-sm text-rose-50">
+              {failedRules.map((rule) => (
+                <li key={rule.id}>{rule.detail}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <p className="mt-3 text-xs text-[var(--muted)]">
-          Print {snapshot.printDate ?? '—'} · snapshot {generated} Melbourne · rules {snapshot.rulesVersion}
+          Print {snapshot.printDate ?? '—'} · snapshot {generated} Australia/Melbourne · rules {snapshot.rulesVersion}
           {snapshot.modelBudget ? ` · model budget for this regime ${pct(snapshot.modelBudget.volTarget)} vol / ${pct(snapshot.modelBudget.maxGross)} gross / ${pct(snapshot.modelBudget.maxNet)} net` : ''}
         </p>
 
@@ -298,6 +313,9 @@ export function RegimeDashboard({ snapshot, ideas, desk }: { snapshot: RegimeSna
               </tbody>
             </table>
           </div>
+          <p className="mt-3 text-xs text-[var(--muted)]">
+            As-of dates in this table are the exchange session or the FRED observation date. They are not shifted into Melbourne. Clocks such as the snapshot time and the price fetch time are Australia/Melbourne.
+          </p>
           {snapshot.gaps.length > 0 ? (
             <ul className="mt-4 space-y-2 text-sm text-[var(--status-warn)]">
               {snapshot.gaps.map((gap) => (
@@ -307,8 +325,8 @@ export function RegimeDashboard({ snapshot, ideas, desk }: { snapshot: RegimeSna
           ) : null}
         </section>
 
-        <IdeasPanel ideas={ideas} risk={desk?.lines} />
-        {desk ? <DeskPanels desk={desk} /> : null}
+        <IdeasPanel ideas={ideas} risk={desk.lines} />
+        <DeskPanels desk={desk} />
 
         <section className="mt-10 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/20 px-4 py-4">
           <h2 className="text-lg font-bold tracking-tight">Rules that bind</h2>

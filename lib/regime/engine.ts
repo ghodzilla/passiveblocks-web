@@ -5,6 +5,7 @@ import { fetchFredSeries } from './fred';
 import type { PositioningInput } from './model';
 import { fetchYahooBars } from './prices';
 import type { SeriesPoint } from './series';
+import { melbourneDate } from './time';
 import type { RegimeSnapshot } from './types';
 
 async function fredOrEmpty(seriesId: string): Promise<{ points: SeriesPoint[]; error: string | null }> {
@@ -28,7 +29,7 @@ async function yahooCloses(symbol: string, gaps: string[]): Promise<SeriesPoint[
 }
 
 export async function fetchRegimeBundle(now: Date): Promise<DataBundle> {
-  const today = now.toISOString().slice(0, 10);
+  const today = melbourneDate(now);
   const generatedAt = now.toISOString();
   const gaps: string[] = [];
 
@@ -166,7 +167,7 @@ export async function buildRegimeSnapshot(now = new Date()): Promise<RegimeSnaps
     const bundle = await fetchRegimeBundle(now);
     return snapshotFromBundle(bundle);
   } catch (error) {
-    const today = now.toISOString().slice(0, 10);
+    const today = melbourneDate(now);
     const message = error instanceof Error ? error.message : 'Regime data fetch failed';
     return snapshotFromBundle({
       ...emptyFredBundle(today, now.toISOString(), [message], []),

@@ -1,11 +1,15 @@
 import type { RegimeId } from './constants';
+import { pairTable } from './correlation';
 import { dipSignal } from './dip';
-import type { IdeasReport } from './ideas';
-import { scaleWeights } from './ideas';
+import { checklistNote, ideaGates, sizingVerdict, type GateCheck } from './gates';
+import type { IdeaStatus, IdeasReport } from './ideas';
+import { defensiveOnly, printStance, scaleWeights, volTargetWeight } from './ideas';
 import type { Journal, PaperPosition } from './journal';
-import { applyOverlapCaps } from './overlap';
+import { applyOverlapCaps, OVERLAP_GROUP_CAP, type OverlapGroup } from './overlap';
 import type { PriceBook } from './prices';
 import type { SeriesPoint } from './series';
+import type { QuantSignals } from './signals';
+import { expressionFor, type Stance } from './universe';
 import {
   averageTrueRange,
   capGroup,
@@ -18,7 +22,7 @@ import {
   THEME_WEIGHT_CAP,
 } from './sizing';
 import { computeSignals, type Bar } from './signals';
-import { evaluateThemes, priorPrint, seriesDirection, type ThemeVerdict } from './themes';
+import { evaluateThemes, priorPrint, seriesDirection, themesForSymbol, type ThemeVerdict } from './themes';
 import { THEME_CHANGELOG, THEME_CONFIG_VERSION, THEMES } from './themes.config';
 import type { RegimeSnapshot } from './types';
 import { cagrFromCurve } from './improve';
@@ -27,12 +31,21 @@ import type { WeekChange } from './improve';
 export interface RiskLine {
   symbol: string;
   name: string;
+  role: 'tactical' | 'systematic' | 'cash';
+  defensive: boolean;
+  status: IdeaStatus;
   stop: number | null;
   qty: number | null;
   weight: number;
   note: string;
+  verdict: string;
+  gates: GateCheck[];
   dip: string | null;
   theme: string | null;
+  above200: boolean | null;
+  momentum12_1: number | null;
+  reversionZ: number | null;
+  pyramid: 'new' | 'add' | 'hold' | 'no-add-loser';
 }
 
 export interface Desk {
@@ -53,6 +66,12 @@ export interface Desk {
   changelog: typeof THEME_CHANGELOG;
   gaps: string[];
   params: Journal['params'];
+  overlap: { groups: OverlapGroup[]; gap: string | null; cap: number };
+  crowdingScale: number;
+  realisedText: string;
+  backtestedText: string;
+  gapText: string;
+  maxDrawdownText: string;
 }
 
 function latestComponent(snapshot: RegimeSnapshot, id: 'ai' | 'liquidity'): { value: number | null; date: string | null } {
@@ -65,7 +84,12 @@ function barsOf(book: PriceBook, symbol: string): Bar[] {
 }
 
 function themeIdsFor(symbol: string): string[] {
-  return THEMES.filter((theme) => theme.symbols.some((item) => item.symbol === symbol)).map((theme) => theme.id);
+  return themesForSymbol(symbol).map((theme) => theme.id);
+}
+
+function measured(value: number | null, digits = 1): string {
+  if (value == null || !Number.isFinite(value)) return 'Not enough history yet';
+  return `${(value * 100).toFixed(digits)}%`;
 }
 
 export function buildDesk(input: {
@@ -99,30 +123,39 @@ export function buildDesk(input: {
     realYield: seriesDirection(input.realYield, input.snapshot.today),
     dollar: seriesDirection(input.dollar, input.snapshot.today),
   });
-  const themeOn = new Map(themes.map((theme) => [theme.id, theme.on]));
 
   const positions = new Map(input.journal.paper.positions.map((position) => [position.symbol, position]));
+  const standDown = defensiveOnly(input.snapshot.action);
+  const regimeOpen = !standDown && (input.snapshot.regime === 'risk_on' || input.snapshot.regime === 'transitional');
   const drafted: {
     symbol: string;
     name: string;
     kind: 'etf' | 'stock' | 'crypto';
     role: 'tactical' | 'systematic' | 'cash';
-    status: 'confirmed' | 'watch' | 'avoid';
+    defensive: boolean;
+    signals: QuantSignals;
     entry: number | null;
     atr: number | null;
     volWeight: number;
     theme: string | null;
     dip: string | null;
-    note: string;
+    gates: GateCheck[];
+    stance: Stance | null;
+    eligible: boolean;
+    atrGap: boolean;
     pyramid: ReturnType<typeof pyramidState>;
   }[] = [];
 
-  const seen = new Set<string>();
-  for (const row of input.ideas.rows) {
-    seen.add(row.symbol);
-    const kind = row.kind;
-    const bars = barsOf(input.book, row.symbol);
-    const atr = averageTrueRange(bars);
+  const pushDraft = (row: {
+    symbol: string;
+    name: string;
+    kind: 'etf' | 'stock' | 'crypto';
+    role: 'tactical' | 'systematic' | 'cash';
+    defensive: boolean;
+    signals: QuantSignals;
+    bars: ReturnType<typeof barsOf>;
+    volWeight: number;
+  }) => {
     const position = positions.get(row.symbol);
     const pyramid = pyramidState({
       hasPosition: Boolean(position),
@@ -130,31 +163,66 @@ export function buildDesk(input: {
       riskPerShare: position?.riskPerShare ?? null,
       last: row.signals.lastClose,
     });
-    const themesForSymbol = themeIdsFor(row.symbol);
-    const on = themesForSymbol.some((id) => themeOn.get(id));
-    const dip = themesForSymbol.length
+    const mapped = themesForSymbol(row.symbol).map((config) => {
+      const live = themes.find((theme) => theme.id === config.id);
+      return { id: config.id, label: live?.label ?? config.label, on: live?.on === true };
+    });
+    const expression = expressionFor(row.symbol);
+    const stance = expression ? printStance(expression, input.snapshot.regime, standDown) : null;
+    const gates = ideaGates({
+      themes: mapped,
+      stance,
+      regimeOpen,
+      role: row.role,
+      signals: row.signals,
+      today: input.snapshot.today,
+      health: input.ideas.signalHealth,
+      halted,
+      pyramid,
+    });
+    const dip = mapped.length
       ? dipSignal({
         regime: input.snapshot.regime,
-        themeOn: on,
+        themeOn: mapped.some((theme) => theme.on),
         halted,
-        closes: bars.map((bar) => bar.close),
+        closes: row.bars.map((bar) => bar.close),
         low: params.dipLow,
         high: params.dipHigh,
       })
       : null;
+    const eligible = gates.every((item) => item.pass) && (pyramid === 'new' || pyramid === 'add');
     drafted.push({
       symbol: row.symbol,
       name: row.name,
-      kind,
+      kind: row.kind,
       role: row.role,
-      status: row.status,
+      defensive: row.defensive,
+      signals: row.signals,
       entry: row.signals.lastClose,
-      atr,
-      volWeight: row.maxWeight,
-      theme: themesForSymbol[0] ?? null,
+      atr: averageTrueRange(row.bars),
+      volWeight: row.volWeight,
+      theme: mapped[0]?.id ?? null,
       dip: dip?.flagged ? dip.reason : null,
-      note: '',
+      gates,
+      stance,
+      eligible,
+      atrGap: false,
       pyramid,
+    });
+  };
+
+  const seen = new Set<string>();
+  for (const row of input.ideas.rows) {
+    seen.add(row.symbol);
+    pushDraft({
+      symbol: row.symbol,
+      name: row.name,
+      kind: row.kind,
+      role: row.role,
+      defensive: row.defensive,
+      signals: row.signals,
+      bars: barsOf(input.book, row.symbol),
+      volWeight: volTargetWeight(input.snapshot.effectiveBudget.volTarget, row.signals.annVol20, row.role),
     });
   }
 
@@ -163,55 +231,27 @@ export function buildDesk(input: {
       if (seen.has(symbol.symbol)) continue;
       seen.add(symbol.symbol);
       const bars = barsOf(input.book, symbol.symbol);
-      const last = bars.length ? bars[bars.length - 1].close : null;
-      const position = positions.get(symbol.symbol);
-      const dip = dipSignal({
-        regime: input.snapshot.regime,
-        themeOn: theme.on,
-        halted,
-        closes: bars.map((bar) => bar.close),
-        low: params.dipLow,
-        high: params.dipHigh,
-      });
-      drafted.push({
+      const signals = computeSignals(bars);
+      const expression = expressionFor(symbol.symbol);
+      pushDraft({
         symbol: symbol.symbol,
         name: symbol.name,
         kind: symbol.kind,
         role: symbol.kind === 'stock' ? 'systematic' : 'tactical',
-        status: theme.on ? 'confirmed' : 'watch',
-        entry: last,
-        atr: averageTrueRange(bars),
-        volWeight: 0,
-        theme: theme.id,
-        dip: dip.flagged ? dip.reason : null,
-        note: '',
-        pyramid: pyramidState({
-          hasPosition: Boolean(position),
-          entry: position?.entry ?? null,
-          riskPerShare: position?.riskPerShare ?? null,
-          last,
-        }),
+        defensive: expression?.defensive ?? false,
+        signals,
+        bars,
+        volWeight: volTargetWeight(
+          input.snapshot.effectiveBudget.volTarget,
+          signals.annVol20,
+          symbol.kind === 'stock' ? 'systematic' : 'tactical',
+        ),
       });
     }
   }
 
   const raw = drafted.map((row) => {
-    if (row.status !== 'confirmed') {
-      row.note = 'Not sized. The playbook or the theme switch is not on.';
-      return { role: row.role, raw: 0, qty: null as number | null, stop: null as number | null };
-    }
-    if (halted && row.pyramid === 'new') {
-      row.note = 'No new entry. The paper portfolio is 10% or more below its peak. The drawdown halt wins over the return target.';
-      return { role: row.role, raw: 0, qty: null, stop: null };
-    }
-    if (row.pyramid === 'no-add-loser') {
-      row.note = 'Do not add. The open paper position is at or below its entry.';
-      return { role: row.role, raw: 0, qty: null, stop: null };
-    }
-    if (row.pyramid === 'hold') {
-      row.note = 'No add until the position is up at least 1R from its original entry.';
-      return { role: row.role, raw: 0, qty: null, stop: null };
-    }
+    if (!row.eligible) return { role: row.role, raw: 0, qty: null as number | null, stop: null as number | null };
     const sized = riskSize({
       capital,
       riskPct: params.riskPct,
@@ -221,14 +261,12 @@ export function buildDesk(input: {
       cap: roleCap(row.kind),
     });
     if (sized.weight == null) {
-      row.note = row.atr == null
-        ? 'ATR(20) is unavailable because high or low is missing. The weight falls back to the volatility target. No stop was invented.'
-        : 'Risk size is unavailable, so no new quantity is proposed.';
-      return { role: row.role, raw: row.volWeight, qty: null, stop: null };
+      if (row.atr == null && row.volWeight > 0) {
+        row.atrGap = true;
+        return { role: row.role, raw: row.volWeight, qty: null, stop: null };
+      }
+      return { role: row.role, raw: 0, qty: null, stop: null };
     }
-    row.note = row.pyramid === 'add'
-      ? `Add allowed after +1R. Stop ${sized.stop?.toFixed(2)}. Risk ${(params.riskPct * 100).toFixed(2)}% of capital.`
-      : `New risk unit. Stop ${sized.stop?.toFixed(2)}. Risk ${(params.riskPct * 100).toFixed(2)}% of capital.`;
     return { role: row.role, raw: sized.weight, qty: sized.qty, stop: sized.stop };
   });
 
@@ -236,9 +274,15 @@ export function buildDesk(input: {
   const crowded = budgeted.map((weight, index) => (
     drafted[index].role === 'cash' ? weight : Math.round(weight * input.ideas.crowding.scale * 1e6) / 1e6
   ));
+  const eligibleSymbols = drafted.filter((row) => row.eligible).map((row) => row.symbol);
+  const pairResult = pairTable(input.book.series, eligibleSymbols);
   const overlap = applyOverlapCaps(
-    drafted.map((row, index) => ({ symbol: row.symbol, status: row.status, weight: crowded[index] })),
-    [],
+    drafted.map((row, index) => ({
+      symbol: row.symbol,
+      status: row.eligible ? 'confirmed' as const : 'watch' as const,
+      weight: crowded[index],
+    })),
+    pairResult.unavailable ? null : pairResult.pairs,
   );
   let weights = overlap.weights;
   for (const theme of THEMES) {
@@ -254,17 +298,50 @@ export function buildDesk(input: {
     const qty = raw[index].qty != null && raw[index].raw > 0
       ? Math.round((raw[index].qty as number) * (weight / raw[index].raw) * 1e6) / 1e6
       : null;
+    const sized = sizingVerdict({ gates: row.gates, stance: row.stance, pyramid: row.pyramid, weight });
+    let note = checklistNote(row.gates, sized.verdict);
+    if (row.atrGap && weight > 0) {
+      note += '\nATR(20) is unavailable, so the weight uses the volatility target. No stop was invented.';
+    } else if (raw[index].stop != null && weight > 0) {
+      note += `\nStop ${raw[index].stop?.toFixed(2)}. Risk ${(params.riskPct * 100).toFixed(2)}% of capital.`;
+    }
     return {
       symbol: row.symbol,
       name: row.name,
-      stop: raw[index].stop,
-      qty,
-      weight,
-      note: row.note,
+      role: row.role,
+      defensive: row.defensive,
+      status: sized.status,
+      stop: sized.status === 'confirmed' ? raw[index].stop : null,
+      qty: sized.status === 'confirmed' ? qty : null,
+      weight: sized.status === 'confirmed' ? weight : 0,
+      note,
+      verdict: sized.verdict,
+      gates: row.gates,
       dip: row.dip,
       theme: row.theme,
+      above200: row.signals.above200,
+      momentum12_1: row.signals.momentum12_1,
+      reversionZ: row.signals.reversionZ,
+      pyramid: row.pyramid,
     };
   });
+
+  const displayed = applyOverlapCaps(
+    lines.map((line) => ({ symbol: line.symbol, status: line.status, weight: line.weight })),
+    pairResult.unavailable ? null : pairResult.pairs,
+  );
+  const overlapView = {
+    groups: displayed.groups.map((group) => {
+      let shown = 0;
+      for (const symbol of group.symbols) {
+        const line = lines.find((item) => item.symbol === symbol);
+        shown += line?.weight ?? 0;
+      }
+      return { ...group, combinedAfter: Math.round(shown * 1e6) / 1e6 };
+    }),
+    gap: displayed.gap,
+    cap: OVERLAP_GROUP_CAP,
+  };
 
   const byTheme = themes.map((theme) => ({
     ...theme,
@@ -273,13 +350,14 @@ export function buildDesk(input: {
 
   const curve = input.journal.paper.marks.map((mark) => mark.equity);
   const realised = cagrFromCurve(curve.length ? [capital, ...curve] : []);
-  const backtested = input.journal.weeks.length ? input.journal.weeks[input.journal.weeks.length - 1].portfolio.cagr : null;
-  const maxDrawdown = input.journal.weeks.length
-    ? input.journal.weeks[input.journal.weeks.length - 1].portfolio.maxDrawdown
+  const lastWeek = input.journal.weeks.length ? input.journal.weeks[input.journal.weeks.length - 1] : null;
+  const backtested = lastWeek ? lastWeek.portfolio.cagr : null;
+  const maxDrawdown = lastWeek
+    ? lastWeek.portfolio.maxDrawdown
     : (input.journal.paper.marks.length ? drawdown.drawdown : null);
   const gaps = [...input.ideas.gaps];
   if (input.journal.gap) gaps.push(input.journal.gap);
-  if (overlap.gap) gaps.push(overlap.gap);
+  if (overlapView.gap) gaps.push(overlapView.gap);
   const weekStart = input.snapshot.today;
   const changes = input.journal.changes.filter((change) => change.at.slice(0, 10) >= shiftDays(weekStart, -7));
 
@@ -301,6 +379,12 @@ export function buildDesk(input: {
     changelog: THEME_CHANGELOG,
     gaps,
     params,
+    overlap: overlapView,
+    crowdingScale: input.ideas.crowding.scale,
+    realisedText: measured(realised),
+    backtestedText: measured(backtested),
+    gapText: measured(realised == null ? null : targetCagr - realised),
+    maxDrawdownText: measured(maxDrawdown),
   };
 }
 

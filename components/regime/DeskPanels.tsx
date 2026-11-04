@@ -1,5 +1,6 @@
 import type { Desk } from '@/lib/regime/desk';
 import { ASPIRATION_LABEL } from '@/lib/regime/sizing';
+import { melbourneClock } from '@/lib/regime/time';
 
 function pct(value: number | null, digits = 1): string {
   if (value == null || !Number.isFinite(value)) return '—';
@@ -37,6 +38,7 @@ export function DeskPanels({ desk }: { desk: Desk }) {
                     <span className="ml-2 text-[var(--muted)]">{line.name}</span>
                     <span className="ml-2 font-mono text-xs">{pct(line.weight)}</span>
                     {line.dip ? <span className="ml-2 text-xs font-semibold text-emerald-200">{line.dip}</span> : null}
+                    <p className="text-xs text-[var(--muted)]">{line.verdict}</p>
                   </li>
                 ))}
               </ul>
@@ -76,18 +78,18 @@ export function DeskPanels({ desk }: { desk: Desk }) {
           </article>
           <article className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4">
             <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">Realised CAGR</p>
-            <p className="mt-2 font-mono text-2xl font-bold">{pct(desk.realisedCagr)}</p>
+            <p className="mt-2 font-mono text-2xl font-bold">{desk.realisedText}</p>
             <p className="mt-2 text-[11px] text-[var(--muted)]">{desk.equity == null ? 'No paper marks yet' : `Equity ${money(desk.equity)}`}</p>
           </article>
           <article className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4">
             <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">Backtested CAGR</p>
-            <p className="mt-2 font-mono text-2xl font-bold">{pct(desk.backtestedCagr)}</p>
+            <p className="mt-2 font-mono text-2xl font-bold">{desk.backtestedText}</p>
             <p className="mt-2 text-[11px] text-[var(--muted)]">Last weekly review, vs SPY and 60/40</p>
           </article>
           <article className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4">
             <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">Gap to target</p>
-            <p className="mt-2 font-mono text-2xl font-bold">{pct(desk.gapToTarget)}</p>
-            <p className="mt-2 text-[11px] text-[var(--muted)]">Max drawdown {pct(desk.maxDrawdown)}</p>
+            <p className="mt-2 font-mono text-2xl font-bold">{desk.gapText}</p>
+            <p className="mt-2 text-[11px] text-[var(--muted)]">Max drawdown {desk.maxDrawdownText}</p>
           </article>
         </div>
         <p className="mt-3 text-sm text-[var(--muted)]">
@@ -113,7 +115,8 @@ export function DeskPanels({ desk }: { desk: Desk }) {
           <ul className="mt-2 space-y-2 text-sm">
             {desk.changes.map((change) => (
               <li key={`${change.at}-${change.ruleId}-${change.action}`}>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-white/60">{change.action}</span>
+                <span className="font-mono text-[11px] text-white/50">{melbourneClock(change.at)}</span>
+                <span className="ml-2 text-[11px] font-bold uppercase tracking-wider text-white/60">{change.action}</span>
                 <span className="ml-2 font-mono text-xs">{change.ruleId}</span>
                 <p className="text-[var(--muted)]">{change.detail}</p>
               </li>

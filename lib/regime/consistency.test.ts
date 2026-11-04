@@ -1,0 +1,234 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { describe, it } from 'node:test';
+import { actionFor, budgetsFor } from './classify';
+import { auditRegime } from './consistency';
+import { buildDesk } from './desk';
+import { ideaGates, verdictFromGates } from './gates';
+import { buildIdeas } from './ideas';
+import { emptyJournal } from './journal';
+import type { Bar, QuantSignals } from './signals';
+import { themesForSymbol } from './themes';
+import { melbourneDate, sessionDateLabel } from './time';
+import type { RegimeSnapshot } from './types';
+import { publishRegime } from './view';
+
+function flatBars(n: number, end = '2026-11-03'): Bar[] {
+  const endMs = Date.parse(`${end}T00:00:00Z`);
+  return Array.from({ length: n }, (_, index) => ({
+    date: new Date(endMs - (n - 1 - index) * 86_400_000).toISOString().slice(0, 10),
+    close: 100,
+  }));
+}
+
+function signals(partial: Partial<QuantSignals>): QuantSignals {
+  return {
+    asOf: '2026-11-03',
+    lastClose: 100,
+    momentum12_1: 0.04,
+    ma200: 90,
+    above200: true,
+    annVol20: 0.12,
+    reversionZ: 0.2,
+    ...partial,
+  };
+}
+
+describe('idea gates', () => {
+  it('names the 200-day average when the theme is on and that is the first failure', () => {
+    const gates = ideaGates({
+      themes: [{ id: 'scarcity', label: 'Scarcity', on: true }],
+      stance: 'prefer',
+      regimeOpen: false,
+      role: 'tactical',
+      today: '2026-11-03',
+      signals: signals({ above200: false, ma200: 110 }),
+      halted: false,
+      pyramid: 'new',
+    });
+    assert.equal(verdictFromGates(gates, 'prefer'), 'Watching: theme on, but price is below its 200-day average');
+    assert.equal(gates.find((gate) => gate.id === 'theme')?.pass, true);
+    assert.equal(gates.find((gate) => gate.id === 'trend')?.pass, false);
+  });
+
+  it('uses Avoid when the playbook avoids the sleeve, even if the theme is the first failure', () => {
+    const gates = ideaGates({
+      themes: [{ id: 'ai-infrastructure', label: 'AI infrastructure', on: false }],
+      stance: 'avoid',
+      regimeOpen: false,
+      role: 'tactical',
+      today: '2026-11-03',
+      signals: signals({ above200: false, ma200: 110 }),
+      halted: false,
+      pyramid: 'new',
+    });
+    assert.equal(verdictFromGates(gates, 'avoid'), 'Avoid. the AI infrastructure theme is off.');
+    const both = ideaGates({
+      themes: [
+        { id: 'crypto', label: 'Crypto', on: false },
+        { id: 'scarcity', label: 'Scarcity', on: false },
+      ],
+      stance: null,
+      regimeOpen: false,
+      role: 'tactical',
+      today: '2026-11-03',
+      signals: signals({}),
+      halted: false,
+      pyramid: 'new',
+    });
+    assert.equal(verdictFromGates(both, null), 'Watching: the Crypto and Scarcity themes are off.');
+  });
+
+  it('says a bond has no theme instead of blaming a switch', () => {
+    const gates = ideaGates({
+      themes: [],
+      stance: 'prefer',
+      regimeOpen: false,
+      role: 'tactical',
+      today: '2026-11-03',
+      signals: signals({ above200: false, ma200: 110 }),
+      halted: false,
+      pyramid: 'new',
+    });
+    assert.match(gates[0].detail, /^No theme/);
+    assert.equal(verdictFromGates(gates, 'prefer'), 'Watching: no theme basket, but price is below its 200-day average');
+  });
+
+  it('does not confirm a name when momentum and trend are both retired', () => {
+    const gates = ideaGates({
+      themes: [{ id: 'scarcity', label: 'Scarcity', on: true }],
+      stance: 'prefer',
+      regimeOpen: true,
+      role: 'tactical',
+      today: '2026-11-03',
+      signals: signals({}),
+      health: [
+        { id: 'momentum', status: 'retired' },
+        { id: 'trend', status: 'retired' },
+        { id: 'reversion', status: 'healthy' },
+      ],
+      halted: false,
+      pyramid: 'new',
+    });
+    assert.equal(gates.every((gate) => gate.pass), false);
+    assert.match(verdictFromGates(gates, 'prefer'), /both retired/);
+  });
+});
+
+describe('theme mapping', () => {
+  it('reads the live baskets, including GOLD.AX, and leaves bonds outside them', () => {
+    assert.deepEqual(themesForSymbol('GLD').map((theme) => theme.id), ['scarcity']);
+    assert.deepEqual(themesForSymbol('GOLD.AX').map((theme) => theme.id), ['scarcity']);
+    assert.deepEqual(themesForSymbol('SLV').map((theme) => theme.id), ['scarcity']);
+    assert.deepEqual(themesForSymbol('BTC-USD').map((theme) => theme.id), ['crypto', 'scarcity']);
+    assert.deepEqual(themesForSymbol('ETH-USD').map((theme) => theme.id), ['crypto']);
+    assert.deepEqual(themesForSymbol('SOL-USD').map((theme) => theme.id), ['crypto']);
+    for (const symbol of ['SMH', 'XLU', 'EQIX', 'DLR']) {
+      assert.deepEqual(themesForSymbol(symbol).map((theme) => theme.id), ['ai-infrastructure']);
+    }
+    assert.equal(themesForSymbol('IEF').length, 0);
+    assert.equal(themesForSymbol('VAF.AX').length, 0);
+  });
+});
+
+describe('published regime view', () => {
+  const today = '2026-11-03';
+  const decision = actionFor({ actionable: true, weak: false, regime: 'tightening' });
+  const budgets = budgetsFor('tightening', decision.action);
+  const snapshot: RegimeSnapshot = {
+    rulesVersion: 'test',
+    generatedAt: '2026-11-03T05:00:00.000Z',
+    today,
+    printDate: today,
+    regime: 'tightening',
+    regimeLabel: 'Tightening/Stress',
+    composite: -0.8,
+    actionable: true,
+    weak: false,
+    action: decision.action,
+    message: decision.message,
+    modelBudget: budgets.modelBudget,
+    effectiveBudget: budgets.effectiveBudget,
+    budgetOverridden: budgets.budgetOverridden,
+    components: [
+      { id: 'liquidity', label: 'Liquidity', z: -0.4, included: true, weight: 0.3, asOf: today, gap: null, detail: '', reading: '' },
+      { id: 'policy', label: 'Policy path', z: -0.2, included: true, weight: 0.2, asOf: today, gap: null, detail: '', reading: '' },
+      { id: 'credit', label: 'Credit', z: -0.3, included: true, weight: 0.25, asOf: today, gap: null, detail: '', reading: '' },
+      { id: 'growth', label: 'Growth differential', z: -0.1, included: true, weight: 0.15, asOf: today, gap: null, detail: '', reading: '' },
+      { id: 'positioning', label: 'Positioning extremes', z: null, included: false, weight: 0, asOf: null, gap: null, detail: '', reading: '' },
+      { id: 'ai', label: 'AI capex', z: 0.2, included: true, weight: 0.08, asOf: today, gap: null, detail: '', reading: '' },
+    ],
+    history: [],
+    freshness: [],
+    gaps: [],
+  };
+  const down = flatBars(220, today);
+  const book = {
+    fetchedAt: '2026-11-03T05:00:00.000Z',
+    gaps: [] as string[],
+    series: ['GLD', 'GOLD.AX', 'IEF', 'AAA.AX', 'BILL.AX', 'SHY'].map((symbol) => ({
+      symbol,
+      bars: down,
+      asOf: down[down.length - 1].date,
+      source: 'yahoo' as const,
+      error: null,
+    })),
+  };
+
+  it('keeps the banner, the gates, the sizes, and the history text on one object', () => {
+    const ideas = buildIdeas({ snapshot, book, watchlist: '' });
+    const desk = buildDesk({
+      snapshot,
+      ideas,
+      book,
+      realYield: [{ date: '2026-11-02', value: 2 }, { date: '2026-11-03', value: 1.4 }],
+      dollar: [{ date: '2026-11-02', value: 120 }, { date: '2026-11-03', value: 121 }],
+      journal: emptyJournal(),
+    });
+    const view = publishRegime({ snapshot, ideas, desk });
+    const failed = view.consistency.rules.filter((rule) => !rule.pass);
+    assert.deepEqual(failed.map((rule) => `${rule.id}: ${rule.detail}`), []);
+    const gld = view.desk.lines.find((line) => line.symbol === 'GLD');
+    const gold = view.desk.lines.find((line) => line.symbol === 'GOLD.AX');
+    const ief = view.desk.lines.find((line) => line.symbol === 'IEF');
+    assert.equal(gld?.theme, 'scarcity');
+    assert.equal(gold?.theme, 'scarcity');
+    assert.match(gld?.verdict ?? '', /Watching: theme on, but price is below its 200-day average/);
+    assert.equal(gld?.weight, 0);
+    assert.notEqual(gld?.status, 'confirmed');
+    assert.match(ief?.gates[0].detail ?? '', /^No theme/);
+    assert.equal(ief?.weight, 0);
+    assert.equal(view.desk.realisedText, 'Not enough history yet');
+    assert.equal(view.desk.maxDrawdownText, 'Not enough history yet');
+    assert.equal(view.ideas.rows.find((row) => row.symbol === 'GLD')?.status, gld?.status);
+    assert.equal(view.ideas.rows.find((row) => row.symbol === 'GLD')?.maxWeight, gld?.weight);
+    assert.equal(view.ideas.banner, snapshot.message);
+
+    const broken = {
+      snapshot,
+      ideas: view.ideas,
+      desk: {
+        ...view.desk,
+        lines: view.desk.lines.map((line) => (
+          line.symbol === 'GLD' ? { ...line, status: 'watch' as const, weight: 0.2 } : line
+        )),
+      },
+    };
+    const breach = auditRegime(broken);
+    assert.equal(breach.rules.find((rule) => rule.id === 'tag-size')?.pass, false);
+  });
+});
+
+describe('clocks', () => {
+  it('moves an instant into Australia/Melbourne and leaves a session date alone', () => {
+    assert.equal(melbourneDate(new Date('2026-11-04T13:30:00.000Z')), '2026-11-05');
+    assert.equal(sessionDateLabel('2026-11-04'), '2026-11-04');
+  });
+});
+
+describe('retired copy', () => {
+  it('does not blame the theme switch for a watch name', () => {
+    const source = readFileSync('lib/regime/desk.ts', 'utf8');
+    assert.equal(source.includes('theme switch is not on'), false);
+  });
+});

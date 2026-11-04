@@ -1,5 +1,7 @@
 import { CORR_WARN, DISPERSION_WINDOW } from '@/lib/regime/correlation';
+import { trendWord } from '@/lib/regime/gates';
 import type { IdeasReport, IdeaStatus } from '@/lib/regime/ideas';
+import { melbourneClock, sessionDateLabel } from '@/lib/regime/time';
 
 function pct(value: number | null, digits = 0): string {
   if (value == null || !Number.isFinite(value)) return '—';
@@ -35,13 +37,7 @@ export function IdeasPanel({ ideas, risk }: {
   risk?: { symbol: string; stop: number | null; qty: number | null; weight: number; note: string; dip: string | null }[];
 }) {
   const riskBySymbol = new Map((risk ?? []).map((line) => [line.symbol, line]));
-  const fetched = ideas.pricesFetchedAt
-    ? new Intl.DateTimeFormat('en-AU', {
-      timeZone: 'Australia/Melbourne',
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    }).format(new Date(ideas.pricesFetchedAt))
-    : null;
+  const fetched = melbourneClock(ideas.pricesFetchedAt);
   const candidates = ideas.rows.filter((row) => row.status !== 'avoid');
   const avoided = ideas.rows.filter((row) => row.status === 'avoid');
 
@@ -50,7 +46,7 @@ export function IdeasPanel({ ideas, risk }: {
       <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Macro plays and stock ideas</p>
       <h2 className="text-lg font-bold tracking-tight">Playbook, then quant confirmation</h2>
       <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">
-        The regime map names liquid US and ASX ETFs an Australian investor can actually trade. A name is Confirmed only when this print prefers it and the daily signals agree: positive 12–1 month momentum, price above the 200-day average, and a 5-session return that is not stretched. Otherwise it is Watch or Avoid. A confirmed idea is then sized by risk: stop is entry minus 2.5 times ATR(20), and quantity is capital times the risk percent divided by the distance to that stop. The volatility target is the fallback only when high and low are missing. Caps stay at {pct(ideas.singlePositionCap)} for an ETF and {pct(ideas.systematicCap)} for a stock. Nothing is sized unless it is Confirmed.
+        The regime map names liquid US and ASX ETFs an Australian investor can actually trade. Each idea uses one checklist: theme, regime, the 200-day average, 12–1 momentum, stretch, and the drawdown halt. The first failed gate is the sentence under the name. A size is shown only when every gate passes. The volatility target is the fallback only when high and low are missing. Caps stay at {pct(ideas.singlePositionCap)} for an ETF and {pct(ideas.systematicCap)} for a stock.
       </p>
 
       {ideas.crowding.warning ? (
@@ -92,8 +88,7 @@ export function IdeasPanel({ ideas, risk }: {
 
       {ideas.defensiveOnly ? (
         <div className="mt-4 rounded-[var(--radius-xl)] border border-rose-400/40 bg-rose-500/10 px-5 py-4">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-white/50">Do nothing / reduce risk</p>
-          <p className="mt-2 text-base font-semibold leading-relaxed text-white">{ideas.banner}</p>
+          <p className="text-base font-semibold leading-relaxed text-white">{ideas.banner}</p>
           <p className="mt-2 text-sm text-white/75">
             Candidates are limited to defensive and cash expressions. Equity beta, cyclicals, and the stock watchlist are not sized on this print.
           </p>
@@ -130,7 +125,7 @@ export function IdeasPanel({ ideas, risk }: {
               <th className="px-3 py-2 font-bold">20d vol</th>
               <th className="px-3 py-2 font-bold">5d z</th>
               <th className="px-3 py-2 font-bold">Max weight</th>
-              <th className="px-3 py-2 font-bold">As of</th>
+              <th className="px-3 py-2 font-bold">As of (session)</th>
             </tr>
           </thead>
           <tbody>
@@ -148,7 +143,7 @@ export function IdeasPanel({ ideas, risk }: {
                   <p className="mt-1 text-xs text-white/55">{row.drivers}</p>
                   <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">{row.invalidation}</p>
                   {riskBySymbol.get(row.symbol)?.note ? (
-                    <p className="mt-2 text-xs leading-relaxed text-white/70">{riskBySymbol.get(row.symbol)?.note}</p>
+                    <p className="mt-2 whitespace-pre-line text-xs leading-relaxed text-white/70">{riskBySymbol.get(row.symbol)?.note}</p>
                   ) : null}
                   {riskBySymbol.get(row.symbol)?.dip ? (
                     <p className="mt-2 text-xs font-semibold text-emerald-200">{riskBySymbol.get(row.symbol)?.dip}</p>
@@ -158,10 +153,15 @@ export function IdeasPanel({ ideas, risk }: {
                   <span className={`inline-block rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${STATUS_CLASS[row.status]}`}>
                     {STATUS_LABEL[row.status]}
                   </span>
+                  {riskBySymbol.get(row.symbol)?.dip ? (
+                    <span className="mt-2 inline-block rounded-full border border-emerald-400/40 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-200">
+                      Dip
+                    </span>
+                  ) : null}
                   {row.priceStale ? <p className="mt-2 text-[11px] text-[var(--status-warn)]">Stale price</p> : null}
                 </td>
                 <td className="px-3 py-3 font-mono text-xs">{pct(row.signals.momentum12_1, 1)}</td>
-                <td className="px-3 py-3 font-mono text-xs">{row.signals.above200 == null ? '—' : row.signals.above200 ? 'Above' : 'Below'}</td>
+                <td className="px-3 py-3 font-mono text-xs">{trendWord(row.signals.above200)}</td>
                 <td className="px-3 py-3 font-mono text-xs">{pct(row.signals.annVol20, 1)}</td>
                 <td className="px-3 py-3 font-mono text-xs">{num(row.signals.reversionZ)}</td>
                 <td className="px-3 py-3 font-mono text-xs">
@@ -170,7 +170,7 @@ export function IdeasPanel({ ideas, risk }: {
                     <p className="mt-1 text-[11px] text-[var(--muted)]">stop {riskBySymbol.get(row.symbol)?.stop?.toFixed(2)} · qty {riskBySymbol.get(row.symbol)?.qty?.toFixed(2) ?? '—'}</p>
                   ) : null}
                 </td>
-                <td className="px-3 py-3 font-mono text-xs">{row.signals.asOf ?? '—'}</td>
+                <td className="px-3 py-3 font-mono text-xs">{sessionDateLabel(row.signals.asOf)}</td>
               </tr>
             ))}
           </tbody>
@@ -233,7 +233,7 @@ export function IdeasPanel({ ideas, risk }: {
       ) : null}
 
       <p className="mt-4 text-xs leading-relaxed text-[var(--muted)]">
-        Prices are adjusted daily closes from the Yahoo chart endpoint, which does not need a paid key. {fetched ? `Book fetched ${fetched} Melbourne time.` : 'The price book has not been fetched.'} The date on each row is that name&apos;s latest bar. A missing bar is left blank. No price is filled in.
+        Prices are adjusted daily closes from the Yahoo chart endpoint, which does not need a paid key. {ideas.pricesFetchedAt ? `Book fetched ${fetched} Australia/Melbourne.` : 'The price book has not been fetched.'} The date on each row is that name&apos;s exchange session, not a Melbourne clock. A missing bar is left blank. No price is filled in.
       </p>
       <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">
         Educational research for the owner. Not financial advice, not a recommendation to buy or sell any security, and not a personalised instruction to size a position. Confirmed means this playbook and these simple signals agree. It is not a forecast.

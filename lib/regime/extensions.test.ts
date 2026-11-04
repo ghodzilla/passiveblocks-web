@@ -41,13 +41,22 @@ function dipCloses(last: number): number[] {
 
 function line(partial: Partial<RiskLine> & Pick<RiskLine, 'symbol'>): RiskLine {
   return {
-    name: partial.symbol,
+    name: partial.name ?? partial.symbol,
+    role: partial.role ?? 'tactical',
+    defensive: partial.defensive ?? false,
+    status: partial.status ?? 'watch',
     stop: partial.stop ?? null,
     qty: partial.qty ?? null,
     weight: partial.weight ?? 0,
     note: partial.note ?? '',
+    verdict: partial.verdict ?? '',
+    gates: partial.gates ?? [],
     dip: partial.dip ?? null,
     theme: partial.theme ?? null,
+    above200: partial.above200 ?? null,
+    momentum12_1: partial.momentum12_1 ?? null,
+    reversionZ: partial.reversionZ ?? null,
+    pyramid: partial.pyramid ?? 'new',
     symbol: partial.symbol,
   };
 }
@@ -68,9 +77,15 @@ function stubDesk(lines: RiskLine[]): Desk {
     gapToTarget: null,
     changes: [],
     configVersion: THEME_CONFIG_VERSION,
-    changelog: [],
+    changelog: THEME_CHANGELOG,
     gaps: [],
     params: emptyJournal().params,
+    overlap: { groups: [], gap: null, cap: 0.25 },
+    crowdingScale: 1,
+    realisedText: 'Not enough history yet',
+    backtestedText: 'Not enough history yet',
+    gapText: 'Not enough history yet',
+    maxDrawdownText: 'Not enough history yet',
   };
 }
 
@@ -135,8 +150,9 @@ describe('theme switches', () => {
   });
 
   it('keeps the theme list versioned for a quarterly human review', () => {
-    assert.equal(THEME_CONFIG_VERSION, '2026-Q4.1');
+    assert.equal(THEME_CONFIG_VERSION, '2026-Q4.2');
     assert.match(THEME_CHANGELOG[0].note, /quarter/);
+    assert.match(THEME_CHANGELOG[1].note, /GOLD\.AX/);
     assert.equal(THEMES.length, 3);
   });
 });
