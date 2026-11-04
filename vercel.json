@@ -3,6 +3,10 @@
     {
       "path": "/api/regime/refresh",
       "schedule": "15 13 * * *"
+    },
+    {
+      "path": "/api/regime/improve",
+      "schedule": "0 22 * * 0"
     }
   ]
 }

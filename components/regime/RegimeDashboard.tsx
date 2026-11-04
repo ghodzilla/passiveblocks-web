@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { DeskPanels } from '@/components/regime/DeskPanels';
 import { IdeasPanel } from '@/components/regime/IdeasPanel';
+import type { Desk } from '@/lib/regime/desk';
 import { MODEL_BUDGET, REGIME_LABEL, THRESHOLDS, type RegimeId } from '@/lib/regime/constants';
 import type { IdeasReport } from '@/lib/regime/ideas';
 import type { HistoryPoint, RegimeSnapshot } from '@/lib/regime/types';
@@ -103,7 +105,7 @@ function ZBar({ z }: { z: number | null }) {
   );
 }
 
-export function RegimeDashboard({ snapshot, ideas }: { snapshot: RegimeSnapshot; ideas: IdeasReport }) {
+export function RegimeDashboard({ snapshot, ideas, desk }: { snapshot: RegimeSnapshot; ideas: IdeasReport; desk?: Desk }) {
   const generated = new Intl.DateTimeFormat('en-AU', {
     timeZone: 'Australia/Melbourne',
     dateStyle: 'medium',
@@ -305,7 +307,8 @@ export function RegimeDashboard({ snapshot, ideas }: { snapshot: RegimeSnapshot;
           ) : null}
         </section>
 
-        <IdeasPanel ideas={ideas} />
+        <IdeasPanel ideas={ideas} risk={desk?.lines} />
+        {desk ? <DeskPanels desk={desk} /> : null}
 
         <section className="mt-10 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/20 px-4 py-4">
           <h2 className="text-lg font-bold tracking-tight">Rules that bind</h2>
@@ -320,6 +323,9 @@ export function RegimeDashboard({ snapshot, ideas }: { snapshot: RegimeSnapshot;
             <div>A tactical idea is sized only when Confirmed, and never above 20% of the book. A watchlist stock is capped at 2%. The sum stays inside the gross and net budget.</div>
             <div>Average pairwise correlation above 0.55 scales non-cash weights down, to half at 0.70. Confirmed AI/megacap names share a 25% group cap.</div>
             <div>A signal with a negative 20-day information coefficient and a hit rate under 48% is retired. Unknown health keeps the default gates.</div>
+            <div>Themes (AI infrastructure, crypto, scarcity) switch on from written rules in a versioned config. A person reviews that list quarterly. The weekly job does not edit it.</div>
+            <div>Risk size uses ATR(20). Stop is entry minus k times ATR (default k 2.5). Quantity is capital times 0.75% divided by the distance to the stop. Add only after +1R. A 10% paper drawdown blocks new entries.</div>
+            <div>Buy the dip — confirmed only in Risk-On or Transitional, with the theme on, 10–20% below the 60-day high, and back above the 20-day average. Never in Tightening or Crisis, and never during the drawdown halt.</div>
           </dl>
         </section>
 

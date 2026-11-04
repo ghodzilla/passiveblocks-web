@@ -30,7 +30,11 @@ const STANCE_CLASS = {
   avoid: 'text-rose-200',
 };
 
-export function IdeasPanel({ ideas }: { ideas: IdeasReport }) {
+export function IdeasPanel({ ideas, risk }: {
+  ideas: IdeasReport;
+  risk?: { symbol: string; stop: number | null; qty: number | null; weight: number; note: string; dip: string | null }[];
+}) {
+  const riskBySymbol = new Map((risk ?? []).map((line) => [line.symbol, line]));
   const fetched = ideas.pricesFetchedAt
     ? new Intl.DateTimeFormat('en-AU', {
       timeZone: 'Australia/Melbourne',
@@ -46,7 +50,7 @@ export function IdeasPanel({ ideas }: { ideas: IdeasReport }) {
       <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Macro plays and stock ideas</p>
       <h2 className="text-lg font-bold tracking-tight">Playbook, then quant confirmation</h2>
       <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">
-        The regime map names liquid US and ASX ETFs an Australian investor can actually trade. A name is Confirmed only when this print prefers it and the daily signals agree: positive 12–1 month momentum, price above the 200-day average, and a 5-session return that is not stretched. Otherwise it is Watch or Avoid. Suggested weights are the regime vol target divided by 20-day annualised volatility, then capped at {pct(ideas.singlePositionCap)} for a tactical idea and {pct(ideas.systematicCap)} for a watchlist stock. Nothing is sized unless it is Confirmed.
+        The regime map names liquid US and ASX ETFs an Australian investor can actually trade. A name is Confirmed only when this print prefers it and the daily signals agree: positive 12–1 month momentum, price above the 200-day average, and a 5-session return that is not stretched. Otherwise it is Watch or Avoid. A confirmed idea is then sized by risk: stop is entry minus 2.5 times ATR(20), and quantity is capital times the risk percent divided by the distance to that stop. The volatility target is the fallback only when high and low are missing. Caps stay at {pct(ideas.singlePositionCap)} for an ETF and {pct(ideas.systematicCap)} for a stock. Nothing is sized unless it is Confirmed.
       </p>
 
       {ideas.crowding.warning ? (
@@ -143,6 +147,12 @@ export function IdeasPanel({ ideas }: { ideas: IdeasReport }) {
                   <p className="mt-2 max-w-md text-xs leading-relaxed text-[var(--muted)]">{row.rationale}</p>
                   <p className="mt-1 text-xs text-white/55">{row.drivers}</p>
                   <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">{row.invalidation}</p>
+                  {riskBySymbol.get(row.symbol)?.note ? (
+                    <p className="mt-2 text-xs leading-relaxed text-white/70">{riskBySymbol.get(row.symbol)?.note}</p>
+                  ) : null}
+                  {riskBySymbol.get(row.symbol)?.dip ? (
+                    <p className="mt-2 text-xs font-semibold text-emerald-200">{riskBySymbol.get(row.symbol)?.dip}</p>
+                  ) : null}
                 </td>
                 <td className="px-3 py-3">
                   <span className={`inline-block rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${STATUS_CLASS[row.status]}`}>
@@ -154,7 +164,12 @@ export function IdeasPanel({ ideas }: { ideas: IdeasReport }) {
                 <td className="px-3 py-3 font-mono text-xs">{row.signals.above200 == null ? '—' : row.signals.above200 ? 'Above' : 'Below'}</td>
                 <td className="px-3 py-3 font-mono text-xs">{pct(row.signals.annVol20, 1)}</td>
                 <td className="px-3 py-3 font-mono text-xs">{num(row.signals.reversionZ)}</td>
-                <td className="px-3 py-3 font-mono text-xs">{pct(row.maxWeight, 1)}</td>
+                <td className="px-3 py-3 font-mono text-xs">
+                  {pct(riskBySymbol.get(row.symbol)?.weight ?? row.maxWeight, 1)}
+                  {riskBySymbol.get(row.symbol)?.stop != null ? (
+                    <p className="mt-1 text-[11px] text-[var(--muted)]">stop {riskBySymbol.get(row.symbol)?.stop?.toFixed(2)} · qty {riskBySymbol.get(row.symbol)?.qty?.toFixed(2) ?? '—'}</p>
+                  ) : null}
+                </td>
                 <td className="px-3 py-3 font-mono text-xs">{row.signals.asOf ?? '—'}</td>
               </tr>
             ))}

@@ -37,12 +37,18 @@ export function parseYahooChart(body: unknown, yahooSymbol: string): Bar[] {
   if (!result || typeof result !== 'object') return [];
   const row = result as {
     timestamp?: unknown;
-    indicators?: { adjclose?: { adjclose?: unknown }[]; quote?: { close?: unknown }[] };
+    indicators?: {
+      adjclose?: { adjclose?: unknown }[];
+      quote?: { close?: unknown; high?: unknown; low?: unknown }[];
+    };
   };
   const timestamps = Array.isArray(row.timestamp) ? row.timestamp : [];
   const adjusted = row.indicators?.adjclose?.[0]?.adjclose;
-  const raw = row.indicators?.quote?.[0]?.close;
+  const quote = row.indicators?.quote?.[0];
+  const raw = quote?.close;
   const closes = Array.isArray(adjusted) ? adjusted : Array.isArray(raw) ? raw : [];
+  const highs = Array.isArray(quote?.high) ? quote.high : [];
+  const lows = Array.isArray(quote?.low) ? quote.low : [];
   const bars: Bar[] = [];
   const n = Math.min(timestamps.length, closes.length);
   for (let i = 0; i < n; i++) {
@@ -50,7 +56,12 @@ export function parseYahooChart(body: unknown, yahooSymbol: string): Bar[] {
     const close = closes[i];
     if (typeof ts !== 'number' || !Number.isFinite(ts)) continue;
     if (typeof close !== 'number' || !Number.isFinite(close) || close <= 0) continue;
-    bars.push({ date: sessionDate(ts, yahooSymbol), close });
+    const high = highs[i];
+    const low = lows[i];
+    const bar: Bar = { date: sessionDate(ts, yahooSymbol), close };
+    if (typeof high === 'number' && Number.isFinite(high) && high > 0) bar.high = high;
+    if (typeof low === 'number' && Number.isFinite(low) && low > 0) bar.low = low;
+    bars.push(bar);
   }
   bars.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
   const deduped: Bar[] = [];

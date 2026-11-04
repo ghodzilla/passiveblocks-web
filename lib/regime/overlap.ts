@@ -12,6 +12,9 @@ export const AI_MEGACAP_CLUSTER = [
   'AVGO',
   'TSLA',
   'VGS.AX',
+  'BTC-USD',
+  'ETH-USD',
+  'SOL-USD',
 ] as const;
 
 const CLUSTER = new Set<string>(AI_MEGACAP_CLUSTER);
@@ -116,7 +119,7 @@ export function applyOverlapCaps(
       }
     }
     const reason = inCluster
-      ? 'Same AI/megacap exposure (QQQ, XLK, XLC, SMH, NVDA, MSFT, AAPL, AMZN, GOOGL, META, AVGO, TSLA, VGS.AX). SPY is not in this group.'
+      ? 'Same AI/megacap or crypto exposure (QQQ, XLK, XLC, SMH, NVDA, MSFT, AAPL, AMZN, GOOGL, META, AVGO, TSLA, VGS.AX, BTC-USD, ETH-USD, SOL-USD). SPY is not in this group.'
       : anyCluster && linkedByCorr
         ? 'AI/megacap cluster and pairwise correlation at or above 0.80.'
         : `Pairwise correlation at or above ${PAIR_CORR_FLAG.toFixed(2)}.`;

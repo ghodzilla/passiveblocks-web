@@ -16,8 +16,12 @@ Set these in Vercel (Production and Preview). Do not commit values. This change 
 | `CRON_SECRET` | Yes, for the scheduled refresh | Long random string. Vercel sends it as `Authorization: Bearer $CRON_SECRET` on the cron request. It does not unlock the HTML page. |
 | `REGIME_ALLOWED_IPS` | No | Optional comma-separated IPs that can open the page without a password. This is **not** `ALLOWED_IPS`. Leave it unset to require the password. |
 | `REGIME_WATCHLIST` | No | Comma-separated stock symbols that replace the default watchlist (US megacaps and a liquid ASX 20 slice). Example: `AAPL,BHP.AX`. Leave unset for the built-in list. An empty value shows no stocks. No price API key is required. |
+| `REGIME_CAPITAL` | No | Paper-portfolio capital in dollars. Default `100000`. A value saved on the owner page wins over this. |
+| `REGIME_TARGET_CAGR` | No | Aspiration return as a decimal, default `0.30` (30% a year). It is labeled an aspiration, not a forecast. A saved page value wins. |
+| `BLOB_READ_WRITE_TOKEN` | No | When set with `REGIME_SESSION_SECRET`, the paper journal is encrypted and stored in Vercel Blob. Without it, the journal stays on the local instance and the page says so. |
+| `REGIME_JOURNAL_PATH` | No | Optional file path for the local journal. Default is a temp file. Do not commit it. |
 
-No new environment variable is required for the AI gauge, the crowding alarm, overlap, or signal health. SPY, RSP, and SMH come from the same Yahoo chart endpoint as the playbook. IPG3344S is skipped, and the gap is labeled, when `FRED_API_KEY` is unset.
+No new environment variable is required for themes, ATR sizing, the dip rule, or the weekly review. The page still runs, and it labels the journal as not durable, when `BLOB_READ_WRITE_TOKEN` is unset. SPY, RSP, SMH, and the crypto pairs come from the same Yahoo chart endpoint. `DFII10` and `DTWEXBGS` use `FRED_API_KEY`. If that key is missing, scarcity stays off and the gap is labeled. IPG3344S is skipped the same way.
 
 `REGIME_OWNER_EMAILS` is no longer read. A Supabase session does not open `/private/regime`.
 
@@ -77,7 +81,7 @@ Because the weight is 8%, a full ±3 concentration spike on an otherwise flat bo
 
 ## Crowding, overlap, and signal health
 
-Average pairwise correlation uses the last 60 overlapping daily log returns across the price book (playbook ETFs and the watchlist). It is unknown, and weights are not scaled, until at least 8 series produce at least 28 pairs. Dispersion is the cross-sectional standard deviation of 20-day returns. It is shown and does not scale weights a second time.
+Average pairwise correlation uses the last 60 overlapping daily log returns across the price book (playbook ETFs, the watchlist, and the theme names, including BTC-USD, ETH-USD, and SOL-USD). It is unknown, and weights are not scaled, until at least 8 series produce at least 28 pairs. Dispersion is the cross-sectional standard deviation of 20-day returns. It is shown and does not scale weights a second time.
 
 | Average correlation | Risk-weight scale |
 | --- | --- |
@@ -87,7 +91,7 @@ Average pairwise correlation uses the last 60 overlapping daily log returns acro
 
 Cash is not scaled. The scale is applied after the gross and net budget, and it only reduces weights.
 
-Confirmed ideas in the AI/megacap cluster share one group cap of **25%**: QQQ, XLK, XLC, SMH, NVDA, MSFT, AAPL, AMZN, GOOGL, META, AVGO, TSLA, and VGS.AX. SPY is not in that list. Confirmed pairs with a 60-day correlation of at least 0.80 are grouped the same way. The page shows combined weight before and after the cap. If pairwise correlation cannot be computed, the identity cap still applies and the gap says so.
+Confirmed ideas in the AI/megacap cluster share one group cap of **25%**: QQQ, XLK, XLC, SMH, NVDA, MSFT, AAPL, AMZN, GOOGL, META, AVGO, TSLA, VGS.AX, BTC-USD, ETH-USD, and SOL-USD. SPY is not in that list. Confirmed pairs with a 60-day correlation of at least 0.80 are grouped the same way. The page shows combined weight before and after the cap. If pairwise correlation cannot be computed, the identity cap still applies and the gap says so.
 
 Signal health is a cross-sectional information coefficient and a sign hit rate on the 20-day forward return. Dates are sampled every 5th observation, up to 120 samples. Fewer than 40 samples stays **unknown**, and the default confirmation rules remain. Momentum uses the 12–1 value, trend is +1/−1 versus the 200-day average, and the reversion signal is the sign-flipped 5-session z.
 
@@ -100,15 +104,55 @@ Signal health is a cross-sectional information coefficient and a sign hit rate o
 
 If both 12–1 momentum and the 200-day trend are retired, reversion alone cannot confirm a name. The row stays Watch.
 
+## Themes
+
+The Themes panel is a written overlay, not a second opinion model. The list lives in `lib/regime/themes.config.ts` with a version and a change log. A person reviews it once a quarter. The weekly job is not allowed to edit the file or flip a switch.
+
+| Theme | Basket | On when |
+| --- | --- | --- |
+| AI infrastructure | SMH, XLU (power), EQIX, DLR | The AI capex component z-score is strictly higher than the prior print. Missing prints stay off. |
+| Crypto | BTC-USD, ETH-USD, SOL-USD | Bitcoin is above its 200-day average **and** the liquidity z-score is rising. Both are required. |
+| Scarcity | GLD, SLV, BTC-USD | The 10-year real yield (`DFII10`) is falling, **or** the trade-weighted dollar (`DTWEXBGS`) is weakening. One true leg is enough. Both unknown stays off. |
+
+An equal print is not a rise. A series older than 10 days is unknown. Bitcoin sits in both the crypto basket and the scarcity basket, and it counts toward both 20% theme caps. A name that is already in the playbook (SMH, XLU, GLD) keeps one weight.
+
+## Risk size, pyramids, and the dip
+
+Every sized idea uses the same stop: entry minus k times ATR(20). ATR is the simple average of the last 20 true ranges. High and low have to be present. If they are missing, no stop is invented and the weight falls back to the volatility target, with a note.
+
+Quantity is `(capital × risk%) / (entry − stop)`. Risk percent must sit between 0.5% and 1%. The default is 0.75%. A value outside that range is left unsized. Then the existing caps still bind: 20% of capital in one theme, 25% in the AI/megacap/crypto overlap group, 20% in one ETF or crypto line, 2% in one stock, plus the regime gross and net budget and the crowding scale. Cash is not scaled.
+
+Pyramiding adds only after the open paper position is up at least 1R from its original entry. A price at or below that entry is a loser: do not add. The original entry and the original R stay when an add is allowed.
+
+The paper portfolio starts as cash equal to capital (`REGIME_CAPITAL`, default $100,000, or the amount saved by the owner session). The daily refresh marks it. After a 10% drawdown from the peak, no new entries are taken. Adds to winners that are already up 1R can still be considered; a brand-new line is zero. The 30% aspiration does not override the halt. With no marks yet, the halt is not invented.
+
+**Buy the dip — confirmed** is a flag, not an order. It appears only when the regime is Risk-On or Transitional, the theme is on, the close is 10–20% below the 60-day high, and the close is back above the 20-day average. It does not appear in Tightening/Stress or Crisis, and it does not appear while the drawdown halt is active.
+
+## Improvement loop
+
+Each daily refresh logs the theme calls, dip flags, and risk entries, and fills in the forward 5-, 20-, and 60-day return once those bars exist. Outcomes that do not exist yet are omitted.
+
+The journal is version 1 JSON. With `BLOB_READ_WRITE_TOKEN` and `REGIME_SESSION_SECRET` it is encrypted (AES-256-GCM, key derived from the session secret) and stored in Vercel Blob at `regime/journal.json`. The blob SDK requires a public blob, so the ciphertext is what gets uploaded. Without the token, the file stays on the instance (or `REGIME_JOURNAL_PATH`) and the page says it is not durable. No Supabase table is used.
+
+`vercel.json` also registers a weekly cron, Sunday 22:00 UTC:
+
+`GET /api/regime/improve`
+
+It is denied unless the caller has a regime session, an allowlisted IP, or presents `CRON_SECRET`. The job walks three out-of-sample folds and reports information coefficient where the signal log has it, plus hit rate, Sharpe, max drawdown, and CAGR for each tunable rule and for the stop system versus SPY and a 60/40 mix of SPY and IEF. A parameter moves only when the candidate improves Sharpe, or ties Sharpe and improves Calmar, on at least 2 of the 3 folds. Full-sample return is not a reason to accept. One parameter change per rule per calendar month. Bounds: ATR k 1.5–4 step 0.5, risk percent 0.5–1% step 0.25%, momentum lookback 189–315 step 21, dip floor 5–15% step 5%, dip ceiling 15–30% step 5%, and the floor stays below the ceiling. Risk percent is scored on the unscaled path. Raising it is leverage, and that does not count as a better rule. The owner sets it. The 10% drawdown halt still blocks new entries whatever the aspiration says.
+
+The Improvement panel shows the target (default 30% a year, explicitly an aspiration), realised CAGR once the paper curve has 30 daily marks, the last backtested CAGR and max drawdown, the gap to the target, and which rules were promoted, demoted, or retired in the last seven days. A negative out-of-sample Sharpe is labeled demoted and is not given more risk. Drawdown limits always win over chasing the target.
+
+The owner session can save capital and the aspiration on the page (`POST /api/regime/settings`). The cron secret cannot.
+
 ## Scheduled refresh
 
-`vercel.json` registers a daily cron at 13:15 UTC:
+`vercel.json` registers two crons. The daily one is 13:15 UTC:
 
 `GET /api/regime/refresh`
 
-The route is denied unless the caller has a regime session, an allowlisted IP, or presents `CRON_SECRET`. The cron drops the `regime-snapshot` tag and rebuilds the regime snapshot and the price book.
+The route is denied unless the caller has a regime session, an allowlisted IP, or presents `CRON_SECRET`. The cron drops the `regime-snapshot` tag, rebuilds the regime snapshot and the price book (including crypto and the theme names), and records that day's paper mark. The weekly review is the Sunday job above.
 
-Hobby Vercel accounts only allow a cron that runs once per day. This schedule is once per day so it can be deployed without a plan change. This repo does not change the Vercel project settings.
+Hobby Vercel accounts only allow a cron that runs at most once per day. Both of these schedules fit that limit. This repo does not change the Vercel project settings. The owner applies `vercel.json` on the next deploy.
 
 ## Verify it is inaccessible when signed out
 
@@ -122,9 +166,12 @@ curl -sI https://www.passiveblocks.io/private/regime
 # API never redirects. Expect 404 Not Found.
 curl -sI https://www.passiveblocks.io/api/regime
 curl -sI https://www.passiveblocks.io/api/regime/refresh
+curl -sI https://www.passiveblocks.io/api/regime/improve
+curl -sI https://www.passiveblocks.io/api/regime/settings
 
 # Wrong or missing cron secret. Expect 404.
 curl -sI -H "Authorization: Bearer wrong" https://www.passiveblocks.io/api/regime/refresh
+curl -sI -H "Authorization: Bearer wrong" https://www.passiveblocks.io/api/regime/improve
 
 # Not in the public index.
 curl -s https://www.passiveblocks.io/robots.txt | grep private
@@ -158,6 +205,13 @@ curl -sI http://localhost:3000/api/regime/refresh
 # 404
 
 curl -sI -H 'Authorization: Bearer local-only' http://localhost:3000/api/regime/refresh
+# 200
+
+curl -sI http://localhost:3000/api/regime/improve
+curl -sI http://localhost:3000/api/regime/settings
+# 404
+
+curl -sI -H 'Authorization: Bearer local-only' http://localhost:3000/api/regime/improve
 # 200
 ```
 
