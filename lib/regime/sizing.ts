@@ -9,6 +9,9 @@ export const THEME_WEIGHT_CAP = 0.2;
 export const DRAWDOWN_HALT = 0.1;
 export const DEFAULT_CAPITAL = 100_000;
 export const ADD_AFTER_R = 1;
+/** Display only. The weekly job does not read this, and it does not widen risk bounds. */
+export const DEFAULT_TARGET_CAGR = 0.66;
+export const ASPIRATION_LABEL = 'Aspiration (Medallion gross ceiling 1988-2018) — not a forecast';
 
 /** Simple average of the last 20 true ranges. Null when high or low is missing. Nothing is approximated from the close. */
 export function averageTrueRange(bars: Bar[], window = ATR_WINDOW): number | null {
@@ -106,7 +109,7 @@ export function resolveTargetCagr(envValue: string | undefined, saved: number | 
     const parsed = Number(envValue);
     if (Number.isFinite(parsed) && parsed >= 0 && parsed <= 2) return parsed;
   }
-  return 0.3;
+  return DEFAULT_TARGET_CAGR;
 }
 
 export function roleCap(kind: 'etf' | 'stock' | 'crypto'): number {
