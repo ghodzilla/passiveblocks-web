@@ -3,6 +3,7 @@ import { CFTC_CONTRACTS, fetchCotNetOi } from './cftc';
 import { FRED_OBSERVATION_START, FRED_SERIES } from './constants';
 import { fetchFredSeries } from './fred';
 import type { PositioningInput } from './model';
+import { fetchYahooBars } from './prices';
 import type { SeriesPoint } from './series';
 import type { RegimeSnapshot } from './types';
 
@@ -17,18 +18,33 @@ async function fredOrEmpty(seriesId: string): Promise<{ points: SeriesPoint[]; e
   }
 }
 
+async function yahooCloses(symbol: string, gaps: string[]): Promise<SeriesPoint[]> {
+  const result = await fetchYahooBars(symbol);
+  if (result.error || result.bars.length === 0) {
+    gaps.push(result.error ?? `${symbol} returned no prices for the AI gauge.`);
+    return [];
+  }
+  return result.bars.map((bar) => ({ date: bar.date, value: bar.close }));
+}
+
 export async function fetchRegimeBundle(now: Date): Promise<DataBundle> {
   const today = now.toISOString().slice(0, 10);
   const generatedAt = now.toISOString();
   const gaps: string[] = [];
 
+  const [spy, rsp, smh] = await Promise.all([
+    yahooCloses('SPY', gaps),
+    yahooCloses('RSP', gaps),
+    yahooCloses('SMH', gaps),
+  ]);
+
   if (!process.env.FRED_API_KEY) {
     gaps.push('FRED_API_KEY is not set. No FRED series were fetched.');
     const positioning = await fetchPositioning(gaps);
-    return emptyFredBundle(today, generatedAt, gaps, positioning);
+    return { ...emptyFredBundle(today, generatedAt, gaps, positioning), spy, rsp, smh, capex: [] };
   }
 
-  const [walcl, tga, rrp, dgs2, policyUpper, hy, curve, usCli, auCli] = await Promise.all([
+  const [walcl, tga, rrp, dgs2, policyUpper, hy, curve, usCli, auCli, capex] = await Promise.all([
     fredOrEmpty(FRED_SERIES.walcl),
     fredOrEmpty(FRED_SERIES.tga),
     fredOrEmpty(FRED_SERIES.rrp),
@@ -38,12 +54,12 @@ export async function fetchRegimeBundle(now: Date): Promise<DataBundle> {
     fredOrEmpty(FRED_SERIES.curve),
     fredOrEmpty(FRED_SERIES.usCli),
     fredOrEmpty(FRED_SERIES.auCli),
+    fredOrEmpty(FRED_SERIES.capex),
   ]);
 
-  for (const result of [walcl, tga, rrp, dgs2, hy, curve, usCli, auCli]) {
+  for (const result of [walcl, tga, rrp, dgs2, hy, curve, usCli, auCli, capex]) {
     if (result.error && result.error !== 'FRED_API_KEY is not set') gaps.push(result.error);
   }
-
   let policyRate = policyUpper.points;
   let policyRateSeriesId: string = FRED_SERIES.policyUpper;
   if (policyUpper.error || policyUpper.points.length === 0) {
@@ -74,6 +90,10 @@ export async function fetchRegimeBundle(now: Date): Promise<DataBundle> {
     usCli: usCli.points,
     auCli: auCli.points,
     positioning,
+    spy,
+    rsp,
+    smh,
+    capex: capex.points,
     gaps,
   };
 }

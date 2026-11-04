@@ -1,3 +1,4 @@
+import { AI_CAPEX_STALE_DAYS, AI_PRICE_STALE_DAYS, CAPEX_SERIES_ID, logRelative } from './ai';
 import { CLI_MOMENTUM_MONTHS, FRED_SERIES, LIQUIDITY_CHANGE_WEEKS, STALE_AFTER_DAYS } from './constants';
 import { buildModel, type ModelInput, type PositioningInput } from './model';
 import {
@@ -25,6 +26,12 @@ export interface DataBundle {
   usCli: SeriesPoint[];
   auCli: SeriesPoint[];
   positioning: PositioningInput[];
+  /** Adjusted closes. Empty when Yahoo did not return the symbol. */
+  spy?: SeriesPoint[];
+  rsp?: SeriesPoint[];
+  smh?: SeriesPoint[];
+  /** FRED IPG3344S. Empty when the key is missing or the fetch failed. */
+  capex?: SeriesPoint[];
   gaps: string[];
 }
 
@@ -148,6 +155,49 @@ export function bundleToModelInput(bundle: DataBundle): ModelInput {
     }),
   ];
 
+  const spy = bundle.spy ?? [];
+  const rsp = bundle.rsp ?? [];
+  const smh = bundle.smh ?? [];
+  const capex = bundle.capex ?? [];
+  freshnessRows.push(
+    freshness({
+      id: 'SPY',
+      label: 'S&P 500 (concentration leg)',
+      points: spy,
+      staleAfterDays: AI_PRICE_STALE_DAYS,
+      source: 'Yahoo chart SPY',
+      href: 'https://finance.yahoo.com/quote/SPY',
+      today,
+    }),
+    freshness({
+      id: 'RSP',
+      label: 'S&P 500 equal weight',
+      points: rsp,
+      staleAfterDays: AI_PRICE_STALE_DAYS,
+      source: 'Yahoo chart RSP',
+      href: 'https://finance.yahoo.com/quote/RSP',
+      today,
+    }),
+    freshness({
+      id: 'SMH',
+      label: 'Semiconductors',
+      points: smh,
+      staleAfterDays: AI_PRICE_STALE_DAYS,
+      source: 'Yahoo chart SMH',
+      href: 'https://finance.yahoo.com/quote/SMH',
+      today,
+    }),
+    freshness({
+      id: CAPEX_SERIES_ID,
+      label: 'Semiconductor industrial production',
+      points: capex,
+      staleAfterDays: AI_CAPEX_STALE_DAYS,
+      source: 'FRED IPG3344S',
+      href: fredHref(CAPEX_SERIES_ID),
+      today,
+    }),
+  );
+
   for (const contract of bundle.positioning) {
     freshnessRows.push(
       freshness({
@@ -172,6 +222,9 @@ export function bundleToModelInput(bundle: DataBundle): ModelInput {
     growthDiff,
     usMomentum,
     positioning: bundle.positioning,
+    concentration: logRelative(spy, rsp),
+    semis: logRelative(smh, spy),
+    capex,
     levels: {
       liquidityChangeMillions: lastPoint(liquidityChange)?.value ?? null,
       policyGapPp: lastPoint(gap)?.value ?? null,

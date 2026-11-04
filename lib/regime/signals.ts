@@ -88,25 +88,88 @@ export function computeSignals(bars: Bar[]): QuantSignals {
   };
 }
 
+export type SignalId = 'momentum' | 'trend' | 'reversion';
+export type SignalHealthStatus = 'healthy' | 'degraded' | 'retired' | 'unknown';
+
+/** Minimal view so confirmation can down-weight a decayed signal without importing the IC panel. */
+export interface SignalHealthView {
+  id: SignalId;
+  status: SignalHealthStatus;
+}
+
+const STRENGTH_PRIOR: Record<SignalId, number> = {
+  momentum: 0.5,
+  trend: 0.3,
+  reversion: 0.2,
+};
+
+function statusOf(health: SignalHealthView[] | undefined, id: SignalId): SignalHealthStatus {
+  return health?.find((item) => item.id === id)?.status ?? 'unknown';
+}
+
+/**
+ * Retired signals drop out and the rest are renormalised. A degraded signal
+ * keeps half of its prior weight. Unknown keeps the default blend.
+ * Returns null when momentum and trend are both retired.
+ */
+export function signalBlendWeights(health?: SignalHealthView[]): Record<SignalId, number> | null {
+  const weights: Record<SignalId, number> = { momentum: 0, trend: 0, reversion: 0 };
+  for (const id of ['momentum', 'trend', 'reversion'] as const) {
+    const status = statusOf(health, id);
+    if (status === 'retired') weights[id] = 0;
+    else if (status === 'degraded') weights[id] = STRENGTH_PRIOR[id] * 0.5;
+    else weights[id] = STRENGTH_PRIOR[id];
+  }
+  if (weights.momentum === 0 && weights.trend === 0) return null;
+  const sum = weights.momentum + weights.trend + weights.reversion;
+  if (sum <= 0) return null;
+  return {
+    momentum: weights.momentum / sum,
+    trend: weights.trend / sum,
+    reversion: weights.reversion / sum,
+  };
+}
+
 /**
  * Long confirmation. Cash is the ballast: a flat price is the point, so
  * momentum and trend do not veto it. Everything else needs a positive 12–1
  * month return, price above the 200-day average, and a 5-session return
  * that is not stretched versus its own trailing distribution.
+ * A retired signal is not a gate. If both momentum and trend are retired,
+ * reversion alone cannot confirm.
  */
-export function quantAgrees(role: 'tactical' | 'systematic' | 'cash', signals: QuantSignals): boolean {
+export function quantAgrees(
+  role: 'tactical' | 'systematic' | 'cash',
+  signals: QuantSignals,
+  health?: SignalHealthView[],
+): boolean {
   if (role === 'cash') {
     return signals.lastClose != null && signals.annVol20 != null && signals.asOf != null;
   }
-  if (signals.momentum12_1 == null || signals.above200 == null || signals.reversionZ == null) return false;
-  return signals.momentum12_1 > 0 && signals.above200 && signals.reversionZ < REVERSION_VETO;
+  const momentum = statusOf(health, 'momentum');
+  const trend = statusOf(health, 'trend');
+  const reversion = statusOf(health, 'reversion');
+  if (momentum === 'retired' && trend === 'retired') return false;
+  if (momentum !== 'retired') {
+    if (signals.momentum12_1 == null || !(signals.momentum12_1 > 0)) return false;
+  }
+  if (trend !== 'retired') {
+    if (signals.above200 == null || !signals.above200) return false;
+  }
+  if (reversion !== 'retired') {
+    if (signals.reversionZ == null || !(signals.reversionZ < REVERSION_VETO)) return false;
+  }
+  return true;
 }
 
-/** Blend of momentum, trend, and an unstretched short-term z-score. Null when the two trend inputs are missing. */
-export function signalStrength(signals: QuantSignals): number | null {
-  if (signals.momentum12_1 == null || signals.above200 == null) return null;
-  const mom = clamp(signals.momentum12_1 / 0.25, -1, 1);
-  const trend = signals.above200 ? 1 : -1;
+/** Blend of momentum, trend, and an unstretched short-term z-score. Null when the two trend inputs are missing or both are retired. */
+export function signalStrength(signals: QuantSignals, health?: SignalHealthView[]): number | null {
+  const weights = signalBlendWeights(health);
+  if (!weights) return null;
+  if (weights.momentum > 0 && signals.momentum12_1 == null) return null;
+  if (weights.trend > 0 && signals.above200 == null) return null;
+  const mom = signals.momentum12_1 == null ? 0 : clamp(signals.momentum12_1 / 0.25, -1, 1);
+  const trend = signals.above200 == null ? 0 : (signals.above200 ? 1 : -1);
   const revert = signals.reversionZ == null ? 0 : clamp(-signals.reversionZ / 2, -1, 1);
-  return 0.5 * mom + 0.3 * trend + 0.2 * revert;
+  return weights.momentum * mom + weights.trend * trend + weights.reversion * revert;
 }

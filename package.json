@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "tsx --test lib/private-access.test.ts lib/regime/model.test.ts lib/regime/auth.test.ts lib/regime/ideas.test.ts",
+    "test": "tsx --test lib/private-access.test.ts lib/regime/model.test.ts lib/regime/auth.test.ts lib/regime/ideas.test.ts lib/regime/upgrades.test.ts",
     "regime:hash-password": "tsx scripts/regime-password-hash.ts"
   },
   "dependencies": {
