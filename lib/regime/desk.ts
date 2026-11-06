@@ -1,6 +1,7 @@
 import type { RegimeId } from './constants';
 import { pairTable } from './correlation';
 import { dipSignal } from './dip';
+import { dipDisplay } from './plain';
 import { checklistNote, ideaGates, sizingVerdict, type GateCheck } from './gates';
 import type { IdeaStatus, IdeasReport } from './ideas';
 import { defensiveOnly, printStance, scaleWeights, volTargetWeight } from './ideas';
@@ -138,7 +139,7 @@ export function buildDesk(input: {
     atr: number | null;
     volWeight: number;
     theme: string | null;
-    dip: string | null;
+    dipFact: string | null;
     gates: GateCheck[];
     stance: Stance | null;
     eligible: boolean;
@@ -202,7 +203,7 @@ export function buildDesk(input: {
       atr: averageTrueRange(row.bars),
       volWeight: row.volWeight,
       theme: mapped[0]?.id ?? null,
-      dip: dip?.flagged ? dip.reason : null,
+      dipFact: dip?.flagged ? dip.reason : null,
       gates,
       stance,
       eligible,
@@ -299,6 +300,14 @@ export function buildDesk(input: {
       ? Math.round((raw[index].qty as number) * (weight / raw[index].raw) * 1e6) / 1e6
       : null;
     const sized = sizingVerdict({ gates: row.gates, stance: row.stance, pyramid: row.pyramid, weight });
+    const failedGate = row.gates.find((gate) => !gate.pass);
+    const dip = row.dipFact
+      ? dipDisplay({
+        fact: row.dipFact,
+        sized: sized.status === 'confirmed' && weight > 0,
+        failure: failedGate ? failedGate.detail : null,
+      })
+      : null;
     let note = checklistNote(row.gates, sized.verdict);
     if (row.atrGap && weight > 0) {
       note += '\nATR(20) is unavailable, so the weight uses the volatility target. No stop was invented.';
@@ -317,7 +326,7 @@ export function buildDesk(input: {
       note,
       verdict: sized.verdict,
       gates: row.gates,
-      dip: row.dip,
+      dip,
       theme: row.theme,
       above200: row.signals.above200,
       momentum12_1: row.signals.momentum12_1,

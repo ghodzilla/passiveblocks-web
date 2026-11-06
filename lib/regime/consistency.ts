@@ -57,6 +57,7 @@ export function auditRegime(input: {
   const rowMismatches: string[] = [];
   const stanceMismatches: string[] = [];
   const dipMismatches: string[] = [];
+  const dipLabelMismatches: string[] = [];
 
   for (const line of desk.lines) {
     const mapped = themesForSymbol(line.symbol);
@@ -67,7 +68,7 @@ export function auditRegime(input: {
       if (!themeGate?.pass || !themeGate.detail.startsWith('No theme')) themeMismatches.push(line.symbol);
     } else if (anyOn) {
       if (!themeGate?.pass) themeMismatches.push(line.symbol);
-    } else if (themeGate?.pass) themeMismatches.push(line.symbol);
+    } else if (themeGate?.pass && !themeGate.detail.includes('not a block')) themeMismatches.push(line.symbol);
 
     const gatesPass = line.gates.every((gate) => gate.pass);
     if (line.weight > 0 && (line.status !== 'confirmed' || !gatesPass)) sizeMismatches.push(line.symbol);
@@ -100,6 +101,9 @@ export function auditRegime(input: {
       const haltOk = haltGate?.pass;
       const regimeOk = snapshot.regime === 'risk_on' || snapshot.regime === 'transitional';
       if (!themeOk || !haltOk || !regimeOk) dipMismatches.push(line.symbol);
+      const saysConfirmed = /confirmed/i.test(line.dip);
+      if (saysConfirmed && !(line.weight > 0 && line.status === 'confirmed')) dipLabelMismatches.push(line.symbol);
+      if (!saysConfirmed && line.weight > 0 && line.status === 'confirmed' && line.dip.startsWith('Dip spotted')) dipLabelMismatches.push(line.symbol);
     }
   }
 
@@ -182,6 +186,13 @@ export function auditRegime(input: {
     detail: stanceMismatches.length
       ? `Playbook stance and the regime gate disagree for ${stanceMismatches.join(', ')}.`
       : 'Each playbook stance matches that symbol’s regime gate.',
+  });
+  rules.push({
+    id: 'dip-label',
+    pass: dipLabelMismatches.length === 0,
+    detail: dipLabelMismatches.length
+      ? `A dip says confirmed without a size, or a sized dip does not, for ${dipLabelMismatches.join(', ')}.`
+      : 'The word confirmed appears on a dip only when that name has a size.',
   });
   rules.push({
     id: 'dip-tag',

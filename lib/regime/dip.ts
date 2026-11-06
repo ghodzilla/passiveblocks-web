@@ -46,7 +46,7 @@ export function dipSignal(input: {
   const above = last > ma;
   const inBand = drawdown >= low - 1e-12 && drawdown <= high + 1e-12;
   if (inBand && above) {
-    return { flagged: true, reason: `${DIP_LABEL}. ${(drawdown * 100).toFixed(1)}% below the 60-day high and back above the 20-day average.` };
+    return { flagged: true, reason: `${(drawdown * 100).toFixed(1)}% below the 60-day high and back above the 20-day average.` };
   }
   if (!inBand) {
     return { flagged: false, reason: `${(drawdown * 100).toFixed(1)}% below the 60-day high, outside the ${(low * 100).toFixed(0)}–${(high * 100).toFixed(0)}% band.` };

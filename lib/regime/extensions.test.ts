@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { applyPaperDay, type Desk, type RiskLine } from './desk';
 import { dipSignal } from './dip';
+import { dipDisplay } from './plain';
 import { changeAllowed, chooseTweak, neighbors, PARAM_BOUNDS, snapToBound, type FoldMetric } from './improve';
 import { emptyJournal, openJournal, sealJournal } from './journal';
 import type { Bar } from './signals';
@@ -187,7 +188,13 @@ describe('dip buying', () => {
   it('flags a confirmed dip only in Risk-On or Transitional with the theme on', () => {
     const flagged = dipSignal({ regime: 'risk_on', themeOn: true, halted: false, closes: dipCloses(85) });
     assert.equal(flagged.flagged, true);
-    assert.match(flagged.reason, /Buy the dip — confirmed/);
+    assert.match(flagged.reason, /60-day high/);
+    assert.doesNotMatch(flagged.reason, /confirmed/i);
+    const sizedLabel = dipDisplay({ fact: flagged.reason, sized: true, failure: null });
+    assert.match(sizedLabel, /Buy the dip — confirmed/);
+    const blockedLabel = dipDisplay({ fact: flagged.reason, sized: false, failure: 'the market score does not allow a new buy yet' });
+    assert.match(blockedLabel, /^Dip spotted — blocked: the market score does not allow a new buy yet/);
+    assert.doesNotMatch(blockedLabel, /confirmed/i);
     assert.equal(dipSignal({ regime: 'transitional', themeOn: true, halted: false, closes: dipCloses(85) }).flagged, true);
     assert.equal(dipSignal({ regime: 'risk_on', themeOn: true, halted: false, closes: dipCloses(95) }).flagged, false);
     assert.equal(dipSignal({ regime: 'risk_on', themeOn: true, halted: false, closes: dipCloses(75) }).flagged, false);
@@ -413,6 +420,10 @@ describe('new regime routes stay denied by default', () => {
     const improve = readFileSync('app/api/regime/improve/route.ts', 'utf8');
     const vercel = readFileSync('vercel.json', 'utf8');
     assert.match(middleware, /\/api\/regime\/improve/);
+    assert.match(middleware, /\/api\/regime\/selfcheck/);
+    const selfcheck = readFileSync('app/api/regime/selfcheck/route.ts', 'utf8');
+    assert.match(selfcheck, /isCronAuthorized/);
+    assert.doesNotMatch(selfcheck, /regimeApiAllowed/);
     assert.match(settings, /regimeApiAllowed\(false\)/);
     assert.match(improve, /regimeApiAllowed\(true\)/);
     assert.match(vercel, /0 22 \* \* 0/);

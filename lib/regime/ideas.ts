@@ -319,7 +319,7 @@ export function buildIdeas(input: {
     rows,
     watchlistNote: stocksLive
       ? null
-      : 'The stock watchlist is stood down. Do nothing / reduce risk limits candidates to defensive and cash expressions.',
+      : 'The stock list is stood down on a sit-tight day, so individual shares are not in this table. Theme names such as Bitcoin, Ether, Solana, and silver are not listed here either. They stay on the theme cards. The ones waiting only on the market score are in Waiting on the regime.',
     gaps: input.book.gaps.slice(),
     pricesFetchedAt: input.book.fetchedAt,
     singlePositionCap: SINGLE_POSITION_CAP,

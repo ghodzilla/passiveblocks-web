@@ -114,7 +114,7 @@ The Themes panel is a written overlay, not a second opinion model. The list live
 | Crypto | BTC-USD, ETH-USD, SOL-USD | Bitcoin is above its 200-day average **and** the liquidity z-score is rising. Both are required. |
 | Scarcity | GLD, GOLD.AX, SLV, BTC-USD | The 10-year real yield (`DFII10`) is falling, **or** the trade-weighted dollar (`DTWEXBGS`) is weakening. One true leg is enough. Both unknown stays off. |
 
-An equal print is not a rise. A series older than 10 days is unknown. Bitcoin sits in both the crypto basket and the scarcity basket, and it counts toward both 20% theme caps. A name that is already in the playbook (SMH, XLU, GLD, GOLD.AX) keeps one weight. Bonds such as IEF and VAF.AX are not in a theme. The idea note says “No theme” and does not blame a switch.
+An equal print is not a rise. A series older than 10 days is unknown. Bitcoin sits in both the crypto basket and the scarcity basket, and it counts toward both 20% theme caps. A name that is already in the playbook (SMH, XLU, GLD, GOLD.AX) keeps one weight. If today’s lean already includes that group, an off theme does not block it. Bonds such as IEF and VAF.AX are not in a theme. The idea note says “No theme” and does not blame a switch.
 
 Every section of the page reads one published view. The ideas table status and weight are copied from the sizing book after the gates, the crowding scale, and the overlap and theme caps. The page then runs the same invariant checks as `lib/regime/consistency.test.ts` and prints “Consistency check: all N rules pass”, or the rules that failed. Snapshot and fetch clocks use Australia/Melbourne. Exchange and FRED as-of values stay session dates. An unmeasured improvement number says “Not enough history yet”.
 
@@ -128,7 +128,9 @@ Pyramiding adds only after the open paper position is up at least 1R from its or
 
 The paper portfolio starts as cash equal to capital (`REGIME_CAPITAL`, default $100,000, or the amount saved by the owner session). The daily refresh marks it. After a 10% drawdown from the peak, no new entries are taken. Adds to winners that are already up 1R can still be considered; a brand-new line is zero. The 66% aspiration does not override the halt. With no marks yet, the halt is not invented.
 
-**Buy the dip — confirmed** is a flag, not an order. It appears only when the regime is Risk-On or Transitional, the theme is on, the close is 10–20% below the 60-day high, and the close is back above the 20-day average. It does not appear in Tightening/Stress or Crisis, and it does not appear while the drawdown halt is active.
+**Buy the dip — confirmed** is a flag, not an order, and the word “confirmed” is used only when that name is actually sized. Otherwise the line reads “Dip spotted — blocked” and names the first failing check. The price pattern is still Risk-On or Transitional, theme on, 10–20% below the 60-day high, and back above the 20-day average. It does not appear in Tightening/Stress or Crisis, and it does not appear while the drawdown halt is active. A Transitional print is still a sit-tight day, so a spotted dip is blocked until the market score is Risk-On and above +0.35.
+
+The daily refresh at 13:15 UTC runs the same consistency rules and stores the result (encrypted in Blob at `regime/selfcheck.json` when the journal secret is set, otherwise on the local instance). A failed check shows a red banner on the page. `GET /api/regime/selfcheck` returns `{ ok, failures, asOf }` and accepts only `Authorization: Bearer CRON_SECRET`. A session or an allowlisted IP does not unlock it.
 
 ## Improvement loop
 

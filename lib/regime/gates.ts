@@ -63,7 +63,7 @@ export function ideaGates(input: {
   const themes = input.themes;
   let themeGate: GateCheck;
   if (themes.length === 0) {
-    themeGate = gate('theme', true, 'No theme. This sleeve is not in AI infrastructure, crypto, or scarcity.');
+    themeGate = gate('theme', true, 'No theme. This holding is not in AI infrastructure, crypto, or scarcity.');
   } else {
     const ons = themes.filter((theme) => theme.on).map((theme) => theme.label);
     const offs = themes.filter((theme) => !theme.on).map((theme) => theme.label);
@@ -75,6 +75,11 @@ export function ideaGates(input: {
           : `. The ${offs.join(' and ')} themes are off`;
       const onClause = ons.length === 1 ? `${ons[0]} is on` : `${ons.join(' and ')} are on`;
       themeGate = gate('theme', true, `${onClause}${offClause}.`);
+    } else if (input.stance === 'prefer') {
+      const offClause = offs.length === 1
+        ? `The ${offs[0]} theme is off.`
+        : `The ${offs.join(' and ')} themes are off.`;
+      themeGate = gate('theme', true, `${offClause} Today’s lean still includes this group, so the theme is not a block.`);
     } else {
       const offClause = offs.length === 1
         ? `the ${offs[0]} theme is off.`
@@ -89,15 +94,15 @@ export function ideaGates(input: {
       'regime',
       input.regimeOpen,
       input.regimeOpen
-        ? 'Risk-On or Transitional, and the action is not do nothing / reduce risk.'
-        : 'the regime action does not allow a new theme entry.',
+        ? 'The market score allows a new buy.'
+        : 'the market score does not allow a new buy yet',
     );
   } else if (input.stance === 'prefer') {
-    regimeGate = gate('regime', true, 'This print prefers the sleeve.');
+    regimeGate = gate('regime', true, 'Today’s lean includes this group.');
   } else if (input.stance === 'avoid') {
-    regimeGate = gate('regime', false, 'the regime avoids this sleeve.');
+    regimeGate = gate('regime', false, 'today’s lean is to avoid this group');
   } else {
-    regimeGate = gate('regime', false, 'the regime does not prefer this sleeve.');
+    regimeGate = gate('regime', false, 'today’s lean is neither for nor against this group');
   }
 
   const cash = input.role === 'cash';
@@ -174,7 +179,7 @@ export function sizingVerdict(input: {
     return { status: 'watch', verdict: `Watching: ${clause}, but the open paper position is at or below its entry` };
   }
   if (input.pyramid === 'hold') {
-    return { status: 'watch', verdict: `Watching: ${clause}, but the position is not yet up 1R from its entry` };
+    return { status: 'watch', verdict: `Watching: ${clause}, but the position is not yet ahead by the original risk on the trade` };
   }
   if (!(input.weight > 0)) {
     return { status: 'watch', verdict: `Watching: ${clause}, but the budget or a cap leaves the size at zero` };
