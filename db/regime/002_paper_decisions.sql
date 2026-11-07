@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS regime_paper_event (
 );
 
 COMMENT ON TABLE regime_paper_event IS
-  'Append-only prospective validation. Decision rows are frozen. Mark rows record unit NAV only when AUD translation and prices are complete.';
+  'Prospective target-weight ledger. Not applied by the app. A decision row stores the rule version, snapshot time, weights, and reference prices. A mark row is a later unit NAV, not a historical backtest.';
 
 DO $grants$
 BEGIN

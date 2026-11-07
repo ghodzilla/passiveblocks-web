@@ -1,3 +1,4 @@
+import { creditSpan } from './creditSpan';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -29,6 +30,7 @@ const PROBES: Probe[] = [
   { id: 'FISCAL-TGA', role: 'TGA daily statement', url: 'https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/dts/operating_cash_balance?filter=record_date:gte:2024-01-02&page[size]=3', kind: 'reprint' },
   { id: 'NYFED-RRP', role: 'NY Fed reverse repo', url: 'https://markets.newyorkfed.org/api/rp/reverserepo/all/results.json?startDate=2024-01-02&endDate=2024-01-05', kind: 'reprint' },
   { id: 'CFTC-2024-ZIP', role: 'CFTC legacy futures history', url: 'https://www.cftc.gov/files/dea/history/deacot2024.zip', kind: 'publication' },
+  { id: 'FRED-HY-CURRENT', role: 'high yield OAS current free graph', url: 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2', kind: 'reprint' },
 ];
 
 interface Row {
@@ -84,6 +86,13 @@ function noteFor(probe: Probe, status: number, body: Buffer): { availability: Ro
     }
     return { availability: 'reprint_only', note: `Header ${header.slice(0, 80)}. Last observation ${span.last ?? 'missing'}. Not accepted as a vintage.` };
   }
+  if (probe.id === 'FRED-HY-CURRENT') {
+    const span = observations(body);
+    return {
+      availability: 'reprint_only',
+      note: `Current free FRED graph, ${span.count} observations from ${span.first} to ${span.last}. This is the file served now. It is not a historical vintage. The series page says that starting in April 2026 the series includes only 3 years of observations. Absence from this file is not proof the series has no longer history anywhere else.`,
+    };
+  }
   if (probe.id === 'TREASURY-YIELD-XML') {
     const dates = text.match(/BID_CURVE_DATE/g)?.length ?? 0;
     const whole = body.toString('utf8').match(/<BID_CURVE_DATE>/g)?.length ?? dates;
@@ -112,7 +121,11 @@ function noteFor(probe: Probe, status: number, body: Buffer): { availability: Ro
   return { availability: 'unavailable', note: 'Unclassified response. Not used.' };
 }
 
-async function one(probe: Probe): Promise<Row> {
+function csvDates(body: Buffer): string[] {
+  return body.toString('utf8').trim().split(/\n/).slice(1).map((line) => line.slice(0, 10)).filter((date) => /^\d{4}-\d{2}-\d{2}$/.test(date));
+}
+
+async function one(probe: Probe): Promise<Row & { dates: string[] }> {
   const downloadedAt = new Date().toISOString();
   try {
     const { status, body } = await fetchBuf(probe.url);
@@ -128,6 +141,7 @@ async function one(probe: Probe): Promise<Row> {
       sha256: body.length ? sha(body) : null,
       availability: judged.availability,
       note: judged.note,
+      dates: probe.id === 'FRED-HY-CURRENT' && status === 200 ? csvDates(body) : [],
     };
   } catch (error) {
     const timedOut = error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError');
@@ -141,15 +155,38 @@ async function one(probe: Probe): Promise<Row> {
       bytes: 0,
       sha256: null,
       availability: 'unavailable',
-      note: timedOut ? 'Timed out before any body. Not used.' : 'Request failed before a body. Not used.',
+      note: probe.id === 'CFTC-2024-ZIP'
+        ? 'This request failed before a body. The official history index lists yearly futures-only files, so a failed request is not proof the file is absent. Not used.'
+        : timedOut ? 'Timed out before any body. Not used.' : 'Request failed before a body. Not used.',
+      dates: [],
     };
   }
 }
 
 async function main() {
   mkdirSync(OUT, { recursive: true });
-  const rows = await Promise.all(PROBES.map((probe) => one(probe)));
+  const fetched = await Promise.all(PROBES.map((probe) => one(probe)));
+  const rows = fetched.map((row) => {
+    const published = { ...row };
+    delete (published as { dates?: string[] }).dates;
+    return published;
+  });
+  const hy = fetched.find((row) => row.id === 'FRED-HY-CURRENT');
+  const span = creditSpan(hy?.dates ?? []);
   const pointInTime = rows.filter((row) => row.availability === 'point_in_time').map((row) => row.id);
+  const credit = {
+    seriesId: 'BAMLH0A0HYM2',
+    testedSource: 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2',
+    seriesPage: 'https://fred.stlouisfed.org/data/BAMLH0A0HYM2',
+    pageNote: 'On 2026-11-07 the series page listed Date Range 2023-11-07 to 2026-11-05 and said: Starting in April 2026, this series will only include 3 years of observations. For more data, go to the source.',
+    constraint: 'Observations before 2023-11-07 are unavailable from this tested free FRED source. That is not proof a longer free history is absent everywhere else.',
+    rule: 'Credit is the daily OAS series. Its z-score window is 756 observations and its minimum is 252. The z-score is null before 252 observations. The 156-week window belongs to liquidity and positioning, not to credit.',
+    failClosed: 'The composite is withheld until liquidity, policy, and credit each have a z-score. New risk stays off. This study does not drop credit or renormalise the remaining legs and then call the result the full strategy.',
+    vintageCutoff: 'A public graph vintage is a calendar date and has no intraday time. A decision on date T may use the previous calendar day’s vintage. That is a conservative availability cutoff, not an exact release timestamp.',
+    alfredApi: 'https://fred.stlouisfed.org/docs/api/fred/series_observations.html accepts vintage_dates as a comma-separated list. No FRED API key was supplied, so that batched call was not made. Single-date public graphs did return.',
+    sha256: hy?.sha256 ?? null,
+    ...span,
+  };
   const results = {
     studyId: 'regime-validation-2026-11-07',
     ranAt: RAN_AT,
@@ -159,36 +196,62 @@ async function main() {
     ruleVersion: '2026-11-08.2',
     fullStrategy: 'not_validated',
     verdict: 'inconclusive',
-    reason: pointInTime.length === 0
-      ? 'No point-in-time vintage file was retrieved for the mandatory macro legs. The production rule was not replayed, and no portfolio return was calculated.'
-      : `Single-date vintage snapshots came back for ${pointInTime.join(', ')}. Each file stops on or before its vintage date. That is not a snapshot at every decision date, and the mandatory set is still incomplete. The production rule was not replayed. No portfolio return was calculated.`,
+    completedReplayDates: 0,
+    reason: span.firstCreditZObservation
+      ? `On the tested free FRED reprint, credit z-scores begin at observation ${span.firstCreditZObservation} (${span.creditZObservationCount} observations through ${span.lastObservation}). The full 756-observation window begins at ${span.firstFullWindowObservation} (${span.fullWindowObservationCount} observations). A previous-day vintage makes the earliest possible decision ${span.earliestDecisionDate} and the latest ${span.latestDecisionDate}. No vintage was fetched for each of those dates. Completed replay dates: 0. No portfolio return was calculated.`
+      : 'The current free FRED high-yield graph did not return a usable observation list. Completed replay dates: 0. No portfolio return was calculated.',
+    blocking: 'A full-strategy replay needs a previous-day vintage of WALCL, WTREGEN, RRPONTSYD, the policy rate, DGS2, and BAMLH0A0HYM2 on every decision date in that credit-valid span. Credit stays fail-closed. This run has single-date snapshots, not that panel.',
     hypotheses: [
-      { id: 'H1', status: 'not_tested', because: 'The pre-registered comparison needs a point-in-time replay. That replay was not run.' },
-      { id: 'H2', status: 'not_tested', because: 'The macro-gate ablation is not reported without the same point-in-time path.' },
+      { id: 'H1', status: 'not_tested', because: 'The comparison was written into the protocol in this folder before this run. There is no external timestamped registration. The 2021–2026 price paths were already examined. The comparison was not run.' },
+      { id: 'H2', status: 'not_tested', because: 'The macro-gate ablation was not run. It is not an out-of-sample registration.' },
     ],
-    preExposure: 'Pull request 11 already published Yahoo price paths for SPY, GLD, GOLD.AX, and BTC-USD from 2021-11-06 through 2026-11-06. Those paths are not an unseen sample. This study does not repeat them as a strategy result.',
+    preExposure: 'Pull request 11 already published Yahoo price paths for SPY, GLD, GOLD.AX, and BTC-USD from 2021-11-06 through 2026-11-06. A later lookback over that period is not unseen. This study does not repeat those paths as a strategy result.',
+    survivorship: 'A frozen-rule lookback can use today’s fixed universe. It does not need a historical membership tape or a theme-history tape. That hypothetical would still be a survivor set, and the price period above is pre-exposed. This run did not execute it.',
     metrics: null,
     taxes: 'excluded',
     currency: 'AUD',
     costBps: 10,
     cashYieldBps: 0,
+    credit,
+    cftc: {
+      index: 'https://www.cftc.gov/MarketReports/CommitmentsofTraders/HistoricalCompressed/index.htm',
+      releasePage: 'https://www.cftc.gov/MarketReports/CommitmentsofTraders/index.htm',
+      file: 'https://www.cftc.gov/files/dea/history/deacot2024.zip',
+      thisRun: rows.find((row) => row.id === 'CFTC-2024-ZIP')?.availability ?? 'unavailable',
+      publication: 'The CFTC page says the COT report is generally published each Friday at 3:30 p.m. Eastern Time using the immediately preceding Tuesday, and that holidays can change the release. A report file is not an ALFRED vintage. This run did not retrieve the zip and did not observe a revision history.',
+    },
+    paperLog: {
+      state: 'ledger_infrastructure',
+      activated: false,
+      operationalPaperNav: false,
+      captures: 'After 002 is applied, a refresh can store rule version, checklist version, theme-config version, the snapshot timestamp, the session date, target weights, and the close, FX, and AUD reference for each line.',
+      limits: 'The unique key keeps the first row for a rule version and session date and drops a later refresh the same day. A row is a target-weight record. It is not a filled order and it is not a historical backtest. The NAV code is tested with synthetic prices and has no production rows.',
+      activation: 'Apply db/regime/002_paper_decisions.sql yourself after review. The app does not apply it and this change does not. Until the table exists, refresh still saves the snapshot and skips the log.',
+    },
     rows,
     omitted: [
-      'Historical universe membership. Today’s list would be a survivor set.',
-      'Theme-rule history. Only the current config exists.',
-      'Weekly parameter edits. No in-force log exists before this paper log.',
-      'Signal-health retirement. It needs completed forward windows and was not applied to a replay.',
-      'OECD CLI and semiconductor IP vintages beyond the ALFRED attempt above.',
-      'Dividends as a separate ledger. Adjusted closes were not taken for a portfolio.',
+      'A previous-day vintage of the mandatory liquidity, policy, and credit series at every decision date from the earliest credit-valid day through the sample end.',
+      'BAMLH0A0HYM2 observations before 2023-11-07 on the tested free FRED source.',
+      'Batched ALFRED vintage_dates. No API key was supplied.',
+      'CFTC files with the Friday 3:30 p.m. Eastern publication lag applied. This run did not download the yearly zip.',
+      'Signal-health retirement, which needs completed forward windows and was not applied to a replay.',
     ],
+    singleDateSnapshots: pointInTime,
   };
-  if (pointInTime.length > 0) {
-    results.fullStrategy = 'not_validated';
-    results.verdict = 'inconclusive';
-  }
   writeFileSync(path.join(OUT, 'manifest.json'), `${JSON.stringify({ ranAt: RAN_AT, rows }, null, 2)}\n`);
   writeFileSync(path.join(OUT, 'results.json'), `${JSON.stringify(results, null, 2)}\n`);
-  console.log(JSON.stringify({ fullStrategy: results.fullStrategy, verdict: results.verdict, rows: rows.map((row) => ({ id: row.id, availability: row.availability, bytes: row.bytes, httpStatus: row.httpStatus })) }, null, 2));
+  console.log(JSON.stringify({
+    fullStrategy: results.fullStrategy,
+    completedReplayDates: results.completedReplayDates,
+    credit: {
+      observationCount: credit.observationCount,
+      firstCreditZObservation: credit.firstCreditZObservation,
+      earliestDecisionDate: credit.earliestDecisionDate,
+      firstFullWindowObservation: credit.firstFullWindowObservation,
+      creditZObservationCount: credit.creditZObservationCount,
+      fullWindowObservationCount: credit.fullWindowObservationCount,
+    },
+  }, null, 2));
 }
 
 main().catch((error) => {

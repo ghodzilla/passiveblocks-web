@@ -28,11 +28,24 @@ export interface PaperPrice {
   aud: number;
 }
 
+export interface PaperReferencePrice {
+  symbol: string;
+  priceDate: string | null;
+  close: number | null;
+  quoteCurrency: 'AUD' | 'USD';
+  fxDate: string | null;
+  fxUsdPerAud: number | null;
+  aud: number | null;
+}
+
 export interface PaperDecisionPayload {
+  recordKind: 'prospective_target_weights';
   hypothesisId: typeof PAPER_HYPOTHESIS;
   rulesVersion: string;
   ruleVersion: string;
   themeConfigVersion: string;
+  /** Snapshot clock. This is the decision time, not the database insert time. */
+  storedAt: string | null;
   sessionDate: string;
   composite: number | null;
   regime: string | null;
@@ -40,12 +53,18 @@ export interface PaperDecisionPayload {
   actionable: boolean;
   weak: boolean;
   lines: PaperLine[];
+  /** Close, FX, and AUD for every line, including a zero weight. Nulls stay null. */
+  referencePrices: PaperReferencePrice[];
   feedDates: { id: string; observationDate: string | null }[];
   currency: 'AUD';
   costBps: number;
   cashYieldBps: number;
   taxes: 'excluded';
   benchmark: string;
+  valuation: {
+    unit: 'time-weighted AUD NAV excluding contributions';
+    needs: string;
+  };
 }
 
 export interface PaperMarkPayload {
@@ -68,7 +87,33 @@ function asMark(value: unknown): PaperMarkPayload | null {
   return row as PaperMarkPayload;
 }
 
-export function decisionFromRefresh(refresh: StoredRefresh): PaperDecisionPayload | null {
+export function referencePrice(book: PriceBook | null, fx: Bar[] | null, symbol: string, sessionDate: string): PaperReferencePrice {
+  const quotedInAud = symbol.endsWith('.AX');
+  const bar = book ? priceOnOrBefore(book, symbol, sessionDate) : null;
+  const fxBar = !quotedInAud && bar ? fxBarOnOrBefore(fx, bar.date) : null;
+  const rate = fxBar?.close ?? null;
+  const aud = bar ? audClose(symbol, bar, rate) : null;
+  return {
+    symbol,
+    priceDate: bar?.date ?? null,
+    close: bar?.close ?? null,
+    quoteCurrency: quotedInAud ? 'AUD' : 'USD',
+    fxDate: fxBar?.date ?? null,
+    fxUsdPerAud: quotedInAud ? null : rate,
+    aud,
+  };
+}
+
+function fxBarOnOrBefore(fx: Bar[] | null, date: string): Bar | null {
+  if (!fx) return null;
+  let found: Bar | null = null;
+  for (const bar of fx) {
+    if (bar.date <= date && bar.close > 0) found = bar;
+  }
+  return found;
+}
+
+export function decisionFromRefresh(refresh: StoredRefresh, fx: Bar[] | null = null): PaperDecisionPayload | null {
   const decision: StoredDecision | null | undefined = refresh.decision;
   const snapshot = refresh.snapshot;
   if (!decision || !snapshot || !decision.lines?.length) return null;
@@ -79,10 +124,12 @@ export function decisionFromRefresh(refresh: StoredRefresh): PaperDecisionPayloa
     status: line.status,
   }));
   return {
+    recordKind: 'prospective_target_weights',
     hypothesisId: PAPER_HYPOTHESIS,
     rulesVersion: snapshot.rulesVersion || RULES_VERSION,
     ruleVersion: decision.ruleVersion || RULE_VERSION,
     themeConfigVersion: decision.themeConfigVersion,
+    storedAt: decision.storedAt || snapshot.generatedAt || null,
     sessionDate: snapshot.today,
     composite: snapshot.composite,
     regime: snapshot.regime,
@@ -90,6 +137,7 @@ export function decisionFromRefresh(refresh: StoredRefresh): PaperDecisionPayloa
     actionable: snapshot.actionable,
     weak: snapshot.weak,
     lines,
+    referencePrices: lines.map((line) => referencePrice(refresh.book, fx, line.symbol, snapshot.today)),
     feedDates: (refresh.health?.sources ?? []).map((source) => ({
       id: source.id,
       observationDate: source.observationDate,
@@ -99,6 +147,10 @@ export function decisionFromRefresh(refresh: StoredRefresh): PaperDecisionPayloa
     cashYieldBps: PAPER_CASH_YIELD_BPS,
     taxes: 'excluded',
     benchmark: '60% SPY and 40% cash in AUD, same cost and zero cash yield, only once AUDUSD and the prices exist.',
+    valuation: {
+      unit: 'time-weighted AUD NAV excluding contributions',
+      needs: 'A later mark uses the previous mark’s stored AUD prices for the held weights, then today’s close and AUDUSD. A missing price or AUDUSD leaves NAV empty. The first insert for a session date is kept. This is not a historical backtest.',
+    },
   };
 }
 
@@ -226,7 +278,7 @@ export async function recordPaperSnapshot(
   refresh: StoredRefresh,
   fx: Bar[] | null,
 ): Promise<'recorded' | 'skipped' | 'missing_schema' | 'outage'> {
-  const decision = decisionFromRefresh(refresh);
+  const decision = decisionFromRefresh(refresh, fx);
   if (!decision || !refresh.book) return 'skipped';
   try {
     await sql.query(INSERT_EVENT, [decision.ruleVersion, 'decision', decision.sessionDate, JSON.stringify(decision)]);

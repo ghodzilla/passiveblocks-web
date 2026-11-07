@@ -3,17 +3,20 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { PGlite } from '@electric-sql/pglite';
 import type { RegimeSql } from './db';
-import { paperMark, readPaperLog, recordPaperSnapshot, type PaperDecisionPayload } from './paperLog';
+import { decisionFromRefresh, paperMark, readPaperLog, recordPaperSnapshot, type PaperDecisionPayload } from './paperLog';
+import { creditSpan, nextCalendarDay } from '../../research/regime-validation/creditSpan';
 import type { PriceBook } from './prices';
 import type { StoredRefresh } from './refreshStore';
 import type { Bar } from './signals';
 
 function decision(lines: PaperDecisionPayload['lines']): PaperDecisionPayload {
   return {
+    recordKind: 'prospective_target_weights',
     hypothesisId: 'H1',
     rulesVersion: 'regime-v2',
     ruleVersion: '2026-11-08.2',
     themeConfigVersion: 'test',
+    storedAt: '2026-11-06T13:15:00.000Z',
     sessionDate: '2026-11-06',
     composite: -0.2,
     regime: 'transitional',
@@ -21,12 +24,17 @@ function decision(lines: PaperDecisionPayload['lines']): PaperDecisionPayload {
     actionable: true,
     weak: true,
     lines,
+    referencePrices: [],
     feedDates: [],
     currency: 'AUD',
     costBps: 10,
     cashYieldBps: 0,
     taxes: 'excluded',
     benchmark: 'test',
+    valuation: {
+      unit: 'time-weighted AUD NAV excluding contributions',
+      needs: 'test',
+    },
   };
 }
 
@@ -134,6 +142,7 @@ describe('paper log storage', () => {
       decision: {
         ruleVersion: '2026-11-08.2',
         themeConfigVersion: 'test',
+        storedAt: '2026-11-06T13:15:00.000Z',
         lines: [{ symbol: 'GOLD.AX', role: 'tactical', weight: 0, status: 'watch' }],
       },
     } as unknown as StoredRefresh;
@@ -146,6 +155,12 @@ describe('paper log storage', () => {
       `SELECT payload FROM regime_paper_event WHERE event_type = 'decision'`,
     );
     assert.equal(raw.rows[0]?.payload.composite, -0.286);
+    const stored = raw.rows[0]?.payload as unknown as PaperDecisionPayload;
+    assert.equal(stored.recordKind, 'prospective_target_weights');
+    assert.equal(stored.storedAt, '2026-11-06T13:15:00.000Z');
+    assert.equal(stored.referencePrices[0]?.symbol, 'GOLD.AX');
+    assert.equal(stored.referencePrices[0]?.close, 30);
+    assert.equal(stored.referencePrices[0]?.aud, 30);
     const sqlText = readFileSync('db/regime/002_paper_decisions.sql', 'utf8');
     assert.equal(sqlText.includes('GRANT SELECT, INSERT ON TABLE regime_paper_event'), true);
     assert.equal(sqlText.includes('REVOKE UPDATE, DELETE, TRUNCATE ON TABLE regime_paper_event'), true);
@@ -180,12 +195,69 @@ describe('paper log storage', () => {
   });
 });
 
+describe('credit warmup on the tested FRED file', () => {
+  it('keeps a z-score empty until 252 observations and dates the decision the next calendar day', () => {
+    const dates = Array.from({ length: 756 }, (_, index) => {
+      const ms = Date.parse('2023-11-07T00:00:00Z') + index * 86_400_000;
+      return new Date(ms).toISOString().slice(0, 10);
+    });
+    const short = creditSpan(dates.slice(0, 251));
+    assert.equal(short.firstCreditZObservation, null);
+    assert.equal(short.creditZObservationCount, 0);
+    const ready = creditSpan(dates);
+    assert.equal(ready.firstCreditZObservation, dates[251]);
+    assert.equal(ready.earliestDecisionDate, nextCalendarDay(dates[251]));
+    assert.equal(ready.firstFullWindowObservation, dates[755]);
+    assert.equal(ready.fullWindowObservationCount, 1);
+    assert.equal(ready.completedReplayDates, 0);
+  });
+});
+
+describe('decision record', () => {
+  it('stores the snapshot clock and a separate close and FX, and leaves AUD empty when FX is missing', () => {
+    const payload = decisionFromRefresh({
+      health: { sources: [] },
+      snapshot: {
+        rulesVersion: 'regime-v2',
+        today: '2026-11-06',
+        generatedAt: '2026-11-06T13:15:00.000Z',
+        composite: 0,
+        regime: 'transitional',
+        action: 'do_nothing',
+        actionable: false,
+        weak: true,
+      },
+      book: book([{ symbol: 'SPY', bars: [{ date: '2026-11-06', close: 100 }] }]),
+      decision: {
+        ruleVersion: '2026-11-08.2',
+        themeConfigVersion: 't',
+        storedAt: '2026-11-06T13:15:00.000Z',
+        lines: [{ symbol: 'SPY', role: 'tactical', weight: 0, status: 'watch' }],
+      },
+    } as unknown as StoredRefresh, null);
+    assert.ok(payload);
+    assert.equal(payload.storedAt, '2026-11-06T13:15:00.000Z');
+    assert.equal(payload.ruleVersion, '2026-11-08.2');
+    assert.equal(payload.referencePrices[0]?.close, 100);
+    assert.equal(payload.referencePrices[0]?.fxUsdPerAud, null);
+    assert.equal(payload.referencePrices[0]?.aud, null);
+  });
+});
+
 describe('validation artifact', () => {
   it('does not report a portfolio result while the full strategy is not validated', () => {
     const study = JSON.parse(readFileSync('research/regime-validation/results.json', 'utf8'));
     assert.equal(study.fullStrategy, 'not_validated');
     assert.equal(study.metrics, null);
+    assert.equal(study.completedReplayDates, 0);
     assert.equal(study.hypotheses.every((item: { status: string }) => item.status === 'not_tested'), true);
+    assert.equal(study.credit.minObs, 252);
+    assert.equal(study.credit.window, 756);
+    assert.equal(study.credit.firstObservation, '2023-11-07');
+    assert.equal(study.credit.creditZObservationCount, study.credit.observationCount - 251);
+    assert.equal(study.credit.completedReplayDates, 0);
+    assert.equal(study.paperLog.activated, false);
+    assert.equal(JSON.stringify(study).includes('pre-registered'), false);
     assert.equal(JSON.stringify(study).includes('66%'), false);
   });
 });

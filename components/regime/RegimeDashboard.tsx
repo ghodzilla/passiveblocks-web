@@ -215,6 +215,25 @@ export function RegimeDashboard({
     preExposure: string;
     metrics: null;
     omitted: string[];
+    blocking?: string;
+    survivorship?: string;
+    credit?: {
+      observationCount: number;
+      firstObservation: string | null;
+      lastObservation: string | null;
+      firstCreditZObservation: string | null;
+      firstFullWindowObservation: string | null;
+      creditZObservationCount: number;
+      fullWindowObservationCount: number;
+      earliestDecisionDate: string | null;
+      latestDecisionDate: string | null;
+      completedReplayDates: number;
+      rule: string;
+      constraint: string;
+      failClosed: string;
+    };
+    cftc?: { publication: string };
+    paperLog?: { state: string; activated: boolean; operationalPaperNav: boolean; captures: string; limits: string; activation: string };
     rows: {
       id: string;
       role: string;
