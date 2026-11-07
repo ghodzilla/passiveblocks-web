@@ -1,7 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { DeskPanels } from '@/components/regime/DeskPanels';
+import { EvaluationPanel } from '@/components/regime/EvaluationPanel';
 import { IdeasPanel } from '@/components/regime/IdeasPanel';
+import type { EvaluationReport } from '@/lib/regime/evaluate';
 import { MODEL_BUDGET, REGIME_LABEL, THRESHOLDS, type RegimeId } from '@/lib/regime/constants';
 import { componentPeriodNote, plainBanner, plainZ, regimeWaitCopy, seriesCadence, todayInOneLine, waitingOnRegime } from '@/lib/regime/plain';
 import type { RefreshHealth } from '@/lib/regime/refreshHealth';
@@ -187,6 +189,8 @@ export function RegimeDashboard({
   blockReason,
   csrf,
   settingsNotice = null,
+  auditNote,
+  evaluation,
 }: {
   view: RegimeView;
   selfCheck: SelfCheckRecord | null;
@@ -195,6 +199,8 @@ export function RegimeDashboard({
   blockReason: string | null;
   csrf: string | null;
   settingsNotice?: string | null;
+  auditNote: string;
+  evaluation: EvaluationReport;
 }) {
   const { snapshot, ideas, desk, consistency } = view;
   const generated = melbourneClock(snapshot.generatedAt);
@@ -463,7 +469,8 @@ export function RegimeDashboard({
           ) : null}
         </section>
 
-        <IdeasPanel ideas={ideas} risk={desk.lines} />
+        <IdeasPanel ideas={ideas} risk={desk.lines} auditNote={auditNote} />
+        <EvaluationPanel report={evaluation} />
         <DeskPanels desk={desk} settingsNotice={settingsNotice} />
 
         <section className="mt-10 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/20 px-4 py-4">

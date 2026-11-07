@@ -9,6 +9,7 @@ import { fetchPriceBook, type PriceBook } from './prices';
 import { providerSource, refreshLogLine, settleRefresh, type ProviderSource, type RefreshHealth } from './refreshHealth';
 import type { StoredRefresh } from './refreshStore';
 import { selfCheckFromReport, type SelfCheckRecord } from './selfcheck';
+import { decisionFromDesk, type StoredDecision } from './decision';
 import { readJournal, readRefresh, writeRefreshBundle } from './state';
 import type { SeriesPoint } from './series';
 import { snapshotFromBundle } from './assemble';
@@ -109,7 +110,12 @@ export async function fetchLiveRefresh(now: Date): Promise<{
   };
 }
 
-function nextRecord(previous: StoredRefresh | null, health: RefreshHealth, live: Awaited<ReturnType<typeof fetchLiveRefresh>>): StoredRefresh {
+function nextRecord(
+  previous: StoredRefresh | null,
+  health: RefreshHealth,
+  live: Awaited<ReturnType<typeof fetchLiveRefresh>>,
+  decision: StoredDecision | null,
+): StoredRefresh {
   const keepPrevious = health.fetchOutcome === 'failure';
   return {
     health,
@@ -117,12 +123,14 @@ function nextRecord(previous: StoredRefresh | null, health: RefreshHealth, live:
     book: keepPrevious ? previous?.book ?? null : live.book,
     realYield: keepPrevious ? previous?.realYield ?? [] : live.realYield,
     dollar: keepPrevious ? previous?.dollar ?? [] : live.dollar,
+    decision: keepPrevious ? previous?.decision ?? null : decision,
   };
 }
 
 async function rolledState(live: Awaited<ReturnType<typeof fetchLiveRefresh>>, sql: RegimeSql): Promise<{
   journal: Journal | null;
   selfCheck: SelfCheckRecord | null;
+  decision: StoredDecision | null;
 }> {
   const journal = await readJournal(sql);
   if (journal.gap) throw new Error('Refusing to roll a journal that was not read from Neon.');
@@ -156,6 +164,11 @@ async function rolledState(live: Awaited<ReturnType<typeof fetchLiveRefresh>>, s
   return {
     journal: rolled,
     selfCheck: selfCheckFromReport(published.consistency, live.snapshot.generatedAt),
+    decision: decisionFromDesk({
+      desk: published.desk,
+      signalHealth: published.ideas.signalHealth,
+      storedAt: live.snapshot.generatedAt,
+    }),
   };
 }
 
@@ -181,6 +194,7 @@ export async function executeRegimeRefresh(input: {
     }
     let journal: Journal | null = null;
     let selfCheck: SelfCheckRecord | null = null;
+    let decision: StoredDecision | null = null;
     const preview = settleRefresh({
       now,
       previous: previous?.health ?? null,
@@ -193,6 +207,7 @@ export async function executeRegimeRefresh(input: {
         const rolled = await rolledState(live, sql);
         journal = rolled.journal;
         selfCheck = rolled.selfCheck;
+        decision = rolled.decision;
       } catch (error) {
         writeRefreshLog('failure', { trigger: input.trigger, message: safeDbMessage(error) });
       }
@@ -208,7 +223,7 @@ export async function executeRegimeRefresh(input: {
       });
       try {
         await writeRefreshBundle(sql, {
-          refresh: nextRecord(previous, optimistic, live),
+          refresh: nextRecord(previous, optimistic, live, decision),
           journal,
           selfCheck,
         });
@@ -224,7 +239,7 @@ export async function executeRegimeRefresh(input: {
       durable,
       writeOk,
     });
-    const stored = writeOk ? nextRecord(previous, health, live) : previous;
+    const stored = writeOk ? nextRecord(previous, health, live, decision) : previous;
     writeRefreshLog('end', {
       trigger: input.trigger,
       outcome: health.outcome,

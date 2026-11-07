@@ -94,14 +94,18 @@ Cash is not scaled. The scale is applied after the gross and net budget, and it 
 
 Confirmed ideas in the AI/megacap cluster share one group cap of **25%**: QQQ, XLK, XLC, SMH, NVDA, MSFT, AAPL, AMZN, GOOGL, META, AVGO, TSLA, VGS.AX, BTC-USD, ETH-USD, and SOL-USD. SPY is not in that list. Confirmed pairs with a 60-day correlation of at least 0.80 are grouped the same way. The page shows combined weight before and after the cap. If pairwise correlation cannot be computed, the identity cap still applies and the gap says so.
 
-Signal health is a cross-sectional information coefficient and a sign hit rate on the 20-day forward return. Dates are sampled every 5th observation, up to 120 samples. Fewer than 40 samples stays **unknown**, and the default confirmation rules remain. Momentum uses the 12–1 value, trend is +1/−1 versus the 200-day average, and the reversion signal is the sign-flipped 5-session z.
+Signal health is a cross-sectional information coefficient and a sign hit rate on the next 20 trading sessions of each symbol. Sample dates are kept only when every symbol that appears in both dates has at least 20 of its own sessions between them. A gap of exactly 20 sessions is allowed, so the windows share a boundary close and no session return. A 28-calendar-day gap is not used: a holiday can put that span inside 20 sessions. The windows are non-overlapping, not independent. Serial dependence remains. Fewer than 40 windows stays **unknown**. Forty is a heuristic, not a statistical test. Momentum uses the 12–1 value, trend is +1/−1 versus the 200-day average, and the reversion signal is the sign-flipped 5-session z. Live gates still use only the latest window.
+
+Unknown does not mean the price feed failed. A degraded score does not block a buy. It keeps the same price check. The half-weight is applied before the three weights are scaled to sum to one, and it only changes the mix when the three signals do not share a status. If momentum, trend, and reversion are all degraded, the scaled mix matches the normal mix. The saved two-year book showed all three as degraded, so labelling that book unknown does not change pass or fail and does not change rank. Position size comes from the risk budget, volatility target, and caps either way. A later book where only one signal has 40 windows and a weak score still takes the half-weight on that signal; insufficient evidence does not. That is the semantic difference. It does not change a regime block, a stale-price block, a drawdown halt, or a cap. Both momentum and trend have to be retired before those checks drop out.
+
+The refresh writes the asset checklist, theme switches, sizes, signal-health scores, and rule version into the same Neon snapshot row. A page that finds no stored checklist says it recomputed the sentences from the saved prices. It does not write on a page view. The research table compares the lagged 200-day and 12–1 rules with a fixed monthly investment of the same cash on the same dates. The lump sum is the same total on the first date only and is not a skill comparison. Ending wealth per unit contributed is not a time-weighted return. The default cost assumption is 10 bps one way on every buy and sell, and cash yield is 0. Both are visible and can be changed with `costBps` and `cashBps` on the page address. The full strategy backtest stays **not validated** until point-in-time macro vintages exist. Yahoo adjusted close is requested; a path is called a total return only when that flag is true.
 
 | Health | Rule |
 | --- | --- |
 | Healthy | IC ≥ 0 and hit rate ≥ 48% |
 | Degraded | IC < 0 or hit rate < 48%, but not both. That signal keeps half of its blend weight and remains a gate. |
 | Retired | IC < 0 and hit rate < 48%. It drops out of the blend and is no longer a confirmation gate. |
-| Unknown | Not enough pairs. No change. |
+| Unknown | Fewer than 40 non-overlapping windows. Heuristic only. The price checks stay at full rank weight. This is not a failed feed. |
 
 If both 12–1 momentum and the 200-day trend are retired, reversion alone cannot confirm a name. The row stays Watch.
 

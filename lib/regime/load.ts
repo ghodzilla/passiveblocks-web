@@ -1,4 +1,6 @@
 import { snapshotFromBundle } from './assemble';
+import { applyStoredDecision, RULE_VERSION, type StoredDecision } from './decision';
+import { evaluateBook, type EvaluationReport, type ResearchAssumptions, parseResearchAssumptions } from './evaluate';
 import { actionFor, budgetsFor } from './classify';
 import { FRED_SERIES } from './constants';
 import { buildDesk, type Desk } from './desk';
@@ -68,7 +70,12 @@ function emptyBook(now: Date): PriceBook {
   };
 }
 
-export async function getRegimeDesk(now = new Date(), attempt: RefreshHealth | null = null, sql?: RegimeSql | null): Promise<{
+export async function getRegimeDesk(
+  now = new Date(),
+  attempt: RefreshHealth | null = null,
+  sql?: RegimeSql | null,
+  assumptions: ResearchAssumptions = parseResearchAssumptions(),
+): Promise<{
   snapshot: RegimeSnapshot;
   ideas: IdeasReport;
   book: PriceBook;
@@ -77,6 +84,9 @@ export async function getRegimeDesk(now = new Date(), attempt: RefreshHealth | n
   consistency: ConsistencyReport;
   health: RefreshHealth | null;
   blockReason: string | null;
+  decision: StoredDecision | null;
+  auditNote: string;
+  evaluation: EvaluationReport;
 }> {
   const [refreshRead, journal] = await Promise.all([readRefresh(sql), readJournal(sql)]);
   const stored = refreshRead.status === 'ok' ? refreshRead.value : null;
@@ -120,14 +130,27 @@ export async function getRegimeDesk(now = new Date(), attempt: RefreshHealth | n
     envTarget: process.env.REGIME_TARGET_CAGR,
   });
   const published = publishRegime({ snapshot, ideas, desk });
+  const savedDecision = stored?.decision && stored.decision.lines ? stored.decision : null;
+  const applied = savedDecision ? applyStoredDecision(published.desk, published.ideas, savedDecision) : null;
+  const shownDesk = applied?.desk ?? published.desk;
+  const shownIdeas = applied?.ideas ?? published.ideas;
+  const consistency = applied
+    ? publishRegime({ snapshot, ideas: shownIdeas, desk: shownDesk }).consistency
+    : published.consistency;
+  const auditNote = savedDecision
+    ? `Checklist stored with this snapshot at ${savedDecision.storedAt} under rule ${savedDecision.ruleVersion}. The page does not replace those sentences with a new calculation.`
+    : `This checklist is calculated from the saved prices by rule ${RULE_VERSION}. It was not stored with the snapshot. Refresh now writes it into the snapshot.`;
   return {
     snapshot,
-    ideas: published.ideas,
+    ideas: shownIdeas,
     book,
-    desk,
+    desk: shownDesk,
     journal,
-    consistency: published.consistency,
+    consistency,
     health,
     blockReason,
+    decision: savedDecision,
+    auditNote,
+    evaluation: evaluateBook(stored?.book ?? null, assumptions),
   };
 }
