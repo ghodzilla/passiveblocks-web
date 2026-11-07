@@ -2,11 +2,13 @@ import { snapshotFromBundle, type DataBundle } from './assemble';
 import { budgetsFor } from './classify';
 import { FRED_SERIES, REGIME_LABEL, RULES_VERSION } from './constants';
 import { buildDesk } from './desk';
-import { buildIdeas } from './ideas';
+import { buildIdeas, SINGLE_POSITION_CAP, SYSTEMATIC_CAP } from './ideas';
 import { emptyJournal, type Journal, type PaperPosition } from './journal';
 import type { PriceBook, PriceSeries } from './prices';
 import type { SeriesPoint } from './series';
 import type { Bar } from './signals';
+import { themesForSymbol } from './themes';
+import { THEME_WEIGHT_CAP } from './sizing';
 import type { RegimeSnapshot } from './types';
 import { DEFAULT_ONE_WAY_BPS } from './evaluate';
 
@@ -248,12 +250,15 @@ export function decidePriceOnly(date: string, book: PriceBook, held: { symbol: s
   };
 }
 
-/** US and crypto fill at the close of a session on or after the decision. ASX has already closed by 13:15 UTC, so its fill is the next session. */
+/**
+ * Fill is the first session after the decision date for every market.
+ * 13:15 UTC is before the US close, so that close is hidden from the signal and is not the fill.
+ * The ASX close on the decision date can be in the signal, and it is not a fill either.
+ */
 export function executionBar(series: PriceSeries | undefined, decisionDate: string): Bar | null {
   if (!series) return null;
-  const asx = series.symbol.endsWith('.AX');
   for (const bar of series.bars) {
-    if (asx ? bar.date > decisionDate : bar.date >= decisionDate) return bar;
+    if (bar.date > decisionDate) return bar;
   }
   return null;
 }
@@ -408,11 +413,35 @@ export interface AudDay {
   halted: boolean;
 }
 
+export interface BookLedger {
+  model: 'paper_ledger_add_and_hold';
+  capsApplyTo: 'each_day_recommended_weights_only';
+  recommendedMaxGross: number;
+  recommendedMaxNet: number;
+  recommendedDaysOverGross: number;
+  recommendedDaysOverNet: number;
+  heldMaxGross: number;
+  heldMaxNet: number;
+  heldMaxSingle: number;
+  heldMaxSingleSymbol: string | null;
+  daysHeldGrossOverBudget: number;
+  daysHeldNetOverBudget: number;
+  daysHeldSingleOverCap: number;
+  daysHeldThemeOverCap: number;
+  averageRiskGross: number;
+  averageDefensiveGross: number;
+  averageCash: number;
+  maxRiskGross: number;
+  maxDefensiveGross: number;
+  consecutiveDaysWithTheSameNewWeight: number;
+  pyramidAdds: number;
+}
+
 /**
- * Production paper book in AUD. Positions stay open through a hold. A confirmed
- * buy adds a tranche of `weight` times current equity. A local price at or
- * through the stop sells. Contributions add cash and units, so unit NAV is unchanged.
- * The live ledger does not convert FX; this book does.
+ * Conditional book. It follows applyPaperDay: a confirmed line adds a tranche,
+ * and a hold stays until the stop. The day's recommended weights are a separate
+ * object. Those weights are what the gross, net, name, and theme caps constrain.
+ * This function does not rescale the held book to that recommendation.
  */
 export function walkAudPaper(input: {
   dates: string[];
@@ -421,7 +450,7 @@ export function walkAudPaper(input: {
   panel?: (date: string) => VintagePanel;
   oneWayBps?: number;
   contribute: (date: string, index: number) => number;
-}): { points: NavPoint[]; missing: string[]; days: AudDay[]; heldSymbols: string[] } {
+}): { points: NavPoint[]; missing: string[]; days: AudDay[]; heldSymbols: string[]; ledger: BookLedger } {
   const fx = input.book.series.find((series) => series.symbol === 'AUDUSD=X');
   const oneWay = (input.oneWayBps ?? REPLAY_ONE_WAY_BPS) / 10_000;
   const journal = emptyJournal();
@@ -434,12 +463,43 @@ export function walkAudPaper(input: {
   const days: AudDay[] = [];
   const missing: string[] = [];
   const heldSymbols = new Set<string>();
+  const ledger: BookLedger = {
+    model: 'paper_ledger_add_and_hold',
+    capsApplyTo: 'each_day_recommended_weights_only',
+    recommendedMaxGross: 0,
+    recommendedMaxNet: 0,
+    recommendedDaysOverGross: 0,
+    recommendedDaysOverNet: 0,
+    heldMaxGross: 0,
+    heldMaxNet: 0,
+    heldMaxSingle: 0,
+    heldMaxSingleSymbol: null,
+    daysHeldGrossOverBudget: 0,
+    daysHeldNetOverBudget: 0,
+    daysHeldSingleOverCap: 0,
+    daysHeldThemeOverCap: 0,
+    averageRiskGross: 0,
+    averageDefensiveGross: 0,
+    averageCash: 0,
+    maxRiskGross: 0,
+    maxDefensiveGross: 0,
+    consecutiveDaysWithTheSameNewWeight: 0,
+    pyramidAdds: 0,
+  };
+  let ledgerDays = 0;
+  let previousNew = new Set<string>();
   for (let index = 0; index < input.dates.length; index++) {
     const date = input.dates[index];
-    const panel = input.mode === 'production' ? input.panel?.(date) : undefined;
-    const snapshot = input.mode === 'price_only' || !panel
-      ? priceOnlySnapshot(date)
-      : snapshotFromBundle(bundleFromPanel(panel, input.book));
+    const panel = input.panel?.(date);
+    const produced = panel ? snapshotFromBundle(bundleFromPanel(panel, input.book)) : priceOnlySnapshot(date);
+    const snapshot = input.mode === 'price_only'
+      ? {
+        ...produced,
+        action: 'risk_budget_open' as const,
+        actionable: true,
+        message: 'Ablation. Stand-down removed. Regime, budget, and component scores stay on the production print.',
+      }
+      : produced;
     const clipped = clippedBook(input.book, date);
     const ideas = buildIdeas({ snapshot, book: clipped });
     const desk = buildDesk({
@@ -455,13 +515,16 @@ export function walkAudPaper(input: {
     const symbols = Array.from(new Set([...held, ...wanted]));
     const fills = fillsFor(input.book, symbols, date, fx);
     const heldMissing = fills.missing.filter((symbol) => held.includes(symbol));
-    const omissions = panel ? panelOmissions(panel) : ['Macro gate forced open. Theme switches that need a macro print stay off. Survivor universe, pre-exposed.'];
+    const omissions = input.mode === 'price_only'
+      ? ['Ablation: the stand-down is off, so a non-defensive name can pass the regime gate. The production budget and regime stay. This is not the risk-on 150% gross budget.']
+      : panel ? panelOmissions(panel) : [];
     if (heldMissing.length) {
       missing.push(...heldMissing.map((symbol) => `${date} ${symbol}`));
       points.push({ date, nav: null, wealth: null, units, gross: 0, turnover: 0, contribution: input.contribute(date, index) });
       days.push({ date, actionable: snapshot.actionable, regime: snapshot.regime, action: snapshot.action, omissions, gross: 0, halted: desk.halted });
       continue;
     }
+    const heldBefore = new Set(journal.paper.positions.map((position) => position.symbol));
     const before = journal.paper.cash ?? 1;
     let wealthBefore = before;
     for (const position of journal.paper.positions) wealthBefore += position.qty * (fills.aud[position.symbol] ?? 0);
@@ -490,11 +553,98 @@ export function walkAudPaper(input: {
     journal.paper.peakEquity = peak;
     journal.paper.marks = journal.paper.marks.concat([{ date, equity: nav }]);
     const gross = wealth > 0 ? invested / wealth : 0;
+    recordLedger(ledger, {
+      lines: desk.lines,
+      maxGross: snapshot.effectiveBudget.maxGross,
+      maxNet: snapshot.effectiveBudget.maxNet,
+      positions: settled.positions,
+      heldBefore,
+      aud: fills.aud,
+      cash: settled.cash,
+      wealth,
+      previousNew,
+    });
+    previousNew = new Set(desk.lines.filter((line) => line.weight > 0).map((line) => line.symbol));
+    ledgerDays += 1;
     const turnover = wealthBefore > 0 ? (settled.buyNotional + settled.sellNotional) / 2 / wealthBefore : 0;
     points.push({ date, nav, wealth: funded.wealth, units, gross, turnover, contribution });
     days.push({ date, actionable: snapshot.actionable, regime: snapshot.regime, action: snapshot.action, omissions, gross, halted: desk.halted });
   }
-  return { points, missing, days, heldSymbols: Array.from(heldSymbols).sort() };
+  if (ledgerDays > 0) {
+    ledger.averageRiskGross /= ledgerDays;
+    ledger.averageDefensiveGross /= ledgerDays;
+    ledger.averageCash /= ledgerDays;
+  }
+  return { points, missing, days, heldSymbols: Array.from(heldSymbols).sort(), ledger };
+}
+
+function recordLedger(ledger: BookLedger, input: {
+  lines: ReturnType<typeof buildDesk>['lines'];
+  maxGross: number;
+  maxNet: number;
+  positions: PaperPosition[];
+  heldBefore: Set<string>;
+  aud: Record<string, number>;
+  cash: number;
+  wealth: number;
+  previousNew: Set<string>;
+}): void {
+  let recommendedGross = 0;
+  let recommendedNet = 0;
+  for (const line of input.lines) {
+    recommendedGross += line.weight;
+    if (line.role !== 'cash') recommendedNet += line.weight;
+    if (line.weight > 0 && input.previousNew.has(line.symbol)) ledger.consecutiveDaysWithTheSameNewWeight += 1;
+    if (line.weight > 0 && input.heldBefore.has(line.symbol)) ledger.pyramidAdds += 1;
+  }
+  ledger.recommendedMaxGross = Math.max(ledger.recommendedMaxGross, recommendedGross);
+  ledger.recommendedMaxNet = Math.max(ledger.recommendedMaxNet, recommendedNet);
+  if (recommendedGross > input.maxGross + 1e-3) ledger.recommendedDaysOverGross += 1;
+  if (recommendedNet > input.maxNet + 1e-3) ledger.recommendedDaysOverNet += 1;
+  const wealth = input.wealth;
+  let heldNet = 0;
+  let risk = 0;
+  let defensive = 0;
+  let cashSleeve = 0;
+  let singleBreach = false;
+  const themes = new Map<string, number>();
+  for (const position of input.positions) {
+    const price = input.aud[position.symbol];
+    const weight = wealth > 0 ? position.qty * price / wealth : 0;
+    const line = input.lines.find((item) => item.symbol === position.symbol);
+    const cap = line?.role === 'systematic' ? SYSTEMATIC_CAP : SINGLE_POSITION_CAP;
+    if (line?.role === 'cash') cashSleeve += weight;
+    else {
+      heldNet += weight;
+      if (line?.defensive) defensive += weight;
+      else risk += weight;
+    }
+    if (weight > cap + 1e-3) singleBreach = true;
+    if (weight > ledger.heldMaxSingle) {
+      ledger.heldMaxSingle = weight;
+      ledger.heldMaxSingleSymbol = position.symbol;
+    }
+    for (const theme of themesForSymbol(position.symbol)) {
+      themes.set(theme.id, (themes.get(theme.id) ?? 0) + weight);
+    }
+  }
+  const cashWeight = wealth > 0 ? input.cash / wealth : 0;
+  ledger.heldMaxGross = Math.max(ledger.heldMaxGross, wealth > 0 ? (wealth - input.cash) / wealth : 0);
+  ledger.heldMaxNet = Math.max(ledger.heldMaxNet, heldNet);
+  ledger.maxRiskGross = Math.max(ledger.maxRiskGross, risk);
+  ledger.maxDefensiveGross = Math.max(ledger.maxDefensiveGross, defensive);
+  ledger.averageRiskGross += risk;
+  ledger.averageDefensiveGross += defensive;
+  ledger.averageCash += cashWeight + cashSleeve;
+  const heldGross = wealth > 0 ? (wealth - input.cash) / wealth : 0;
+  if (heldGross > input.maxGross + 1e-3) ledger.daysHeldGrossOverBudget += 1;
+  if (heldNet > input.maxNet + 1e-3) ledger.daysHeldNetOverBudget += 1;
+  if (singleBreach) ledger.daysHeldSingleOverCap += 1;
+  let themeBreach = false;
+  themes.forEach((sum) => {
+    if (sum > THEME_WEIGHT_CAP + 1e-3) themeBreach = true;
+  });
+  if (themeBreach) ledger.daysHeldThemeOverCap += 1;
 }
 
 function pointsOf(panel: VintagePanel, id: string): SeriesPoint[] {

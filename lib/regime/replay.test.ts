@@ -42,7 +42,8 @@ describe('replay accounting', () => {
     const funded = applyContribution(0.9, 1, 1);
     assert.equal(funded.nav, 0.9);
     assert.ok(funded.wealth > 1.8);
-    assert.ok(Math.abs(maxDrawdown([1, funded.nav, funded.nav]) - 0.1) < 1e-12);
+    const drawdown = maxDrawdown([1, funded.nav, funded.nav]);
+    assert.ok(drawdown != null && Math.abs(drawdown - 0.1) < 1e-12);
     assert.equal(maxDrawdown([1, funded.wealth]), 0);
   });
 
@@ -64,6 +65,7 @@ describe('replay accounting', () => {
       adjusted: true,
     };
     assert.equal(executionBar(asx, '2024-11-28')?.date, '2024-11-29');
+    assert.equal(executionBar(spy, '2024-11-27')?.date, '2024-11-29');
     assert.equal(executionBar(spy, '2024-11-28')?.date, '2024-11-29');
     assert.equal(tradedFraction([{ symbol: 'SPY', weight: 0.5 }, { symbol: 'CASH', weight: 0.5 }], [{ symbol: 'CASH', weight: 1 }]), 0.5);
     const held = [{ symbol: 'SPY', qty: 0.01, entry: 100, stop: 90, riskPerShare: 10, openedOn: '2024-11-01' }];
@@ -96,6 +98,11 @@ describe('replay accounting', () => {
     assert.equal(file.production.missingCount, 0);
     assert.equal(file.hypotheses.h1, 'unsupported');
     assert.equal(file.hypotheses.h2, 'unsupported');
+    assert.equal(file.fullStrategy, 'incomplete_no_single_execution_policy');
+    assert.equal(file.production.ledger.recommendedDaysOverGross, 0);
+    assert.ok(file.production.ledger.daysHeldGrossOverBudget > 400);
+    assert.ok(file.production.ledger.consecutiveDaysWithTheSameNewWeight > 0);
+    assert.equal(file.coverage.cliDecisionsShorterThan60, 0);
     assert.ok(file.production.summary.returnPerDrawdown < file.staticSixtyForty.summary.returnPerDrawdown);
     assert.equal(JSON.stringify(file).includes('api_key'), false);
   });

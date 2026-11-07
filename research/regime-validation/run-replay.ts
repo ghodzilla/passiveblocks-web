@@ -174,7 +174,7 @@ function hypothesisVerdict(
     h2: timeChanged ? 'supported' : 'unsupported',
     ratios,
     timeInMarket: { production: production?.timeInMarket ?? null, priceOnly: price?.timeInMarket ?? null },
-    because: 'H1 asks for a higher net AUD return per unit of drawdown than buy-and-hold SPY and monthly 60/40 SPY, on the full span and on each half. H2 asks whether forcing the macro gate open changes the share of days with a position. Thresholds were not fit to this span. The span was already examined.',
+    because: 'These ratios are conditional on the add-and-hold paper ledger, not on a book that is rebalanced to the capped daily recommendation. H1 asks for a higher return per unit of drawdown than buy-and-hold SPY and monthly 60/40, on the full span and on each half. H2’s time-in-market flag counts any holding. Risk, defensive, and cash sleeves are reported separately. Thresholds were not fit to this span.',
   };
 }
 
@@ -210,7 +210,7 @@ async function main() {
     costBps: 10,
     cashYieldBps: 0,
     universe: 'Current survivor list. Hypothetical frozen-rule lookback. Pre-exposed to the 2021–2026 paths already published.',
-    clock: 'Decision instant is 13:15:00Z on a SPY session. US and crypto signals hide that session’s close and fill it. ASX signals may use the session that has already closed, and the ASX fill is the next ASX session. Weekdays with no SPY bar are holidays and are not trades. Date.now is not the engine clock.',
+    clock: 'Decision instant is 13:15:00Z on a SPY session. US and crypto signals hide that session’s close. Every fill, including ASX, is the next session after the decision date. Weekdays with no SPY bar are not trades. Date.now is not the engine clock.',
   };
   if (!book || Object.keys(intervals).length === 0) {
     writeFileSync(path.join(OUT, 'replay-results.json'), `${JSON.stringify({ ...base, experiment: 'not_run', reason: 'Prices or the FRED interval files are missing.' }, null, 2)}\n`);
@@ -245,6 +245,7 @@ async function main() {
     dates,
     book,
     mode: 'price_only',
+    panel: panelFor,
     contribute: contributeOnFirstOfMonth(dates),
   });
   const staticMix = walkNav({
@@ -298,19 +299,26 @@ async function main() {
     return n >= 252 && n < 756;
   });
   const runnable = production.missing.length === 0 && diagnostic.missing.length === 0 && staticMix.missing.length === 0 && spyPath.missing.length === 0 && lumpSpy.missing.length === 0;
+  let cliMin = Number.POSITIVE_INFINITY;
+  let cliBelow60 = 0;
+  for (const date of dates) {
+    const count = (panelFor(date).series.USALOLITOAASTSAM ?? []).length;
+    if (count < cliMin) cliMin = count;
+    if (count < 60) cliBelow60 += 1;
+  }
   writeFileSync(path.join(OUT, 'replay-results.json'), `${JSON.stringify({
     ...base,
-    experiment: 'frozen_rule_diagnostic',
-    fullStrategy: 'production_rules_on_current_universe',
+    experiment: 'conditional_paper_ledger',
+    fullStrategy: 'incomplete_no_single_execution_policy',
     restricted: [
       'CFTC positioning omitted. No release-dated history was in the archive, and today’s book was not copied back.',
       'Universe is the current survivor list, a hypothetical, and the window is inside the already examined 2021–2026 sample.',
-      'AUD cash book. A hold keeps the shares. A confirmed line adds a tranche of its weight times current equity. Stops use the local price. The live ledger does not convert FX.',
-      'FRED observation_start on the fetch was 2019-06-01. The 756-day and 156-week windows used here start after that date. The monthly CLI and capex series do reach back to 2019-06-01, so their 60-month window includes the start of the file.',
+      'The measured book follows applyPaperDay: add a confirmed tranche and hold until the stop. Gross, net, name, and theme caps constrain that day’s recommended weights, not the accumulated shares. The banner text says to keep exposure inside the budget. The ledger does not cut the book back to those weights. Production does not define one of those as the executed portfolio.',
+      'FRED observation_start on the fetch was 2019-06-01. The 60-month CLI window constant was not changed. Months before June 2019 are absent from the file.',
       'DFEDTARU intervals are joined across the 2022-12-31 and 2023-01-01 realtime chunks. A row whose rt_start is the chunk boundary is the copy that contains the vintage, not a claim about the original release minute.',
-      'The three dates with fewer than 252 credit observations are not actionable. Defensive names the lean still includes can still be bought. On 2024-10-18 that book was about 10% invested.',
+      'The three dates with fewer than 252 credit observations are not actionable. Defensive names the lean still includes can still receive a new tranche.',
     ],
-    reason: 'Prior-day ALFRED intervals were rebuilt with rt_start <= vintage <= rt_end and observation date <= vintage. The production snapshot and desk ran on those inputs. Credit below 252 observations fail-closes. A z-score from 252 observations is the engine rule; the 756-observation window is the full lookback, not a second gate.',
+    reason: 'The production snapshot and the capped daily weights were built from prior-day vintages. The NAV below is conditional on the add-and-hold ledger. It is not the capped recommendation, and it is not a full-strategy result. CFTC is omitted. Fills are the next session after the decision date.',
     audit,
     coverage: {
       weekdayDecisions: weekdays.length,
@@ -321,9 +329,14 @@ async function main() {
       creditBelow252: creditShort,
       creditShortOf756: creditPartialWindow.length,
       firstFullCreditWindow: dates.find((date) => (panelFor(date).series.BAMLH0A0HYM2 ?? []).length >= 756) ?? null,
+      fill: 'next session after the decision date, for US, crypto, and ASX',
+      cliMonthsAtFirstReplay: Number.isFinite(cliMin) ? cliMin : null,
+      cliDecisionsShorterThan60: cliBelow60,
+      sessionArithmetic: `${weekdays.length} weekdays minus ${holidays.length} dates with no SPY bar is ${traded.length}. Dropping ${droppedNoLaterAsx.length} date with no later fill leaves ${dates.length}.`,
     },
     production: {
-      label: 'production_rules',
+      label: 'conditional_add_and_hold_ledger',
+      ledger: production.ledger,
       missingExecutions: production.missing.slice(0, 20),
       missingCount: production.missing.length,
       omissionsSample: production.days.find((row) => row.actionable)?.omissions ?? production.days[0]?.omissions ?? [],
@@ -339,7 +352,8 @@ async function main() {
       summary: runnable ? summarise(production.points) : null,
     },
     priceOnlyDiagnostic: {
-      label: 'price_only_diagnostic',
+      label: 'ablation_standdown_removed_budget_unchanged',
+      ledger: diagnostic.ledger,
       missingExecutions: diagnostic.missing.length,
       heldSymbols: diagnostic.heldSymbols,
       summary: diagnostic.missing.length ? null : summarise(diagnostic.points),
