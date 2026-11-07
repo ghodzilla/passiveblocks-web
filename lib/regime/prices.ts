@@ -7,6 +7,8 @@ export interface PriceSeries {
   asOf: string | null;
   source: 'yahoo' | null;
   error: string | null;
+  /** True when Yahoo adjusted close was present. Absent on snapshots saved before this field. */
+  adjusted?: boolean | null;
 }
 
 export interface PriceBook {
@@ -73,8 +75,8 @@ export function parseYahooChart(body: unknown, yahooSymbol: string): Bar[] {
   return deduped;
 }
 
-async function fetchYahooOnce(host: string, yahoo: string): Promise<Bar[]> {
-  const url = `https://${host}/v8/finance/chart/${encodeURIComponent(yahoo)}?range=2y&interval=1d&includeAdjustedClose=true`;
+async function fetchYahooOnce(host: string, yahoo: string): Promise<{ bars: Bar[]; adjusted: boolean }> {
+  const url = `https://${host}/v8/finance/chart/${encodeURIComponent(yahoo)}?range=5y&interval=1d&includeAdjustedClose=true`;
   const response = await fetch(url, {
     cache: 'no-store',
     signal: AbortSignal.timeout(8_000),
@@ -82,24 +84,32 @@ async function fetchYahooOnce(host: string, yahoo: string): Promise<Bar[]> {
   });
   if (!response.ok) throw new Error(`${yahoo} HTTP ${response.status}`);
   const body: unknown = await response.json();
-  return parseYahooChart(body, yahoo);
+  return { bars: parseYahooChart(body, yahoo), adjusted: chartUsesAdjustedClose(body) };
 }
 
-export async function fetchYahooBars(yahoo: string): Promise<{ bars: Bar[]; error: string | null }> {
+function chartUsesAdjustedClose(body: unknown): boolean {
+  if (!body || typeof body !== 'object') return false;
+  const result = (body as { chart?: { result?: unknown[] } }).chart?.result?.[0];
+  if (!result || typeof result !== 'object') return false;
+  const adjusted = (result as { indicators?: { adjclose?: { adjclose?: unknown }[] } }).indicators?.adjclose?.[0]?.adjclose;
+  return Array.isArray(adjusted);
+}
+
+export async function fetchYahooBars(yahoo: string): Promise<{ bars: Bar[]; adjusted: boolean | null; error: string | null }> {
   let last = 'price request failed';
   for (const host of HOSTS) {
     try {
-      const bars = await fetchYahooOnce(host, yahoo);
-      if (bars.length === 0) {
+      const fetched = await fetchYahooOnce(host, yahoo);
+      if (fetched.bars.length === 0) {
         last = `${yahoo} returned no prices`;
         continue;
       }
-      return { bars, error: null };
+      return { bars: fetched.bars, adjusted: fetched.adjusted, error: null };
     } catch (error) {
       last = error instanceof Error ? error.message : `${yahoo} price request failed`;
     }
   }
-  return { bars: [], error: last };
+  return { bars: [], adjusted: null, error: last };
 }
 
 async function mapPool<T, R>(items: T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
@@ -129,6 +139,7 @@ export async function fetchPriceBook(instruments: Instrument[]): Promise<PriceBo
       asOf: bars.length > 0 ? bars[bars.length - 1].date : null,
       source: bars.length > 0 ? 'yahoo' : null,
       error: fetched.error,
+      adjusted: fetched.adjusted,
     };
   });
   const gaps: string[] = [];

@@ -19,7 +19,7 @@ export function DeskPanels({ desk, settingsNotice = null }: { desk: Desk; settin
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Themes</p>
         <h2 className="text-lg font-bold tracking-tight">Theme switches, version {desk.configVersion}</h2>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">
-          Each basket is on or off from a written rule. A person reviews the list once a quarter. The weekly job does not rewrite these switches. A theme being on is not a buy. The sentence under each name says what is in the way, and 0% means it is not sized.
+          Each basket is on or off from a written rule. A person reviews the list once a quarter. The weekly job does not rewrite these switches. A theme being on is support for the story, not approval to trade. The sentence under each name is the blocker or the pass. 0% means it is not sized. Cash can pass a check that a share fails, and that is still not an order.
         </p>
         <div className="mt-4 grid gap-3">
           {desk.themes.map((theme) => (

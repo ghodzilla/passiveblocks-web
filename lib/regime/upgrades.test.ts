@@ -306,17 +306,20 @@ describe('signal decay', () => {
     const short = evaluateSignalHealth([{ symbol: 'SPY', bars: bars(Array.from({ length: 80 }, () => 100)) }]);
     assert.deepEqual(short.map((signal) => signal.status), ['unknown', 'unknown', 'unknown']);
 
-    const long = Array.from({ length: 8 }, (_, symbol) => {
+    const drift = (days: number) => Array.from({ length: 8 }, (_, symbol) => {
       const daily = 1 + (symbol - 3.5) * 0.0004;
       const closes: number[] = [];
       let price = 100;
-      for (let i = 0; i < 500; i++) {
+      for (let i = 0; i < days; i++) {
         closes.push(price);
         price *= daily;
       }
       return { symbol: `S${symbol}`, bars: bars(closes) };
     });
-    const health = evaluateSignalHealth(long);
+    const twoYear = evaluateSignalHealth(drift(500));
+    assert.ok(twoYear.every((signal) => signal.samples < 40));
+    assert.deepEqual(twoYear.map((signal) => signal.status), ['unknown', 'unknown', 'unknown']);
+    const health = evaluateSignalHealth(drift(1700));
     const momentum = health.find((signal) => signal.id === 'momentum');
     assert.ok((momentum?.samples ?? 0) >= 40);
     assert.ok((momentum?.ic ?? 0) > 0.5);

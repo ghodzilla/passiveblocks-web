@@ -19,7 +19,7 @@ export default async function RegimePage({
   const sessionToken = cookies().get(REGIME_COOKIE)?.value ?? 'ip';
   const csrf = secret && secret.length >= 32 ? signRefreshCsrf(secret, sessionToken) : null;
   const attempt = secret ? openAttemptCookie(secret, cookies().get(ATTEMPT_COOKIE)?.value) : null;
-  const [{ snapshot, ideas, desk, consistency, health, blockReason }, selfCheck] = await Promise.all([
+  const [{ snapshot, ideas, desk, consistency, health, blockReason, auditNote, evaluation }, selfCheck] = await Promise.all([
     getRegimeDesk(new Date(), attempt),
     readSelfCheck(),
   ]);
@@ -36,6 +36,8 @@ export default async function RegimePage({
       attempt={attempt}
       blockReason={blockReason}
       csrf={csrf}
+      auditNote={auditNote}
+      evaluation={evaluation}
     />
   );
 }

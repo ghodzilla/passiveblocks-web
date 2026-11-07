@@ -14,8 +14,13 @@ export const IC_HORIZON = 20;
 export const IC_WINDOW = 120;
 /** Fewer than this and the signal stays on the default rule. */
 export const IC_MIN = 40;
-/** Step so overlapping 20-day forwards are not treated as independent. */
-export const IC_STEP = 5;
+/**
+ * Minimum calendar gap between scored dates.
+ * A 20-session forward return is about 28 calendar days. A shorter step
+ * repeats the same outcome and can call a two-year book degraded or healthy
+ * before 40 separate results exist.
+ */
+export const IC_GAP_DAYS = Math.round((IC_HORIZON * 7) / 5);
 export const RETIRE_HIT_RATE = 0.48;
 const MIN_CROSS_SECTION = 5;
 
@@ -141,14 +146,46 @@ function hitRate(xs: number[], ys: number[]): number | null {
   return hits / n;
 }
 
+export function independentSampleDates(dates: string[], gapDays = IC_GAP_DAYS, limit = IC_WINDOW): string[] {
+  const sorted = dates.slice().sort();
+  const picked: string[] = [];
+  for (let i = sorted.length - 1; i >= 0 && picked.length < limit; i -= 1) {
+    const date = sorted[i];
+    const newer = picked[picked.length - 1];
+    if (newer) {
+      const left = Date.parse(`${date}T00:00:00Z`);
+      const right = Date.parse(`${newer}T00:00:00Z`);
+      if (!Number.isFinite(left) || !Number.isFinite(right)) continue;
+      const days = Math.round((right - left) / 86_400_000);
+      if (days < gapDays) continue;
+    }
+    picked.push(date);
+  }
+  return picked;
+}
+
+export function signalHealthSentence(signal: SignalHealth): string {
+  const score = signal.ic == null ? '—' : signal.ic.toFixed(2);
+  const hits = signal.hitRate == null ? '—' : `${Math.round(signal.hitRate * 100)}%`;
+  if (signal.status === 'unknown') {
+    return `${signal.label} is not validated. There are ${signal.samples} separate 20-session outcomes, and ${IC_MIN} are required before it can be called healthy or weak. A missing label here is not a missing price feed. The usual buy checks stay on.`;
+  }
+  if (signal.status === 'degraded') {
+    return `${signal.label} has enough separate outcomes to score, and that score is weak (${score}, hit rate ${hits}, ${signal.samples} outcomes). One of the two tests failed. It still counts as a buy check, at half of its usual weight. The feed itself is a separate question.`;
+  }
+  if (signal.status === 'retired') {
+    return `${signal.label} failed both tests (${score}, hit rate ${hits}, ${signal.samples} outcomes), so it no longer blocks or confirms a buy. If the past-year move and the 200-day trend are both retired, nothing new is confirmed.`;
+  }
+  return `${signal.label} has lined up with later prices on this sample (${score}, hit rate ${hits}, ${signal.samples} separate outcomes). That is a recent score, not a promise it will keep working.`;
+}
+
 function summarize(id: SignalId, rows: Map<string, { signal: number[]; forward: number[] }>): SignalHealth {
   const dates = Array.from(rows.keys()).filter((date) => {
     const row = rows.get(date);
     return row != null && row.signal.length >= MIN_CROSS_SECTION;
   }).sort();
 
-  const picked: string[] = [];
-  for (let i = dates.length - 1; i >= 0 && picked.length < IC_WINDOW; i -= IC_STEP) picked.push(dates[i]);
+  const picked = independentSampleDates(dates);
 
   const ics: number[] = [];
   const hits: number[] = [];

@@ -1,4 +1,5 @@
 import { CORR_WARN, DISPERSION_WINDOW } from '@/lib/regime/correlation';
+import { signalHealthSentence } from '@/lib/regime/health';
 import { trendWord, type GateCheck } from '@/lib/regime/gates';
 import type { IdeasReport, IdeaStatus } from '@/lib/regime/ideas';
 import { checklistLines, plainDrivers, stanceWords } from '@/lib/regime/plain';
@@ -33,9 +34,17 @@ const STANCE_CLASS = {
   avoid: 'text-rose-200',
 };
 
-export function IdeasPanel({ ideas, risk }: {
+const HEALTH_WORD = {
+  healthy: 'Holding up lately',
+  degraded: 'Weak lately',
+  retired: 'Turned off',
+  unknown: 'Not validated',
+} as const;
+
+export function IdeasPanel({ ideas, risk, auditNote = null }: {
   ideas: IdeasReport;
   risk: { symbol: string; stop: number | null; qty: number | null; weight: number; verdict: string; gates: GateCheck[]; dip: string | null }[];
+  auditNote?: string | null;
 }) {
   const riskBySymbol = new Map(risk.map((line) => [line.symbol, line]));
   const fetched = melbourneClock(ideas.pricesFetchedAt);
@@ -47,8 +56,9 @@ export function IdeasPanel({ ideas, risk }: {
       <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Macro plays and stock ideas</p>
       <h2 className="text-lg font-bold tracking-tight">What to hold, then each name</h2>
       <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">
-        These are liquid US and ASX funds an Australian investor can actually trade. The sentence under a name is the verdict. Open Why? for the checklist: theme, today’s lean, the 200-day average, the past year, a stretched week, and the loss halt. A size appears only when every item passes. One fund is capped at {pct(ideas.singlePositionCap)} and one stock at {pct(ideas.systematicCap)}.
+        Confirmed means every checklist item passed and the size is above zero. Watch means something blocked it, and the sentence names that item. Avoid means today’s lean is away from the group. None of those words is a recommendation to buy or sell. A theme that is on is not approval to trade. Cash and defensive sleeves can pass checks that a share fails, and that is still not an order. One fund is capped at {pct(ideas.singlePositionCap)} and one stock at {pct(ideas.systematicCap)}.
       </p>
+      {auditNote ? <p className="mt-2 max-w-3xl text-sm leading-relaxed text-white/80">{auditNote}</p> : null}
 
       {ideas.crowding.warning ? (
         <div className="mt-4 rounded-[var(--radius-xl)] border border-amber-300/50 bg-amber-400/15 px-5 py-4">
@@ -207,7 +217,7 @@ export function IdeasPanel({ ideas, risk }: {
       <div className="mt-6">
         <h3 className="text-sm font-bold">Are the signals still useful?</h3>
         <p className="mt-1 max-w-3xl text-sm text-[var(--muted)]">
-          If a signal has been wrong lately it is retired and stops deciding buys. Unknown means there is not enough history yet, so the normal checks stay. If both the past-year move and the 200-day trend are retired, nothing new is confirmed.
+          This table is not the price feed. The feed can be complete while the signal is still not validated. Not validated means there are fewer than 40 separate 20-session outcomes, so the usual checks stay on. Weak lately means one of the two scores failed and the check stays, at half weight. Turned off means both failed. Holding up lately is only a recent score, not a forecast. A two-year book cannot produce 40 separate outcomes.
         </p>
         <div className="mt-3 overflow-x-auto">
           <table className="w-full min-w-[520px] text-left text-sm">
@@ -228,7 +238,8 @@ export function IdeasPanel({ ideas, risk }: {
                   <td className="py-2 pr-3">{signal.hitRate == null ? '—' : pct(signal.hitRate, 0)}</td>
                   <td className="py-2 pr-3">{signal.samples}</td>
                   <td className={`py-2 font-sans text-[11px] font-bold uppercase tracking-wider ${signal.status === 'retired' ? 'text-rose-200' : signal.status === 'degraded' ? 'text-amber-100' : signal.status === 'healthy' ? 'text-emerald-200' : 'text-[var(--muted)]'}`}>
-                    {signal.status}
+                    {HEALTH_WORD[signal.status]}
+                    <p className="mt-1 font-normal normal-case tracking-normal text-[var(--muted)]">{signalHealthSentence(signal)}</p>
                   </td>
                 </tr>
               ))}
