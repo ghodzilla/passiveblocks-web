@@ -1,6 +1,6 @@
 import { snapshotFromBundle } from './assemble';
 import { applyStoredDecision, RULE_VERSION, type StoredDecision } from './decision';
-import { evaluateBook, type EvaluationReport } from './evaluate';
+import { evaluateBook, type EvaluationReport, type ResearchAssumptions, parseResearchAssumptions } from './evaluate';
 import { actionFor, budgetsFor } from './classify';
 import { FRED_SERIES } from './constants';
 import { buildDesk, type Desk } from './desk';
@@ -70,7 +70,12 @@ function emptyBook(now: Date): PriceBook {
   };
 }
 
-export async function getRegimeDesk(now = new Date(), attempt: RefreshHealth | null = null, sql?: RegimeSql | null): Promise<{
+export async function getRegimeDesk(
+  now = new Date(),
+  attempt: RefreshHealth | null = null,
+  sql?: RegimeSql | null,
+  assumptions: ResearchAssumptions = parseResearchAssumptions(),
+): Promise<{
   snapshot: RegimeSnapshot;
   ideas: IdeasReport;
   book: PriceBook;
@@ -146,6 +151,6 @@ export async function getRegimeDesk(now = new Date(), attempt: RefreshHealth | n
     blockReason,
     decision: savedDecision,
     auditNote,
-    evaluation: evaluateBook(stored?.book ?? null),
+    evaluation: evaluateBook(stored?.book ?? null, assumptions),
   };
 }

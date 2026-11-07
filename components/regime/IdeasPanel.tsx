@@ -38,7 +38,7 @@ const HEALTH_WORD = {
   healthy: 'Holding up lately',
   degraded: 'Weak lately',
   retired: 'Turned off',
-  unknown: 'Not validated',
+  unknown: 'Not enough evidence',
 } as const;
 
 export function IdeasPanel({ ideas, risk, auditNote = null }: {
@@ -217,7 +217,7 @@ export function IdeasPanel({ ideas, risk, auditNote = null }: {
       <div className="mt-6">
         <h3 className="text-sm font-bold">Are the signals still useful?</h3>
         <p className="mt-1 max-w-3xl text-sm text-[var(--muted)]">
-          This table is not the price feed. The feed can be complete while the signal is still not validated. Not validated means there are fewer than 40 separate 20-session outcomes, so the usual checks stay on. Weak lately means one of the two scores failed and the check stays, at half weight. Turned off means both failed. Holding up lately is only a recent score, not a forecast. A two-year book cannot produce 40 separate outcomes.
+          This table is not the price feed. Insufficient performance evidence means fewer than 40 non-overlapping 20-session windows. That 40 is a heuristic, not a statistical test, and later windows can still move with earlier ones. It does not mean a price is missing. A degraded score does not block a buy. It keeps the price check and, when only some signals are weak, halves that signal’s rank weight. If all three are weak together, the mix scales back to the normal weights. Insufficient evidence does not apply the haircut. Neither label changes the size. Size still comes from the risk budget, the caps, and today’s regime. Turned off means both scores failed, and only then does that check drop out. Holding up lately is a recent score, not a forecast.
         </p>
         <div className="mt-3 overflow-x-auto">
           <table className="w-full min-w-[520px] text-left text-sm">

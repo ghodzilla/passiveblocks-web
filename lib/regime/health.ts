@@ -8,19 +8,15 @@ import {
   type Bar,
 } from './signals';
 
-/** Forward trading days used for the hit-rate and information coefficient. */
+/** Forward trading sessions used for the hit-rate and information coefficient. */
 export const IC_HORIZON = 20;
-/** Most recent non-overlapping samples kept after stepping. */
+/** Most recent non-overlapping samples kept. */
 export const IC_WINDOW = 120;
-/** Fewer than this and the signal stays on the default rule. */
-export const IC_MIN = 40;
 /**
- * Minimum calendar gap between scored dates.
- * A 20-session forward return is about 28 calendar days. A shorter step
- * repeats the same outcome and can call a two-year book degraded or healthy
- * before 40 separate results exist.
+ * Fewer than this and the score stays unknown.
+ * This is a heuristic sample floor, not a statistical test.
  */
-export const IC_GAP_DAYS = Math.round((IC_HORIZON * 7) / 5);
+export const IC_MIN = 40;
 export const RETIRE_HIT_RATE = 0.48;
 const MIN_CROSS_SECTION = 5;
 
@@ -53,10 +49,16 @@ export function healthStatus(ic: number | null, hitRate: number | null, samples:
 
 interface DatedSignal {
   date: string;
+  session: number;
   momentum: number | null;
   trend: number | null;
   reversion: number | null;
   forward: number | null;
+}
+
+export interface SessionStamp {
+  symbol: string;
+  session: number;
 }
 
 function panel(bars: Bar[]): DatedSignal[] {
@@ -104,7 +106,7 @@ function panel(bars: Bar[]): DatedSignal[] {
 
     let forward: number | null = null;
     if (i + IC_HORIZON < n && closes[i] > 0) forward = closes[i + IC_HORIZON] / closes[i] - 1;
-    out.push({ date: dates[i], momentum, trend, reversion, forward });
+    out.push({ date: dates[i], session: i, momentum, trend, reversion, forward });
   }
   return out;
 }
@@ -146,46 +148,64 @@ function hitRate(xs: number[], ys: number[]): number | null {
   return hits / n;
 }
 
-export function independentSampleDates(dates: string[], gapDays = IC_GAP_DAYS, limit = IC_WINDOW): string[] {
-  const sorted = dates.slice().sort();
-  const picked: string[] = [];
-  for (let i = sorted.length - 1; i >= 0 && picked.length < limit; i -= 1) {
-    const date = sorted[i];
-    const newer = picked[picked.length - 1];
-    if (newer) {
-      const left = Date.parse(`${date}T00:00:00Z`);
-      const right = Date.parse(`${newer}T00:00:00Z`);
-      if (!Number.isFinite(left) || !Number.isFinite(right)) continue;
-      const days = Math.round((right - left) / 86_400_000);
-      if (days < gapDays) continue;
-    }
-    picked.push(date);
+/**
+ * True when no symbol has forward windows that share a trading session.
+ * A gap of exactly one horizon is allowed: the next window starts on the
+ * close that ended the previous one. Those windows are non-overlapping, not
+ * independent. A calendar gap is not used, because holidays can put 28 days
+ * inside the same 20 sessions.
+ */
+export function forwardWindowsDisjoint(older: SessionStamp[], newer: SessionStamp[], horizon = IC_HORIZON): boolean {
+  const next = new Map<string, number>();
+  for (const row of newer) {
+    const prior = next.get(row.symbol);
+    if (prior == null || row.session < prior) next.set(row.symbol, row.session);
   }
-  return picked;
+  for (const row of older) {
+    const later = next.get(row.symbol);
+    if (later == null) continue;
+    if (later - row.session < horizon) return false;
+  }
+  return true;
+}
+
+export function selectNonOverlappingDates(
+  entries: { date: string; sessions: SessionStamp[] }[],
+  horizon = IC_HORIZON,
+  limit = IC_WINDOW,
+): string[] {
+  const sorted = entries.slice().sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+  const picked: { date: string; sessions: SessionStamp[] }[] = [];
+  for (let i = sorted.length - 1; i >= 0 && picked.length < limit; i -= 1) {
+    const entry = sorted[i];
+    const newer = picked[picked.length - 1];
+    if (newer && !forwardWindowsDisjoint(entry.sessions, newer.sessions, horizon)) continue;
+    picked.push(entry);
+  }
+  return picked.map((entry) => entry.date);
 }
 
 export function signalHealthSentence(signal: SignalHealth): string {
   const score = signal.ic == null ? '—' : signal.ic.toFixed(2);
   const hits = signal.hitRate == null ? '—' : `${Math.round(signal.hitRate * 100)}%`;
   if (signal.status === 'unknown') {
-    return `${signal.label} is not validated. There are ${signal.samples} separate 20-session outcomes, and ${IC_MIN} are required before it can be called healthy or weak. A missing label here is not a missing price feed. The usual buy checks stay on.`;
+    return `${signal.label} has insufficient performance evidence. There are ${signal.samples} non-overlapping 20-session windows, and ${IC_MIN} is the heuristic floor before a weak or healthy label. That floor is not a statistical test. Later windows can still move with earlier ones. This is not a missing price feed. It does not block a buy and it does not halve rank weight. The price checks stay as they are.`;
   }
   if (signal.status === 'degraded') {
-    return `${signal.label} has enough separate outcomes to score, and that score is weak (${score}, hit rate ${hits}, ${signal.samples} outcomes). One of the two tests failed. It still counts as a buy check, at half of its usual weight. The feed itself is a separate question.`;
+    return `${signal.label} has at least ${IC_MIN} non-overlapping windows and one of the two scores failed (${score}, hit rate ${hits}, ${signal.samples} windows). It does not by itself block a buy. It keeps the price check and halves this signal’s rank weight. Size still comes from the risk budget. The price feed is a separate question.`;
   }
   if (signal.status === 'retired') {
-    return `${signal.label} failed both tests (${score}, hit rate ${hits}, ${signal.samples} outcomes), so it no longer blocks or confirms a buy. If the past-year move and the 200-day trend are both retired, nothing new is confirmed.`;
+    return `${signal.label} failed both scores (${score}, hit rate ${hits}, ${signal.samples} non-overlapping windows), so this check no longer blocks or confirms a buy. If the past-year move and the 200-day trend are both retired, nothing new is confirmed.`;
   }
-  return `${signal.label} has lined up with later prices on this sample (${score}, hit rate ${hits}, ${signal.samples} separate outcomes). That is a recent score, not a promise it will keep working.`;
+  return `${signal.label} lined up with later prices on ${signal.samples} non-overlapping windows (${score}, hit rate ${hits}). The windows are not independent draws, and ${IC_MIN} is not a statistical pass. This is not a promise it will keep working.`;
 }
 
-function summarize(id: SignalId, rows: Map<string, { signal: number[]; forward: number[] }>): SignalHealth {
-  const dates = Array.from(rows.keys()).filter((date) => {
-    const row = rows.get(date);
-    return row != null && row.signal.length >= MIN_CROSS_SECTION;
-  }).sort();
-
-  const picked = independentSampleDates(dates);
+function summarize(id: SignalId, rows: Map<string, { signal: number[]; forward: number[]; sessions: SessionStamp[] }>): SignalHealth {
+  const eligible = Array.from(rows.entries()).filter(([, row]) => row.signal.length >= MIN_CROSS_SECTION).map(([date, row]) => ({
+    date,
+    sessions: row.sessions,
+  }));
+  const picked = selectNonOverlappingDates(eligible);
 
   const ics: number[] = [];
   const hits: number[] = [];
@@ -216,28 +236,29 @@ function summarize(id: SignalId, rows: Map<string, { signal: number[]; forward: 
  * Cross-sectional information coefficient and hit rate.
  * Momentum uses the 12–1 value, trend is +1/−1, and the reversion signal
  * is the sign-flipped 5-session z (the veto points the other way).
- * A short sample stays unknown and does not retire anything.
+ * A short sample stays unknown. Unknown does not retire a gate and does not halve rank weight.
  */
 export function evaluateSignalHealth(series: { symbol: string; bars: Bar[] }[]): SignalHealth[] {
-  const panels = series.map((item) => panel(item.bars));
-  const buckets: Record<SignalId, Map<string, { signal: number[]; forward: number[] }>> = {
+  const panels = series.map((item) => ({ symbol: item.symbol, points: panel(item.bars) }));
+  const buckets: Record<SignalId, Map<string, { signal: number[]; forward: number[]; sessions: SessionStamp[] }>> = {
     momentum: new Map(),
     trend: new Map(),
     reversion: new Map(),
   };
 
-  for (const points of panels) {
-    for (const point of points) {
+  for (const item of panels) {
+    for (const point of item.points) {
       if (point.forward == null) continue;
       const add = (id: SignalId, signal: number | null) => {
         if (signal == null || !Number.isFinite(signal)) return;
         let row = buckets[id].get(point.date);
         if (!row) {
-          row = { signal: [], forward: [] };
+          row = { signal: [], forward: [], sessions: [] };
           buckets[id].set(point.date, row);
         }
         row.signal.push(signal);
         row.forward.push(point.forward as number);
+        row.sessions.push({ symbol: item.symbol, session: point.session });
       };
       add('momentum', point.momentum);
       add('trend', point.trend);

@@ -6,7 +6,7 @@ import { THEME_CONFIG_VERSION } from './themes.config';
 import { themesForSymbol } from './themes';
 
 /** Bump when a gate, health rule, or stored checklist field changes meaning. */
-export const RULE_VERSION = '2026-11-08.1';
+export const RULE_VERSION = '2026-11-08.2';
 
 export interface StoredDecisionLine {
   symbol: string;
