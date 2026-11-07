@@ -45,7 +45,7 @@ export interface RefreshHealth {
   attemptedAt: string;
   lastFullySuccessfulFetchAt: string | null;
   lastPersistedAt: string | null;
-  storage: 'vercel-blob' | 'unavailable';
+  storage: 'neon' | 'unavailable';
   sources: ProviderSource[];
   note: string;
 }
@@ -101,9 +101,25 @@ export function staleMandatorySource(sources: ProviderSource[], today: string): 
   return null;
 }
 
+export function unavailableStoreReason(kind: 'unconfigured' | 'outage' | 'missing_schema' | 'empty'): string {
+  if (kind === 'unconfigured') {
+    return 'REGIME_DATABASE_URL is not set. Serverless disk and memory are not a saved snapshot. New buys stay off until the pooled Neon connection is set. This deploy does not set that variable.';
+  }
+  if (kind === 'missing_schema') {
+    return 'The regime tables are not in Neon yet. Apply db/regime/001_durable_state.sql to database regime. New buys stay off.';
+  }
+  if (kind === 'outage') {
+    return 'Neon could not be read. New buys stay off. Serverless disk is not used as a substitute.';
+  }
+  return 'No durable refresh is saved. Serverless disk and memory are not a saved snapshot. New buys stay off until a refresh is stored in Neon Postgres.';
+}
+
 export function refreshBlockReason(health: RefreshHealth | null, now: Date): string | null {
-  if (!health || !health.durable || !health.persisted) {
-    return 'No durable refresh is saved. Serverless disk and memory are not a saved snapshot. New buys stay off until a refresh is stored in Vercel Blob.';
+  if (!health || !health.durable) {
+    return unavailableStoreReason('empty');
+  }
+  if (!health.persisted || health.outcome === 'persistence_failure') {
+    return 'The latest refresh was not saved in Neon. New buys stay off. A previous snapshot, if one was already stored, was left in place.';
   }
   if (health.fetchOutcome === 'failure' || health.outcome === 'failure') {
     return 'The latest refresh did not receive every mandatory feed. New buys stay off.';
@@ -135,7 +151,7 @@ export function settleRefresh(input: {
     : input.previous?.lastFullySuccessfulFetchAt ?? null;
   const lastPersistedAt = snapshotSaved ? attemptedAt : input.previous?.lastPersistedAt ?? null;
   const note = !input.durable
-    ? 'Vercel Blob is not configured. This attempt was not saved. Serverless disk is not durable. Create a Blob store and set BLOB_READ_WRITE_TOKEN. This change does not create that store.'
+    ? 'REGIME_DATABASE_URL is not set. This attempt was not saved. Serverless disk is not durable. Set that variable to the pooled Neon connection for project dark-credit-39672712. This change does not create the project or set the variable.'
     : !input.writeOk
       ? 'The refresh ran and the durable write failed. The previous saved snapshot, if there was one, was left in place.'
       : fetchOutcome === 'failure'
@@ -152,7 +168,7 @@ export function settleRefresh(input: {
     attemptedAt,
     lastFullySuccessfulFetchAt,
     lastPersistedAt,
-    storage: input.durable ? 'vercel-blob' : 'unavailable',
+    storage: input.durable ? 'neon' : 'unavailable',
     sources: input.sources,
     note,
   };

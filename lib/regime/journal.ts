@@ -1,14 +1,15 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import path from 'node:path';
-import { list, put } from '@vercel/blob';
 import { DEFAULT_ATR_K, DEFAULT_RISK_PCT } from './sizing';
 import { DIP_HIGH, DIP_LOW } from './dip';
 import { MOMENTUM_LOOKBACK } from './signals';
 import type { WeekChange } from './improve';
 
-export const JOURNAL_PATHNAME = 'regime/journal.json';
+/** Kept on the journal document so one upsert stays inside the Free plan's 1 GB. */
+export const JOURNAL_MARK_LIMIT = 800;
+export const JOURNAL_CALL_LIMIT = 4000;
+export const JOURNAL_OUTCOME_LIMIT = 12000;
+export const JOURNAL_WEEK_LIMIT = 156;
+export const JOURNAL_CHANGE_LIMIT = 156;
 
 export interface PaperPosition {
   symbol: string;
@@ -109,68 +110,15 @@ export function parseJournal(raw: string): Journal {
   return parsed;
 }
 
-function filePath(): string {
-  return process.env.REGIME_JOURNAL_PATH || path.join(tmpdir(), 'passiveblocks-regime-journal.json');
-}
-
-async function readFileJournal(): Promise<Journal | null> {
-  try {
-    const raw = await readFile(filePath(), 'utf8');
-    return parseJournal(raw);
-  } catch {
-    return null;
-  }
-}
-
-async function writeFileJournal(journal: Journal): Promise<void> {
-  const target = filePath();
-  await mkdir(path.dirname(target), { recursive: true });
-  await writeFile(target, JSON.stringify(journal), 'utf8');
-}
-
-export async function readJournal(): Promise<Journal> {
-  const token = process.env.BLOB_READ_WRITE_TOKEN;
-  const secret = process.env.REGIME_SESSION_SECRET;
-  if (token && secret && secret.length >= 32) {
-    try {
-      const found = await list({ prefix: JOURNAL_PATHNAME, token, limit: 10 });
-      const blob = found.blobs.find((item) => item.pathname === JOURNAL_PATHNAME);
-      if (!blob) return emptyJournal();
-      const response = await fetch(blob.url, { cache: 'no-store' });
-      if (!response.ok) throw new Error(`Journal blob HTTP ${response.status}`);
-      const text = openJournal(await response.text(), secret);
-      return parseJournal(text);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Journal read failed';
-      const journal = emptyJournal();
-      journal.gap = `The paper journal could not be read (${message}). No track record was invented.`;
-      return journal;
-    }
-  }
-  const local = await readFileJournal();
-  if (local) {
-    local.gap = local.gap ?? 'BLOB_READ_WRITE_TOKEN is not set. This journal is stored on the local instance only.';
-    return local;
-  }
-  const journal = emptyJournal();
-  journal.gap = 'BLOB_READ_WRITE_TOKEN is not set. The paper journal is not durable on a new serverless instance. Set the token to store an encrypted journal in Vercel Blob. No Supabase table is used.';
-  return journal;
-}
-
-export async function writeJournal(journal: Journal): Promise<void> {
-  const token = process.env.BLOB_READ_WRITE_TOKEN;
-  const secret = process.env.REGIME_SESSION_SECRET;
-  const stored = { ...journal, gap: null };
-  if (token && secret && secret.length >= 32) {
-    const body = sealJournal(JSON.stringify(stored), secret);
-    await put(JOURNAL_PATHNAME, body, {
-      access: 'public',
-      token,
-      addRandomSuffix: false,
-      allowOverwrite: true,
-      contentType: 'text/plain',
-    });
-    return;
-  }
-  await writeFileJournal(stored);
+/** Drops the oldest rows. Callers save `gap` as null because a gap means the read failed. */
+export function boundJournal(journal: Journal): Journal {
+  return {
+    ...journal,
+    gap: null,
+    paper: { ...journal.paper, marks: journal.paper.marks.slice(-JOURNAL_MARK_LIMIT) },
+    calls: journal.calls.slice(-JOURNAL_CALL_LIMIT),
+    outcomes: journal.outcomes.slice(-JOURNAL_OUTCOME_LIMIT),
+    weeks: journal.weeks.slice(-JOURNAL_WEEK_LIMIT),
+    changes: journal.changes.slice(-JOURNAL_CHANGE_LIMIT),
+  };
 }

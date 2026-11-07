@@ -3,11 +3,13 @@ import { applyPaperDay, buildDesk, settleForward } from './desk';
 import { fetchRegimeBundle } from './engine';
 import { fetchFredSeries } from './fred';
 import { buildIdeas } from './ideas';
-import { readJournal, writeJournal } from './journal';
+import { openRegimeSql, safeDbMessage, type RegimeSql } from './db';
+import type { Journal } from './journal';
 import { fetchPriceBook, type PriceBook } from './prices';
 import { providerSource, refreshLogLine, settleRefresh, type ProviderSource, type RefreshHealth } from './refreshHealth';
-import { durableRefreshStore, type RefreshStore, type StoredRefresh } from './refreshStore';
-import { selfCheckFromReport, writeSelfCheck } from './selfcheck';
+import type { StoredRefresh } from './refreshStore';
+import { selfCheckFromReport, type SelfCheckRecord } from './selfcheck';
+import { readJournal, readRefresh, writeRefreshBundle } from './state';
 import type { SeriesPoint } from './series';
 import { snapshotFromBundle } from './assemble';
 import { publishRegime } from './view';
@@ -118,20 +120,85 @@ function nextRecord(previous: StoredRefresh | null, health: RefreshHealth, live:
   };
 }
 
+async function rolledState(live: Awaited<ReturnType<typeof fetchLiveRefresh>>, sql: RegimeSql): Promise<{
+  journal: Journal | null;
+  selfCheck: SelfCheckRecord | null;
+}> {
+  const journal = await readJournal(sql);
+  if (journal.gap) throw new Error('Refusing to roll a journal that was not read from Neon.');
+  const ideas = buildIdeas({ snapshot: live.snapshot, book: live.book, watchlist: process.env.REGIME_WATCHLIST });
+  const desk = buildDesk({
+    snapshot: live.snapshot,
+    ideas,
+    book: live.book,
+    realYield: live.realYield,
+    dollar: live.dollar,
+    journal,
+    envCapital: process.env.REGIME_CAPITAL,
+    envTarget: process.env.REGIME_TARGET_CAGR,
+  });
+  const published = publishRegime({ snapshot: live.snapshot, ideas, desk });
+  const prices: Record<string, number> = {};
+  const bars: Record<string, PriceBook['series'][number]['bars']> = {};
+  for (const series of live.book.series) {
+    const last = series.bars[series.bars.length - 1];
+    if (last && last.close > 0) prices[series.symbol] = last.close;
+    bars[series.symbol] = series.bars;
+  }
+  const rolled = applyPaperDay({
+    journal,
+    desk,
+    prices,
+    date: live.snapshot.today,
+    capital: desk.capital,
+  });
+  rolled.outcomes = settleForward(rolled.calls, bars);
+  return {
+    journal: rolled,
+    selfCheck: selfCheckFromReport(published.consistency, live.snapshot.generatedAt),
+  };
+}
+
 export async function executeRegimeRefresh(input: {
   now?: Date;
   trigger: 'cron' | 'owner';
-  store?: RefreshStore | null;
+  sql?: RegimeSql | null;
 }): Promise<{ health: RefreshHealth; stored: StoredRefresh | null }> {
   const now = input.now ?? new Date();
-  const store = input.store === undefined ? durableRefreshStore() : input.store;
+  const sql = input.sql === undefined ? await openRegimeSql() : input.sql;
   writeRefreshLog('start', { trigger: input.trigger, at: now.toISOString() });
   try {
-    const previous = store ? await store.read().catch(() => null) : null;
+    const read = sql ? await readRefresh(sql) : { status: 'unconfigured' as const, value: null };
+    const previous = read.status === 'ok' ? read.value : null;
     const live = await fetchLiveRefresh(now);
-    const durable = Boolean(store?.durable);
+    const durable = Boolean(sql);
+    const canWrite = Boolean(sql) && read.status === 'ok';
+    if (sql && read.status !== 'ok') {
+      writeRefreshLog('failure', {
+        trigger: input.trigger,
+        message: read.status === 'missing_schema' ? 'regime tables are missing' : 'Neon read failed before the save',
+      });
+    }
+    let journal: Journal | null = null;
+    let selfCheck: SelfCheckRecord | null = null;
+    const preview = settleRefresh({
+      now,
+      previous: previous?.health ?? null,
+      sources: live.sources,
+      durable,
+      writeOk: true,
+    });
+    if (preview.fetchOutcome !== 'failure' && sql && canWrite) {
+      try {
+        const rolled = await rolledState(live, sql);
+        journal = rolled.journal;
+        selfCheck = rolled.selfCheck;
+      } catch (error) {
+        writeRefreshLog('failure', { trigger: input.trigger, message: safeDbMessage(error) });
+      }
+    }
     let writeOk = false;
-    if (store?.durable) {
+    if (sql && canWrite) {
       const optimistic = settleRefresh({
         now,
         previous: previous?.health ?? null,
@@ -140,11 +207,14 @@ export async function executeRegimeRefresh(input: {
         writeOk: true,
       });
       try {
-        await store.write(nextRecord(previous, optimistic, live));
+        await writeRefreshBundle(sql, {
+          refresh: nextRecord(previous, optimistic, live),
+          journal,
+          selfCheck,
+        });
         writeOk = true;
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Refresh store write failed';
-        writeRefreshLog('failure', { trigger: input.trigger, message: message.slice(0, 200) });
+        writeRefreshLog('failure', { trigger: input.trigger, message: safeDbMessage(error) });
       }
     }
     const health = settleRefresh({
@@ -154,44 +224,7 @@ export async function executeRegimeRefresh(input: {
       durable,
       writeOk,
     });
-    const stored = writeOk && store ? nextRecord(previous, health, live) : previous;
-    if (health.fetchOutcome !== 'failure') {
-      try {
-        const journal = await readJournal();
-        const ideas = buildIdeas({ snapshot: live.snapshot, book: live.book, watchlist: process.env.REGIME_WATCHLIST });
-        const desk = buildDesk({
-          snapshot: live.snapshot,
-          ideas,
-          book: live.book,
-          realYield: live.realYield,
-          dollar: live.dollar,
-          journal,
-          envCapital: process.env.REGIME_CAPITAL,
-          envTarget: process.env.REGIME_TARGET_CAGR,
-        });
-        const published = publishRegime({ snapshot: live.snapshot, ideas, desk });
-        const prices: Record<string, number> = {};
-        const bars: Record<string, PriceBook['series'][number]['bars']> = {};
-        for (const series of live.book.series) {
-          const last = series.bars[series.bars.length - 1];
-          if (last && last.close > 0) prices[series.symbol] = last.close;
-          bars[series.symbol] = series.bars;
-        }
-        const rolled = applyPaperDay({
-          journal,
-          desk,
-          prices,
-          date: live.snapshot.today,
-          capital: desk.capital,
-        });
-        rolled.outcomes = settleForward(rolled.calls, bars);
-        await writeJournal(rolled);
-        await writeSelfCheck(selfCheckFromReport(published.consistency, live.snapshot.generatedAt));
-      } catch (error) {
-        const message = error instanceof Error ? error.message : 'Journal write failed';
-        writeRefreshLog('failure', { trigger: input.trigger, message: message.slice(0, 200) });
-      }
-    }
+    const stored = writeOk ? nextRecord(previous, health, live) : previous;
     writeRefreshLog('end', {
       trigger: input.trigger,
       outcome: health.outcome,
@@ -202,8 +235,7 @@ export async function executeRegimeRefresh(input: {
     });
     return { health, stored };
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Refresh failed';
-    writeRefreshLog('failure', { trigger: input.trigger, message: message.slice(0, 200) });
+    writeRefreshLog('failure', { trigger: input.trigger, message: safeDbMessage(error) });
     throw error;
   }
 }

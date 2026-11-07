@@ -4,12 +4,16 @@ import { enforceRegimePage } from '@/lib/regime/guard';
 import { getRegimeDesk } from '@/lib/regime/load';
 import { ATTEMPT_COOKIE, openAttemptCookie, signRefreshCsrf } from '@/lib/regime/refreshHealth';
 import { REGIME_COOKIE } from '@/lib/regime/session';
-import { readSelfCheck } from '@/lib/regime/selfcheck';
+import { readSelfCheck } from '@/lib/regime/state';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-export default async function RegimePage() {
+export default async function RegimePage({
+  searchParams,
+}: {
+  searchParams?: { settings?: string | string[] };
+}) {
   await enforceRegimePage();
   const secret = process.env.REGIME_SESSION_SECRET;
   const sessionToken = cookies().get(REGIME_COOKIE)?.value ?? 'ip';
@@ -19,10 +23,15 @@ export default async function RegimePage() {
     getRegimeDesk(new Date(), attempt),
     readSelfCheck(),
   ]);
+  const settingsFlag = Array.isArray(searchParams?.settings) ? searchParams?.settings[0] : searchParams?.settings;
+  const settingsNotice = settingsFlag === 'store'
+    ? 'Capital and the aspiration were not saved. Neon did not keep the write, and this server did not keep a local copy.'
+    : null;
   return (
     <RegimeDashboard
       view={{ snapshot, ideas, desk, consistency }}
-      selfCheck={selfCheck}
+      selfCheck={selfCheck.status === 'ok' ? selfCheck.value : null}
+      settingsNotice={settingsNotice}
       health={health}
       attempt={attempt}
       blockReason={blockReason}

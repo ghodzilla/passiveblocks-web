@@ -11,7 +11,7 @@ import {
 } from './improve';
 import type { Journal } from './journal';
 import { getRegimeDesk } from './load';
-import { writeJournal } from './journal';
+import { writeJournal } from './state';
 import type { Bar } from './signals';
 
 function closes(bars: Bar[]): number[] {

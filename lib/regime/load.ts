@@ -5,20 +5,21 @@ import { buildDesk, type Desk } from './desk';
 import type { ConsistencyReport } from './consistency';
 import { publishRegime } from './view';
 import { buildIdeas, type IdeasReport } from './ideas';
-import { readJournal, type Journal } from './journal';
+import type { RegimeSql } from './db';
+import type { Journal } from './journal';
 import { melbourneDate } from './time';
 import type { PriceBook } from './prices';
-import { refreshBlockReason, type RefreshHealth } from './refreshHealth';
-import { readStoredRefresh } from './refreshStore';
+import { refreshBlockReason, unavailableStoreReason, type RefreshHealth } from './refreshHealth';
+import { readJournal, readRefresh } from './state';
 import type { SeriesPoint } from './series';
 import { THEMES } from './themes.config';
 import type { RegimeSnapshot } from './types';
 import { resolveUniverse, type Instrument } from './universe';
 
 /**
- * The owner page reads the encrypted Blob record written by the cron or by
- * Refresh now. The Next.js data cache is not a successful refresh, and a
- * file in /tmp is not durable on Vercel.
+ * The owner page reads the Neon row written by the cron or by Refresh now.
+ * The Next.js data cache is not a successful refresh, and a file in /tmp is
+ * not durable on Vercel.
  */
 export function priceUniverse(watchlist: string | undefined): Instrument[] {
   const base = resolveUniverse(watchlist);
@@ -67,7 +68,7 @@ function emptyBook(now: Date): PriceBook {
   };
 }
 
-export async function getRegimeDesk(now = new Date(), attempt: RefreshHealth | null = null): Promise<{
+export async function getRegimeDesk(now = new Date(), attempt: RefreshHealth | null = null, sql?: RegimeSql | null): Promise<{
   snapshot: RegimeSnapshot;
   ideas: IdeasReport;
   book: PriceBook;
@@ -77,12 +78,15 @@ export async function getRegimeDesk(now = new Date(), attempt: RefreshHealth | n
   health: RefreshHealth | null;
   blockReason: string | null;
 }> {
-  const [stored, journal] = await Promise.all([readStoredRefresh(), readJournal()]);
+  const [refreshRead, journal] = await Promise.all([readRefresh(sql), readJournal(sql)]);
+  const stored = refreshRead.status === 'ok' ? refreshRead.value : null;
   const storedHealth = stored?.health ?? null;
   const health = attempt && (!storedHealth || Date.parse(attempt.attemptedAt) > Date.parse(storedHealth.attemptedAt))
     ? attempt
     : storedHealth;
-  const blockReason = refreshBlockReason(health, now);
+  const blockReason = health
+    ? refreshBlockReason(health, now)
+    : unavailableStoreReason(refreshRead.status === 'ok' ? 'empty' : refreshRead.status);
   const baseSnapshot = stored?.snapshot ?? snapshotFromBundle({
     today: melbourneDate(now),
     generatedAt: now.toISOString(),

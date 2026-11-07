@@ -62,6 +62,7 @@ describe('refresh outcomes', () => {
     assert.equal(health.snapshotSaved, true);
     assert.equal(health.lastFullySuccessfulFetchAt, NOW.toISOString());
     assert.equal(health.lastPersistedAt, NOW.toISOString());
+    assert.equal(health.storage, 'neon');
     assert.equal(refreshBlockReason(health, NOW), null);
     assert.equal(classifyFetch([]), 'failure');
   });
@@ -131,7 +132,7 @@ describe('refresh outcomes', () => {
     assert.equal(health.snapshotSaved, false);
     assert.equal(health.lastFullySuccessfulFetchAt, NOW.toISOString());
     assert.equal(health.lastPersistedAt, previous.lastPersistedAt);
-    assert.match(refreshBlockReason(health, NOW) ?? '', /No durable refresh is saved/);
+    assert.match(refreshBlockReason(health, NOW) ?? '', /not saved in Neon/);
     assert.match(health.note, /durable write failed/);
     const unavailable = settleRefresh({
       now: NOW,
@@ -141,7 +142,7 @@ describe('refresh outcomes', () => {
       writeOk: false,
     });
     assert.equal(unavailable.storage, 'unavailable');
-    assert.match(unavailable.note, /BLOB_READ_WRITE_TOKEN/);
+    assert.match(unavailable.note, /REGIME_DATABASE_URL/);
     assert.match(unavailable.note, /not durable/);
   });
 
@@ -161,9 +162,9 @@ describe('refresh outcomes', () => {
   });
 
   it('does not invent a live desk when nothing durable is saved', async () => {
-    const view = await getRegimeDesk(NOW, null);
+    const view = await getRegimeDesk(NOW, null, null);
     assert.equal(view.health, null);
-    assert.match(view.blockReason ?? '', /No durable refresh is saved/);
+    assert.match(view.blockReason ?? '', /REGIME_DATABASE_URL/);
     assert.equal(view.snapshot.actionable, false);
     assert.equal(view.snapshot.action, 'reduce_risk');
   });

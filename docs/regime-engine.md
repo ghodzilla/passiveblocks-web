@@ -18,10 +18,11 @@ Set these in Vercel (Production and Preview). Do not commit values. This change 
 | `REGIME_WATCHLIST` | No | Comma-separated stock symbols that replace the default watchlist (US megacaps and a liquid ASX 20 slice). Example: `AAPL,BHP.AX`. Leave unset for the built-in list. An empty value shows no stocks. No price API key is required. |
 | `REGIME_CAPITAL` | No | Paper-portfolio capital in dollars. Default `100000`. A value saved on the owner page wins over this. |
 | `REGIME_TARGET_CAGR` | No | Aspiration return as a decimal, default `0.66` (66% a year). The panel labels it “Aspiration (Medallion gross ceiling 1988-2018) — not a forecast”. A saved page value wins. It does not change risk limits. |
-| `BLOB_READ_WRITE_TOKEN` | No | When set with `REGIME_SESSION_SECRET`, the paper journal is encrypted and stored in Vercel Blob. Without it, the journal stays on the local instance and the page says so. |
-| `REGIME_JOURNAL_PATH` | No | Optional file path for the local journal. Default is a temp file. Do not commit it. |
+| `REGIME_DATABASE_URL` | Yes, for a saved desk | Pooled Neon connection string (the hostname contains `-pooler`) for database `regime` on project `dark-credit-39672712`. Server-only. This is not the Supabase `DATABASE_URL`. The app does not set it and does not log it. |
 
-No new environment variable is required for themes, ATR sizing, the dip rule, or the weekly review. The page still runs, and it labels the journal as not durable, when `BLOB_READ_WRITE_TOKEN` is unset. SPY, RSP, SMH, and the crypto pairs come from the same Yahoo chart endpoint. `DFII10` and `DTWEXBGS` use `FRED_API_KEY`. If that key is missing, scarcity stays off and the gap is labeled. IPG3344S is skipped the same way.
+Apply `db/regime/001_durable_state.sql` with the direct connection (hostname without `-pooler`) as `regime_owner` on database `regime`, branch `br-crimson-pine-bbjnrwel`. The file is idempotent and contains no password. After you create a `regime_app` role in the Neon console, run the file again so that role receives row access only. Put the pooled URL for `regime_app` in `REGIME_DATABASE_URL`. The app does not run the migration.
+
+No Blob token and no journal file path are read. Without `REGIME_DATABASE_URL`, the page says so and new buys stay off. Serverless disk is not a fallback. Themes, ATR sizing, and the dip rule do not add another variable. SPY, RSP, SMH, and the crypto pairs come from the same Yahoo chart endpoint. `DFII10` and `DTWEXBGS` use `FRED_API_KEY`. If that key is missing, scarcity stays off and the gap is labeled. IPG3344S is skipped the same way.
 
 `REGIME_OWNER_EMAILS` is no longer read. A Supabase session does not open `/private/regime`.
 
@@ -130,13 +131,13 @@ The paper portfolio starts as cash equal to capital (`REGIME_CAPITAL`, default $
 
 **Buy the dip — confirmed** is a flag, not an order, and the word “confirmed” is used only when that name is actually sized. Otherwise the line reads “Dip spotted — blocked” and names the first failing check. The price pattern is still Risk-On or Transitional, theme on, 10–20% below the 60-day high, and back above the 20-day average. It does not appear in Tightening/Stress or Crisis, and it does not appear while the drawdown halt is active. A Transitional print is still a sit-tight day, so a spotted dip is blocked until the market score is Risk-On and above +0.35.
 
-The daily refresh at 13:15 UTC runs the same consistency rules and stores the result (encrypted in Blob at `regime/selfcheck.json` when the journal secret is set, otherwise on the local instance). A failed check shows a red banner on the page. `GET /api/regime/selfcheck` returns `{ ok, failures, asOf }` and accepts only `Authorization: Bearer CRON_SECRET`. A session or an allowlisted IP does not unlock it.
+The daily refresh at 13:15 UTC runs the same consistency rules and stores the result in the `regime_selfcheck` row. A failed check shows a red banner on the page. `GET /api/regime/selfcheck` returns `{ ok, failures, asOf }` and accepts only `Authorization: Bearer CRON_SECRET`. A session or an allowlisted IP does not unlock it. If Neon cannot be read, that route returns HTTP 500 and does not report the check as passed.
 
 ## Improvement loop
 
 Each daily refresh logs the theme calls, dip flags, and risk entries, and fills in the forward 5-, 20-, and 60-day return once those bars exist. Outcomes that do not exist yet are omitted.
 
-The journal is version 1 JSON. With `BLOB_READ_WRITE_TOKEN` and `REGIME_SESSION_SECRET` it is encrypted (AES-256-GCM, key derived from the session secret) and stored in Vercel Blob at `regime/journal.json`. The blob SDK requires a public blob, so the ciphertext is what gets uploaded. Without the token, the file stays on the instance (or `REGIME_JOURNAL_PATH`) and the page says it is not durable. No Supabase table is used.
+The journal is version 1 JSON in the single `regime_journal` row: paper portfolio, signal calls, forward outcomes, and weekly notes. It is not encrypted into a public blob. It is reachable only with the Neon connection string, and the page still requires the owner session. The Supabase database is not used. Password login is unchanged.
 
 `vercel.json` also registers a weekly cron, Sunday 22:00 UTC:
 
@@ -156,7 +157,7 @@ The owner session can save capital and the aspiration on the page (`POST /api/re
 
 `GET` is the cron. It accepts a regime session, an allowlisted IP, or `CRON_SECRET`. `POST` is the owner **Refresh now** button. The cron secret does not authorize `POST`. The button sends a CSRF token tied to the session cookie, and the route rejects a cross-site origin.
 
-A refresh is saved only in encrypted Vercel Blob at `regime/refresh.json`. That needs `BLOB_READ_WRITE_TOKEN` and `REGIME_SESSION_SECRET` (32 characters or more). This repo does not create the Blob store. Without the token, the page says the attempt was not saved. Serverless disk and memory are not treated as a snapshot. The page does not fill in a live provider call just because the cache is empty.
+A refresh is saved only in Neon Postgres, in `regime_refresh`, together with the journal and the self-check when the mandatory feeds arrived. The write is one transaction. Attempt metadata goes to `regime_refresh_attempts` without prices, and rows past the newest 45 are deleted in that same transaction. This repo does not create the Neon project and does not put `REGIME_DATABASE_URL` into Vercel. The project `dark-credit-39672712` was provisioned empty. Apply `db/regime/001_durable_state.sql` with the direct connection before expecting a save. Without the variable, or if the tables are missing, or if Neon cannot be read, the page says so and does not fetch providers to fill the screen. Serverless disk and memory are not a snapshot. A file left in `/tmp` from an older deploy is ignored.
 
 The saved record keeps the last attempt time, the last fully successful provider fetch, the last saved snapshot, and each feed’s period, fetch time, and error. Mandatory feeds are the Fed assets, the Treasury account, reverse repo, the 2-year yield, the policy rate, and the high-yield spread. If one of those fails, or is past its stale window, or the 13:15 UTC job is overdue, new buys stay off. Optional feeds can fail and the attempt is marked partial. A full success is every requested feed, saved. Each cron start, end, and failure writes one JSON log line with event `regime_refresh` and no prices or secrets. The weekly review is the Sunday job above.
 

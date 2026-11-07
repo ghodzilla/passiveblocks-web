@@ -147,7 +147,7 @@ function RefreshHealthPanel({
         <div>Last attempt: {clock(shown?.attemptedAt ?? null)}</div>
         <div>Last full provider fetch: {clock(shown?.lastFullySuccessfulFetchAt ?? null)}</div>
         <div>Last saved snapshot: {clock(shown?.lastPersistedAt ?? null)}</div>
-        <div>Storage: {shown?.storage ?? 'unavailable'}</div>
+        <div>Storage: {shown?.storage === 'neon' ? 'Neon Postgres' : 'unavailable'}</div>
         <div>This attempt: {shown ? `${shown.outcome} (feeds ${shown.fetchOutcome})` : '—'}</div>
         <div>Saved: {shown?.snapshotSaved ? 'snapshot stored' : 'snapshot not stored'}</div>
       </dl>
@@ -186,6 +186,7 @@ export function RegimeDashboard({
   attempt,
   blockReason,
   csrf,
+  settingsNotice = null,
 }: {
   view: RegimeView;
   selfCheck: SelfCheckRecord | null;
@@ -193,6 +194,7 @@ export function RegimeDashboard({
   attempt: RefreshHealth | null;
   blockReason: string | null;
   csrf: string | null;
+  settingsNotice?: string | null;
 }) {
   const { snapshot, ideas, desk, consistency } = view;
   const generated = melbourneClock(snapshot.generatedAt);
@@ -462,7 +464,7 @@ export function RegimeDashboard({
         </section>
 
         <IdeasPanel ideas={ideas} risk={desk.lines} />
-        <DeskPanels desk={desk} />
+        <DeskPanels desk={desk} settingsNotice={settingsNotice} />
 
         <section className="mt-10 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/20 px-4 py-4">
           <h2 className="text-lg font-bold tracking-tight">Rules, in plain English</h2>
