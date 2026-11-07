@@ -1,4 +1,4 @@
-import { THRESHOLDS } from './constants';
+import { THRESHOLDS, type ComponentId } from './constants';
 import { DIP_LABEL } from './dip';
 import type { GateCheck } from './gates';
 
@@ -180,4 +180,47 @@ export function stanceWords(printStance: string, mapStance: string): { today: st
 
 export function checklistLines(gates: GateCheck[]): string {
   return gates.map((gate) => `${gate.label} ${gate.pass ? 'pass' : 'fail'} — ${gate.detail}`).join('\n');
+}
+
+export function seriesCadence(staleAfterDays: number): string {
+  if (staleAfterDays >= 75) return 'monthly release';
+  if (staleAfterDays >= 21) return 'weekly';
+  return 'daily';
+}
+
+interface DatedRow {
+  id: string;
+  asOf: string | null;
+  label?: string;
+}
+
+function covered(rows: DatedRow[], id: string): string {
+  return rows.find((row) => row.id === id)?.asOf ?? 'not in this download';
+}
+
+/**
+ * Names the period each leg covers. A blended card must not collapse to the
+ * oldest month, or a current daily series looks like the page stopped in that month.
+ */
+export function componentPeriodNote(id: ComponentId, rows: DatedRow[]): string {
+  if (id === 'liquidity') {
+    return `Period covered: Fed assets ${covered(rows, 'WALCL')} (weekly), Treasury account ${covered(rows, 'WTREGEN')} (weekly), reverse repo ${covered(rows, 'RRPONTSYD')} (daily).`;
+  }
+  if (id === 'policy') {
+    const policy = rows.find((row) => row.id === 'DFEDTARU' || row.id === 'DFF');
+    return `Period covered: 2-year yield ${covered(rows, 'DGS2')} (daily), policy rate ${policy?.asOf ?? 'not in this download'} (daily).`;
+  }
+  if (id === 'credit') {
+    return `Period covered: high-yield spread ${covered(rows, 'BAMLH0A0HYM2')} (daily).`;
+  }
+  if (id === 'growth') {
+    return `Period covered: yield curve ${covered(rows, 'T10Y2Y')} (daily). US leading indicator ${covered(rows, 'USALOLITOAASTSAM')} and Australia leading indicator ${covered(rows, 'AUSLOLITOAASTSAM')} are monthly releases. That date is the month being measured. The download time is the snapshot clock at the top of the page.`;
+  }
+  if (id === 'ai') {
+    return `Period covered: S&P 500 ${covered(rows, 'SPY')}, equal-weight ${covered(rows, 'RSP')}, semiconductors ${covered(rows, 'SMH')} (share prices). Semiconductor production ${covered(rows, 'IPG3344S')} is a monthly release. That date is the newest month published. The download time is the snapshot clock at the top of the page.`;
+  }
+  const reports = rows.filter((row) => row.id.startsWith('CFTC-'));
+  if (reports.length === 0) return 'Period covered: no CFTC report in this download.';
+  const listed = reports.map((row) => `${row.label ?? row.id} ${row.asOf ?? 'not in this download'}`).join('; ');
+  return `Period covered: ${listed} (weekly reports).`;
 }

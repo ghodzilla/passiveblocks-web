@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { actionFor, budgetsFor } from './classify';
 import { auditRegime } from './consistency';
-import { plainZ, regimeWaitCopy, todayInOneLine, waitingOnRegime } from './plain';
+import { componentPeriodNote, plainZ, regimeWaitCopy, seriesCadence, todayInOneLine, waitingOnRegime } from './plain';
 import { selfCheckFromReport } from './selfcheck';
 import { buildDesk } from './desk';
 import { ideaGates, verdictFromGates } from './gates';
@@ -281,6 +281,31 @@ describe('plain English', () => {
     assert.match(line, /Crypto and gold are on watch/);
     assert.match(regimeWaitCopy({ action: 'do_nothing', actionable: true, weak: true, regimeLabel: 'Transitional' }), /above \+0\.35 into Risk-On/);
     assert.match(regimeWaitCopy({ action: 'do_nothing', actionable: true, weak: true, regimeLabel: 'Transitional' }), /Transitional/);
+  });
+
+  it('does not label a blended score with only the older monthly date', () => {
+    const rows = [
+      { id: 'T10Y2Y', asOf: '2026-11-06' },
+      { id: 'USALOLITOAASTSAM', asOf: '2026-09-01' },
+      { id: 'AUSLOLITOAASTSAM', asOf: '2026-09-01' },
+      { id: 'SPY', asOf: '2026-11-06' },
+      { id: 'RSP', asOf: '2026-11-06' },
+      { id: 'SMH', asOf: '2026-11-06' },
+      { id: 'IPG3344S', asOf: '2026-09-01' },
+    ];
+    const growth = componentPeriodNote('growth', rows);
+    const ai = componentPeriodNote('ai', rows);
+    assert.match(growth, /2026-11-06/);
+    assert.match(growth, /2026-09-01/);
+    assert.match(growth, /monthly/);
+    assert.match(growth, /month being measured/);
+    assert.match(growth, /snapshot clock/);
+    assert.equal(growth.includes('as of 2026-09-01'), false);
+    assert.match(ai, /2026-11-06/);
+    assert.match(ai, /2026-09-01/);
+    assert.match(ai, /newest month published/);
+    assert.equal(seriesCadence(75), 'monthly release');
+    assert.equal(seriesCadence(10), 'daily');
   });
 
   it('stores a failed daily self-check as not ok', () => {

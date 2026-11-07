@@ -236,6 +236,6 @@ Rules version `regime-v2`. Positive z is risk-on. Each component is a trailing z
 
 `|composite| < 0.35` is the no-edge band: do nothing. Stale or missing liquidity, policy, or credit forces the preservation budget (3% vol, 20% gross, 0 net) and the message “Do nothing / reduce risk”, even if the last label was risk-on.
 
-Stale limits: daily series 10 days, weekly series 21 days, monthly CLI 75 days.
+Stale limits: daily series 10 days, weekly series 21 days, monthly CLI and semiconductor production 75 days. A September observation on those monthly series is the month being measured. The component card lists each leg’s period so a blended score is not labelled with only the oldest month. Only stale liquidity, policy, or credit forces the preservation budget.
 
 Positioning is CFTC legacy futures-only non-commercial net / open interest for E-mini S&P (`13874A`), the 10-year note (`043602`), euro FX (`099741`), and WTI (`067651`), sign-flipped so a crowded long is risk-off. If that feed fails, the gap is shown and the weight is redistributed. VIX is not used as a stand-in.
