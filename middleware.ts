@@ -150,6 +150,7 @@ export async function middleware(request: NextRequest) {
     }
 
     const cronAuthorized = isRegimeApi
+      && (method === 'GET' || method === 'HEAD')
       && (pathname.startsWith('/api/regime/refresh') || pathname.startsWith('/api/regime/improve') || pathname.startsWith('/api/regime/selfcheck'))
       && isCronAuthorized(request.headers.get('authorization'));
 

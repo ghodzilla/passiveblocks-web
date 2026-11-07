@@ -4,6 +4,7 @@ import { FRED_OBSERVATION_START, FRED_SERIES } from './constants';
 import { fetchFredSeries } from './fred';
 import type { PositioningInput } from './model';
 import { fetchYahooBars } from './prices';
+import { providerSource, type ProviderSource } from './refreshHealth';
 import type { SeriesPoint } from './series';
 import { melbourneDate } from './time';
 import type { RegimeSnapshot } from './types';
@@ -19,30 +20,75 @@ async function fredOrEmpty(seriesId: string): Promise<{ points: SeriesPoint[]; e
   }
 }
 
-async function yahooCloses(symbol: string, gaps: string[]): Promise<SeriesPoint[]> {
+async function yahooCloses(symbol: string, gaps: string[], reports: ProviderSource[], fetchedAt: string): Promise<SeriesPoint[]> {
   const result = await fetchYahooBars(symbol);
-  if (result.error || result.bars.length === 0) {
-    gaps.push(result.error ?? `${symbol} returned no prices for the AI gauge.`);
-    return [];
-  }
-  return result.bars.map((bar) => ({ date: bar.date, value: bar.close }));
+  const points = result.error || result.bars.length === 0
+    ? []
+    : result.bars.map((bar) => ({ date: bar.date, value: bar.close }));
+  if (points.length === 0) gaps.push(result.error ?? `${symbol} returned no prices for the AI gauge.`);
+  reports.push(providerSource({
+    id: symbol,
+    label: symbol,
+    mandatory: false,
+    observationDate: points.length ? points[points.length - 1].date : null,
+    fetchedAt,
+    error: points.length ? null : (result.error ?? `${symbol} returned no prices`),
+  }));
+  return points;
+}
+
+function recordFeed(
+  reports: ProviderSource[],
+  id: string,
+  label: string,
+  mandatory: boolean,
+  result: { points: SeriesPoint[]; error: string | null },
+  fetchedAt: string,
+): SeriesPoint[] {
+  reports.push(providerSource({
+    id,
+    label,
+    mandatory,
+    observationDate: result.points.length ? result.points[result.points.length - 1].date : null,
+    fetchedAt,
+    error: result.error,
+  }));
+  return result.points;
 }
 
 export async function fetchRegimeBundle(now: Date): Promise<DataBundle> {
   const today = melbourneDate(now);
   const generatedAt = now.toISOString();
   const gaps: string[] = [];
+  const reports: ProviderSource[] = [];
 
   const [spy, rsp, smh] = await Promise.all([
-    yahooCloses('SPY', gaps),
-    yahooCloses('RSP', gaps),
-    yahooCloses('SMH', gaps),
+    yahooCloses('SPY', gaps, reports, generatedAt),
+    yahooCloses('RSP', gaps, reports, generatedAt),
+    yahooCloses('SMH', gaps, reports, generatedAt),
   ]);
 
   if (!process.env.FRED_API_KEY) {
     gaps.push('FRED_API_KEY is not set. No FRED series were fetched.');
-    const positioning = await fetchPositioning(gaps);
-    return { ...emptyFredBundle(today, generatedAt, gaps, positioning), spy, rsp, smh, capex: [] };
+    for (const series of [
+      [FRED_SERIES.walcl, 'Fed total assets', true],
+      [FRED_SERIES.tga, 'Treasury General Account', true],
+      [FRED_SERIES.rrp, 'Overnight reverse repo', true],
+      [FRED_SERIES.dgs2, 'US 2-year yield', true],
+      [FRED_SERIES.policyUpper, 'Fed funds target upper', true],
+      [FRED_SERIES.hy, 'US high-yield OAS', true],
+    ] as const) {
+      reports.push(providerSource({
+        id: series[0],
+        label: series[1],
+        mandatory: series[2],
+        observationDate: null,
+        fetchedAt: generatedAt,
+        error: 'FRED_API_KEY is not set',
+      }));
+    }
+    const positioning = await fetchPositioning(gaps, reports, generatedAt);
+    return { ...emptyFredBundle(today, generatedAt, gaps, positioning), spy, rsp, smh, capex: [], reports };
   }
 
   const [walcl, tga, rrp, dgs2, policyUpper, hy, curve, usCli, auCli, capex] = await Promise.all([
@@ -58,48 +104,66 @@ export async function fetchRegimeBundle(now: Date): Promise<DataBundle> {
     fredOrEmpty(FRED_SERIES.capex),
   ]);
 
+  const walclPoints = recordFeed(reports, FRED_SERIES.walcl, 'Fed total assets', true, walcl, generatedAt);
+  const tgaPoints = recordFeed(reports, FRED_SERIES.tga, 'Treasury General Account', true, tga, generatedAt);
+  const rrpPoints = recordFeed(reports, FRED_SERIES.rrp, 'Overnight reverse repo', true, rrp, generatedAt);
+  const dgs2Points = recordFeed(reports, FRED_SERIES.dgs2, 'US 2-year yield', true, dgs2, generatedAt);
+  const policyUpperPoints = recordFeed(reports, FRED_SERIES.policyUpper, 'Fed funds target upper', false, policyUpper, generatedAt);
+  const hyPoints = recordFeed(reports, FRED_SERIES.hy, 'US high-yield OAS', true, hy, generatedAt);
+  const curvePoints = recordFeed(reports, FRED_SERIES.curve, 'US 10y−2y curve', false, curve, generatedAt);
+  const usCliPoints = recordFeed(reports, FRED_SERIES.usCli, 'US OECD CLI', false, usCli, generatedAt);
+  const auCliPoints = recordFeed(reports, FRED_SERIES.auCli, 'Australia OECD CLI', false, auCli, generatedAt);
+  const capexPoints = recordFeed(reports, FRED_SERIES.capex, 'Semiconductor industrial production', false, capex, generatedAt);
+
   for (const result of [walcl, tga, rrp, dgs2, hy, curve, usCli, auCli, capex]) {
     if (result.error && result.error !== 'FRED_API_KEY is not set') gaps.push(result.error);
   }
-  let policyRate = policyUpper.points;
+  let policyRate = policyUpperPoints;
   let policyRateSeriesId: string = FRED_SERIES.policyUpper;
-  if (policyUpper.error || policyUpper.points.length === 0) {
+  if (policyUpper.error || policyUpperPoints.length === 0) {
     const effective = await fredOrEmpty(FRED_SERIES.policyEffective);
-    if (effective.points.length > 0) {
-      policyRate = effective.points;
+    const effectivePoints = recordFeed(reports, FRED_SERIES.policyEffective, 'Effective fed funds', true, effective, generatedAt);
+    if (effectivePoints.length > 0 && !effective.error) {
+      policyRate = effectivePoints;
       policyRateSeriesId = FRED_SERIES.policyEffective;
       gaps.push('DFEDTARU unavailable. Policy path uses effective fed funds (DFF) instead of the target upper bound.');
-    } else if (policyUpper.error) {
-      gaps.push(policyUpper.error);
+    } else {
+      const upper = reports.find((item) => item.id === FRED_SERIES.policyUpper);
+      if (upper) upper.mandatory = true;
+      if (policyUpper.error) gaps.push(policyUpper.error);
       if (effective.error) gaps.push(effective.error);
     }
+  } else {
+    const upper = reports.find((item) => item.id === FRED_SERIES.policyUpper);
+    if (upper) upper.mandatory = true;
   }
 
-  const positioning = await fetchPositioning(gaps);
+  const positioning = await fetchPositioning(gaps, reports, generatedAt);
 
   return {
     today,
     generatedAt,
-    walcl: walcl.points,
-    tga: tga.points,
-    rrp: rrp.points,
-    dgs2: dgs2.points,
+    walcl: walclPoints,
+    tga: tgaPoints,
+    rrp: rrpPoints,
+    dgs2: dgs2Points,
     policyRate,
     policyRateSeriesId,
-    hy: hy.points,
-    curve: curve.points,
-    usCli: usCli.points,
-    auCli: auCli.points,
+    hy: hyPoints,
+    curve: curvePoints,
+    usCli: usCliPoints,
+    auCli: auCliPoints,
     positioning,
     spy,
     rsp,
     smh,
-    capex: capex.points,
+    capex: capexPoints,
     gaps,
+    reports,
   };
 }
 
-async function fetchPositioning(gaps: string[]): Promise<PositioningInput[]> {
+async function fetchPositioning(gaps: string[], reports: ProviderSource[], fetchedAt: string): Promise<PositioningInput[]> {
   const results = await Promise.all(
     CFTC_CONTRACTS.map(async (contract) => {
       try {
@@ -118,6 +182,14 @@ async function fetchPositioning(gaps: string[]): Promise<PositioningInput[]> {
   const positioning: PositioningInput[] = [];
   const failures: string[] = [];
   for (const result of results) {
+    reports.push(providerSource({
+      id: `CFTC-${result.contract.id}`,
+      label: result.contract.label,
+      mandatory: false,
+      observationDate: result.netOi.length ? result.netOi[result.netOi.length - 1].date : null,
+      fetchedAt,
+      error: result.error,
+    }));
     if (result.error || result.netOi.length === 0) {
       failures.push(result.error ?? `${result.contract.label} unavailable`);
       continue;
@@ -159,6 +231,7 @@ function emptyFredBundle(
     auCli: [],
     positioning,
     gaps,
+    reports: [],
   };
 }
 

@@ -403,6 +403,7 @@ describe('snapshot', () => {
       auCli: [],
       positioning: [],
       gaps: [],
+      reports: [],
     };
     const snap = snapshotFromBundle(bundle);
     const liquidity = snap.components.find((component) => component.id === 'liquidity');

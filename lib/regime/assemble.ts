@@ -10,6 +10,7 @@ import {
   type SeriesPoint,
 } from './series';
 import { ageInDays } from './stats';
+import type { ProviderSource } from './refreshHealth';
 import type { FreshnessRow, RegimeSnapshot } from './types';
 
 export interface DataBundle {
@@ -33,6 +34,7 @@ export interface DataBundle {
   /** FRED IPG3344S. Empty when the key is missing or the fetch failed. */
   capex?: SeriesPoint[];
   gaps: string[];
+  reports: ProviderSource[];
 }
 
 function fredHref(id: string): string {

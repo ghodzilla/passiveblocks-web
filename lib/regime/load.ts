@@ -1,37 +1,25 @@
-import { revalidateTag, unstable_cache } from 'next/cache';
-import { FRED_OBSERVATION_START } from './constants';
-import { applyPaperDay, buildDesk, settleForward, type Desk } from './desk';
+import { snapshotFromBundle } from './assemble';
+import { actionFor, budgetsFor } from './classify';
+import { FRED_SERIES } from './constants';
+import { buildDesk, type Desk } from './desk';
 import type { ConsistencyReport } from './consistency';
 import { publishRegime } from './view';
-import { buildRegimeSnapshot } from './engine';
-import { fetchFredSeries } from './fred';
 import { buildIdeas, type IdeasReport } from './ideas';
-import { readJournal, writeJournal, type Journal } from './journal';
-import { selfCheckFromReport, writeSelfCheck } from './selfcheck';
-import { fetchPriceBook, type PriceBook } from './prices';
+import type { RegimeSql } from './db';
+import type { Journal } from './journal';
+import { melbourneDate } from './time';
+import type { PriceBook } from './prices';
+import { refreshBlockReason, unavailableStoreReason, type RefreshHealth } from './refreshHealth';
+import { readJournal, readRefresh } from './state';
 import type { SeriesPoint } from './series';
 import { THEMES } from './themes.config';
 import type { RegimeSnapshot } from './types';
 import { resolveUniverse, type Instrument } from './universe';
 
-const TAG = 'regime-snapshot';
-
 /**
- * Regime snapshot cache. This is Next.js unstable_cache (the Vercel runtime
- * cache), not Supabase. Inner FRED and CFTC fetches are no-store. The price
- * book below shares the regime-snapshot tag. Cron drops that tag and rebuilds
- * both. Page views inside the hour reuse the cached snapshot.
- */
-export const getCachedRegimeSnapshot = unstable_cache(
-  async () => buildRegimeSnapshot(new Date()),
-  ['regime-snapshot-v2'],
-  { revalidate: 60 * 60, tags: [TAG] },
-);
-
-/**
- * Daily prices for the playbook and the watchlist. Same tag as the regime
- * snapshot, so the existing cron refreshes both. Inner Yahoo fetches are
- * no-store. A failed symbol is a gap, not a made-up price.
+ * The owner page reads the Neon row written by the cron or by Refresh now.
+ * The Next.js data cache is not a successful refresh, and a file in /tmp is
+ * not durable on Vercel.
  */
 export function priceUniverse(watchlist: string | undefined): Instrument[] {
   const base = resolveUniverse(watchlist);
@@ -56,95 +44,90 @@ export function priceUniverse(watchlist: string | undefined): Instrument[] {
   return base.concat(extras);
 }
 
-export const getCachedPriceBook = unstable_cache(
-  async () => fetchPriceBook(priceUniverse(process.env.REGIME_WATCHLIST)),
-  ['regime-prices-v2'],
-  { revalidate: 60 * 60 * 24, tags: [TAG] },
-);
-
-async function fetchMacro(seriesId: string): Promise<SeriesPoint[]> {
-  if (!process.env.FRED_API_KEY) return [];
-  try {
-    return await fetchFredSeries(seriesId, FRED_OBSERVATION_START);
-  } catch {
-    return [];
-  }
-}
-
-export const getCachedThemeMacro = unstable_cache(
-  async () => {
-    const [realYield, dollar] = await Promise.all([fetchMacro('DFII10'), fetchMacro('DTWEXBGS')]);
-    return { realYield, dollar };
-  },
-  ['regime-theme-macro-v1'],
-  { revalidate: 60 * 60, tags: [TAG] },
-);
-
-async function loadPriceBook(): Promise<PriceBook> {
-  try {
-    return await getCachedPriceBook();
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Price book fetch failed';
-    return { fetchedAt: new Date().toISOString(), series: [], gaps: [message] };
-  }
-}
-
-export async function getRegimeWithIdeas(): Promise<{ snapshot: RegimeSnapshot; ideas: IdeasReport; book: PriceBook }> {
-  const [snapshot, book] = await Promise.all([getCachedRegimeSnapshot(), loadPriceBook()]);
+export function gateSnapshot(snapshot: RegimeSnapshot, reason: string | null): RegimeSnapshot {
+  if (!reason) return snapshot;
+  const decision = actionFor({ actionable: false, weak: snapshot.weak, regime: snapshot.regime });
+  const budget = budgetsFor(snapshot.regime, decision.action);
   return {
-    snapshot,
-    book,
-    ideas: buildIdeas({ snapshot, book, watchlist: process.env.REGIME_WATCHLIST }),
+    ...snapshot,
+    actionable: false,
+    action: decision.action,
+    message: decision.message,
+    modelBudget: budget.modelBudget,
+    effectiveBudget: budget.effectiveBudget,
+    budgetOverridden: budget.budgetOverridden,
+    gaps: snapshot.gaps.includes(reason) ? snapshot.gaps : snapshot.gaps.concat(reason),
   };
 }
 
-export async function getRegimeDesk(): Promise<{ snapshot: RegimeSnapshot; ideas: IdeasReport; book: PriceBook; desk: Desk; journal: Journal; consistency: ConsistencyReport }> {
-  const [{ snapshot, ideas, book }, macro, journal] = await Promise.all([
-    getRegimeWithIdeas(),
-    getCachedThemeMacro().catch(() => ({ realYield: [] as SeriesPoint[], dollar: [] as SeriesPoint[] })),
-    readJournal(),
-  ]);
+function emptyBook(now: Date): PriceBook {
+  return {
+    fetchedAt: now.toISOString(),
+    series: [],
+    gaps: ['No durable price book is saved.'],
+  };
+}
+
+export async function getRegimeDesk(now = new Date(), attempt: RefreshHealth | null = null, sql?: RegimeSql | null): Promise<{
+  snapshot: RegimeSnapshot;
+  ideas: IdeasReport;
+  book: PriceBook;
+  desk: Desk;
+  journal: Journal;
+  consistency: ConsistencyReport;
+  health: RefreshHealth | null;
+  blockReason: string | null;
+}> {
+  const [refreshRead, journal] = await Promise.all([readRefresh(sql), readJournal(sql)]);
+  const stored = refreshRead.status === 'ok' ? refreshRead.value : null;
+  const storedHealth = stored?.health ?? null;
+  const health = attempt && (!storedHealth || Date.parse(attempt.attemptedAt) > Date.parse(storedHealth.attemptedAt))
+    ? attempt
+    : storedHealth;
+  const blockReason = health
+    ? refreshBlockReason(health, now)
+    : unavailableStoreReason(refreshRead.status === 'ok' ? 'empty' : refreshRead.status);
+  const baseSnapshot = stored?.snapshot ?? snapshotFromBundle({
+    today: melbourneDate(now),
+    generatedAt: now.toISOString(),
+    walcl: [],
+    tga: [],
+    rrp: [],
+    dgs2: [],
+    policyRate: [],
+    policyRateSeriesId: FRED_SERIES.policyUpper,
+    hy: [],
+    curve: [],
+    usCli: [],
+    auCli: [],
+    positioning: [],
+    gaps: ['No durable regime snapshot is saved. This page did not fetch a live feed in its place.'],
+    reports: [],
+  });
+  const snapshot = gateSnapshot(baseSnapshot, blockReason);
+  const book = stored?.book ?? emptyBook(now);
+  const realYield: SeriesPoint[] = stored?.realYield ?? [];
+  const dollar: SeriesPoint[] = stored?.dollar ?? [];
+  const ideas = buildIdeas({ snapshot, book, watchlist: process.env.REGIME_WATCHLIST });
   const desk = buildDesk({
     snapshot,
     ideas,
     book,
-    realYield: macro.realYield,
-    dollar: macro.dollar,
+    realYield,
+    dollar,
     journal,
     envCapital: process.env.REGIME_CAPITAL,
     envTarget: process.env.REGIME_TARGET_CAGR,
   });
   const published = publishRegime({ snapshot, ideas, desk });
-  return { snapshot, ideas: published.ideas, book, desk, journal, consistency: published.consistency };
-}
-
-export async function refreshRegimeSnapshot() {
-  revalidateTag(TAG);
-  const view = await getRegimeDesk();
-  try {
-    const prices: Record<string, number> = {};
-    const bars: Record<string, PriceBook['series'][number]['bars']> = {};
-    for (const series of view.book.series) {
-      const last = series.bars[series.bars.length - 1];
-      if (last && last.close > 0) prices[series.symbol] = last.close;
-      bars[series.symbol] = series.bars;
-    }
-    const rolled = applyPaperDay({
-      journal: view.journal,
-      desk: view.desk,
-      prices,
-      date: view.snapshot.today,
-      capital: view.desk.capital,
-    });
-    rolled.outcomes = settleForward(rolled.calls, bars);
-    await writeJournal(rolled);
-  } catch {
-    view.desk.gaps.push('The paper journal was not saved on this refresh.');
-  }
-  try {
-    await writeSelfCheck(selfCheckFromReport(view.consistency, view.snapshot.generatedAt));
-  } catch {
-    view.desk.gaps.push('The daily self-check was not saved.');
-  }
-  return { ...view.snapshot, ideas: view.ideas, desk: view.desk };
+  return {
+    snapshot,
+    ideas: published.ideas,
+    book,
+    desk,
+    journal,
+    consistency: published.consistency,
+    health,
+    blockReason,
+  };
 }

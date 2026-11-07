@@ -12,7 +12,7 @@ function money(value: number): string {
   return new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
 }
 
-export function DeskPanels({ desk }: { desk: Desk }) {
+export function DeskPanels({ desk, settingsNotice = null }: { desk: Desk; settingsNotice?: string | null }) {
   return (
     <>
       <section className="mt-10" id="themes">
@@ -100,6 +100,7 @@ export function DeskPanels({ desk }: { desk: Desk }) {
         <p className="mt-3 text-sm text-[var(--muted)]">
           Paper capital {money(desk.capital)}. Risk per idea {(desk.params.riskPct * 100).toFixed(2)}% of capital. The stop uses {desk.params.atrK} times the average daily range. A dip is {(desk.params.dipLow * 100).toFixed(0)}–{(desk.params.dipHigh * 100).toFixed(0)}% below the 60-day high.
         </p>
+        {settingsNotice ? <p className="mt-3 text-sm text-amber-100">{settingsNotice}</p> : null}
         <form method="POST" action="/api/regime/settings" className="mt-4 flex flex-wrap items-end gap-3">
           <label className="text-xs text-[var(--muted)]">
             Capital

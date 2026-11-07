@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { safeDbMessage } from '@/lib/regime/db';
 import { regimeApiAllowed, regimeDenied } from '@/lib/regime/guard';
 import { runWeeklyReview } from '@/lib/regime/weekly';
 
@@ -17,7 +18,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Weekly review failed';
+    const message = safeDbMessage(error);
     return NextResponse.json({ ok: false, note: message, changes: [] }, {
       status: 500,
       headers: {

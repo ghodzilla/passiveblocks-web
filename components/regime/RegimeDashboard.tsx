@@ -4,6 +4,7 @@ import { DeskPanels } from '@/components/regime/DeskPanels';
 import { IdeasPanel } from '@/components/regime/IdeasPanel';
 import { MODEL_BUDGET, REGIME_LABEL, THRESHOLDS, type RegimeId } from '@/lib/regime/constants';
 import { componentPeriodNote, plainBanner, plainZ, regimeWaitCopy, seriesCadence, todayInOneLine, waitingOnRegime } from '@/lib/regime/plain';
+import type { RefreshHealth } from '@/lib/regime/refreshHealth';
 import type { SelfCheckRecord } from '@/lib/regime/selfcheck';
 import { melbourneClock } from '@/lib/regime/time';
 import type { RegimeView } from '@/lib/regime/view';
@@ -107,11 +108,98 @@ function ZBar({ z }: { z: number | null }) {
   );
 }
 
-export function RegimeDashboard({ view, selfCheck }: { view: RegimeView; selfCheck: SelfCheckRecord | null }) {
+function clock(value: string | null): string {
+  if (!value) return '—';
+  return `${melbourneClock(value)} Australia/Melbourne`;
+}
+
+function RefreshHealthPanel({
+  health,
+  attempt,
+  csrf,
+}: {
+  health: RefreshHealth | null;
+  attempt: RefreshHealth | null;
+  csrf: string | null;
+}) {
+  const shown = health ?? attempt;
+  const browserOnly = Boolean(attempt && (!health || Date.parse(attempt.attemptedAt) > Date.parse(health.attemptedAt)));
+  return (
+    <section className="mb-6 rounded-[var(--radius-xl)] border border-[var(--border)] bg-black/30 px-5 py-4" id="refresh-health" data-refresh-outcome={shown?.outcome ?? 'none'} data-refresh-durable={shown?.durable ? 'yes' : 'no'}>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-sm font-bold">Refresh health</h2>
+        {csrf ? (
+          <form method="POST" action="/api/regime/refresh">
+            <input type="hidden" name="csrf" value={csrf} />
+            <button type="submit" className="rounded-full border border-[var(--accent)]/40 bg-[var(--accent-muted)] px-3 py-1.5 text-xs font-bold text-[var(--accent-soft)]">
+              Refresh now
+            </button>
+          </form>
+        ) : (
+          <p className="text-xs text-[var(--muted)]">Refresh now needs the session secret on the server.</p>
+        )}
+      </div>
+      <p className="mt-2 text-sm text-white/80">{shown?.note ?? 'No refresh has been recorded.'}</p>
+      {browserOnly ? (
+        <p className="mt-2 text-sm text-amber-100">This attempt is in this browser only. It was not written to durable storage. New buys stay off. Any scores below are the last saved snapshot.</p>
+      ) : null}
+      <dl className="mt-3 grid gap-2 text-sm text-[var(--muted)] sm:grid-cols-2">
+        <div>Last attempt: {clock(shown?.attemptedAt ?? null)}</div>
+        <div>Last full provider fetch: {clock(shown?.lastFullySuccessfulFetchAt ?? null)}</div>
+        <div>Last saved snapshot: {clock(shown?.lastPersistedAt ?? null)}</div>
+        <div>Storage: {shown?.storage === 'neon' ? 'Neon Postgres' : 'unavailable'}</div>
+        <div>This attempt: {shown ? `${shown.outcome} (feeds ${shown.fetchOutcome})` : '—'}</div>
+        <div>Saved: {shown?.snapshotSaved ? 'snapshot stored' : 'snapshot not stored'}</div>
+      </dl>
+      {shown && shown.sources.length > 0 ? (
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full min-w-[640px] text-left text-sm">
+            <thead className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
+              <tr>
+                <th className="py-2 pr-3 font-bold">Feed</th>
+                <th className="py-2 pr-3 font-bold">Period</th>
+                <th className="py-2 pr-3 font-bold">Fetched</th>
+                <th className="py-2 font-bold">Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              {shown.sources.map((source) => (
+                <tr key={source.id} className="border-t border-[var(--border)]">
+                  <td className="py-2 pr-3">{source.label}{source.mandatory ? ' · required' : ''}</td>
+                  <td className="py-2 pr-3 font-mono text-xs">{source.observationDate ?? '—'}</td>
+                  <td className="py-2 pr-3 text-xs">{clock(source.fetchedAt)}</td>
+                  <td className="py-2 text-xs text-[var(--status-warn)]">{source.error ?? ''}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
+export function RegimeDashboard({
+  view,
+  selfCheck,
+  health,
+  attempt,
+  blockReason,
+  csrf,
+  settingsNotice = null,
+}: {
+  view: RegimeView;
+  selfCheck: SelfCheckRecord | null;
+  health: RefreshHealth | null;
+  attempt: RefreshHealth | null;
+  blockReason: string | null;
+  csrf: string | null;
+  settingsNotice?: string | null;
+}) {
   const { snapshot, ideas, desk, consistency } = view;
   const generated = melbourneClock(snapshot.generatedAt);
   const failedRules = consistency.rules.filter((rule) => !rule.pass);
-  const banner = plainBanner(snapshot);
+  const banner = plainBanner({ ...snapshot, blockReason });
   const oneLine = todayInOneLine({
     action: snapshot.action,
     actionable: snapshot.actionable,
@@ -180,6 +268,7 @@ export function RegimeDashboard({ view, selfCheck }: { view: RegimeView; selfChe
             </ul>
           </div>
         ) : null}
+        <RefreshHealthPanel health={health} attempt={attempt} csrf={csrf} />
         <p className="text-base font-semibold leading-relaxed text-white sm:text-lg" data-today-line>{oneLine}</p>
         <p className="mb-2 mt-6 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Macro regime engine</p>
         <h1 className={`text-3xl font-extrabold tracking-tight sm:text-4xl ${regimeTone(snapshot.regime)}`}>
@@ -375,7 +464,7 @@ export function RegimeDashboard({ view, selfCheck }: { view: RegimeView; selfChe
         </section>
 
         <IdeasPanel ideas={ideas} risk={desk.lines} />
-        <DeskPanels desk={desk} />
+        <DeskPanels desk={desk} settingsNotice={settingsNotice} />
 
         <section className="mt-10 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/20 px-4 py-4">
           <h2 className="text-lg font-bold tracking-tight">Rules, in plain English</h2>

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
+import { safeDbMessage } from '@/lib/regime/db';
 import { regimeApiAllowed, regimeDenied } from '@/lib/regime/guard';
-import { readJournal, writeJournal } from '@/lib/regime/journal';
+import { readJournal, writeJournal } from '@/lib/regime/state';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -25,6 +26,11 @@ export async function POST(request: Request) {
   const journal = await readJournal();
   journal.settings.capital = capital;
   journal.settings.targetCagr = targetPct / 100;
-  await writeJournal(journal);
+  try {
+    await writeJournal(journal);
+  } catch (error) {
+    console.error(JSON.stringify({ event: 'regime_journal', phase: 'failure', message: safeDbMessage(error) }));
+    return NextResponse.redirect(new URL('/private/regime?settings=store', request.url), 303);
+  }
   return NextResponse.redirect(new URL('/private/regime', request.url), 303);
 }
