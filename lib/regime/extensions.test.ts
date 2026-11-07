@@ -421,6 +421,12 @@ describe('new regime routes stay denied by default', () => {
     const vercel = readFileSync('vercel.json', 'utf8');
     assert.match(middleware, /\/api\/regime\/improve/);
     assert.match(middleware, /\/api\/regime\/selfcheck/);
+    assert.match(middleware, /method === 'GET'/);
+    const refresh = readFileSync('app/api/regime/refresh/route.ts', 'utf8');
+    assert.match(refresh, /export async function POST/);
+    assert.match(refresh, /regimeApiAllowed\(false\)/);
+    assert.match(refresh, /refreshCsrfMatches/);
+    assert.match(refresh, /writeRefreshLog/);
     const selfcheck = readFileSync('app/api/regime/selfcheck/route.ts', 'utf8');
     assert.match(selfcheck, /isCronAuthorized/);
     assert.doesNotMatch(selfcheck, /regimeApiAllowed/);

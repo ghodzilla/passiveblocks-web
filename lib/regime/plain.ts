@@ -139,9 +139,16 @@ export function plainBanner(input: {
   actionable: boolean;
   weak: boolean;
   regimeLabel: string;
+  blockReason?: string | null;
 }): { headline: string; note: string } {
   const band = THRESHOLDS.weakAbsComposite;
   if (!input.actionable) {
+    if (input.blockReason) {
+      return {
+        headline: 'Sit tight. This page does not have a saved, current refresh.',
+        note: input.blockReason,
+      };
+    }
     return {
       headline: 'Sit tight. A core data series is missing or stale, so this is not a day to add risk.',
       note: 'Cash can still be held. The numbers below are the last complete print, not a buy signal.',

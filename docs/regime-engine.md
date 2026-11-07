@@ -154,7 +154,11 @@ The owner session can save capital and the aspiration on the page (`POST /api/re
 
 `GET /api/regime/refresh`
 
-The route is denied unless the caller has a regime session, an allowlisted IP, or presents `CRON_SECRET`. The cron drops the `regime-snapshot` tag, rebuilds the regime snapshot and the price book (including crypto and the theme names), and records that day's paper mark. The weekly review is the Sunday job above.
+`GET` is the cron. It accepts a regime session, an allowlisted IP, or `CRON_SECRET`. `POST` is the owner **Refresh now** button. The cron secret does not authorize `POST`. The button sends a CSRF token tied to the session cookie, and the route rejects a cross-site origin.
+
+A refresh is saved only in encrypted Vercel Blob at `regime/refresh.json`. That needs `BLOB_READ_WRITE_TOKEN` and `REGIME_SESSION_SECRET` (32 characters or more). This repo does not create the Blob store. Without the token, the page says the attempt was not saved. Serverless disk and memory are not treated as a snapshot. The page does not fill in a live provider call just because the cache is empty.
+
+The saved record keeps the last attempt time, the last fully successful provider fetch, the last saved snapshot, and each feed’s period, fetch time, and error. Mandatory feeds are the Fed assets, the Treasury account, reverse repo, the 2-year yield, the policy rate, and the high-yield spread. If one of those fails, or is past its stale window, or the 13:15 UTC job is overdue, new buys stay off. Optional feeds can fail and the attempt is marked partial. A full success is every requested feed, saved. Each cron start, end, and failure writes one JSON log line with event `regime_refresh` and no prices or secrets. The weekly review is the Sunday job above.
 
 Hobby Vercel accounts only allow a cron that runs at most once per day. Both of these schedules fit that limit. This repo does not change the Vercel project settings. The owner applies `vercel.json` on the next deploy.
 
