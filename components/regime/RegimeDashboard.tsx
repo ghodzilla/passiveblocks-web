@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { DeskPanels } from '@/components/regime/DeskPanels';
 import { IdeasPanel } from '@/components/regime/IdeasPanel';
 import { MODEL_BUDGET, REGIME_LABEL, THRESHOLDS, type RegimeId } from '@/lib/regime/constants';
-import { plainBanner, plainZ, regimeWaitCopy, todayInOneLine, waitingOnRegime } from '@/lib/regime/plain';
+import { componentPeriodNote, plainBanner, plainZ, regimeWaitCopy, seriesCadence, todayInOneLine, waitingOnRegime } from '@/lib/regime/plain';
 import type { SelfCheckRecord } from '@/lib/regime/selfcheck';
 import { melbourneClock } from '@/lib/regime/time';
 import type { RegimeView } from '@/lib/regime/view';
@@ -240,7 +240,7 @@ export function RegimeDashboard({ view, selfCheck }: { view: RegimeView; selfChe
         )}
 
         <p className="mt-3 text-xs text-[var(--muted)]">
-          Print {snapshot.printDate ?? '—'} · snapshot {generated} Australia/Melbourne · rules {snapshot.rulesVersion}
+          Downloaded {generated} Australia/Melbourne. Print date {snapshot.printDate ?? '—'} is the latest day used in the score. A date on a series is the period that series covers, not this download. Rules {snapshot.rulesVersion}
           {snapshot.modelBudget ? ` · model budget for this regime ${pct(snapshot.modelBudget.volTarget)} vol / ${pct(snapshot.modelBudget.maxGross)} gross / ${pct(snapshot.modelBudget.maxNet)} net` : ''}
         </p>
 
@@ -261,8 +261,8 @@ export function RegimeDashboard({ view, selfCheck }: { view: RegimeView; selfChe
                 <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">{component.detail}</p>
                 <p className="mt-2 text-[11px] uppercase tracking-wider text-white/35">
                   {component.included ? 'In composite' : 'Excluded'}
-                  {component.asOf ? ` · as of ${component.asOf}` : ''}
                 </p>
+                <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">{componentPeriodNote(component.id, snapshot.freshness)}</p>
                 {component.gap ? (
                   <p className="mt-2 text-sm text-[var(--status-warn)]">{component.included ? 'Note: ' : 'Gap: '}{component.gap}</p>
                 ) : null}
@@ -329,7 +329,7 @@ export function RegimeDashboard({ view, selfCheck }: { view: RegimeView; selfChe
               <thead className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
                 <tr>
                   <th className="py-2 pr-3 font-bold">Series</th>
-                  <th className="py-2 pr-3 font-bold">As of</th>
+                  <th className="py-2 pr-3 font-bold" title="The day or month the statistic describes. Not the download time.">Period covered</th>
                   <th className="py-2 pr-3 font-bold">Age</th>
                   <th className="py-2 pr-3 font-bold">Status</th>
                   <th className="py-2 font-bold">Source</th>
@@ -339,10 +339,18 @@ export function RegimeDashboard({ view, selfCheck }: { view: RegimeView; selfChe
                 {snapshot.freshness.map((row) => (
                   <tr key={row.id} className="border-t border-[var(--border)]">
                     <td className="py-2.5 pr-3">{row.label}</td>
-                    <td className="py-2.5 pr-3 font-mono text-xs">{row.asOf ?? '—'}</td>
+                    <td className="py-2.5 pr-3 font-mono text-xs">
+                      {row.asOf ?? '—'}
+                      <span className="mt-0.5 block font-sans text-[10px] uppercase tracking-wider text-[var(--muted)]">{seriesCadence(row.staleAfterDays)}</span>
+                    </td>
                     <td className="py-2.5 pr-3 font-mono text-xs">{row.ageDays == null ? '—' : `${row.ageDays}d`}</td>
-                    <td className={`py-2.5 pr-3 text-xs font-bold uppercase tracking-wider ${row.stale ? 'text-[var(--status-danger)]' : 'text-[var(--status-ok)]'}`}>
-                      {row.stale ? 'Stale' : 'Fresh'}
+                    <td
+                      className={`py-2.5 pr-3 text-xs font-bold uppercase tracking-wider ${row.stale ? 'text-[var(--status-danger)]' : 'text-[var(--status-ok)]'}`}
+                      title={row.stale
+                        ? `Older than the ${row.staleAfterDays}-day window for this series.`
+                        : `Inside the ${row.staleAfterDays}-day window. The date is the period covered, not the download time.`}
+                    >
+                      {row.stale ? 'Stale' : 'Current'}
                     </td>
                     <td className="py-2.5">
                       <a href={row.href} className="text-[var(--accent-soft)] underline-offset-2 hover:underline" rel="noreferrer">
@@ -355,7 +363,7 @@ export function RegimeDashboard({ view, selfCheck }: { view: RegimeView; selfChe
             </table>
           </div>
           <p className="mt-3 text-xs text-[var(--muted)]">
-            As-of dates in this table are the exchange session or the FRED observation date. They are not shifted into Melbourne. Clocks such as the snapshot time and the price fetch time are Australia/Melbourne.
+            Period covered is the day or month the number describes. The download time is the snapshot clock above. A monthly series shows an older month when that month is the newest release. A row marked Stale is outside the window this model allows. Stale liquidity, the policy rate, the 2-year yield, or the high-yield spread blocks new risk. Share-price dates stay on the exchange session. Melbourne time is used for the snapshot clock.
           </p>
           {snapshot.gaps.length > 0 ? (
             <ul className="mt-4 space-y-2 text-sm text-[var(--status-warn)]">
