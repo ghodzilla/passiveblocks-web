@@ -1,0 +1,358 @@
+[
+ {
+  "series_id": "WALCL",
+  "mandatory": true,
+  "id_provenance": "brief+PROTOCOL.md",
+  "status": 200,
+  "parts": [
+   {
+    "request": {
+     "realtime_start": "2019-01-01",
+     "realtime_end": "9999-12-31",
+     "observation_start": "2019-06-01",
+     "output_type": "1",
+     "file_type": "json",
+     "limit": "100000",
+     "series_id": "WALCL",
+     "offset": "0"
+    },
+    "status": 200,
+    "file": "raw/WALCL_0.json",
+    "sha256": "3886ed0e60532c1f38ca7f826a2b27b31808cdca1cba6236044b9ac040e4618c",
+    "bytes": 38972,
+    "count": 388,
+    "rows": 388,
+    "retrieved_utc": "2026-11-07T22:48:24.743483+00:00"
+   }
+  ],
+  "rows": 388
+ },
+ {
+  "series_id": "WTREGEN",
+  "mandatory": true,
+  "id_provenance": "brief+PROTOCOL.md",
+  "status": 200,
+  "parts": [
+   {
+    "request": {
+     "realtime_start": "2019-01-01",
+     "realtime_end": "9999-12-31",
+     "observation_start": "2019-06-01",
+     "output_type": "1",
+     "file_type": "json",
+     "limit": "100000",
+     "series_id": "WTREGEN",
+     "offset": "0"
+    },
+    "status": 200,
+    "file": "raw/WTREGEN_0.json",
+    "sha256": "f1b9b741438f94951aec7578f9696fe8c93c19f61db5034c231c4dfe40a79473",
+    "bytes": 71644,
+    "count": 724,
+    "rows": 724,
+    "retrieved_utc": "2026-11-07T22:48:29.067974+00:00"
+   }
+  ],
+  "rows": 724
+ },
+ {
+  "series_id": "RRPONTSYD",
+  "mandatory": true,
+  "id_provenance": "brief+PROTOCOL.md",
+  "status": 200,
+  "parts": [
+   {
+    "request": {
+     "realtime_start": "2019-01-01",
+     "realtime_end": "9999-12-31",
+     "observation_start": "2019-06-01",
+     "output_type": "1",
+     "file_type": "json",
+     "limit": "100000",
+     "series_id": "RRPONTSYD",
+     "offset": "0"
+    },
+    "status": 200,
+    "file": "raw/RRPONTSYD_0.json",
+    "sha256": "b73d9cc82c560a0070d09b276ed7b73c8715aede9bf3c2cb87b81ba9d112efd7",
+    "bytes": 189342,
+    "count": 1948,
+    "rows": 1948,
+    "retrieved_utc": "2026-11-07T22:48:33.693109+00:00"
+   }
+  ],
+  "rows": 1948
+ },
+ {
+  "series_id": "DFEDTARU",
+  "mandatory": true,
+  "id_provenance": "brief+PROTOCOL.md",
+  "status": 200,
+  "parts": [
+   {
+    "request": {
+     "series_id": "DFEDTARU",
+     "realtime_start": "2019-01-01",
+     "realtime_end": "2022-12-31",
+     "observation_start": "2019-06-01",
+     "output_type": "1",
+     "file_type": "json",
+     "limit": "100000",
+     "offset": "0"
+    },
+    "status": 200,
+    "file": "raw/DFEDTARU_2019-01-01.json",
+    "sha256": "bd389878ab0e4dc2583ea5137c0a6fff4db6607a5f5d3b1793ba2d1e157b1887",
+    "bytes": 124727,
+    "count": 1310,
+    "rows": 1310,
+    "retrieved_utc": "2026-11-07T22:49:34.267612+00:00"
+   },
+   {
+    "request": {
+     "series_id": "DFEDTARU",
+     "realtime_start": "2023-01-01",
+     "realtime_end": "9999-12-31",
+     "observation_start": "2019-06-01",
+     "output_type": "1",
+     "file_type": "json",
+     "limit": "100000",
+     "offset": "0"
+    },
+    "status": 200,
+    "file": "raw/DFEDTARU_2023-01-01.json",
+    "sha256": "9f2ceab3a1669d215b9b8e5db2d0c6f778ac9a2f6ae502f63fed0d3dca5663a1",
+    "bytes": 258194,
+    "count": 2717,
+    "rows": 2717,
+    "retrieved_utc": "2026-11-07T22:49:37.781460+00:00"
+   }
+  ],
+  "rows": 4027,
+  "note": "chunked real-time windows; intervals clipped at chunk boundary 2022-12-31/2023-01-01"
+ },
+ {
+  "series_id": "DGS2",
+  "mandatory": true,
+  "id_provenance": "brief; production health source id",
+  "status": 200,
+  "parts": [
+   {
+    "request": {
+     "realtime_start": "2019-01-01",
+     "realtime_end": "9999-12-31",
+     "observation_start": "2019-06-01",
+     "output_type": "1",
+     "file_type": "json",
+     "limit": "100000",
+     "series_id": "DGS2",
+     "offset": "0"
+    },
+    "status": 200,
+    "file": "raw/DGS2_0.json",
+    "sha256": "46de552a7d53b61da7fc62208a69a97009fedd7dc05ab01b4debce912d637a74",
+    "bytes": 184275,
+    "count": 1940,
+    "rows": 1940,
+    "retrieved_utc": "2026-11-07T22:48:41.597150+00:00"
+   }
+  ],
+  "rows": 1940
+ },
+ {
+  "series_id": "BAMLH0A0HYM2",
+  "mandatory": true,
+  "id_provenance": "brief+PROTOCOL.md",
+  "status": 200,
+  "parts": [
+   {
+    "request": {
+     "realtime_start": "2019-01-01",
+     "realtime_end": "9999-12-31",
+     "observation_start": "2019-06-01",
+     "output_type": "1",
+     "file_type": "json",
+     "limit": "100000",
+     "series_id": "BAMLH0A0HYM2",
+     "offset": "0"
+    },
+    "status": 200,
+    "file": "raw/BAMLH0A0HYM2_0.json",
+    "sha256": "94b4bc75b3c565b3b122050cee84bfed0d856cc942eca8179e9f6945019e4c26",
+    "bytes": 75668,
+    "count": 794,
+    "rows": 794,
+    "retrieved_utc": "2026-11-07T22:48:45.705138+00:00"
+   }
+  ],
+  "rows": 794
+ },
+ {
+  "series_id": "USALOLITOAASTSAM",
+  "mandatory": false,
+  "id_provenance": "run-availability.ts",
+  "status": 200,
+  "parts": [
+   {
+    "request": {
+     "realtime_start": "2019-01-01",
+     "realtime_end": "9999-12-31",
+     "observation_start": "2019-06-01",
+     "output_type": "1",
+     "file_type": "json",
+     "limit": "100000",
+     "series_id": "USALOLITOAASTSAM",
+     "offset": "0"
+    },
+    "status": 200,
+    "file": "raw/USALOLITOAASTSAM_0.json",
+    "sha256": "e277c9a72f02f058c021dbeaf926440668c24ecd8ef31e568a229672cfad2b4e",
+    "bytes": 368391,
+    "count": 3440,
+    "rows": 3440,
+    "retrieved_utc": "2026-11-07T22:48:51.478833+00:00"
+   }
+  ],
+  "rows": 3440
+ },
+ {
+  "series_id": "IPG3344S",
+  "mandatory": false,
+  "id_provenance": "run-availability.ts",
+  "status": 200,
+  "parts": [
+   {
+    "request": {
+     "realtime_start": "2019-01-01",
+     "realtime_end": "9999-12-31",
+     "observation_start": "2019-06-01",
+     "output_type": "1",
+     "file_type": "json",
+     "limit": "100000",
+     "series_id": "IPG3344S",
+     "offset": "0"
+    },
+    "status": 200,
+    "file": "raw/IPG3344S_0.json",
+    "sha256": "e78e48982e462431ba8f7c80cd11b8e68b144b1dc707f8957700a41566108534",
+    "bytes": 74187,
+    "count": 747,
+    "rows": 747,
+    "retrieved_utc": "2026-11-07T22:48:55.605745+00:00"
+   }
+  ],
+  "rows": 747
+ },
+ {
+  "series_id": "AUSLOLITOAASTSAM",
+  "mandatory": false,
+  "id_provenance": "production saved health source id (not in PR12 files)",
+  "status": 200,
+  "parts": [
+   {
+    "request": {
+     "realtime_start": "2019-01-01",
+     "realtime_end": "9999-12-31",
+     "observation_start": "2019-06-01",
+     "output_type": "1",
+     "file_type": "json",
+     "limit": "100000",
+     "series_id": "AUSLOLITOAASTSAM",
+     "offset": "0"
+    },
+    "status": 200,
+    "file": "raw/AUSLOLITOAASTSAM_0.json",
+    "sha256": "e0774ed6203984029a431074329abac25053d2604dd2ae828b8b51c674c842c6",
+    "bytes": 369408,
+    "count": 3448,
+    "rows": 3448,
+    "retrieved_utc": "2026-11-07T22:49:01.894724+00:00"
+   }
+  ],
+  "rows": 3448
+ },
+ {
+  "series_id": "T10Y2Y",
+  "mandatory": false,
+  "id_provenance": "production saved health source id (not in PR12 files)",
+  "status": 200,
+  "parts": [
+   {
+    "request": {
+     "realtime_start": "2019-01-01",
+     "realtime_end": "9999-12-31",
+     "observation_start": "2019-06-01",
+     "output_type": "1",
+     "file_type": "json",
+     "limit": "100000",
+     "series_id": "T10Y2Y",
+     "offset": "0"
+    },
+    "status": 200,
+    "file": "raw/T10Y2Y_0.json",
+    "sha256": "9665509b717fdb600a53540ce2eec72ff50981183bba9e6ca4ff565002ea0805",
+    "bytes": 184911,
+    "count": 1942,
+    "rows": 1942,
+    "retrieved_utc": "2026-11-07T22:49:06.552280+00:00"
+   }
+  ],
+  "rows": 1942
+ },
+ {
+  "series_id": "DFII10",
+  "mandatory": false,
+  "id_provenance": "production saved health source id (not in PR12 files)",
+  "status": 200,
+  "parts": [
+   {
+    "request": {
+     "realtime_start": "2019-01-01",
+     "realtime_end": "9999-12-31",
+     "observation_start": "2019-06-01",
+     "output_type": "1",
+     "file_type": "json",
+     "limit": "100000",
+     "series_id": "DFII10",
+     "offset": "0"
+    },
+    "status": 200,
+    "file": "raw/DFII10_0.json",
+    "sha256": "f2835ebeddd2f1b3ef1df00ea705f55d1d5f024796fead1caf7a8866b372305a",
+    "bytes": 184821,
+    "count": 1940,
+    "rows": 1940,
+    "retrieved_utc": "2026-11-07T22:49:11.121396+00:00"
+   }
+  ],
+  "rows": 1940
+ },
+ {
+  "series_id": "DTWEXBGS",
+  "mandatory": false,
+  "id_provenance": "production saved health source id (not in PR12 files)",
+  "status": 200,
+  "parts": [
+   {
+    "request": {
+     "realtime_start": "2019-01-01",
+     "realtime_end": "9999-12-31",
+     "observation_start": "2019-06-01",
+     "output_type": "1",
+     "file_type": "json",
+     "limit": "100000",
+     "series_id": "DTWEXBGS",
+     "offset": "0"
+    },
+    "status": 200,
+    "file": "raw/DTWEXBGS_0.json",
+    "sha256": "c88ed0ade0c427ceaac7f673b93a7a02ad473acf620e4bec8f36792465c17036",
+    "bytes": 720004,
+    "count": 7284,
+    "rows": 7284,
+    "retrieved_utc": "2026-11-07T22:49:15.955346+00:00"
+   }
+  ],
+  "rows": 7284
+ }
+]

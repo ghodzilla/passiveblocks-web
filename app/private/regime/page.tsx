@@ -29,10 +29,16 @@ export default async function RegimePage({
     readPaperLog(),
   ]);
   let validation = null;
+  let replay = null;
   try {
     validation = JSON.parse(readFileSync('research/regime-validation/results.json', 'utf8'));
   } catch {
     validation = null;
+  }
+  try {
+    replay = JSON.parse(readFileSync('research/regime-validation/replay-results.json', 'utf8'));
+  } catch {
+    replay = null;
   }
   const settingsFlag = Array.isArray(searchParams?.settings) ? searchParams?.settings[0] : searchParams?.settings;
   const settingsNotice = settingsFlag === 'store'
@@ -50,6 +56,7 @@ export default async function RegimePage({
       auditNote={auditNote}
       evaluation={evaluation}
       validation={validation}
+      replay={replay}
       paperLog={paperLog}
     />
   );

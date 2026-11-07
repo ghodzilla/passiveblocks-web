@@ -48,3 +48,5 @@ Missing-data policy in a replay is the live one: a missing mandatory leg blocks 
 ## What this folder is allowed to conclude
 
 If any required vintage is unavailable, `results.json` says `fullStrategy: "not_validated"` and leaves portfolio metrics null. Restricted notes may describe a downloaded file. They are not the strategy result. Synthetic series are not written here.
+
+The later file `replay-results.json` is the frozen-rule run on the archived prior-day intervals. It does not replace this protocol, and a completed run is not by itself evidence that the hypothesis holds.

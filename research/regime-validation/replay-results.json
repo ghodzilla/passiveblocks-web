@@ -1,0 +1,403 @@
+{
+  "ranAt": "2026-11-07T23:05:34.055Z",
+  "command": "npx tsx research/regime-validation/run-replay.ts",
+  "fullStrategy": "production_rules_on_current_universe",
+  "prices": {
+    "symbols": 58,
+    "gaps": [],
+    "file": "research/regime-validation/prices/book.json"
+  },
+  "panelDates": 536,
+  "tradedSessions": 515,
+  "weekdayHolidaysSkipped": [
+    "2024-11-28",
+    "2024-12-25",
+    "2025-01-01",
+    "2025-01-09",
+    "2025-01-20",
+    "2025-02-17",
+    "2025-04-18",
+    "2025-05-26",
+    "2025-06-19",
+    "2025-07-04",
+    "2025-09-01",
+    "2025-11-27",
+    "2025-12-25",
+    "2026-01-01",
+    "2026-01-19",
+    "2026-02-16",
+    "2026-04-03",
+    "2026-05-25",
+    "2026-06-19",
+    "2026-07-03",
+    "2026-09-07"
+  ],
+  "taxes": "excluded",
+  "currency": "AUD",
+  "costBps": 10,
+  "cashYieldBps": 0,
+  "universe": "Current survivor list. Hypothetical frozen-rule lookback. Pre-exposed to the 2021–2026 paths already published.",
+  "clock": "Decision instant is 13:15:00Z on a SPY session. US and crypto signals hide that session’s close and fill it. ASX signals may use the session that has already closed, and the ASX fill is the next ASX session. Weekdays with no SPY bar are holidays and are not trades. Date.now is not the engine clock.",
+  "experiment": "frozen_rule_diagnostic",
+  "restricted": [
+    "CFTC positioning omitted. No release-dated history was in the archive, and today’s book was not copied back.",
+    "Universe is the current survivor list, a hypothetical, and the window is inside the already examined 2021–2026 sample.",
+    "AUD cash book. A hold keeps the shares. A confirmed line adds a tranche of its weight times current equity. Stops use the local price. The live ledger does not convert FX.",
+    "FRED observation_start on the fetch was 2019-06-01. The 756-day and 156-week windows used here start after that date. The monthly CLI and capex series do reach back to 2019-06-01, so their 60-month window includes the start of the file.",
+    "DFEDTARU intervals are joined across the 2022-12-31 and 2023-01-01 realtime chunks. A row whose rt_start is the chunk boundary is the copy that contains the vintage, not a claim about the original release minute.",
+    "The three dates with fewer than 252 credit observations are not actionable. Defensive names the lean still includes can still be bought. On 2024-10-18 that book was about 10% invested."
+  ],
+  "reason": "Prior-day ALFRED intervals were rebuilt with rt_start <= vintage <= rt_end and observation date <= vintage. The production snapshot and desk ran on those inputs. Credit below 252 observations fail-closes. A z-score from 252 observations is the engine rule; the 756-observation window is the full lookback, not a second gate.",
+  "audit": [
+    {
+      "date": "2024-10-18",
+      "vintage": "2024-10-17",
+      "hyCount": 249,
+      "hyLast": "2024-10-17",
+      "dgs2": 1346
+    },
+    {
+      "date": "2024-10-23",
+      "vintage": "2024-10-22",
+      "hyCount": 252,
+      "hyLast": "2024-10-22",
+      "dgs2": 1349
+    },
+    {
+      "date": "2026-09-25",
+      "vintage": "2026-09-24",
+      "hyCount": 756,
+      "hyLast": "2026-09-24",
+      "dgs2": 1829
+    },
+    {
+      "date": "2026-11-06",
+      "vintage": "2026-11-05",
+      "hyCount": 786,
+      "hyLast": "2026-11-05",
+      "dgs2": 1858
+    }
+  ],
+  "coverage": {
+    "weekdayDecisions": 536,
+    "spySessions": 515,
+    "replayedSessions": 514,
+    "droppedNoLaterAsxSession": [
+      "2026-11-06"
+    ],
+    "holidaysSkipped": [
+      "2024-11-28",
+      "2024-12-25",
+      "2025-01-01",
+      "2025-01-09",
+      "2025-01-20",
+      "2025-02-17",
+      "2025-04-18",
+      "2025-05-26",
+      "2025-06-19",
+      "2025-07-04",
+      "2025-09-01",
+      "2025-11-27",
+      "2025-12-25",
+      "2026-01-01",
+      "2026-01-19",
+      "2026-02-16",
+      "2026-04-03",
+      "2026-05-25",
+      "2026-06-19",
+      "2026-07-03",
+      "2026-09-07"
+    ],
+    "creditBelow252": [
+      "2024-10-18",
+      "2024-10-21",
+      "2024-10-22"
+    ],
+    "creditShortOf756": 481,
+    "firstFullCreditWindow": "2026-09-25"
+  },
+  "production": {
+    "label": "production_rules",
+    "missingExecutions": [],
+    "missingCount": 0,
+    "omissionsSample": [
+      "CFTC positioning is omitted. Today’s positioning is not copied into this date."
+    ],
+    "failClosedDays": 3,
+    "failClosedDates": [
+      "2024-10-18",
+      "2024-10-21",
+      "2024-10-22"
+    ],
+    "heldSymbols": [
+      "AAA.AX",
+      "AAPL",
+      "AMZN",
+      "ANZ.AX",
+      "AVGO",
+      "BHP.AX",
+      "BILL.AX",
+      "BRK-B",
+      "BTC-USD",
+      "CBA.AX",
+      "DLR",
+      "EQIX",
+      "FXA",
+      "GLD",
+      "GOLD.AX",
+      "GOOGL",
+      "IEF",
+      "IOZ.AX",
+      "IWM",
+      "LLY",
+      "META",
+      "MQG.AX",
+      "MSFT",
+      "MTUM",
+      "NAB.AX",
+      "NVDA",
+      "QQQ",
+      "SHY",
+      "SMH",
+      "SOL-USD",
+      "SPY",
+      "TLS.AX",
+      "TSLA",
+      "USMV",
+      "UUP",
+      "VAF.AX",
+      "VAS.AX",
+      "VGS.AX",
+      "WBC.AX",
+      "WES.AX",
+      "XLB",
+      "XLC",
+      "XLE",
+      "XLF",
+      "XLI",
+      "XLK",
+      "XLP",
+      "XLRE",
+      "XLU",
+      "XLV",
+      "XLY"
+    ],
+    "exposureByAction": {
+      "reduce_risk": {
+        "days": 13,
+        "averageGross": 0.754930656684554
+      },
+      "do_nothing": {
+        "days": 435,
+        "averageGross": 0.9452872718316987
+      },
+      "risk_budget_open": {
+        "days": 66,
+        "averageGross": 0.994949350385887
+      }
+    },
+    "regimeCounts": {
+      "none": 3,
+      "transitional": 434,
+      "risk_on": 67,
+      "tightening": 10
+    },
+    "summary": {
+      "start": "2024-10-18",
+      "end": "2026-11-05",
+      "observations": 514,
+      "dayCount": 748,
+      "cagr": 0.11450058652204587,
+      "maxDrawdown": 0.24151298321452747,
+      "sharpe": 0.7336767707124172,
+      "riskFree": 0,
+      "dayBasis": "Unit-NAV changes between decision dates. Annualised with 365.25 divided by the average gap of 1.46 days. Risk-free rate is 0 because cash yield is 0. Dependence-aware standard errors are not computed.",
+      "averageGross": 0.9468496476831847,
+      "timeInMarket": 1,
+      "turnover": 2.385937635445663,
+      "trades": 49,
+      "wealthEnd": 26.639595948895778,
+      "unitNavEnd": 1.2484519833886685,
+      "firstHalfDrawdown": 0.0810475415085328,
+      "secondHalfDrawdown": 0.24151298321452747,
+      "firstHalfCagr": 0.31130805400649697,
+      "secondHalfCagr": -0.052634216784739674,
+      "returnPerDrawdown": 0.47409702367983686,
+      "preExposed": true
+    }
+  },
+  "priceOnlyDiagnostic": {
+    "label": "price_only_diagnostic",
+    "missingExecutions": 0,
+    "heldSymbols": [
+      "AAPL",
+      "AMZN",
+      "ANZ.AX",
+      "AVGO",
+      "BHP.AX",
+      "BRK-B",
+      "CBA.AX",
+      "CSL.AX",
+      "FXA",
+      "GOOGL",
+      "IOZ.AX",
+      "IWM",
+      "LLY",
+      "META",
+      "MQG.AX",
+      "MSFT",
+      "MTUM",
+      "NAB.AX",
+      "NVDA",
+      "QQQ",
+      "SPY",
+      "TLS.AX",
+      "TSLA",
+      "VAS.AX",
+      "VGS.AX",
+      "WBC.AX",
+      "WES.AX",
+      "XLB",
+      "XLC",
+      "XLE",
+      "XLF",
+      "XLI",
+      "XLK",
+      "XLY"
+    ],
+    "summary": {
+      "start": "2024-10-18",
+      "end": "2026-11-05",
+      "observations": 514,
+      "dayCount": 748,
+      "cagr": -0.03556461275216105,
+      "maxDrawdown": 0.2564851628301622,
+      "sharpe": -0.17038105339286974,
+      "riskFree": 0,
+      "dayBasis": "Unit-NAV changes between decision dates. Annualised with 365.25 divided by the average gap of 1.46 days. Risk-free rate is 0 because cash yield is 0. Dependence-aware standard errors are not computed.",
+      "averageGross": 0.9542939711057199,
+      "timeInMarket": 1,
+      "turnover": 2.371304898381457,
+      "trades": 91,
+      "wealthEnd": 25.25344893133809,
+      "unitNavEnd": 0.9281273797011695,
+      "firstHalfDrawdown": 0.23996032145045365,
+      "secondHalfDrawdown": 0.10070734196532316,
+      "firstHalfCagr": -0.02655988616352467,
+      "secondHalfCagr": -0.03348783530633748,
+      "returnPerDrawdown": -0.13866148185620783,
+      "preExposed": true
+    }
+  },
+  "staticSixtyForty": {
+    "label": "static_60_spy_40_cash",
+    "summary": {
+      "start": "2024-10-18",
+      "end": "2026-11-05",
+      "observations": 514,
+      "dayCount": 748,
+      "cagr": 0.0681321367423755,
+      "maxDrawdown": 0.10896598720502057,
+      "sharpe": 0.7127227399980127,
+      "riskFree": 0,
+      "dayBasis": "Unit-NAV changes between decision dates. Annualised with 365.25 divided by the average gap of 1.46 days. Risk-free rate is 0 because cash yield is 0. Dependence-aware standard errors are not computed.",
+      "averageGross": 0.6000000000000005,
+      "timeInMarket": 1,
+      "turnover": 1.433693809797447,
+      "trades": 514,
+      "wealthEnd": 27.474080472123745,
+      "unitNavEnd": 1.1438282014306722,
+      "firstHalfDrawdown": 0.10896598720502057,
+      "secondHalfDrawdown": 0.07299807385019262,
+      "firstHalfCagr": 0.12272863044246551,
+      "secondHalfCagr": 0.014920516183887012,
+      "returnPerDrawdown": 0.6252605835083587,
+      "preExposed": true
+    }
+  },
+  "spySameContributions": {
+    "label": "spy_same_contributions",
+    "summary": {
+      "start": "2024-10-18",
+      "end": "2026-11-05",
+      "observations": 514,
+      "dayCount": 748,
+      "cagr": 0.11074638534324288,
+      "maxDrawdown": 0.17674269100386528,
+      "sharpe": 0.7168205029657495,
+      "riskFree": 0,
+      "dayBasis": "Unit-NAV changes between decision dates. Annualised with 365.25 divided by the average gap of 1.46 days. Risk-free rate is 0 because cash yield is 0. Dependence-aware standard errors are not computed.",
+      "averageGross": 1,
+      "timeInMarket": 1,
+      "turnover": 1,
+      "trades": 1,
+      "wealthEnd": 28.42169409235151,
+      "unitNavEnd": 1.2387418913863886,
+      "firstHalfDrawdown": 0.17674269100386528,
+      "secondHalfDrawdown": 0.11939505318565537,
+      "firstHalfCagr": 0.20428848432347535,
+      "secondHalfCagr": 0.02234198278190025,
+      "returnPerDrawdown": 0.6265966910101018,
+      "preExposed": true
+    }
+  },
+  "spyLumpSum": {
+    "label": "spy_buy_and_hold",
+    "funding": "One unit at the first session. No later contributions. Different funding from the monthly paths.",
+    "summary": {
+      "start": "2024-10-18",
+      "end": "2026-11-05",
+      "observations": 514,
+      "dayCount": 748,
+      "cagr": 0.11074638534324288,
+      "maxDrawdown": 0.17674269100386528,
+      "sharpe": 0.7168205029657495,
+      "riskFree": 0,
+      "dayBasis": "Unit-NAV changes between decision dates. Annualised with 365.25 divided by the average gap of 1.46 days. Risk-free rate is 0 because cash yield is 0. Dependence-aware standard errors are not computed.",
+      "averageGross": 1,
+      "timeInMarket": 1,
+      "turnover": 1,
+      "trades": 1,
+      "wealthEnd": 1.2387418913863886,
+      "unitNavEnd": 1.2387418913863886,
+      "firstHalfDrawdown": 0.17674269100386528,
+      "secondHalfDrawdown": 0.11939505318565537,
+      "firstHalfCagr": 0.20428848432347535,
+      "secondHalfCagr": 0.02234198278190025,
+      "returnPerDrawdown": 0.6265966910101018,
+      "preExposed": true
+    }
+  },
+  "hypotheses": {
+    "h1": "unsupported",
+    "h2": "unsupported",
+    "ratios": {
+      "production": {
+        "full": 0.47409702367983686,
+        "firstHalf": 3.8410548699212796,
+        "secondHalf": -0.21793535106966302
+      },
+      "sixtyFortyMonthly": {
+        "full": 0.6252605835083587,
+        "firstHalf": 1.1263021938354985,
+        "secondHalf": 0.20439602577058463
+      },
+      "spyMonthly": {
+        "full": 0.6265966910101018,
+        "firstHalf": 1.1558525173694887,
+        "secondHalf": 0.18712653653379763
+      },
+      "spyBuyAndHold": {
+        "full": 0.6265966910101018,
+        "firstHalf": 1.1558525173694887,
+        "secondHalf": 0.18712653653379763
+      }
+    },
+    "timeInMarket": {
+      "production": 1,
+      "priceOnly": 1
+    },
+    "because": "H1 asks for a higher net AUD return per unit of drawdown than buy-and-hold SPY and monthly 60/40 SPY, on the full span and on each half. H2 asks whether forcing the macro gate open changes the share of days with a position. Thresholds were not fit to this span. The span was already examined."
+  },
+  "metricsNote": "CAGR, drawdown, and Sharpe use unit NAV after stripping the shared monthly contribution. Wealth includes that contribution and is not the drawdown. Monthly SPY and buy-and-hold SPY share a unit NAV because a contribution adds units and does not change NAV. Their ending wealth differs. The sample is pre-exposed. This is not an out-of-sample profitability result."
+}

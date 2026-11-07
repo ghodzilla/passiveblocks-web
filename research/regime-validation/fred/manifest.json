@@ -1,0 +1,318 @@
+{
+ "generated_utc": "2026-11-07T22:50:03.077281+00:00",
+ "rule": "vintage = decision - 1 calendar day; decision dates = weekdays (exchange holidays NOT removed)",
+ "min_obs": {
+  "WALCL": 169,
+  "WTREGEN": 169,
+  "RRPONTSYD": null,
+  "DFEDTARU": null,
+  "DGS2": 252,
+  "BAMLH0A0HYM2": 252
+ },
+ "full_obs": {
+  "DGS2": 756,
+  "BAMLH0A0HYM2": 756
+ },
+ "series": {
+  "WALCL": {
+   "dates": 536,
+   "empty": [],
+   "below_min": [],
+   "below_full": 0,
+   "max_obs_after_vintage": 0,
+   "below_min_count": 0,
+   "first_ok": null,
+   "empty_count": 0,
+   "mandatory": true,
+   "id_provenance": "brief+PROTOCOL.md",
+   "interval_rows": 388,
+   "rows_date_after_rt_end": 0
+  },
+  "WTREGEN": {
+   "dates": 536,
+   "empty": [],
+   "below_min": [],
+   "below_full": 0,
+   "max_obs_after_vintage": 0,
+   "below_min_count": 0,
+   "first_ok": null,
+   "empty_count": 0,
+   "mandatory": true,
+   "id_provenance": "brief+PROTOCOL.md",
+   "interval_rows": 724,
+   "rows_date_after_rt_end": 0
+  },
+  "RRPONTSYD": {
+   "dates": 536,
+   "empty": [],
+   "below_min": [],
+   "below_full": 0,
+   "max_obs_after_vintage": 0,
+   "below_min_count": 0,
+   "first_ok": null,
+   "empty_count": 0,
+   "mandatory": true,
+   "id_provenance": "brief+PROTOCOL.md",
+   "interval_rows": 1862,
+   "rows_date_after_rt_end": 0
+  },
+  "DFEDTARU": {
+   "dates": 536,
+   "empty": [],
+   "below_min": [],
+   "below_full": 0,
+   "max_obs_after_vintage": 0,
+   "below_min_count": 0,
+   "first_ok": null,
+   "empty_count": 0,
+   "mandatory": true,
+   "id_provenance": "brief+PROTOCOL.md",
+   "interval_rows": 4027,
+   "rows_date_after_rt_end": 0
+  },
+  "DGS2": {
+   "dates": 536,
+   "empty": [],
+   "below_min": [],
+   "below_full": 0,
+   "max_obs_after_vintage": 0,
+   "below_min_count": 0,
+   "first_ok": null,
+   "empty_count": 0,
+   "mandatory": true,
+   "id_provenance": "brief; production health source id",
+   "interval_rows": 1859,
+   "rows_date_after_rt_end": 0
+  },
+  "BAMLH0A0HYM2": {
+   "dates": 536,
+   "empty": [],
+   "below_min": [
+    "2024-10-18",
+    "2024-10-21",
+    "2024-10-22",
+    "2024-10-21",
+    "2024-10-22"
+   ],
+   "below_full": 505,
+   "max_obs_after_vintage": 0,
+   "below_min_count": 3,
+   "first_ok": null,
+   "empty_count": 0,
+   "mandatory": true,
+   "id_provenance": "brief+PROTOCOL.md",
+   "interval_rows": 786,
+   "rows_date_after_rt_end": 0
+  },
+  "USALOLITOAASTSAM": {
+   "dates": 536,
+   "empty": [],
+   "below_min": [],
+   "below_full": 0,
+   "max_obs_after_vintage": 0,
+   "below_min_count": 0,
+   "first_ok": null,
+   "empty_count": 0,
+   "mandatory": false,
+   "id_provenance": "run-availability.ts",
+   "interval_rows": 3440,
+   "rows_date_after_rt_end": 0
+  },
+  "IPG3344S": {
+   "dates": 536,
+   "empty": [],
+   "below_min": [],
+   "below_full": 0,
+   "max_obs_after_vintage": 0,
+   "below_min_count": 0,
+   "first_ok": null,
+   "empty_count": 0,
+   "mandatory": false,
+   "id_provenance": "run-availability.ts",
+   "interval_rows": 747,
+   "rows_date_after_rt_end": 0
+  },
+  "AUSLOLITOAASTSAM": {
+   "dates": 536,
+   "empty": [],
+   "below_min": [],
+   "below_full": 0,
+   "max_obs_after_vintage": 0,
+   "below_min_count": 0,
+   "first_ok": null,
+   "empty_count": 0,
+   "mandatory": false,
+   "id_provenance": "production saved health source id (not in PR12 files)",
+   "interval_rows": 3448,
+   "rows_date_after_rt_end": 0
+  },
+  "T10Y2Y": {
+   "dates": 536,
+   "empty": [],
+   "below_min": [],
+   "below_full": 0,
+   "max_obs_after_vintage": 0,
+   "below_min_count": 0,
+   "first_ok": null,
+   "empty_count": 0,
+   "mandatory": false,
+   "id_provenance": "production saved health source id (not in PR12 files)",
+   "interval_rows": 1862,
+   "rows_date_after_rt_end": 0
+  },
+  "DFII10": {
+   "dates": 536,
+   "empty": [],
+   "below_min": [],
+   "below_full": 0,
+   "max_obs_after_vintage": 0,
+   "below_min_count": 0,
+   "first_ok": null,
+   "empty_count": 0,
+   "mandatory": false,
+   "id_provenance": "production saved health source id (not in PR12 files)",
+   "interval_rows": 1859,
+   "rows_date_after_rt_end": 0
+  },
+  "DTWEXBGS": {
+   "dates": 536,
+   "empty": [],
+   "below_min": [],
+   "below_full": 0,
+   "max_obs_after_vintage": 0,
+   "below_min_count": 0,
+   "first_ok": null,
+   "empty_count": 0,
+   "mandatory": false,
+   "id_provenance": "production saved health source id (not in PR12 files)",
+   "interval_rows": 7202,
+   "rows_date_after_rt_end": 0
+  }
+ },
+ "missing_series": [],
+ "not_fetched": {
+  "DGS10": "not named in PROTOCOL.md/run-availability.ts; not fetched"
+ },
+ "files": {
+  "acquire.py": {
+   "bytes": 2961,
+   "sha256": "d38a99fd72416c0b4ccab3c918bf33b1fbd81774379e1288e394a454bb221bd8"
+  },
+  "acquire_dfedtaru.py": {
+   "bytes": 1761,
+   "sha256": "9d1ca63d647410bf22876b16c5f813ed70ae304170aad2688a3c65b42ac273ee"
+  },
+  "build_panel.py": {
+   "bytes": 3067,
+   "sha256": "a9dccce467884bc6d9fe6510862ad289b7ddec69f7341b055f38e007c9b21c9c"
+  },
+  "fetch_meta.json": {
+   "bytes": 8801,
+   "sha256": "a3035232bb7e02c5a19ede21ed697b8a8ddfcf4134753eb348b39b61e497da3a"
+  },
+  "intervals_AUSLOLITOAASTSAM.jsonl": {
+   "bytes": 351891,
+   "sha256": "f7e631ec522440690b153c5d8a3713307e8f3b648cd0632542f01c6a954e927e"
+  },
+  "intervals_BAMLH0A0HYM2.jsonl": {
+   "bytes": 71422,
+   "sha256": "d99c19ad3725d1530645480566024f3d1bda27e36a0d831f901a866c767cbef3"
+  },
+  "intervals_DFEDTARU.jsonl": {
+   "bytes": 454853,
+   "sha256": "4fb76e73915e0a3291750b7868d8ead215314b7ff5562a49ed2881e2114c5f3e"
+  },
+  "intervals_DFII10.jsonl": {
+   "bytes": 174844,
+   "sha256": "551e1212c651bb54ccafbe42208dba26349bc7d348ef4fb7fde11804e44c9241"
+  },
+  "intervals_DGS2.jsonl": {
+   "bytes": 174298,
+   "sha256": "473f6577bf43c339f11700be1dfaa9c5bd1cb97042084f335a52c6d87d3c9ba9"
+  },
+  "intervals_DTWEXBGS.jsonl": {
+   "bytes": 683307,
+   "sha256": "582546effb80ad3bd63ce4144cb119aef07964ed58ff371a67fc63769b6ceb95"
+  },
+  "intervals_IPG3344S.jsonl": {
+   "bytes": 70176,
+   "sha256": "bd963e51ddbeed0c58ba58fcb2cc5ef49b24f7b4d88d7cf02c4218648a8c5f94"
+  },
+  "intervals_RRPONTSYD.jsonl": {
+   "bytes": 179325,
+   "sha256": "5f1ae42e8dc1161ab7ee42d6f01ef11899843d1db51ef0d1391435802f11e14e"
+  },
+  "intervals_T10Y2Y.jsonl": {
+   "bytes": 174924,
+   "sha256": "0e25716efc947740c68c1adf82ddb68ba9a3c55e85d0ba723bac0c8a53daaa7d"
+  },
+  "intervals_USALOLITOAASTSAM.jsonl": {
+   "bytes": 350914,
+   "sha256": "4a90964f8de3ef5d184ddb7f95a3b73acafd55e87024731cbc1ea93bd3108c75"
+  },
+  "intervals_WALCL.jsonl": {
+   "bytes": 36756,
+   "sha256": "e952c738b2d0496ba820587aa90f5209402babeaa8bb5dcc079c5d8c3db10fa6"
+  },
+  "intervals_WTREGEN.jsonl": {
+   "bytes": 67748,
+   "sha256": "e7b3367ed628d95d85d2f233f912ca68117eb88f2ab3ef42a71d91904e2fd8af"
+  },
+  "panel_asof_summary.jsonl": {
+   "bytes": 727231,
+   "sha256": "9f9205f6f3dea8e3a2fa88f1f2a414169fabb9496ba8762f6c83401e55c53c3b"
+  },
+  "raw/AUSLOLITOAASTSAM_0.json": {
+   "bytes": 369408,
+   "sha256": "e0774ed6203984029a431074329abac25053d2604dd2ae828b8b51c674c842c6"
+  },
+  "raw/BAMLH0A0HYM2_0.json": {
+   "bytes": 75668,
+   "sha256": "94b4bc75b3c565b3b122050cee84bfed0d856cc942eca8179e9f6945019e4c26"
+  },
+  "raw/DFEDTARU_2019-01-01.json": {
+   "bytes": 124727,
+   "sha256": "bd389878ab0e4dc2583ea5137c0a6fff4db6607a5f5d3b1793ba2d1e157b1887"
+  },
+  "raw/DFEDTARU_2023-01-01.json": {
+   "bytes": 258194,
+   "sha256": "9f2ceab3a1669d215b9b8e5db2d0c6f778ac9a2f6ae502f63fed0d3dca5663a1"
+  },
+  "raw/DFII10_0.json": {
+   "bytes": 184821,
+   "sha256": "f2835ebeddd2f1b3ef1df00ea705f55d1d5f024796fead1caf7a8866b372305a"
+  },
+  "raw/DGS2_0.json": {
+   "bytes": 184275,
+   "sha256": "46de552a7d53b61da7fc62208a69a97009fedd7dc05ab01b4debce912d637a74"
+  },
+  "raw/DTWEXBGS_0.json": {
+   "bytes": 720004,
+   "sha256": "c88ed0ade0c427ceaac7f673b93a7a02ad473acf620e4bec8f36792465c17036"
+  },
+  "raw/IPG3344S_0.json": {
+   "bytes": 74187,
+   "sha256": "e78e48982e462431ba8f7c80cd11b8e68b144b1dc707f8957700a41566108534"
+  },
+  "raw/RRPONTSYD_0.json": {
+   "bytes": 189342,
+   "sha256": "b73d9cc82c560a0070d09b276ed7b73c8715aede9bf3c2cb87b81ba9d112efd7"
+  },
+  "raw/T10Y2Y_0.json": {
+   "bytes": 184911,
+   "sha256": "9665509b717fdb600a53540ce2eec72ff50981183bba9e6ca4ff565002ea0805"
+  },
+  "raw/USALOLITOAASTSAM_0.json": {
+   "bytes": 368391,
+   "sha256": "e277c9a72f02f058c021dbeaf926440668c24ecd8ef31e568a229672cfad2b4e"
+  },
+  "raw/WALCL_0.json": {
+   "bytes": 38972,
+   "sha256": "3886ed0e60532c1f38ca7f826a2b27b31808cdca1cba6236044b9ac040e4618c"
+  },
+  "raw/WTREGEN_0.json": {
+   "bytes": 71644,
+   "sha256": "f1b9b741438f94951aec7578f9696fe8c93c19f61db5034c231c4dfe40a79473"
+  }
+ }
+}
