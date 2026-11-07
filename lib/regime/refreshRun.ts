@@ -10,6 +10,8 @@ import { providerSource, refreshLogLine, settleRefresh, type ProviderSource, typ
 import type { StoredRefresh } from './refreshStore';
 import { selfCheckFromReport, type SelfCheckRecord } from './selfcheck';
 import { decisionFromDesk, type StoredDecision } from './decision';
+import { recordPaperSnapshot } from './paperLog';
+import { fetchYahooBars } from './prices';
 import { readJournal, readRefresh, writeRefreshBundle } from './state';
 import type { SeriesPoint } from './series';
 import { snapshotFromBundle } from './assemble';
@@ -240,6 +242,17 @@ export async function executeRegimeRefresh(input: {
       writeOk,
     });
     const stored = writeOk ? nextRecord(previous, health, live, decision) : previous;
+    if (writeOk && sql && stored?.decision && stored.snapshot) {
+      let fx: { date: string; close: number }[] | null = null;
+      try {
+        const quote = await fetchYahooBars('AUDUSD=X');
+        fx = quote.bars.length > 0 ? quote.bars : null;
+      } catch {
+        fx = null;
+      }
+      const paper = await recordPaperSnapshot(sql, stored, fx);
+      if (paper === 'outage') writeRefreshLog('failure', { trigger: input.trigger, message: 'paper decision log was not appended' });
+    }
     writeRefreshLog('end', {
       trigger: input.trigger,
       outcome: health.outcome,

@@ -1,0 +1,173 @@
+{
+  "ranAt": "2026-11-07T22:32:08.939Z",
+  "rows": [
+    {
+      "id": "FRED-DGS2",
+      "role": "policy yield, latest graph",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS2&cosd=2024-01-02&coed=2024-01-05",
+      "kind": "vintage",
+      "downloadedAt": "2026-11-07T22:32:08.939Z",
+      "httpStatus": 200,
+      "bytes": 86,
+      "sha256": "64b73457b49d188c72a529af46d51771d13d2b36921a145fcdfad3f27406c9f6",
+      "availability": "reprint_only",
+      "note": "Header observation_date,DGS2. Last observation 2024-01-05. Not accepted as a vintage."
+    },
+    {
+      "id": "ALFRED-DGS2-2019-01-02",
+      "role": "policy yield vintage",
+      "url": "https://alfred.stlouisfed.org/graph/alfredgraph.csv?id=DGS2&vintage_date=2019-01-02",
+      "kind": "vintage",
+      "downloadedAt": "2026-11-07T22:32:08.960Z",
+      "httpStatus": 200,
+      "bytes": 177069,
+      "sha256": "56e96d7f32c612fe90a17af0d885603daae25981054b65239d39f0e52102dee5",
+      "availability": "point_in_time",
+      "note": "One vintage snapshot, 11110 observations from 1976-06-01 to 2018-12-31. Header observation_date,DGS2_20190102. The graph file can be a short window rather than the series' full history. A replay needs a snapshot at every decision date."
+    },
+    {
+      "id": "ALFRED-WALCL-2020-06-01",
+      "role": "balance sheet vintage",
+      "url": "https://alfred.stlouisfed.org/graph/alfredgraph.csv?id=WALCL&vintage_date=2020-06-01",
+      "kind": "vintage",
+      "downloadedAt": "2026-11-07T22:32:08.961Z",
+      "httpStatus": 200,
+      "bytes": 17040,
+      "sha256": "27db2a1083fc12eb52d3268e29350301f50d0f80d4cbea39e8d499cceae6b8df",
+      "availability": "point_in_time",
+      "note": "One vintage snapshot, 911 observations from 2002-12-18 to 2020-05-27. Header observation_date,WALCL_20200601. The graph file can be a short window rather than the series' full history. A replay needs a snapshot at every decision date."
+    },
+    {
+      "id": "ALFRED-HY-2020-06-01",
+      "role": "high yield OAS vintage",
+      "url": "https://alfred.stlouisfed.org/graph/alfredgraph.csv?id=BAMLH0A0HYM2&vintage_date=2020-06-01",
+      "kind": "vintage",
+      "downloadedAt": "2026-11-07T22:32:08.962Z",
+      "httpStatus": 404,
+      "bytes": 0,
+      "sha256": null,
+      "availability": "unavailable",
+      "note": "HTTP 404, 0 bytes. Not used."
+    },
+    {
+      "id": "ALFRED-HY-2024-06-03",
+      "role": "high yield OAS vintage",
+      "url": "https://alfred.stlouisfed.org/graph/alfredgraph.csv?id=BAMLH0A0HYM2&vintage_date=2024-06-03",
+      "kind": "vintage",
+      "downloadedAt": "2026-11-07T22:32:08.962Z",
+      "httpStatus": 200,
+      "bytes": 2459,
+      "sha256": "2b21e0508e33d15a56d72c1f6c6a278124275042b46084286dc1d17ad877a54e",
+      "availability": "point_in_time",
+      "note": "One vintage snapshot, 152 observations from 2023-11-07 to 2024-06-03. Header observation_date,BAMLH0A0HYM2_20240603. The graph file can be a short window rather than the series' full history. A replay needs a snapshot at every decision date."
+    },
+    {
+      "id": "ALFRED-RRP-2024-06-03",
+      "role": "RRP vintage",
+      "url": "https://alfred.stlouisfed.org/graph/alfredgraph.csv?id=RRPONTSYD&vintage_date=2024-06-03",
+      "kind": "vintage",
+      "downloadedAt": "2026-11-07T22:32:08.963Z",
+      "httpStatus": 200,
+      "bytes": 84508,
+      "sha256": "20b36bf57d3fd99922a01bebd6b710f771897e1c2356ac5a130b445949aeb44f",
+      "availability": "point_in_time",
+      "note": "One vintage snapshot, 5562 observations from 2003-02-07 to 2024-06-03. Header observation_date,RRPONTSYD_20240603. The graph file can be a short window rather than the series' full history. A replay needs a snapshot at every decision date."
+    },
+    {
+      "id": "ALFRED-TGA-2024-06-03",
+      "role": "TGA vintage",
+      "url": "https://alfred.stlouisfed.org/graph/alfredgraph.csv?id=WTREGEN&vintage_date=2024-06-03",
+      "kind": "vintage",
+      "downloadedAt": "2026-11-07T22:32:08.964Z",
+      "httpStatus": 200,
+      "bytes": 35522,
+      "sha256": "c71ea4a0b79b64ce52a2f047b778ebcc912829e6486707f072b42f210efd90a4",
+      "availability": "point_in_time",
+      "note": "One vintage snapshot, 2004 observations from 1986-01-08 to 2024-05-29. Header observation_date,WTREGEN_20240603. The graph file can be a short window rather than the series' full history. A replay needs a snapshot at every decision date."
+    },
+    {
+      "id": "ALFRED-POLICY-2024-06-03",
+      "role": "policy rate vintage",
+      "url": "https://alfred.stlouisfed.org/graph/alfredgraph.csv?id=DFEDTARU&vintage_date=2024-06-03",
+      "kind": "vintage",
+      "downloadedAt": "2026-11-07T22:32:08.964Z",
+      "httpStatus": 200,
+      "bytes": 90419,
+      "sha256": "d36ab7d4048fd27022affa80b882b93be6b37452592cf0eb55b602af8d057393",
+      "availability": "point_in_time",
+      "note": "One vintage snapshot, 5649 observations from 2008-12-16 to 2024-06-03. Header observation_date,DFEDTARU_20240603. The graph file can be a short window rather than the series' full history. A replay needs a snapshot at every decision date."
+    },
+    {
+      "id": "ALFRED-USCLI-2020-06-01",
+      "role": "US CLI vintage",
+      "url": "https://alfred.stlouisfed.org/graph/alfredgraph.csv?id=USALOLITOAASTSAM&vintage_date=2020-06-01",
+      "kind": "vintage",
+      "downloadedAt": "2026-11-07T22:32:08.965Z",
+      "httpStatus": 200,
+      "bytes": 20700,
+      "sha256": "929f14a078d1f6d4c20518bddf875c8ded42136d07f63cebab1ba7edb5374a39",
+      "availability": "point_in_time",
+      "note": "One vintage snapshot, 724 observations from 1960-01-01 to 2020-04-01. Header observation_date,USALOLITOAASTSAM_20200601. The graph file can be a short window rather than the series' full history. A replay needs a snapshot at every decision date."
+    },
+    {
+      "id": "ALFRED-CAPEX-2020-06-01",
+      "role": "semiconductor IP vintage",
+      "url": "https://alfred.stlouisfed.org/graph/alfredgraph.csv?id=IPG3344S&vintage_date=2020-06-01",
+      "kind": "vintage",
+      "downloadedAt": "2026-11-07T22:32:08.966Z",
+      "httpStatus": 200,
+      "bytes": 10811,
+      "sha256": "3ffb5e114c7456556ff3eaccd63f8814c29cefad99950e235197c64e2654e383",
+      "availability": "point_in_time",
+      "note": "One vintage snapshot, 580 observations from 1972-01-01 to 2020-04-01. Header observation_date,IPG3344S_20200601. The graph file can be a short window rather than the series' full history. A replay needs a snapshot at every decision date."
+    },
+    {
+      "id": "TREASURY-YIELD-XML",
+      "role": "Treasury yield reprint",
+      "url": "https://home.treasury.gov/sites/default/files/interest-rates/yield.xml",
+      "kind": "reprint",
+      "downloadedAt": "2026-11-07T22:32:08.967Z",
+      "httpStatus": 200,
+      "bytes": 11087,
+      "sha256": "6aab5d2fba2ab85d6bad71b9b6bf108476232ecf5e4b91f6868565e7026e086e",
+      "availability": "reprint_only",
+      "note": "Current Treasury yield file contains 5 curve dates and no vintage column."
+    },
+    {
+      "id": "FISCAL-TGA",
+      "role": "TGA daily statement",
+      "url": "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/dts/operating_cash_balance?filter=record_date:gte:2024-01-02&page[size]=3",
+      "kind": "reprint",
+      "downloadedAt": "2026-11-07T22:32:08.967Z",
+      "httpStatus": 200,
+      "bytes": 3266,
+      "sha256": "f5ed533e5e9555a2b0b7a03b4b6daf2f15085e5cf81e6df7035a4f821d65fdc7",
+      "availability": "reprint_only",
+      "note": "Daily Treasury Statement rows have record_date and no vintage field."
+    },
+    {
+      "id": "NYFED-RRP",
+      "role": "NY Fed reverse repo",
+      "url": "https://markets.newyorkfed.org/api/rp/reverserepo/all/results.json?startDate=2024-01-02&endDate=2024-01-05",
+      "kind": "reprint",
+      "downloadedAt": "2026-11-07T22:32:08.968Z",
+      "httpStatus": 400,
+      "bytes": 0,
+      "sha256": null,
+      "availability": "unavailable",
+      "note": "HTTP 400, 0 bytes. Not used."
+    },
+    {
+      "id": "CFTC-2024-ZIP",
+      "role": "CFTC legacy futures history",
+      "url": "https://www.cftc.gov/files/dea/history/deacot2024.zip",
+      "kind": "publication",
+      "downloadedAt": "2026-11-07T22:32:08.968Z",
+      "httpStatus": null,
+      "bytes": 0,
+      "sha256": null,
+      "availability": "unavailable",
+      "note": "Request failed before a body. Not used."
+    }
+  ]
+}
