@@ -45,6 +45,33 @@ A daily ALFRED vintage has no clock time. The conservative cutoff is the previou
 
 Missing-data policy in a replay is the live one: a missing mandatory leg blocks new risk. It is not filled with today’s value.
 
+## Whole-book limits, declared before the rerun
+
+Policy version `book-limits-2026-11-07`. This is a change the owner approved after the add-and-hold ledger was shown to ignore the caps. It is not the historical production journal. Thresholds are the existing ones. Nothing here was chosen to improve a return.
+
+The production suggestion caps that day’s new weights only. A hold prints weight 0 and is not a sell instruction. `applyPaperDay` then adds another tranche on every later day that is still `add`. The approved rule is different: the gross, net, name, theme, and overlap limits bind the carried book and any new tranche together.
+
+Decisions use only prices known at the decision. US and crypto marks are the previous session. ASX marks may include the session that has already closed. Every sell, trim, and buy is filled on the next session after the decision, with AUDUSD as the last rate on or before that fill. A 10 bps one-way cost is charged on the traded AUD notional. Cash yield is 0. No borrowing.
+
+Order on that fill:
+
+1. A local price at or through the stop sells the whole name.
+2. A stale mark (older than 7 days) or a missing mark is a required reduction. If the next session has no price or no FX, the name stays and the day is listed as pending. It is not marked as trimmed.
+3. Caps are applied to the book marked at the decision, in this order. The tolerance is 0.0001 of equity, so a rounded weight is not called a breach. Anything larger is reported.
+   - Name: 20% tactical or cash-role, 2% systematic. Sell the excess.
+   - Overlap: 25% for the AI/megacap cluster and for any correlation group the desk already formed. Sell the largest member first. Equal weights use the symbol name A to Z.
+   - Theme: 20%. Same priority.
+   - Net: non-cash roles only, matching `scaleWeights`. Cash-role names (SHY, AAA.AX, BILL.AX) are outside the net. Sell non-defensive names first, largest first, then defensive non-cash names. Cash-role is not sold to meet the net cap.
+   - Gross: all held names. Same priority, and cash-role is last.
+4. A new name is bought only if it is not halted, was not sold on this decision, and fits in every remaining cap. A pyramid add is one tranche, the first day the name is `add` and it has not already taken that tranche. Later days that remain `add` do not buy again. A name sold on this decision is not bought again on this decision.
+5. Buys are filled in desk order and only with cash already on hand after the sells. A buy that cash cannot cover is cut or skipped and listed. Weights are fractions of decision-time equity.
+
+A hold whose weight is inside the caps is kept. Weight 0 on a hold is not a target of zero.
+
+After the fill, prices will not match the decision marks. That gap is post-fill drift. It is counted separately from an order that breached a cap. The next decision’s pre-trade mark is the drift since the last fill. The policy does not claim the book stays inside the caps between sessions.
+
+The live journal mixes ASX and US prices in one cash figure and has no FX conversion. Cap orders are not applied to that mixed book. The refresh records `blocked_mixed_currency` and still processes stops, which are in each name’s own price. The research replay marks everything in AUD and does enforce the limits. CFTC stays omitted. The universe is the current survivor list. The window is the same 514 sessions, 2024-10-18 through 2026-11-05.
+
 ## What this folder is allowed to conclude
 
 If any required vintage is unavailable, `results.json` says `fullStrategy: "not_validated"` and leaves portfolio metrics null. Restricted notes may describe a downloaded file. They are not the strategy result. Synthetic series are not written here.

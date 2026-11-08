@@ -170,11 +170,11 @@ function hypothesisVerdict(
   const timeChanged = production != null && price != null && Math.abs(production.timeInMarket - price.timeInMarket) > 1e-6;
   const h1 = above(ratios.production, ratios.sixtyFortyMonthly) && above(ratios.production, ratios.spyBuyAndHold);
   return {
-    h1: h1 ? 'supported' : 'unsupported',
-    h2: timeChanged ? 'supported' : 'unsupported',
+    h1: production == null ? 'inconclusive' : h1 ? 'supported' : 'unsupported',
+    h2: production == null || price == null ? 'inconclusive' : timeChanged ? 'supported' : 'unsupported',
     ratios,
     timeInMarket: { production: production?.timeInMarket ?? null, priceOnly: price?.timeInMarket ?? null },
-    because: 'These ratios are conditional on the add-and-hold paper ledger, not on a book that is rebalanced to the capped daily recommendation. H1 asks for a higher return per unit of drawdown than buy-and-hold SPY and monthly 60/40, on the full span and on each half. H2’s time-in-market flag counts any holding. Risk, defensive, and cash sleeves are reported separately. Thresholds were not fit to this span.',
+    because: 'H1 and H2 are scored on book-limits-2026-11-07, the repaired whole-book policy. That policy is not the historical add-and-hold journal. H1 asks for a higher unit-NAV return per unit of drawdown than buy-and-hold SPY and monthly 60/40, on the full span and on each half. H2 asks whether removing the stand-down, while keeping the same whole-book limits and the production budget, changes time in market. Any holding counts, including a defensive ETF. Risk, defensive, and cash sleeves are reported beside that flag. Thresholds were not fit to this span. Post-fill price drift is not a new-order breach.',
   };
 }
 
@@ -237,17 +237,29 @@ async function main() {
     dates,
     book,
     mode: 'production',
+    policy: 'binding',
     panel: panelFor,
     contribute: contributeOnFirstOfMonth(dates),
   });
-  console.log('production', Date.now() - started, 'ms', production.missing.length);
+  console.log('binding', Date.now() - started, 'ms', production.missing.length);
   const diagnostic = walkAudPaper({
     dates,
     book,
     mode: 'price_only',
+    policy: 'binding',
     panel: panelFor,
     contribute: contributeOnFirstOfMonth(dates),
   });
+  console.log('ablation', Date.now() - started, 'ms', diagnostic.missing.length);
+  const addHold = walkAudPaper({
+    dates,
+    book,
+    mode: 'production',
+    policy: 'add_hold',
+    panel: panelFor,
+    contribute: contributeOnFirstOfMonth(dates),
+  });
+  console.log('add-hold', Date.now() - started, 'ms', addHold.missing.length);
   const staticMix = walkNav({
     dates,
     book,
@@ -298,7 +310,7 @@ async function main() {
     const n = (panelFor(date).series.BAMLH0A0HYM2 ?? []).length;
     return n >= 252 && n < 756;
   });
-  const runnable = production.missing.length === 0 && diagnostic.missing.length === 0 && staticMix.missing.length === 0 && spyPath.missing.length === 0 && lumpSpy.missing.length === 0;
+  const runnable = production.missing.length === 0 && diagnostic.missing.length === 0 && addHold.missing.length === 0 && staticMix.missing.length === 0 && spyPath.missing.length === 0 && lumpSpy.missing.length === 0;
   let cliMin = Number.POSITIVE_INFINITY;
   let cliBelow60 = 0;
   for (const date of dates) {
@@ -308,17 +320,19 @@ async function main() {
   }
   writeFileSync(path.join(OUT, 'replay-results.json'), `${JSON.stringify({
     ...base,
-    experiment: 'conditional_paper_ledger',
-    fullStrategy: 'incomplete_no_single_execution_policy',
+    experiment: 'book_limits_2026_11_07',
+    fullStrategy: 'repaired_policy_not_the_historical_rule',
+    policy: 'book-limits-2026-11-07',
     restricted: [
       'CFTC positioning omitted. No release-dated history was in the archive, and today’s book was not copied back.',
       'Universe is the current survivor list, a hypothetical, and the window is inside the already examined 2021–2026 sample.',
-      'The measured book follows applyPaperDay: add a confirmed tranche and hold until the stop. Gross, net, name, and theme caps constrain that day’s recommended weights, not the accumulated shares. The banner text says to keep exposure inside the budget. The ledger does not cut the book back to those weights. Production does not define one of those as the executed portfolio.',
+      'book-limits-2026-11-07 caps the carried book and new tranches. It is the owner-approved repair. It is not the historical add-and-hold journal, and it is not an unseen out-of-sample test.',
+      'A hold with suggestion weight 0 is kept. It is sold for a stop, a stale or missing mark, or a binding cap. One pyramid tranche is allowed per position.',
       'FRED observation_start on the fetch was 2019-06-01. The 60-month CLI window constant was not changed. Months before June 2019 are absent from the file.',
       'DFEDTARU intervals are joined across the 2022-12-31 and 2023-01-01 realtime chunks. A row whose rt_start is the chunk boundary is the copy that contains the vintage, not a claim about the original release minute.',
-      'The three dates with fewer than 252 credit observations are not actionable. Defensive names the lean still includes can still receive a new tranche.',
+      'The three dates with fewer than 252 credit observations are not actionable. Defensive names can still be held or added inside the preservation budget.',
     ],
-    reason: 'The production snapshot and the capped daily weights were built from prior-day vintages. The NAV below is conditional on the add-and-hold ledger. It is not the capped recommendation, and it is not a full-strategy result. CFTC is omitted. Fills are the next session after the decision date.',
+    reason: 'Prior-day vintages, the current survivor universe, 10 bps, cash yield 0, and next-session fills. The scored book is the repaired whole-book policy. The add-and-hold path is a historical diagnostic on the same dates. CFTC is omitted. This is not a guarantee and the aspiration label is not a result.',
     audit,
     coverage: {
       weekdayDecisions: weekdays.length,
@@ -335,7 +349,9 @@ async function main() {
       sessionArithmetic: `${weekdays.length} weekdays minus ${holidays.length} dates with no SPY bar is ${traded.length}. Dropping ${droppedNoLaterAsx.length} date with no later fill leaves ${dates.length}.`,
     },
     production: {
-      label: 'conditional_add_and_hold_ledger',
+      label: 'whole_book_limits',
+      policy: production.binding?.version ?? null,
+      binding: production.binding,
       ledger: production.ledger,
       missingExecutions: production.missing.slice(0, 20),
       missingCount: production.missing.length,
@@ -352,11 +368,18 @@ async function main() {
       summary: runnable ? summarise(production.points) : null,
     },
     priceOnlyDiagnostic: {
-      label: 'ablation_standdown_removed_budget_unchanged',
+      label: 'ablation_standdown_removed_same_whole_book_limits',
       ledger: diagnostic.ledger,
+      binding: diagnostic.binding,
       missingExecutions: diagnostic.missing.length,
       heldSymbols: diagnostic.heldSymbols,
       summary: diagnostic.missing.length ? null : summarise(diagnostic.points),
+    },
+    addHoldDiagnostic: {
+      label: 'historical_add_and_hold_not_the_policy',
+      ledger: addHold.ledger,
+      missingExecutions: addHold.missing.length,
+      summary: addHold.missing.length ? null : summarise(addHold.points),
     },
     staticSixtyForty: {
       label: 'static_60_spy_40_cash',

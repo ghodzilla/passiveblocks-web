@@ -149,10 +149,14 @@ async function rolledState(live: Awaited<ReturnType<typeof fetchLiveRefresh>>, s
   });
   const published = publishRegime({ snapshot: live.snapshot, ideas, desk });
   const prices: Record<string, number> = {};
+  const asOf: Record<string, string> = {};
   const bars: Record<string, PriceBook['series'][number]['bars']> = {};
   for (const series of live.book.series) {
     const last = series.bars[series.bars.length - 1];
-    if (last && last.close > 0) prices[series.symbol] = last.close;
+    if (last && last.close > 0) {
+      prices[series.symbol] = last.close;
+      asOf[series.symbol] = last.date;
+    }
     bars[series.symbol] = series.bars;
   }
   const rolled = applyPaperDay({
@@ -161,6 +165,14 @@ async function rolledState(live: Awaited<ReturnType<typeof fetchLiveRefresh>>, s
     prices,
     date: live.snapshot.today,
     capital: desk.capital,
+    asOf,
+    limits: {
+      maxGross: live.snapshot.effectiveBudget.maxGross,
+      maxNet: live.snapshot.effectiveBudget.maxNet,
+      haltNewEntries: desk.halted,
+      overlapGroups: [],
+      themeGroups: [],
+    },
   });
   rolled.outcomes = settleForward(rolled.calls, bars);
   return {

@@ -90,6 +90,7 @@ export interface ReplayView {
     omissionsSample: string[];
     exposureByAction?: Record<string, { days: number; averageGross: number }>;
     ledger?: {
+      model?: string;
       recommendedMaxGross: number;
       recommendedDaysOverGross: number;
       heldMaxGross: number;
@@ -103,9 +104,23 @@ export interface ReplayView {
       averageCash: number;
       consecutiveDaysWithTheSameNewWeight: number;
     };
+    binding?: {
+      version: string;
+      tolerance: number;
+      decisionBreachDays: { gross: number; net: number; name: number; theme: number; overlap: number };
+      preTradeDriftDays: { gross: number; net: number; name: number; theme: number; overlap: number };
+      postFillDriftDays: { gross: number; net: number; name: number; theme: number; overlap: number };
+      unresolvedDates: string[];
+      pendingCount: number;
+      pyramidTranches: number;
+      trims: number;
+      cashShortfalls: number;
+      feesPaid: number;
+    } | null;
     summary: PathSummary | null;
   };
   priceOnlyDiagnostic: { label: string; summary: PathSummary | null };
+  addHoldDiagnostic?: { label: string; summary: PathSummary | null };
   staticSixtyForty: { label: string; summary: PathSummary | null };
   spySameContributions: { label: string; summary: PathSummary | null };
   spyLumpSum?: { label: string; funding: string; summary: PathSummary | null };
@@ -155,13 +170,19 @@ function ReplayResult({ replay }: { replay: ReplayView }) {
           H1 {replay.hypotheses.h1}. H2 {replay.hypotheses.h2}. {replay.hypotheses.because} Time in market: production {pct(replay.hypotheses.timeInMarket.production)}, price-only diagnostic {pct(replay.hypotheses.timeInMarket.priceOnly)}.
         </p>
       ) : null}
-      {replay.production.ledger ? (
+      {replay.production.binding ? (
         <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
-          Recommended weights stayed inside the day’s gross cap on {replay.production.ledger.recommendedDaysOverGross === 0 ? 'every session' : `${replay.production.ledger.recommendedDaysOverGross} sessions`}. The add-and-hold book exceeded that day’s gross cap on {replay.production.ledger.daysHeldGrossOverBudget} sessions and the net cap on {replay.production.ledger.daysHeldNetOverBudget} sessions. Largest held name {replay.production.ledger.heldMaxSingleSymbol ?? '—'} at {(replay.production.ledger.heldMaxSingle * 100).toFixed(1)}%. Average sleeves: risk {(replay.production.ledger.averageRiskGross * 100).toFixed(1)}%, defensive {(replay.production.ledger.averageDefensiveGross * 100).toFixed(1)}%, cash {(replay.production.ledger.averageCash * 100).toFixed(1)}%. Same name was a new buy on two consecutive sessions: {replay.production.ledger.consecutiveDaysWithTheSameNewWeight}.
+          Policy {replay.production.binding.version}. Tolerance {(replay.production.binding.tolerance * 100).toFixed(2)} percentage points. Decision-time order breaches, in sessions: gross {replay.production.binding.decisionBreachDays.gross}, net {replay.production.binding.decisionBreachDays.net}, name {replay.production.binding.decisionBreachDays.name}, theme {replay.production.binding.decisionBreachDays.theme}, overlap {replay.production.binding.decisionBreachDays.overlap}. Pre-trade fill drift: gross {replay.production.binding.preTradeDriftDays.gross}, net {replay.production.binding.preTradeDriftDays.net}, name {replay.production.binding.preTradeDriftDays.name}, theme {replay.production.binding.preTradeDriftDays.theme}, overlap {replay.production.binding.preTradeDriftDays.overlap}. Post-fill drift: gross {replay.production.binding.postFillDriftDays.gross}, net {replay.production.binding.postFillDriftDays.net}, name {replay.production.binding.postFillDriftDays.name}, theme {replay.production.binding.postFillDriftDays.theme}, overlap {replay.production.binding.postFillDriftDays.overlap}. Dates a planned reduction could not be filled: {replay.production.binding.unresolvedDates.join(', ') || 'none'}. Pending marks {replay.production.binding.pendingCount}. Pyramid tranches {replay.production.binding.pyramidTranches}. Trims {replay.production.binding.trims}. Cash shortfalls {replay.production.binding.cashShortfalls}. Fees paid {replay.production.binding.feesPaid.toFixed(4)} of starting equity, before later contributions.
         </p>
       ) : null}
-      <PathRow label="Conditional add-and-hold ledger" summary={replay.production.summary} />
-      <PathRow label="Ablation: stand-down removed, production budget kept" summary={replay.priceOnlyDiagnostic.summary} />
+      {replay.production.ledger ? (
+        <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
+          Recommended weights stayed inside the day’s gross cap on {replay.production.ledger.recommendedDaysOverGross === 0 ? 'every session' : `${replay.production.ledger.recommendedDaysOverGross} sessions`}. Post-fill book versus that day’s cap, which includes market drift: gross {replay.production.ledger.daysHeldGrossOverBudget} sessions, net {replay.production.ledger.daysHeldNetOverBudget} sessions, a single name {replay.production.ledger.daysHeldSingleOverCap} sessions. Largest held name {replay.production.ledger.heldMaxSingleSymbol ?? '—'} at {(replay.production.ledger.heldMaxSingle * 100).toFixed(1)}%. Average sleeves: risk {(replay.production.ledger.averageRiskGross * 100).toFixed(1)}%, defensive {(replay.production.ledger.averageDefensiveGross * 100).toFixed(1)}%, cash {(replay.production.ledger.averageCash * 100).toFixed(1)}%.
+        </p>
+      ) : null}
+      <PathRow label="Whole-book limits, repaired policy" summary={replay.production.summary} />
+      <PathRow label="Ablation: stand-down removed, same whole-book limits" summary={replay.priceOnlyDiagnostic.summary} />
+      {replay.addHoldDiagnostic ? <PathRow label="Historical add-and-hold ledger, not the policy" summary={replay.addHoldDiagnostic.summary} /> : null}
       <PathRow label="60% SPY / 40% cash, same contributions" summary={replay.staticSixtyForty.summary} />
       <PathRow label="SPY, same contributions" summary={replay.spySameContributions.summary} />
       {replay.spyLumpSum ? <PathRow label="SPY buy and hold, one unit and no later contribution" summary={replay.spyLumpSum.summary} /> : null}

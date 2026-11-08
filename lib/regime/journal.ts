@@ -18,6 +18,8 @@ export interface PaperPosition {
   stop: number;
   riskPerShare: number;
   openedOn: string;
+  /** 1 after the opening buy, 2 after the single pyramid add. */
+  tranches?: number;
 }
 
 export interface RuleCall {
@@ -51,6 +53,8 @@ export interface Journal {
     peakEquity: number | null;
     positions: PaperPosition[];
     marks: { date: string; equity: number }[];
+    /** Set when whole-book caps were applied, or when mixed currencies blocked them. */
+    limitStatus?: 'enforced' | 'blocked_mixed_currency';
   };
   calls: RuleCall[];
   outcomes: ForwardOutcome[];

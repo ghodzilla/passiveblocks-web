@@ -4,7 +4,9 @@ import { dipSignal } from './dip';
 import { dipDisplay } from './plain';
 import { checklistNote, ideaGates, sizingVerdict, type GateCheck } from './gates';
 import type { IdeaStatus, IdeasReport } from './ideas';
-import { defensiveOnly, printStance, scaleWeights, volTargetWeight } from './ideas';
+import { planBookLimits, type LimitSpec } from './bookLimits';
+import { AI_MEGACAP_CLUSTER } from './overlap';
+import { defensiveOnly, priceIsFresh, printStance, scaleWeights, volTargetWeight } from './ideas';
 import type { Journal, PaperPosition } from './journal';
 import { applyOverlapCaps, OVERLAP_GROUP_CAP, type OverlapGroup } from './overlap';
 import type { PriceBook } from './prices';
@@ -457,8 +459,15 @@ export function applyPaperDay(input: {
   prices: Record<string, number>;
   date: string;
   capital: number;
+  limits?: LimitSpec;
+  /** Last bar date used for the stale-price exit. Absent means the caller has no date to test. */
+  asOf?: Record<string, string>;
 }): Journal {
   if (input.journal.paper.marks.some((mark) => mark.date === input.date)) return input.journal;
+  for (const position of input.journal.paper.positions) {
+    const price = input.prices[position.symbol];
+    if (price == null || !(price > 0)) return input.journal;
+  }
   const next: Journal = JSON.parse(JSON.stringify(input.journal)) as Journal;
   let cash = next.paper.cash ?? input.capital;
   const positions: PaperPosition[] = next.paper.positions.map((position) => ({ ...position }));
@@ -478,28 +487,95 @@ export function applyPaperDay(input: {
     kept.push(position);
   }
   const open = new Map(kept.map((position) => [position.symbol, position]));
+  const classes = new Set<string>();
+  for (const position of kept) classes.add(position.symbol.endsWith('.AX') ? 'aud' : 'usd');
   for (const line of input.desk.lines) {
-    if (stopped.has(line.symbol)) continue;
-    if (line.qty == null || !(line.qty > 0) || line.stop == null) continue;
-    const price = input.prices[line.symbol];
-    if (price == null || !(price > 0)) continue;
-    const existing = open.get(line.symbol);
-    const cost = line.qty * price;
-    if (!(cash >= cost)) continue;
-    if (!existing) {
-      cash -= cost;
-      open.set(line.symbol, {
+    if (!(line.weight > 0)) continue;
+    classes.add(line.symbol.endsWith('.AX') ? 'aud' : 'usd');
+  }
+  const mixed = classes.size > 1;
+  if (!mixed) {
+    let equity = cash;
+    for (const position of kept) equity += position.qty * input.prices[position.symbol];
+    const spec: LimitSpec = {
+      maxGross: input.limits?.maxGross ?? 1.5,
+      maxNet: input.limits?.maxNet ?? 1,
+      haltNewEntries: input.limits?.haltNewEntries ?? input.desk.halted,
+      overlapGroups: [
+        Array.from(AI_MEGACAP_CLUSTER),
+        ...input.desk.overlap.groups.map((group) => group.symbols),
+      ],
+      themeGroups: THEMES.map((theme) => ({ id: theme.id, symbols: theme.symbols.map((item) => item.symbol) })),
+    };
+    const plan = planBookLimits(
+      kept.map((position) => {
+        const line = input.desk.lines.find((item) => item.symbol === position.symbol);
+        return {
+          symbol: position.symbol,
+          weight: equity > 0 ? position.qty * input.prices[position.symbol] / equity : 0,
+          role: line?.role ?? 'tactical',
+          defensive: line?.defensive ?? false,
+          themes: themesForSymbol(position.symbol).map((theme) => theme.id),
+          unpriced: false,
+          forceExit: input.asOf?.[position.symbol] != null && !priceIsFresh(input.asOf[position.symbol], input.date),
+          tranches: position.tranches ?? 1,
+        };
+      }),
+      input.desk.lines.filter((line) => line.weight > 0 && line.stop != null && !stopped.has(line.symbol)).map((line) => ({
         symbol: line.symbol,
-        qty: line.qty,
-        entry: price,
-        stop: line.stop,
-        riskPerShare: price - line.stop,
-        openedOn: input.date,
-      });
-    } else if (price >= existing.entry + existing.riskPerShare) {
-      cash -= cost;
-      existing.qty += line.qty;
+        weight: line.weight,
+        role: line.role,
+        defensive: line.defensive,
+        themes: themesForSymbol(line.symbol).map((theme) => theme.id),
+        kind: open.has(line.symbol) ? 'pyramid' as const : 'new' as const,
+      })),
+      spec,
+    );
+    for (const sale of plan.sells) {
+      const position = open.get(sale.symbol);
+      const price = input.prices[sale.symbol];
+      if (!position || !(price > 0) || !(equity > 0)) continue;
+      const currentWeight = position.qty * price / equity;
+      if (!(currentWeight > 0)) continue;
+      const fraction = Math.min(1, sale.weight / currentWeight);
+      const sold = position.qty * fraction;
+      position.qty -= sold;
+      cash += sold * price;
+      if (!(position.qty > 1e-8)) open.delete(sale.symbol);
     }
+    equity = cash;
+    open.forEach((position) => {
+      equity += position.qty * input.prices[position.symbol];
+    });
+    for (const buy of plan.buys) {
+      const line = input.desk.lines.find((item) => item.symbol === buy.symbol);
+      const price = input.prices[buy.symbol];
+      if (!line || line.stop == null || !(price > line.stop) || !(price > 0)) continue;
+      const notional = buy.weight * equity;
+      if (!(cash >= notional)) continue;
+      const existing = open.get(buy.symbol);
+      if (buy.kind === 'pyramid') {
+        if (!existing || (existing.tranches ?? 1) >= 2) continue;
+        if (!(price >= existing.entry + existing.riskPerShare)) continue;
+        existing.qty += notional / price;
+        existing.tranches = 2;
+        cash -= notional;
+      } else if (!existing) {
+        cash -= notional;
+        open.set(buy.symbol, {
+          symbol: buy.symbol,
+          qty: notional / price,
+          entry: price,
+          stop: line.stop,
+          riskPerShare: price - line.stop,
+          openedOn: input.date,
+          tranches: 1,
+        });
+      }
+    }
+    next.paper.limitStatus = 'enforced';
+  } else {
+    next.paper.limitStatus = 'blocked_mixed_currency';
   }
   const held: PaperPosition[] = [];
   open.forEach((position) => held.push(position));

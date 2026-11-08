@@ -1,13 +1,16 @@
 import { snapshotFromBundle, type DataBundle } from './assemble';
+import { BOOK_LIMIT_TOLERANCE, BOOK_LIMITS_VERSION, clampBuysToCash, planBookLimits, type LimitSpec } from './bookLimits';
 import { budgetsFor } from './classify';
 import { FRED_SERIES, REGIME_LABEL, RULES_VERSION } from './constants';
 import { buildDesk } from './desk';
-import { buildIdeas, SINGLE_POSITION_CAP, SYSTEMATIC_CAP } from './ideas';
+import { buildIdeas, priceIsFresh, SINGLE_POSITION_CAP, SYSTEMATIC_CAP } from './ideas';
 import { emptyJournal, type Journal, type PaperPosition } from './journal';
+import { AI_MEGACAP_CLUSTER, OVERLAP_GROUP_CAP } from './overlap';
 import type { PriceBook, PriceSeries } from './prices';
 import type { SeriesPoint } from './series';
 import type { Bar } from './signals';
 import { themesForSymbol } from './themes';
+import { THEMES } from './themes.config';
 import { THEME_WEIGHT_CAP } from './sizing';
 import type { RegimeSnapshot } from './types';
 import { DEFAULT_ONE_WAY_BPS } from './evaluate';
@@ -413,9 +416,35 @@ export interface AudDay {
   halted: boolean;
 }
 
+export interface BreachCounts {
+  gross: number;
+  net: number;
+  name: number;
+  theme: number;
+  overlap: number;
+}
+
+export interface BindingAudit {
+  version: typeof BOOK_LIMITS_VERSION;
+  tolerance: number;
+  /** Planned weights, after trims and adds, measured at the decision. A count here is a new-order violation. */
+  decisionBreachDays: BreachCounts;
+  /** Fill prices before today's orders. This is market drift since the decision mark. */
+  preTradeDriftDays: BreachCounts;
+  /** Fill prices after the planned shares traded. Drift and rounding live here, not in the decision count. */
+  postFillDriftDays: BreachCounts;
+  unresolvedDates: string[];
+  pendingCount: number;
+  pendingSample: { date: string; symbol: string; reason: string }[];
+  pyramidTranches: number;
+  trims: number;
+  cashShortfalls: number;
+  feesPaid: number;
+}
+
 export interface BookLedger {
-  model: 'paper_ledger_add_and_hold';
-  capsApplyTo: 'each_day_recommended_weights_only';
+  model: 'paper_ledger_add_and_hold' | 'whole_book_limits';
+  capsApplyTo: 'each_day_recommended_weights_only' | 'carried_book_and_new_tranches';
   recommendedMaxGross: number;
   recommendedMaxNet: number;
   recommendedDaysOverGross: number;
@@ -437,22 +466,295 @@ export interface BookLedger {
   pyramidAdds: number;
 }
 
+function decisionQuote(book: PriceBook, symbol: string, decisionDate: string, fx: PriceSeries | undefined): { local: number; aud: number; barDate: string } | null {
+  const series = book.series.find((item) => item.symbol === symbol);
+  if (!series) return null;
+  const last = infoThrough(symbol, decisionDate);
+  let bar: Bar | null = null;
+  for (const item of series.bars) {
+    if (item.date <= last) bar = item;
+  }
+  if (!bar) return null;
+  const converted = audFill(symbol, bar, fx);
+  if (!converted) return null;
+  return { local: bar.close, aud: converted.aud, barDate: bar.date };
+}
+
+function limitSpecFor(desk: ReturnType<typeof buildDesk>, maxGross: number, maxNet: number): LimitSpec {
+  return {
+    maxGross,
+    maxNet,
+    haltNewEntries: desk.halted,
+    overlapGroups: [Array.from(AI_MEGACAP_CLUSTER), ...desk.overlap.groups.map((group) => group.symbols)],
+    themeGroups: THEMES.map((theme) => ({ id: theme.id, symbols: theme.symbols.map((item) => item.symbol) })),
+  };
+}
+
+function breachOf(
+  rows: { symbol: string; weight: number; role: 'tactical' | 'systematic' | 'cash'; defensive: boolean }[],
+  spec: LimitSpec,
+): BreachCounts {
+  let gross = 0;
+  let net = 0;
+  let name = 0;
+  for (const row of rows) {
+    gross += row.weight;
+    if (row.role !== 'cash') net += row.weight;
+    const cap = row.role === 'systematic' ? SYSTEMATIC_CAP : SINGLE_POSITION_CAP;
+    if (row.weight > cap + BOOK_LIMIT_TOLERANCE) name += 1;
+  }
+  const themes = new Map<string, number>();
+  for (const row of rows) {
+    for (const theme of themesForSymbol(row.symbol)) themes.set(theme.id, (themes.get(theme.id) ?? 0) + row.weight);
+  }
+  let theme = 0;
+  themes.forEach((sum) => {
+    if (sum > THEME_WEIGHT_CAP + BOOK_LIMIT_TOLERANCE) theme += 1;
+  });
+  let overlap = 0;
+  for (const group of spec.overlapGroups) {
+    let sum = 0;
+    for (const symbol of group) sum += rows.find((row) => row.symbol === symbol)?.weight ?? 0;
+    if (sum > OVERLAP_GROUP_CAP + BOOK_LIMIT_TOLERANCE) overlap += 1;
+  }
+  return {
+    gross: gross > spec.maxGross + BOOK_LIMIT_TOLERANCE ? 1 : 0,
+    net: net > spec.maxNet + BOOK_LIMIT_TOLERANCE ? 1 : 0,
+    name: name > 0 ? 1 : 0,
+    theme: theme > 0 ? 1 : 0,
+    overlap: overlap > 0 ? 1 : 0,
+  };
+}
+
+function emptyBreaches(): BreachCounts {
+  return { gross: 0, net: 0, name: 0, theme: 0, overlap: 0 };
+}
+
+function addBreaches(total: BreachCounts, day: BreachCounts): void {
+  total.gross += day.gross;
+  total.net += day.net;
+  total.name += day.name;
+  total.theme += day.theme;
+  total.overlap += day.overlap;
+}
+
 /**
- * Conditional book. It follows applyPaperDay: a confirmed line adds a tranche,
- * and a hold stays until the stop. The day's recommended weights are a separate
- * object. Those weights are what the gross, net, name, and theme caps constrain.
- * This function does not rescale the held book to that recommendation.
+ * Whole-book limits. Holds are kept. Caps and the stale-price guard can sell.
+ * Share counts are fixed from the decision mark and filled on the next session.
+ */
+function executeBinding(input: {
+  cash: number;
+  positions: PaperPosition[];
+  date: string;
+  book: PriceBook;
+  fx: PriceSeries | undefined;
+  lines: ReturnType<typeof buildDesk>['lines'];
+  spec: LimitSpec;
+  local: Record<string, number>;
+  aud: Record<string, number>;
+  oneWay: number;
+}): {
+  cash: number;
+  positions: PaperPosition[];
+  buyNotional: number;
+  sellNotional: number;
+  pending: { symbol: string; reason: string }[];
+  decisionBreach: BreachCounts;
+  preTradeDrift: BreachCounts;
+  postFillDrift: BreachCounts;
+  unresolved: boolean;
+  pyramidTranches: number;
+  trims: number;
+  cashShortfalls: number;
+  fees: number;
+} {
+  let cash = input.cash;
+  const kept: PaperPosition[] = [];
+  const stopped = new Set<string>();
+  let sellNotional = 0;
+  let fees = 0;
+  for (const position of input.positions) {
+    const local = input.local[position.symbol];
+    const aud = input.aud[position.symbol];
+    if (local <= position.stop) {
+      const notional = position.qty * aud;
+      cash += notional * (1 - input.oneWay);
+      fees += notional * input.oneWay;
+      sellNotional += notional;
+      stopped.add(position.symbol);
+    } else kept.push({ ...position });
+  }
+  const quotes = new Map<string, { local: number; aud: number; barDate: string }>();
+  for (const position of kept) {
+    const quote = decisionQuote(input.book, position.symbol, input.date, input.fx);
+    if (quote) quotes.set(position.symbol, quote);
+  }
+  const priced: PaperPosition[] = [];
+  const pending: { symbol: string; reason: string }[] = [];
+  for (const position of kept) {
+    if (quotes.has(position.symbol)) priced.push(position);
+    else pending.push({ symbol: position.symbol, reason: 'No decision mark. The name is not trimmed and the cap is not guaranteed.' });
+  }
+  let decisionEquity = cash;
+  for (const position of priced) decisionEquity += position.qty * (quotes.get(position.symbol)?.aud ?? 0);
+  const lineFor = (symbol: string) => input.lines.find((line) => line.symbol === symbol);
+  const plan = planBookLimits(
+    priced.map((position) => {
+      const line = lineFor(position.symbol);
+      const quote = quotes.get(position.symbol);
+      return {
+        symbol: position.symbol,
+        weight: decisionEquity > 0 && quote ? position.qty * quote.aud / decisionEquity : 0,
+        role: line?.role ?? 'tactical',
+        defensive: line?.defensive ?? false,
+        themes: themesForSymbol(position.symbol).map((theme) => theme.id),
+        unpriced: false,
+        forceExit: quote ? !priceIsFresh(quote.barDate, input.date) : false,
+        tranches: position.tranches ?? 1,
+      };
+    }),
+    input.lines.filter((line) => line.weight > 0 && line.stop != null && !stopped.has(line.symbol)).map((line) => ({
+      symbol: line.symbol,
+      weight: line.weight,
+      role: line.role,
+      defensive: line.defensive,
+      themes: themesForSymbol(line.symbol).map((theme) => theme.id),
+      kind: priced.some((position) => position.symbol === line.symbol) || kept.some((position) => position.symbol === line.symbol) ? 'pyramid' as const : 'new' as const,
+    })),
+    input.spec,
+  );
+  for (const item of plan.pending) pending.push(item);
+  const rowsFor = (positions: PaperPosition[], priceOf: (symbol: string) => number | null, cashNow: number) => {
+    let equity = cashNow;
+    for (const position of positions) {
+      const price = priceOf(position.symbol);
+      if (price != null) equity += position.qty * price;
+    }
+    return positions.map((position) => {
+      const line = lineFor(position.symbol);
+      const price = priceOf(position.symbol) ?? 0;
+      return {
+        symbol: position.symbol,
+        weight: equity > 0 ? position.qty * price / equity : 0,
+        role: line?.role ?? 'tactical' as const,
+        defensive: line?.defensive ?? false,
+      };
+    });
+  };
+  const preTradeDrift = breachOf(rowsFor(kept, (symbol) => input.aud[symbol] ?? null, cash), input.spec);
+  const open = new Map(priced.map((position) => [position.symbol, position]));
+  for (const position of kept) {
+    if (!quotes.has(position.symbol)) open.set(position.symbol, position);
+  }
+  for (const sale of plan.sells) {
+    const position = open.get(sale.symbol);
+    const quote = quotes.get(sale.symbol);
+    const fill = input.aud[sale.symbol];
+    if (!position || !quote || !(fill > 0) || !(decisionEquity > 0)) {
+      pending.push({ symbol: sale.symbol, reason: 'Planned reduction has no fill. The shares stay.' });
+      continue;
+    }
+    const currentWeight = position.qty * quote.aud / decisionEquity;
+    if (!(currentWeight > 0)) continue;
+    const sold = position.qty * Math.min(1, sale.weight / currentWeight);
+    const notional = sold * fill;
+    cash += notional * (1 - input.oneWay);
+    fees += notional * input.oneWay;
+    sellNotional += notional;
+    position.qty -= sold;
+    if (!(position.qty > 1e-10)) open.delete(sale.symbol);
+  }
+  const fillable = plan.buys.filter((buy) => (input.aud[buy.symbol] ?? 0) > 0 && (input.local[buy.symbol] ?? 0) > 0);
+  for (const buy of plan.buys) {
+    if (!fillable.includes(buy)) pending.push({ symbol: buy.symbol, reason: 'Planned buy has no fill or no FX. It is not marked as bought.' });
+  }
+  const clamped = clampBuysToCash(
+    fillable.map((buy) => ({ symbol: buy.symbol, notional: buy.weight * decisionEquity })),
+    cash,
+    input.oneWay,
+  );
+  cash = clamped.cashLeft;
+  fees += clamped.fees;
+  let buyNotional = 0;
+  let pyramidTranches = 0;
+  for (const buy of clamped.filled) {
+    const planned = fillable.find((item) => item.symbol === buy.symbol);
+    const line = lineFor(buy.symbol);
+    const local = input.local[buy.symbol];
+    const aud = input.aud[buy.symbol];
+    if (!planned || !line || line.stop == null || !(local > line.stop) || !(aud > 0)) {
+      cash += buy.notional * (1 + input.oneWay);
+      fees -= buy.notional * input.oneWay;
+      pending.push({ symbol: buy.symbol, reason: 'Fill is through the stop. The buy is not taken.' });
+      continue;
+    }
+    const existing = open.get(buy.symbol);
+    if (planned.kind === 'pyramid' && existing && (existing.tranches ?? 1) < 2) {
+      existing.qty += buy.notional / aud;
+      existing.tranches = 2;
+      pyramidTranches += 1;
+      buyNotional += buy.notional;
+    } else if (planned.kind === 'new' && !existing) {
+      open.set(buy.symbol, {
+        symbol: buy.symbol,
+        qty: buy.notional / aud,
+        entry: local,
+        stop: line.stop,
+        riskPerShare: local - line.stop,
+        openedOn: input.date,
+        tranches: 1,
+      });
+      buyNotional += buy.notional;
+    } else {
+      cash += buy.notional * (1 + input.oneWay);
+      fees -= buy.notional * input.oneWay;
+      pending.push({ symbol: buy.symbol, reason: 'The planned buy no longer matches a held tranche. Cash is returned.' });
+    }
+  }
+  for (const short of clamped.shortfall) pending.push({ symbol: short.symbol, reason: 'Cash cannot fund the planned buy. No borrowing.' });
+  const positions: PaperPosition[] = [];
+  open.forEach((position) => {
+    if (position.qty > 1e-10) positions.push(position);
+  });
+  const decisionRows = plan.keptWeight.map((row) => {
+    const line = lineFor(row.symbol);
+    return { symbol: row.symbol, weight: row.weight, role: line?.role ?? 'tactical' as const, defensive: line?.defensive ?? false };
+  });
+  const postRows = rowsFor(positions, (symbol) => input.aud[symbol] ?? null, cash);
+  return {
+    cash,
+    positions,
+    buyNotional,
+    sellNotional,
+    pending,
+    decisionBreach: breachOf(decisionRows, input.spec),
+    preTradeDrift: preTradeDrift,
+    postFillDrift: breachOf(postRows, input.spec),
+    unresolved: pending.some((item) => item.reason.startsWith('No decision mark') || item.reason.startsWith('Planned reduction')),
+    pyramidTranches,
+    trims: plan.sells.length,
+    cashShortfalls: clamped.shortfall.length,
+    fees,
+  };
+}
+
+/**
+ * `add_hold` repeats the historical journal: a confirmed line adds a tranche and
+ * a hold stays until the stop. `binding` applies book-limits-2026-11-07 to the
+ * carried book and to new tranches. Holds are not sold because their suggestion is 0.
  */
 export function walkAudPaper(input: {
   dates: string[];
   book: PriceBook;
   mode: 'production' | 'price_only';
+  policy?: 'add_hold' | 'binding';
   panel?: (date: string) => VintagePanel;
   oneWayBps?: number;
   contribute: (date: string, index: number) => number;
-}): { points: NavPoint[]; missing: string[]; days: AudDay[]; heldSymbols: string[]; ledger: BookLedger } {
+}): { points: NavPoint[]; missing: string[]; days: AudDay[]; heldSymbols: string[]; ledger: BookLedger; binding: BindingAudit | null } {
   const fx = input.book.series.find((series) => series.symbol === 'AUDUSD=X');
   const oneWay = (input.oneWayBps ?? REPLAY_ONE_WAY_BPS) / 10_000;
+  const policy = input.policy ?? 'add_hold';
   const journal = emptyJournal();
   journal.settings.capital = 1;
   journal.paper.cash = 1;
@@ -463,9 +765,23 @@ export function walkAudPaper(input: {
   const days: AudDay[] = [];
   const missing: string[] = [];
   const heldSymbols = new Set<string>();
+  const binding: BindingAudit = {
+    version: BOOK_LIMITS_VERSION,
+    tolerance: BOOK_LIMIT_TOLERANCE,
+    decisionBreachDays: emptyBreaches(),
+    preTradeDriftDays: emptyBreaches(),
+    postFillDriftDays: emptyBreaches(),
+    unresolvedDates: [],
+    pendingCount: 0,
+    pendingSample: [],
+    pyramidTranches: 0,
+    trims: 0,
+    cashShortfalls: 0,
+    feesPaid: 0,
+  };
   const ledger: BookLedger = {
-    model: 'paper_ledger_add_and_hold',
-    capsApplyTo: 'each_day_recommended_weights_only',
+    model: policy === 'binding' ? 'whole_book_limits' : 'paper_ledger_add_and_hold',
+    capsApplyTo: policy === 'binding' ? 'carried_book_and_new_tranches' : 'each_day_recommended_weights_only',
     recommendedMaxGross: 0,
     recommendedMaxNet: 0,
     recommendedDaysOverGross: 0,
@@ -520,36 +836,77 @@ export function walkAudPaper(input: {
       : panel ? panelOmissions(panel) : [];
     if (heldMissing.length) {
       missing.push(...heldMissing.map((symbol) => `${date} ${symbol}`));
+      if (policy === 'binding') binding.unresolvedDates.push(date);
       points.push({ date, nav: null, wealth: null, units, gross: 0, turnover: 0, contribution: input.contribute(date, index) });
       days.push({ date, actionable: snapshot.actionable, regime: snapshot.regime, action: snapshot.action, omissions, gross: 0, halted: desk.halted });
       continue;
     }
     const heldBefore = new Set(journal.paper.positions.map((position) => position.symbol));
-    const before = journal.paper.cash ?? 1;
+    const before: number = journal.paper.cash ?? 1;
     let wealthBefore = before;
     for (const position of journal.paper.positions) wealthBefore += position.qty * (fills.aud[position.symbol] ?? 0);
-    const settled = settleAudDay({
-      cash: before,
-      positions: journal.paper.positions,
-      local: fills.local,
-      aud: fills.aud,
-      openedOn: date,
-      buys: desk.lines.map((line) => ({ symbol: line.symbol, weight: line.weight, stop: line.stop })),
-      oneWay,
-    });
-    if (settled.unfilled.length) missing.push(...settled.unfilled.map((symbol) => `${date} ${symbol} unfilled`));
-    let wealth = settled.cash;
-    for (const position of settled.positions) wealth += position.qty * fills.aud[position.symbol];
-    const invested = wealth - settled.cash;
+    let cashAfter: number = before;
+    let positionsAfter: PaperPosition[] = journal.paper.positions;
+    let buyNotional = 0;
+    let sellNotional = 0;
+    if (policy === 'binding') {
+      const settled = executeBinding({
+        cash: before,
+        positions: journal.paper.positions,
+        date,
+        book: input.book,
+        fx,
+        lines: desk.lines,
+        spec: limitSpecFor(desk, snapshot.effectiveBudget.maxGross, snapshot.effectiveBudget.maxNet),
+        local: fills.local,
+        aud: fills.aud,
+        oneWay,
+      });
+      cashAfter = settled.cash;
+      positionsAfter = settled.positions;
+      buyNotional = settled.buyNotional;
+      sellNotional = settled.sellNotional;
+      addBreaches(binding.decisionBreachDays, settled.decisionBreach);
+      addBreaches(binding.preTradeDriftDays, settled.preTradeDrift);
+      addBreaches(binding.postFillDriftDays, settled.postFillDrift);
+      binding.pyramidTranches += settled.pyramidTranches;
+      binding.trims += settled.trims;
+      binding.cashShortfalls += settled.cashShortfalls;
+      binding.feesPaid += settled.fees;
+      binding.pendingCount += settled.pending.length;
+      for (const item of settled.pending) {
+        if (binding.pendingSample.length < 40) binding.pendingSample.push({ date, symbol: item.symbol, reason: item.reason });
+      }
+      if (settled.unresolved) binding.unresolvedDates.push(date);
+    } else {
+      const settled = settleAudDay({
+        cash: before,
+        positions: journal.paper.positions,
+        local: fills.local,
+        aud: fills.aud,
+        openedOn: date,
+        buys: desk.lines.map((line) => ({ symbol: line.symbol, weight: line.weight, stop: line.stop })),
+        oneWay,
+      });
+      cashAfter = settled.cash;
+      positionsAfter = settled.positions;
+      buyNotional = settled.buyNotional;
+      sellNotional = settled.sellNotional;
+      if (settled.unfilled.length) missing.push(...settled.unfilled.map((symbol) => `${date} ${symbol} unfilled`));
+    }
+    const markedCash = cashAfter;
+    let wealth = markedCash;
+    for (const position of positionsAfter) wealth += position.qty * fills.aud[position.symbol];
+    const invested = wealth - markedCash;
     const nav = wealth / units;
     const contribution = input.contribute(date, index);
     const funded = applyContribution(nav, units, contribution);
-    if (contribution > 0) settled.cash += contribution;
+    if (contribution > 0) cashAfter += contribution;
     units = funded.units;
     if (nav > peak) peak = nav;
-    journal.paper.cash = settled.cash;
-    journal.paper.positions = settled.positions;
-    for (const position of settled.positions) heldSymbols.add(position.symbol);
+    journal.paper.cash = cashAfter;
+    journal.paper.positions = positionsAfter;
+    for (const position of positionsAfter) heldSymbols.add(position.symbol);
     journal.paper.peakEquity = peak;
     journal.paper.marks = journal.paper.marks.concat([{ date, equity: nav }]);
     const gross = wealth > 0 ? invested / wealth : 0;
@@ -557,16 +914,16 @@ export function walkAudPaper(input: {
       lines: desk.lines,
       maxGross: snapshot.effectiveBudget.maxGross,
       maxNet: snapshot.effectiveBudget.maxNet,
-      positions: settled.positions,
+      positions: positionsAfter,
       heldBefore,
       aud: fills.aud,
-      cash: settled.cash,
+      cash: markedCash,
       wealth,
       previousNew,
     });
     previousNew = new Set(desk.lines.filter((line) => line.weight > 0).map((line) => line.symbol));
     ledgerDays += 1;
-    const turnover = wealthBefore > 0 ? (settled.buyNotional + settled.sellNotional) / 2 / wealthBefore : 0;
+    const turnover = wealthBefore > 0 ? (buyNotional + sellNotional) / 2 / wealthBefore : 0;
     points.push({ date, nav, wealth: funded.wealth, units, gross, turnover, contribution });
     days.push({ date, actionable: snapshot.actionable, regime: snapshot.regime, action: snapshot.action, omissions, gross, halted: desk.halted });
   }
@@ -575,7 +932,7 @@ export function walkAudPaper(input: {
     ledger.averageDefensiveGross /= ledgerDays;
     ledger.averageCash /= ledgerDays;
   }
-  return { points, missing, days, heldSymbols: Array.from(heldSymbols).sort(), ledger };
+  return { points, missing, days, heldSymbols: Array.from(heldSymbols).sort(), ledger, binding: policy === 'binding' ? binding : null };
 }
 
 function recordLedger(ledger: BookLedger, input: {
