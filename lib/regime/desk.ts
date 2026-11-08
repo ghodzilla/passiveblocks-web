@@ -4,6 +4,7 @@ import { dipSignal } from './dip';
 import { dipDisplay } from './plain';
 import { checklistNote, ideaGates, sizingVerdict, type GateCheck } from './gates';
 import type { IdeaStatus, IdeasReport } from './ideas';
+import { paperLedgerFrom, valuedMarks, type PaperLedger } from './audPaper';
 import { planBookLimits, type LimitSpec } from './bookLimits';
 import { AI_MEGACAP_CLUSTER } from './overlap';
 import { defensiveOnly, priceIsFresh, printStance, scaleWeights, volTargetWeight } from './ideas';
@@ -75,6 +76,8 @@ export interface Desk {
   backtestedText: string;
   gapText: string;
   maxDrawdownText: string;
+  /** AUD paper book shown to the owner. Null only on desks built before this field. */
+  paperLedger?: PaperLedger;
 }
 
 function latestComponent(snapshot: RegimeSnapshot, id: 'ai' | 'liquidity'): { value: number | null; date: string | null } {
@@ -108,11 +111,14 @@ export function buildDesk(input: {
   const capital = resolveCapital(input.envCapital, input.journal.settings.capital);
   const targetCagr = resolveTargetCagr(input.envTarget, input.journal.settings.targetCagr);
   const params = input.journal.params;
-  const marks = input.journal.paper.marks;
-  const equity = marks.length ? marks[marks.length - 1].equity : (input.journal.paper.cash ?? capital);
-  const peak = input.journal.paper.peakEquity ?? equity;
+  const aud = input.journal.audBook ?? null;
+  const marks = aud ? valuedMarks(aud) : input.journal.paper.marks;
+  const cash = aud ? aud.cash : input.journal.paper.cash;
+  const equity = marks.length ? marks[marks.length - 1].equity : (cash ?? capital);
+  const peak = (aud ? aud.peakEquity : input.journal.paper.peakEquity) ?? equity;
   const drawdown = drawdownState(equity, peak);
-  const halted = input.journal.paper.marks.length > 0 && drawdown.halted;
+  const halted = marks.length > 0 && drawdown.halted;
+  const paperLedger = paperLedgerFrom(input.journal);
 
   const ai = latestComponent(input.snapshot, 'ai');
   const liquidity = latestComponent(input.snapshot, 'liquidity');
@@ -127,7 +133,8 @@ export function buildDesk(input: {
     dollar: seriesDirection(input.dollar, input.snapshot.today),
   });
 
-  const positions = new Map(input.journal.paper.positions.map((position) => [position.symbol, position]));
+  const heldPositions = aud ? aud.positions : input.journal.paper.positions;
+  const positions = new Map(heldPositions.map((position) => [position.symbol, position]));
   const standDown = defensiveOnly(input.snapshot.action);
   const regimeOpen = !standDown && (input.snapshot.regime === 'risk_on' || input.snapshot.regime === 'transitional');
   const drafted: {
@@ -359,13 +366,13 @@ export function buildDesk(input: {
     lines: lines.filter((line) => themeIdsFor(line.symbol).includes(theme.id)),
   }));
 
-  const curve = input.journal.paper.marks.map((mark) => mark.equity);
+  const curve = marks.map((mark) => mark.equity);
   const realised = cagrFromCurve(curve.length ? [capital, ...curve] : []);
   const lastWeek = input.journal.weeks.length ? input.journal.weeks[input.journal.weeks.length - 1] : null;
   const backtested = lastWeek ? lastWeek.portfolio.cagr : null;
   const maxDrawdown = lastWeek
     ? lastWeek.portfolio.maxDrawdown
-    : (input.journal.paper.marks.length ? drawdown.drawdown : null);
+    : (marks.length ? drawdown.drawdown : null);
   const gaps = [...input.ideas.gaps];
   if (input.journal.gap) gaps.push(input.journal.gap);
   if (overlapView.gap) gaps.push(overlapView.gap);
@@ -377,10 +384,10 @@ export function buildDesk(input: {
     lines,
     capital,
     targetCagr,
-    drawdown: input.journal.paper.marks.length ? drawdown.drawdown : null,
+    drawdown: marks.length ? drawdown.drawdown : null,
     halted,
-    equity: input.journal.paper.marks.length ? equity : null,
-    peakEquity: input.journal.paper.marks.length ? peak : null,
+    equity: paperLedger.currency === 'AUD' ? paperLedger.equity : (marks.length ? equity : null),
+    peakEquity: marks.length ? peak : null,
     realisedCagr: realised,
     backtestedCagr: backtested,
     maxDrawdown,
@@ -396,6 +403,7 @@ export function buildDesk(input: {
     backtestedText: measured(backtested),
     gapText: measured(realised == null ? null : targetCagr - realised),
     maxDrawdownText: measured(maxDrawdown),
+    paperLedger,
   };
 }
 

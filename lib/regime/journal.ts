@@ -1,3 +1,4 @@
+import type { AudPaperBook } from './audPaper';
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto';
 import { DEFAULT_ATR_K, DEFAULT_RISK_PCT } from './sizing';
 import { DIP_HIGH, DIP_LOW } from './dip';
@@ -55,7 +56,14 @@ export interface Journal {
     marks: { date: string; equity: number }[];
     /** Set when whole-book caps were applied, or when mixed currencies blocked them. */
     limitStatus?: 'enforced' | 'blocked_mixed_currency';
+    /** Set when these rows are the old mixed-currency ledger. They are not rewritten. */
+    valuation?: 'uncomparable_mixed_local';
+    retained?: true;
   };
+  /** Capped book in AUD. Absent on journals saved before this field. */
+  audBook?: AudPaperBook | null;
+  /** Previous AUD book, kept only after the owner starts a new one. */
+  audBookPrevious?: AudPaperBook | null;
   calls: RuleCall[];
   outcomes: ForwardOutcome[];
   changes: WeekChange[];
@@ -120,6 +128,12 @@ export function boundJournal(journal: Journal): Journal {
     ...journal,
     gap: null,
     paper: { ...journal.paper, marks: journal.paper.marks.slice(-JOURNAL_MARK_LIMIT) },
+    audBook: journal.audBook
+      ? { ...journal.audBook, marks: journal.audBook.marks.slice(-JOURNAL_MARK_LIMIT), pending: journal.audBook.pending.slice(-40) }
+      : journal.audBook,
+    audBookPrevious: journal.audBookPrevious
+      ? { ...journal.audBookPrevious, marks: journal.audBookPrevious.marks.slice(-JOURNAL_MARK_LIMIT), pending: journal.audBookPrevious.pending.slice(-40) }
+      : journal.audBookPrevious,
     calls: journal.calls.slice(-JOURNAL_CALL_LIMIT),
     outcomes: journal.outcomes.slice(-JOURNAL_OUTCOME_LIMIT),
     weeks: journal.weeks.slice(-JOURNAL_WEEK_LIMIT),

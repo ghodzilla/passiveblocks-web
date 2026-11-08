@@ -1,4 +1,5 @@
 import { snapshotFromBundle, type DataBundle } from './assemble';
+import { markInAud } from './fx';
 import { BOOK_LIMIT_TOLERANCE, BOOK_LIMITS_VERSION, clampBuysToCash, planBookLimits, type LimitSpec } from './bookLimits';
 import { budgetsFor } from './classify';
 import { FRED_SERIES, REGIME_LABEL, RULES_VERSION } from './constants';
@@ -267,18 +268,9 @@ export function executionBar(series: PriceSeries | undefined, decisionDate: stri
 }
 
 export function audFill(symbol: string, bar: Bar, fx: PriceSeries | undefined): { aud: number; fxDate: string | null } | null {
-  if (symbol.endsWith('.AX') || symbol === 'CASH') return { aud: bar.close, fxDate: null };
-  if (!fx) return null;
-  let rate: number | null = null;
-  let fxDate: string | null = null;
-  for (const point of fx.bars) {
-    if (point.date <= bar.date && point.close > 0) {
-      rate = point.close;
-      fxDate = point.date;
-    }
-  }
-  if (!(rate != null) || !(rate > 0)) return null;
-  return { aud: bar.close / rate, fxDate };
+  const marked = markInAud({ symbol, local: bar.close, priceDate: bar.date, fxBars: fx?.bars });
+  if (!marked) return null;
+  return { aud: marked.aud, fxDate: marked.fxDate };
 }
 
 export function tradedFraction(next: { symbol: string; weight: number }[], prev: { symbol: string; weight: number }[]): number {

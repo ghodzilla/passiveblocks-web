@@ -70,7 +70,7 @@ A hold whose weight is inside the caps is kept. Weight 0 on a hold is not a targ
 
 After the fill, prices will not match the decision marks. That gap is post-fill drift. It is counted separately from an order that breached a cap. The next decision’s pre-trade mark is the drift since the last fill. The policy does not claim the book stays inside the caps between sessions.
 
-The live journal mixes ASX and US prices in one cash figure and has no FX conversion. Cap orders are not applied to that mixed book. The refresh records `blocked_mixed_currency` and still processes stops, which are in each name’s own price. The research replay marks everything in AUD and does enforce the limits. CFTC stays omitted. The universe is the current survivor list. The window is the same 514 sessions, 2024-10-18 through 2026-11-05.
+The live tracker keeps any earlier mixed-currency ledger and does not convert its cash or cost bases. A separate AUD book, `aud-paper-v1`, uses the same AUDUSD convention as this replay: the Yahoo close is USD per 1 AUD, and a USD price becomes AUD by dividing by the last rate on or before that price. A missing or stale rate blocks a new buy and leaves the book unvalued. The research replay is unchanged by that live book. CFTC stays omitted. The universe is the current survivor list. The window is the same 514 sessions, 2024-10-18 through 2026-11-05.
 
 ## What this folder is allowed to conclude
 
