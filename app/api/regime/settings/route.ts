@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
+import { rebaselineAudBook } from '@/lib/regime/audPaper';
 import { safeDbMessage } from '@/lib/regime/db';
 import { regimeApiAllowed, regimeDenied } from '@/lib/regime/guard';
 import { readJournal, writeJournal } from '@/lib/regime/state';
+import { melbourneDate } from '@/lib/regime/time';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -26,6 +28,11 @@ export async function POST(request: Request) {
   const journal = await readJournal();
   journal.settings.capital = capital;
   journal.settings.targetCagr = targetPct / 100;
+  if (String(form.get('intent') ?? '') === 'rebaseline') {
+    const next = rebaselineAudBook(journal, melbourneDate(new Date()), capital);
+    journal.audBook = next.audBook;
+    journal.audBookPrevious = next.audBookPrevious;
+  }
   try {
     await writeJournal(journal);
   } catch (error) {

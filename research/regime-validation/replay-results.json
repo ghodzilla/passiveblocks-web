@@ -1,0 +1,753 @@
+{
+  "ranAt": "2026-11-07T23:43:55.239Z",
+  "command": "npx tsx research/regime-validation/run-replay.ts",
+  "fullStrategy": "repaired_policy_not_the_historical_rule",
+  "prices": {
+    "symbols": 58,
+    "gaps": [],
+    "file": "research/regime-validation/prices/book.json"
+  },
+  "panelDates": 536,
+  "tradedSessions": 515,
+  "weekdayHolidaysSkipped": [
+    "2024-11-28",
+    "2024-12-25",
+    "2025-01-01",
+    "2025-01-09",
+    "2025-01-20",
+    "2025-02-17",
+    "2025-04-18",
+    "2025-05-26",
+    "2025-06-19",
+    "2025-07-04",
+    "2025-09-01",
+    "2025-11-27",
+    "2025-12-25",
+    "2026-01-01",
+    "2026-01-19",
+    "2026-02-16",
+    "2026-04-03",
+    "2026-05-25",
+    "2026-06-19",
+    "2026-07-03",
+    "2026-09-07"
+  ],
+  "taxes": "excluded",
+  "currency": "AUD",
+  "costBps": 10,
+  "cashYieldBps": 0,
+  "universe": "Current survivor list. Hypothetical frozen-rule lookback. Pre-exposed to the 2021–2026 paths already published.",
+  "clock": "Decision instant is 13:15:00Z on a SPY session. US and crypto signals hide that session’s close. Every fill, including ASX, is the next session after the decision date. Weekdays with no SPY bar are not trades. Date.now is not the engine clock.",
+  "experiment": "book_limits_2026_11_07",
+  "policy": "book-limits-2026-11-07",
+  "restricted": [
+    "CFTC positioning omitted. No release-dated history was in the archive, and today’s book was not copied back.",
+    "Universe is the current survivor list, a hypothetical, and the window is inside the already examined 2021–2026 sample.",
+    "book-limits-2026-11-07 caps the carried book and new tranches. It is the owner-approved repair. It is not the historical add-and-hold journal, and it is not an unseen out-of-sample test.",
+    "A hold with suggestion weight 0 is kept. It is sold for a stop, a stale or missing mark, or a binding cap. One pyramid tranche is allowed per position.",
+    "FRED observation_start on the fetch was 2019-06-01. The 60-month CLI window constant was not changed. Months before June 2019 are absent from the file.",
+    "DFEDTARU intervals are joined across the 2022-12-31 and 2023-01-01 realtime chunks. A row whose rt_start is the chunk boundary is the copy that contains the vintage, not a claim about the original release minute.",
+    "The three dates with fewer than 252 credit observations are not actionable. Defensive names can still be held or added inside the preservation budget."
+  ],
+  "reason": "Prior-day vintages, the current survivor universe, 10 bps, cash yield 0, and next-session fills. The scored book is the repaired whole-book policy. The add-and-hold path is a historical diagnostic on the same dates. CFTC is omitted. This is not a guarantee and the aspiration label is not a result.",
+  "audit": [
+    {
+      "date": "2024-10-18",
+      "vintage": "2024-10-17",
+      "hyCount": 249,
+      "hyLast": "2024-10-17",
+      "dgs2": 1346
+    },
+    {
+      "date": "2024-10-23",
+      "vintage": "2024-10-22",
+      "hyCount": 252,
+      "hyLast": "2024-10-22",
+      "dgs2": 1349
+    },
+    {
+      "date": "2026-09-25",
+      "vintage": "2026-09-24",
+      "hyCount": 756,
+      "hyLast": "2026-09-24",
+      "dgs2": 1829
+    },
+    {
+      "date": "2026-11-06",
+      "vintage": "2026-11-05",
+      "hyCount": 786,
+      "hyLast": "2026-11-05",
+      "dgs2": 1858
+    }
+  ],
+  "coverage": {
+    "weekdayDecisions": 536,
+    "spySessions": 515,
+    "replayedSessions": 514,
+    "droppedNoLaterAsxSession": [
+      "2026-11-06"
+    ],
+    "holidaysSkipped": [
+      "2024-11-28",
+      "2024-12-25",
+      "2025-01-01",
+      "2025-01-09",
+      "2025-01-20",
+      "2025-02-17",
+      "2025-04-18",
+      "2025-05-26",
+      "2025-06-19",
+      "2025-07-04",
+      "2025-09-01",
+      "2025-11-27",
+      "2025-12-25",
+      "2026-01-01",
+      "2026-01-19",
+      "2026-02-16",
+      "2026-04-03",
+      "2026-05-25",
+      "2026-06-19",
+      "2026-07-03",
+      "2026-09-07"
+    ],
+    "creditBelow252": [
+      "2024-10-18",
+      "2024-10-21",
+      "2024-10-22"
+    ],
+    "creditShortOf756": 481,
+    "firstFullCreditWindow": "2026-09-25",
+    "fill": "next session after the decision date, for US, crypto, and ASX",
+    "cliMonthsAtFirstReplay": 64,
+    "cliDecisionsShorterThan60": 0,
+    "sessionArithmetic": "536 weekdays minus 21 dates with no SPY bar is 515. Dropping 1 date with no later fill leaves 514."
+  },
+  "production": {
+    "label": "whole_book_limits",
+    "policy": "book-limits-2026-11-07",
+    "binding": {
+      "version": "book-limits-2026-11-07",
+      "tolerance": 0.0001,
+      "decisionBreachDays": {
+        "gross": 0,
+        "net": 0,
+        "name": 0,
+        "theme": 0,
+        "overlap": 0
+      },
+      "preTradeDriftDays": {
+        "gross": 3,
+        "net": 31,
+        "name": 17,
+        "theme": 18,
+        "overlap": 19
+      },
+      "postFillDriftDays": {
+        "gross": 0,
+        "net": 29,
+        "name": 15,
+        "theme": 17,
+        "overlap": 22
+      },
+      "unresolvedDates": [],
+      "pendingCount": 9,
+      "pendingSample": [
+        {
+          "date": "2024-11-14",
+          "symbol": "XLY",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-10-08",
+          "symbol": "SOL-USD",
+          "reason": "Fill is through the stop. The buy is not taken."
+        },
+        {
+          "date": "2025-10-14",
+          "symbol": "FXA",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-10-16",
+          "symbol": "AMZN",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-10-16",
+          "symbol": "IWM",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-10-28",
+          "symbol": "IWM",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-10-29",
+          "symbol": "AMZN",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-10-30",
+          "symbol": "META",
+          "reason": "Fill is through the stop. The buy is not taken."
+        },
+        {
+          "date": "2025-10-30",
+          "symbol": "META",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        }
+      ],
+      "pyramidTranches": 37,
+      "trims": 102,
+      "cashShortfalls": 7,
+      "feesPaid": 0.040319027735416166
+    },
+    "ledger": {
+      "model": "whole_book_limits",
+      "capsApplyTo": "carried_book_and_new_tranches",
+      "recommendedMaxGross": 0.7033720000000001,
+      "recommendedMaxNet": 0.7033720000000001,
+      "recommendedDaysOverGross": 0,
+      "recommendedDaysOverNet": 0,
+      "heldMaxGross": 1,
+      "heldMaxNet": 0.9922745920295943,
+      "heldMaxSingle": 0.1997953823665224,
+      "heldMaxSingleSymbol": "MTUM",
+      "daysHeldGrossOverBudget": 0,
+      "daysHeldNetOverBudget": 12,
+      "daysHeldSingleOverCap": 2,
+      "daysHeldThemeOverCap": 13,
+      "averageRiskGross": 0.1393785167644339,
+      "averageDefensiveGross": 0.08916756719655035,
+      "averageCash": 0.7714539160390159,
+      "maxRiskGross": 0.9547906636704772,
+      "maxDefensiveGross": 0.20181260706146192,
+      "consecutiveDaysWithTheSameNewWeight": 1151,
+      "pyramidAdds": 1286
+    },
+    "missingExecutions": [],
+    "missingCount": 0,
+    "omissionsSample": [
+      "CFTC positioning is omitted. Today’s positioning is not copied into this date."
+    ],
+    "failClosedDays": 3,
+    "failClosedDates": [
+      "2024-10-18",
+      "2024-10-21",
+      "2024-10-22"
+    ],
+    "heldSymbols": [
+      "AAA.AX",
+      "AAPL",
+      "AMZN",
+      "ANZ.AX",
+      "AVGO",
+      "BHP.AX",
+      "BILL.AX",
+      "BRK-B",
+      "BTC-USD",
+      "CBA.AX",
+      "DLR",
+      "EQIX",
+      "ETH-USD",
+      "FXA",
+      "GLD",
+      "GOLD.AX",
+      "GOOGL",
+      "IEF",
+      "IOZ.AX",
+      "IWM",
+      "LLY",
+      "META",
+      "MQG.AX",
+      "MSFT",
+      "MTUM",
+      "NAB.AX",
+      "NVDA",
+      "QQQ",
+      "SHY",
+      "SLV",
+      "SMH",
+      "SOL-USD",
+      "SPY",
+      "TLS.AX",
+      "TSLA",
+      "USMV",
+      "UUP",
+      "VAF.AX",
+      "VAS.AX",
+      "VGS.AX",
+      "WBC.AX",
+      "WES.AX",
+      "XLB",
+      "XLC",
+      "XLE",
+      "XLF",
+      "XLI",
+      "XLK",
+      "XLP",
+      "XLRE",
+      "XLU",
+      "XLV",
+      "XLY"
+    ],
+    "exposureByAction": {
+      "reduce_risk": {
+        "days": 13,
+        "averageGross": 0.18649856525771702
+      },
+      "do_nothing": {
+        "days": 435,
+        "averageGross": 0.15653556334835436
+      },
+      "risk_budget_open": {
+        "days": 66,
+        "averageGross": 0.8190531427170423
+      }
+    },
+    "regimeCounts": {
+      "none": 3,
+      "transitional": 434,
+      "risk_on": 67,
+      "tightening": 10
+    },
+    "summary": {
+      "start": "2024-10-18",
+      "end": "2026-11-05",
+      "observations": 514,
+      "dayCount": 748,
+      "cagr": 0.051749407304692685,
+      "maxDrawdown": 0.03208557317891571,
+      "sharpe": 1.3625408830096966,
+      "riskFree": 0,
+      "dayBasis": "Unit-NAV changes between decision dates. Annualised with 365.25 divided by the average gap of 1.46 days. Risk-free rate is 0 because cash yield is 0. Dependence-aware standard errors are not computed.",
+      "averageGross": 0.24236373312102935,
+      "timeInMarket": 1,
+      "turnover": 3.092976968300159,
+      "trades": 104,
+      "wealthEnd": 26.817435354071506,
+      "unitNavEnd": 1.108740553320966,
+      "firstHalfDrawdown": 0.02232900844198888,
+      "secondHalfDrawdown": 0.02245275130304705,
+      "firstHalfCagr": 0.11126177724712649,
+      "secondHalfCagr": -0.0025332141895095805,
+      "returnPerDrawdown": 1.61285594046045,
+      "preExposed": true
+    }
+  },
+  "priceOnlyDiagnostic": {
+    "label": "ablation_standdown_removed_same_whole_book_limits",
+    "ledger": {
+      "model": "whole_book_limits",
+      "capsApplyTo": "carried_book_and_new_tranches",
+      "recommendedMaxGross": 0.7089660000000001,
+      "recommendedMaxNet": 0.7089660000000001,
+      "recommendedDaysOverGross": 0,
+      "recommendedDaysOverNet": 0,
+      "heldMaxGross": 1,
+      "heldMaxNet": 0.9922432071064211,
+      "heldMaxSingle": 0.17505526318150408,
+      "heldMaxSingleSymbol": "IWM",
+      "daysHeldGrossOverBudget": 0,
+      "daysHeldNetOverBudget": 36,
+      "daysHeldSingleOverCap": 1,
+      "daysHeldThemeOverCap": 2,
+      "averageRiskGross": 0.21459266682295985,
+      "averageDefensiveGross": 0.046481930704612914,
+      "averageCash": 0.7389254024724271,
+      "maxRiskGross": 0.9826695935380151,
+      "maxDefensiveGross": 0.15642372525490522,
+      "consecutiveDaysWithTheSameNewWeight": 1038,
+      "pyramidAdds": 1242
+    },
+    "binding": {
+      "version": "book-limits-2026-11-07",
+      "tolerance": 0.0001,
+      "decisionBreachDays": {
+        "gross": 0,
+        "net": 0,
+        "name": 0,
+        "theme": 0,
+        "overlap": 0
+      },
+      "preTradeDriftDays": {
+        "gross": 3,
+        "net": 66,
+        "name": 12,
+        "theme": 3,
+        "overlap": 24
+      },
+      "postFillDriftDays": {
+        "gross": 0,
+        "net": 65,
+        "name": 10,
+        "theme": 3,
+        "overlap": 25
+      },
+      "unresolvedDates": [],
+      "pendingCount": 23,
+      "pendingSample": [
+        {
+          "date": "2024-11-14",
+          "symbol": "XLY",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-09-02",
+          "symbol": "IWM",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-09-19",
+          "symbol": "IWM",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-09-22",
+          "symbol": "MTUM",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-09-23",
+          "symbol": "NVDA",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-09-23",
+          "symbol": "TSLA",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-09-23",
+          "symbol": "MTUM",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-09-24",
+          "symbol": "TSLA",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-09-24",
+          "symbol": "MTUM",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-09-25",
+          "symbol": "TSLA",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-09-25",
+          "symbol": "NVDA",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-09-26",
+          "symbol": "TSLA",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-09-29",
+          "symbol": "NVDA",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-09-30",
+          "symbol": "NVDA",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-10-01",
+          "symbol": "TSLA",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-10-14",
+          "symbol": "FXA",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-10-16",
+          "symbol": "AMZN",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-10-17",
+          "symbol": "SMH",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-10-24",
+          "symbol": "SMH",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-10-27",
+          "symbol": "SMH",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-10-29",
+          "symbol": "MTUM",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-10-30",
+          "symbol": "META",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        },
+        {
+          "date": "2025-10-31",
+          "symbol": "AAPL",
+          "reason": "Cash cannot fund the planned buy. No borrowing."
+        }
+      ],
+      "pyramidTranches": 39,
+      "trims": 124,
+      "cashShortfalls": 23,
+      "feesPaid": 0.04608676105802478
+    },
+    "missingExecutions": 0,
+    "heldSymbols": [
+      "AAA.AX",
+      "AAPL",
+      "AMZN",
+      "ANZ.AX",
+      "AVGO",
+      "BHP.AX",
+      "BILL.AX",
+      "BRK-B",
+      "BTC-USD",
+      "CBA.AX",
+      "DLR",
+      "EQIX",
+      "ETH-USD",
+      "FXA",
+      "GLD",
+      "GOLD.AX",
+      "GOOGL",
+      "IEF",
+      "IOZ.AX",
+      "IWM",
+      "LLY",
+      "META",
+      "MQG.AX",
+      "MSFT",
+      "MTUM",
+      "NAB.AX",
+      "NVDA",
+      "QQQ",
+      "SHY",
+      "SLV",
+      "SMH",
+      "SOL-USD",
+      "SPY",
+      "TLS.AX",
+      "TLT",
+      "TSLA",
+      "USMV",
+      "VAF.AX",
+      "VAS.AX",
+      "VGS.AX",
+      "WBC.AX",
+      "WES.AX",
+      "XLB",
+      "XLC",
+      "XLE",
+      "XLF",
+      "XLI",
+      "XLK",
+      "XLP",
+      "XLRE",
+      "XLU",
+      "XLV",
+      "XLY"
+    ],
+    "summary": {
+      "start": "2024-10-18",
+      "end": "2026-11-05",
+      "observations": 514,
+      "dayCount": 748,
+      "cagr": 0.04605648176069965,
+      "maxDrawdown": 0.032025243228215164,
+      "sharpe": 0.9802899622675236,
+      "riskFree": 0,
+      "dayBasis": "Unit-NAV changes between decision dates. Annualised with 365.25 divided by the average gap of 1.46 days. Risk-free rate is 0 because cash yield is 0. Dependence-aware standard errors are not computed.",
+      "averageGross": 0.2748746713038556,
+      "timeInMarket": 1,
+      "turnover": 3.319875465792506,
+      "trades": 159,
+      "wealthEnd": 26.45508115007363,
+      "unitNavEnd": 1.0964850487119158,
+      "firstHalfDrawdown": 0.032025243228215164,
+      "secondHalfDrawdown": 0.020473850084691162,
+      "firstHalfCagr": 0.1062887523373961,
+      "secondHalfCagr": -0.006833343118014756,
+      "returnPerDrawdown": 1.4381305844422927,
+      "preExposed": true
+    }
+  },
+  "addHoldDiagnostic": {
+    "label": "historical_add_and_hold_not_the_policy",
+    "ledger": {
+      "model": "paper_ledger_add_and_hold",
+      "capsApplyTo": "each_day_recommended_weights_only",
+      "recommendedMaxGross": 0.957653,
+      "recommendedMaxNet": 0.957653,
+      "recommendedDaysOverGross": 0,
+      "recommendedDaysOverNet": 0,
+      "heldMaxGross": 0.9996805927525688,
+      "heldMaxNet": 0.9949717376550212,
+      "heldMaxSingle": 0.5447536174957708,
+      "heldMaxSingleSymbol": "GLD",
+      "daysHeldGrossOverBudget": 444,
+      "daysHeldNetOverBudget": 444,
+      "daysHeldSingleOverCap": 456,
+      "daysHeldThemeOverCap": 482,
+      "averageRiskGross": 0.24512811687215108,
+      "averageDefensiveGross": 0.6857757348460878,
+      "averageCash": 0.06909614828176133,
+      "maxRiskGross": 0.9186180146368134,
+      "maxDefensiveGross": 0.8721663173811773,
+      "consecutiveDaysWithTheSameNewWeight": 1574,
+      "pyramidAdds": 1178
+    },
+    "missingExecutions": 0,
+    "summary": {
+      "start": "2024-10-18",
+      "end": "2026-11-05",
+      "observations": 514,
+      "dayCount": 748,
+      "cagr": 0.11980195848553121,
+      "maxDrawdown": 0.2403047236833446,
+      "sharpe": 0.8212167963655806,
+      "riskFree": 0,
+      "dayBasis": "Unit-NAV changes between decision dates. Annualised with 365.25 divided by the average gap of 1.46 days. Risk-free rate is 0 because cash yield is 0. Dependence-aware standard errors are not computed.",
+      "averageGross": 0.9441637430159235,
+      "timeInMarket": 1,
+      "turnover": 2.2181374294859872,
+      "trades": 54,
+      "wealthEnd": 26.77582415825258,
+      "unitNavEnd": 1.260643909628078,
+      "firstHalfDrawdown": 0.07685689013121924,
+      "secondHalfDrawdown": 0.2403047236833446,
+      "firstHalfCagr": 0.31539630482185466,
+      "secondHalfCagr": -0.05543517616177318,
+      "returnPerDrawdown": 0.4985418374188814,
+      "preExposed": true
+    }
+  },
+  "staticSixtyForty": {
+    "label": "static_60_spy_40_cash",
+    "summary": {
+      "start": "2024-10-18",
+      "end": "2026-11-05",
+      "observations": 514,
+      "dayCount": 748,
+      "cagr": 0.0674365420624774,
+      "maxDrawdown": 0.10896598720502167,
+      "sharpe": 0.7062590414405043,
+      "riskFree": 0,
+      "dayBasis": "Unit-NAV changes between decision dates. Annualised with 365.25 divided by the average gap of 1.46 days. Risk-free rate is 0 because cash yield is 0. Dependence-aware standard errors are not computed.",
+      "averageGross": 0.6000000000000005,
+      "timeInMarket": 1,
+      "turnover": 1.433161316298791,
+      "trades": 514,
+      "wealthEnd": 27.49206217367292,
+      "unitNavEnd": 1.1423032527369057,
+      "firstHalfDrawdown": 0.10896598720502167,
+      "secondHalfDrawdown": 0.07299807385019311,
+      "firstHalfCagr": 0.1203676276525536,
+      "secondHalfCagr": 0.02182200638595755,
+      "returnPerDrawdown": 0.6188769889781681,
+      "preExposed": true
+    }
+  },
+  "spySameContributions": {
+    "label": "spy_same_contributions",
+    "summary": {
+      "start": "2024-10-18",
+      "end": "2026-11-05",
+      "observations": 514,
+      "dayCount": 748,
+      "cagr": 0.10954262385984936,
+      "maxDrawdown": 0.17674269100386514,
+      "sharpe": 0.7103547778620346,
+      "riskFree": 0,
+      "dayBasis": "Unit-NAV changes between decision dates. Annualised with 365.25 divided by the average gap of 1.46 days. Risk-free rate is 0 because cash yield is 0. Dependence-aware standard errors are not computed.",
+      "averageGross": 1,
+      "timeInMarket": 1,
+      "turnover": 1,
+      "trades": 1,
+      "wealthEnd": 28.45242972433952,
+      "unitNavEnd": 1.2359941803379135,
+      "firstHalfDrawdown": 0.17674269100386514,
+      "secondHalfDrawdown": 0.11939505318565594,
+      "firstHalfCagr": 0.20007485676376713,
+      "secondHalfCagr": 0.033965015394046505,
+      "returnPerDrawdown": 0.6197858776375301,
+      "preExposed": true
+    }
+  },
+  "spyLumpSum": {
+    "label": "spy_buy_and_hold",
+    "funding": "One unit at the first session. No later contributions. Different funding from the monthly paths.",
+    "summary": {
+      "start": "2024-10-18",
+      "end": "2026-11-05",
+      "observations": 514,
+      "dayCount": 748,
+      "cagr": 0.10954262385984936,
+      "maxDrawdown": 0.17674269100386514,
+      "sharpe": 0.7103547778620346,
+      "riskFree": 0,
+      "dayBasis": "Unit-NAV changes between decision dates. Annualised with 365.25 divided by the average gap of 1.46 days. Risk-free rate is 0 because cash yield is 0. Dependence-aware standard errors are not computed.",
+      "averageGross": 1,
+      "timeInMarket": 1,
+      "turnover": 1,
+      "trades": 1,
+      "wealthEnd": 1.2359941803379135,
+      "unitNavEnd": 1.2359941803379135,
+      "firstHalfDrawdown": 0.17674269100386514,
+      "secondHalfDrawdown": 0.11939505318565594,
+      "firstHalfCagr": 0.20007485676376713,
+      "secondHalfCagr": 0.033965015394046505,
+      "returnPerDrawdown": 0.6197858776375301,
+      "preExposed": true
+    }
+  },
+  "hypotheses": {
+    "h1": "unsupported",
+    "h2": "unsupported",
+    "ratios": {
+      "production": {
+        "full": 1.61285594046045,
+        "firstHalf": 4.982835558335981,
+        "secondHalf": -0.1128242216429752
+      },
+      "sixtyFortyMonthly": {
+        "full": 0.6188769889781681,
+        "firstHalf": 1.104634856618878,
+        "secondHalf": 0.29893948202990595
+      },
+      "spyMonthly": {
+        "full": 0.6197858776375301,
+        "firstHalf": 1.1320120545148413,
+        "secondHalf": 0.28447590153699137
+      },
+      "spyBuyAndHold": {
+        "full": 0.6197858776375301,
+        "firstHalf": 1.1320120545148413,
+        "secondHalf": 0.28447590153699137
+      }
+    },
+    "timeInMarket": {
+      "production": 1,
+      "priceOnly": 1
+    },
+    "because": "H1 and H2 are scored on book-limits-2026-11-07, the repaired whole-book policy. That policy is not the historical add-and-hold journal. H1 asks for a higher unit-NAV return per unit of drawdown than buy-and-hold SPY and monthly 60/40, on the full span and on each half. H2 asks whether removing the stand-down, while keeping the same whole-book limits and the production budget, changes time in market. Any holding counts, including a defensive ETF. Risk, defensive, and cash sleeves are reported beside that flag. Thresholds were not fit to this span. Post-fill price drift is not a new-order breach."
+  },
+  "metricsNote": "CAGR, drawdown, and Sharpe use unit NAV after stripping the shared monthly contribution. Wealth includes that contribution and is not the drawdown. Monthly SPY and buy-and-hold SPY share a unit NAV because a contribution adds units and does not change NAV. Their ending wealth differs. The sample is pre-exposed. This is not an out-of-sample profitability result."
+}

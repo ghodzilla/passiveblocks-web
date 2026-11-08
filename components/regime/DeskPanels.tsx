@@ -12,6 +12,18 @@ function money(value: number): string {
   return new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
 }
 
+function audMoney(value: number | null): string {
+  if (value == null || !Number.isFinite(value)) return '—';
+  return new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', maximumFractionDigits: 0 }).format(value);
+}
+
+function equityLine(desk: Desk): string {
+  if (desk.paperLedger?.status === 'legacy_only') return 'Earlier ledger retained. No AUD value.';
+  if (desk.equity == null || desk.paperLedger?.valued === false) return 'No AUD paper value yet';
+  if (desk.paperLedger?.currency === 'AUD') return `Equity ${audMoney(desk.equity)}`;
+  return `Equity ${money(desk.equity)}`;
+}
+
 export function DeskPanels({ desk, settingsNotice = null }: { desk: Desk; settingsNotice?: string | null }) {
   return (
     <>
@@ -62,6 +74,52 @@ export function DeskPanels({ desk, settingsNotice = null }: { desk: Desk; settin
         </div>
       </section>
 
+      <section className="mt-10" id="paper-book">
+        <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Paper only</p>
+        <h2 className="text-lg font-bold tracking-tight">AUD paper book{desk.paperLedger?.policy ? `, ${desk.paperLedger.policy}` : ''}</h2>
+        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">
+          This is a paper ledger, not a brokerage account and not an order. Caps bind the shares already held and any new tranche. A fresh price or a fresh FX rate is not a buy. A missing or stale AUDUSD rate blocks a new buy and leaves the book without an AUD value. 0% on a held name is not an instruction to sell it. The research replay charges 10 bps and fills the next session. This book is a share ledger in AUD with no broker fee, marked at the latest fetched close.
+        </p>
+        {desk.paperLedger ? (
+          <div className="mt-4 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4 text-sm leading-relaxed text-[var(--muted)]">
+            <p>{desk.paperLedger.note}</p>
+            <p className="mt-2">
+              Status {desk.paperLedger.status}. {desk.paperLedger.valued ? `AUD value ${audMoney(desk.paperLedger.equity)}.` : 'No AUD net value is shown.'}
+              {desk.paperLedger.exposures
+                ? ` Held gross ${(desk.paperLedger.exposures.gross * 100).toFixed(1)}% of the ${(desk.paperLedger.exposures.maxGross * 100).toFixed(0)}% cap. Held net ${(desk.paperLedger.exposures.net * 100).toFixed(1)}% of the ${(desk.paperLedger.exposures.maxNet * 100).toFixed(0)}% cap. Risk ${(desk.paperLedger.exposures.risk * 100).toFixed(1)}%. Defensive ${(desk.paperLedger.exposures.defensive * 100).toFixed(1)}%. Cash ${(desk.paperLedger.exposures.cash * 100).toFixed(1)}%.`
+                : ' Held exposure is not compared with the caps until the book has an AUD value.'}
+            </p>
+            {desk.paperLedger.fx ? (
+              <p className="mt-2">
+                AUDUSD is USD per 1 AUD. Observation {desk.paperLedger.fx.observationDate ?? 'missing'}. Fetched {desk.paperLedger.fx.fetchedAt ?? 'missing'}. Rate {desk.paperLedger.fx.rate == null ? 'missing' : desk.paperLedger.fx.rate.toFixed(4)}. {desk.paperLedger.fx.fresh ? 'The rate is inside the price window.' : 'The rate is missing or stale, so new USD buys stay off.'}
+                {desk.paperLedger.fx.error ? ` ${desk.paperLedger.fx.error}` : ''}
+              </p>
+            ) : (
+              <p className="mt-2">No AUDUSD quote is stored on this book yet. US and crypto names stay unvalued until a refresh stores one.</p>
+            )}
+            {desk.paperLedger.pending.length > 0 ? (
+              <ul className="mt-2 list-disc space-y-1 pl-5">
+                {desk.paperLedger.pending.map((item) => (
+                  <li key={`${item.symbol}-${item.reason}`}>{item.symbol}: {item.reason}</li>
+                ))}
+              </ul>
+            ) : <p className="mt-2">No pending trim or FX block on the latest mark.</p>}
+            {desk.paperLedger.legacy ? (
+              <p className="mt-2">The earlier ledger has {desk.paperLedger.legacyPositions} retained row{desk.paperLedger.legacyPositions === 1 ? '' : 's'}. Those cash and cost figures are not converted and are not an AUD value.</p>
+            ) : null}
+          </div>
+        ) : null}
+        <form method="POST" action="/api/regime/settings" className="mt-4">
+          <input type="hidden" name="intent" value="rebaseline" />
+          <input type="hidden" name="capital" value={desk.capital} />
+          <input type="hidden" name="targetCagr" value={Math.round(desk.targetCagr * 100)} />
+          <button type="submit" className="rounded-full border border-white/20 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
+            Start a new AUD paper book
+          </button>
+        </form>
+        <p className="mt-2 text-xs text-[var(--muted)]">That button keeps the current AUD book and the earlier ledger. It does not delete them. It opens a new book at the saved capital.</p>
+      </section>
+
       <section className="mt-10" id="improvement">
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Improvement</p>
         <h2 className="text-lg font-bold tracking-tight">The aim, then the record</h2>
@@ -84,7 +142,7 @@ export function DeskPanels({ desk, settingsNotice = null }: { desk: Desk; settin
           <article className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4">
             <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]" title="Compound annual growth of the paper book.">Paper return so far</p>
             <p className="mt-2 font-mono text-2xl font-bold">{desk.realisedText}</p>
-            <p className="mt-2 text-[11px] text-[var(--muted)]">{desk.equity == null ? 'No paper marks yet' : `Equity ${money(desk.equity)}`}</p>
+            <p className="mt-2 text-[11px] text-[var(--muted)]">{equityLine(desk)}</p>
           </article>
           <article className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4">
             <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]" title="Compound annual growth from the last weekly test.">Tested return</p>
@@ -98,7 +156,7 @@ export function DeskPanels({ desk, settingsNotice = null }: { desk: Desk; settin
           </article>
         </div>
         <p className="mt-3 text-sm text-[var(--muted)]">
-          Paper capital {money(desk.capital)}. Risk per idea {(desk.params.riskPct * 100).toFixed(2)}% of capital. The stop uses {desk.params.atrK} times the average daily range. A dip is {(desk.params.dipLow * 100).toFixed(0)}–{(desk.params.dipHigh * 100).toFixed(0)}% below the 60-day high.
+          Paper capital {desk.paperLedger?.currency === 'AUD' ? audMoney(desk.capital) : money(desk.capital)}. Risk per idea {(desk.params.riskPct * 100).toFixed(2)}% of capital. The stop uses {desk.params.atrK} times the average daily range. A dip is {(desk.params.dipLow * 100).toFixed(0)}–{(desk.params.dipHigh * 100).toFixed(0)}% below the 60-day high.
         </p>
         {settingsNotice ? <p className="mt-3 text-sm text-amber-100">{settingsNotice}</p> : null}
         <form method="POST" action="/api/regime/settings" className="mt-4 flex flex-wrap items-end gap-3">

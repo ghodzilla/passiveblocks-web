@@ -34,3 +34,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# downloaded research bodies; checksums live in the manifest
+/research/regime-validation/cache/

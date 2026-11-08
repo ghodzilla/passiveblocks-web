@@ -389,8 +389,29 @@ describe('paper journal', () => {
       date: '2026-11-05',
       capital: 100000,
     });
-    assert.equal(added.paper.positions[0].qty, 12);
+    assert.ok(added.paper.positions[0].qty > 10);
+    assert.equal(added.paper.positions[0].tranches, 2);
     assert.equal(added.paper.positions[0].entry, 100);
+    const againNext = applyPaperDay({
+      journal: added,
+      desk: stubDesk([line({ symbol: 'QQQ', qty: 2, stop: 90, weight: 0.01 })]),
+      prices: { QQQ: 110 },
+      date: '2026-11-06',
+      capital: 100000,
+    });
+    assert.equal(againNext.paper.positions[0].qty, added.paper.positions[0].qty);
+    const blocked = applyPaperDay({
+      journal: held,
+      desk: stubDesk([
+        line({ symbol: 'QQQ', qty: 2, stop: 90, weight: 0.01 }),
+        line({ symbol: 'GOLD.AX', weight: 0.05, stop: 20 }),
+      ]),
+      prices: { QQQ: 106, 'GOLD.AX': 30 },
+      date: '2026-11-05',
+      capital: 100000,
+    });
+    assert.equal(blocked.paper.limitStatus, 'blocked_mixed_currency');
+    assert.equal(blocked.paper.positions[0].qty, 10);
 
     const stopped = applyPaperDay({
       journal,

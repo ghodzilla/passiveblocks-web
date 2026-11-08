@@ -1,3 +1,5 @@
+import type { PaperLedger } from './audPaper';
+import { BOOK_LIMITS_VERSION, BOOK_LIMIT_TOLERANCE } from './bookLimits';
 import { budgetsFor } from './classify';
 import { defensiveOnly, type IdeasReport } from './ideas';
 import { OVERLAP_GROUP_CAP } from './overlap';
@@ -14,6 +16,26 @@ export interface ConsistencyRule {
 
 export interface ConsistencyReport {
   rules: ConsistencyRule[];
+}
+
+export function heldBookRule(ledger: PaperLedger | null): ConsistencyRule {
+  const withinCaps = ledger?.exposures != null
+    && ledger.exposures.gross <= ledger.exposures.maxGross + BOOK_LIMIT_TOLERANCE
+    && ledger.exposures.net <= ledger.exposures.maxNet + BOOK_LIMIT_TOLERANCE;
+  const heldDetail = !ledger
+    ? 'No AUD paper book is attached. The audit does not treat a missing book as a capped value.'
+    : ledger.status === 'unvalued'
+      ? `Policy ${ledger.policy ?? BOOK_LIMITS_VERSION}. The AUD book is unvalued. No net value is shown and no new buy is added.`
+      : ledger.exposures
+        ? `Policy ${ledger.policy ?? BOOK_LIMITS_VERSION}. Paper only. Held gross ${(ledger.exposures.gross * 100).toFixed(1)}% against ${(ledger.exposures.maxGross * 100).toFixed(0)}%, net ${(ledger.exposures.net * 100).toFixed(1)}% against ${(ledger.exposures.maxNet * 100).toFixed(0)}%. Pending ${ledger.pending.length}.`
+        : `Policy ${ledger.policy ?? BOOK_LIMITS_VERSION}. Paper only. The AUD book has no held exposure to compare. Pending ${ledger.pending.length}.`;
+  return {
+    id: 'held-book',
+    pass: !ledger || ledger.status === 'unvalued' || ledger.status === 'legacy_only' || ledger.exposures == null || withinCaps,
+    detail: ledger?.legacy
+      ? `${heldDetail} The earlier ledger is retained and is not an AUD value.`
+      : heldDetail,
+  };
 }
 
 function budgetClose(left: { volTarget: number; maxGross: number; maxNet: number }, right: { volTarget: number; maxGross: number; maxNet: number }): boolean {
@@ -217,6 +239,7 @@ export function auditRegime(input: {
       && (ideas.crowding.scale === 1 || ideas.crowding.warning != null || ideas.crowding.average == null),
     detail: 'The crowding alarm and the scale applied to the sizes are the same number.',
   });
+  rules.push(heldBookRule(desk.paperLedger ?? null));
   rules.push({
     id: 'history',
     pass: (desk.realisedCagr != null || desk.realisedText === 'Not enough history yet')

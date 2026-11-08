@@ -2,6 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { DeskPanels } from '@/components/regime/DeskPanels';
 import { EvaluationPanel } from '@/components/regime/EvaluationPanel';
+import { ValidationStudy, type ReplayView } from '@/components/regime/ValidationStudy';
+import type { PaperMarkPayload } from '@/lib/regime/paperLog';
 import { IdeasPanel } from '@/components/regime/IdeasPanel';
 import type { EvaluationReport } from '@/lib/regime/evaluate';
 import { MODEL_BUDGET, REGIME_LABEL, THRESHOLDS, type RegimeId } from '@/lib/regime/constants';
@@ -191,6 +193,9 @@ export function RegimeDashboard({
   settingsNotice = null,
   auditNote,
   evaluation,
+  validation,
+  replay,
+  paperLog,
 }: {
   view: RegimeView;
   selfCheck: SelfCheckRecord | null;
@@ -201,6 +206,48 @@ export function RegimeDashboard({
   settingsNotice?: string | null;
   auditNote: string;
   evaluation: EvaluationReport;
+  validation: {
+    ranAt: string;
+    command: string;
+    fullStrategy: string;
+    verdict: string;
+    reason: string;
+    hypotheses: { id: string; status: string; because: string }[];
+    preExposure: string;
+    metrics: null;
+    omitted: string[];
+    blocking?: string;
+    survivorship?: string;
+    credit?: {
+      observationCount: number;
+      firstObservation: string | null;
+      lastObservation: string | null;
+      firstCreditZObservation: string | null;
+      firstFullWindowObservation: string | null;
+      creditZObservationCount: number;
+      fullWindowObservationCount: number;
+      earliestDecisionDate: string | null;
+      latestDecisionDate: string | null;
+      completedReplayDates: number;
+      rule: string;
+      constraint: string;
+      failClosed: string;
+    };
+    cftc?: { publication: string };
+    paperLog?: { state: string; activated: boolean; operationalPaperNav: boolean; captures: string; limits: string; activation: string };
+    rows: {
+      id: string;
+      role: string;
+      url: string;
+      availability: string;
+      httpStatus: number | null;
+      bytes: number;
+      sha256: string | null;
+      note: string;
+    }[];
+  } | null;
+  replay: ReplayView | null;
+  paperLog: { status: string; decisions: number; marks: number; latest: PaperMarkPayload | null };
 }) {
   const { snapshot, ideas, desk, consistency } = view;
   const generated = melbourneClock(snapshot.generatedAt);
@@ -471,6 +518,7 @@ export function RegimeDashboard({
 
         <IdeasPanel ideas={ideas} risk={desk.lines} auditNote={auditNote} />
         <EvaluationPanel report={evaluation} />
+        <ValidationStudy study={validation} replay={replay} paper={paperLog} />
         <DeskPanels desk={desk} settingsNotice={settingsNotice} />
 
         <section className="mt-10 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/20 px-4 py-4">

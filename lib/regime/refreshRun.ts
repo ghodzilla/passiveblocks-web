@@ -1,18 +1,24 @@
+import { openAudBook, paperLedgerFrom, retainLegacyPaper, rollAudPaper } from './audPaper';
 import { FRED_OBSERVATION_START } from './constants';
-import { applyPaperDay, buildDesk, settleForward } from './desk';
+import { buildDesk, settleForward } from './desk';
 import { fetchRegimeBundle } from './engine';
 import { fetchFredSeries } from './fred';
 import { buildIdeas } from './ideas';
 import { openRegimeSql, safeDbMessage, type RegimeSql } from './db';
 import type { Journal } from './journal';
-import { fetchPriceBook, type PriceBook } from './prices';
+import { FX_CONVENTION, FX_SYMBOL, fxForPrice, type StoredFx } from './fx';
+import { fetchPriceBook, fetchYahooBars, type PriceBook } from './prices';
+import { heldBookRule } from './consistency';
 import { providerSource, refreshLogLine, settleRefresh, type ProviderSource, type RefreshHealth } from './refreshHealth';
 import type { StoredRefresh } from './refreshStore';
 import { selfCheckFromReport, type SelfCheckRecord } from './selfcheck';
 import { decisionFromDesk, type StoredDecision } from './decision';
+import { recordPaperSnapshot } from './paperLog';
 import { readJournal, readRefresh, writeRefreshBundle } from './state';
+import { resolveCapital } from './sizing';
 import type { SeriesPoint } from './series';
 import { snapshotFromBundle } from './assemble';
+import { melbourneDate } from './time';
 import { publishRegime } from './view';
 import { priceUniverse } from './load';
 
@@ -87,26 +93,57 @@ function priceSource(book: PriceBook): ProviderSource {
   });
 }
 
+async function fetchAudUsd(now: Date): Promise<StoredFx> {
+  const fetchedAt = now.toISOString();
+  const quote = await fetchYahooBars(FX_SYMBOL);
+  const bars = quote.bars.map((bar) => ({ date: bar.date, close: bar.close }));
+  const onOrBefore = fxForPrice(bars, melbourneDate(now));
+  return {
+    symbol: FX_SYMBOL,
+    convention: FX_CONVENTION,
+    fetchedAt,
+    observationDate: onOrBefore?.fxDate ?? null,
+    rate: onOrBefore?.rate ?? null,
+    adjusted: quote.adjusted,
+    error: quote.error ?? (onOrBefore ? null : 'No AUDUSD rate on or before today.'),
+    bars,
+  };
+}
+
+function fxSource(fx: StoredFx): ProviderSource {
+  return providerSource({
+    id: FX_SYMBOL,
+    label: 'AUDUSD (USD per 1 AUD)',
+    mandatory: false,
+    observationDate: fx.observationDate,
+    fetchedAt: fx.fetchedAt,
+    error: fx.error,
+  });
+}
+
 export async function fetchLiveRefresh(now: Date): Promise<{
   sources: ProviderSource[];
   snapshot: ReturnType<typeof snapshotFromBundle>;
   book: PriceBook;
   realYield: SeriesPoint[];
   dollar: SeriesPoint[];
+  fx: StoredFx;
 }> {
   const fetchedAt = now.toISOString();
-  const [bundle, book, realYield, dollar] = await Promise.all([
+  const [bundle, book, realYield, dollar, fx] = await Promise.all([
     fetchRegimeBundle(now),
     fetchPriceBook(priceUniverse(process.env.REGIME_WATCHLIST)),
     themeSeries('DFII10', fetchedAt),
     themeSeries('DTWEXBGS', fetchedAt),
+    fetchAudUsd(now),
   ]);
   return {
-    sources: bundle.reports.concat([priceSource(book), realYield.source, dollar.source]),
+    sources: bundle.reports.concat([priceSource(book), fxSource(fx), realYield.source, dollar.source]),
     snapshot: snapshotFromBundle(bundle),
     book,
     realYield: realYield.points,
     dollar: dollar.points,
+    fx,
   };
 }
 
@@ -124,6 +161,7 @@ function nextRecord(
     realYield: keepPrevious ? previous?.realYield ?? [] : live.realYield,
     dollar: keepPrevious ? previous?.dollar ?? [] : live.dollar,
     decision: keepPrevious ? previous?.decision ?? null : decision,
+    fx: keepPrevious ? previous?.fx ?? null : live.fx,
   };
 }
 
@@ -132,8 +170,10 @@ async function rolledState(live: Awaited<ReturnType<typeof fetchLiveRefresh>>, s
   selfCheck: SelfCheckRecord | null;
   decision: StoredDecision | null;
 }> {
-  const journal = await readJournal(sql);
-  if (journal.gap) throw new Error('Refusing to roll a journal that was not read from Neon.');
+  const read = await readJournal(sql);
+  if (read.gap) throw new Error('Refusing to roll a journal that was not read from Neon.');
+  const capital = resolveCapital(process.env.REGIME_CAPITAL, read.settings.capital);
+  const separated = openAudBook(retainLegacyPaper(read), live.snapshot.today, capital);
   const ideas = buildIdeas({ snapshot: live.snapshot, book: live.book, watchlist: process.env.REGIME_WATCHLIST });
   const desk = buildDesk({
     snapshot: live.snapshot,
@@ -141,29 +181,52 @@ async function rolledState(live: Awaited<ReturnType<typeof fetchLiveRefresh>>, s
     book: live.book,
     realYield: live.realYield,
     dollar: live.dollar,
-    journal,
+    journal: separated,
     envCapital: process.env.REGIME_CAPITAL,
     envTarget: process.env.REGIME_TARGET_CAGR,
   });
   const published = publishRegime({ snapshot: live.snapshot, ideas, desk });
   const prices: Record<string, number> = {};
+  const asOf: Record<string, string> = {};
   const bars: Record<string, PriceBook['series'][number]['bars']> = {};
   for (const series of live.book.series) {
     const last = series.bars[series.bars.length - 1];
-    if (last && last.close > 0) prices[series.symbol] = last.close;
+    if (last && last.close > 0) {
+      prices[series.symbol] = last.close;
+      asOf[series.symbol] = last.date;
+    }
     bars[series.symbol] = series.bars;
   }
-  const rolled = applyPaperDay({
-    journal,
-    desk,
-    prices,
+  const aud = separated.audBook;
+  if (!aud) throw new Error('The AUD paper book was not opened.');
+  separated.audBook = rollAudPaper(aud, {
     date: live.snapshot.today,
-    capital: desk.capital,
+    lines: desk.lines.map((line) => ({
+      symbol: line.symbol,
+      weight: line.weight,
+      stop: line.stop,
+      role: line.role,
+      defensive: line.defensive,
+    })),
+    local: prices,
+    asOf,
+    fxBars: live.fx.error ? null : live.fx.bars,
+    fxFetchedAt: live.fx.fetchedAt,
+    fxError: live.fx.error,
+    maxGross: live.snapshot.effectiveBudget.maxGross,
+    maxNet: live.snapshot.effectiveBudget.maxNet,
+    haltNewEntries: desk.halted,
+    overlapGroups: desk.overlap.groups.map((group) => group.symbols),
   });
+  const rolled = separated;
   rolled.outcomes = settleForward(rolled.calls, bars);
+  const held = heldBookRule(paperLedgerFrom(rolled));
+  const rules = published.consistency.rules.some((rule) => rule.id === 'held-book')
+    ? published.consistency.rules.map((rule) => (rule.id === 'held-book' ? held : rule))
+    : published.consistency.rules.concat(held);
   return {
     journal: rolled,
-    selfCheck: selfCheckFromReport(published.consistency, live.snapshot.generatedAt),
+    selfCheck: selfCheckFromReport({ rules }, live.snapshot.generatedAt),
     decision: decisionFromDesk({
       desk: published.desk,
       signalHealth: published.ideas.signalHealth,
@@ -240,6 +303,11 @@ export async function executeRegimeRefresh(input: {
       writeOk,
     });
     const stored = writeOk ? nextRecord(previous, health, live, decision) : previous;
+    if (writeOk && sql && stored?.decision && stored.snapshot) {
+      const fx = stored.fx && !stored.fx.error && stored.fx.bars.length > 0 ? stored.fx.bars : null;
+      const paper = await recordPaperSnapshot(sql, stored, fx);
+      if (paper === 'outage') writeRefreshLog('failure', { trigger: input.trigger, message: 'paper decision log was not appended' });
+    }
     writeRefreshLog('end', {
       trigger: input.trigger,
       outcome: health.outcome,
