@@ -1,3 +1,4 @@
+import { paperLogSentence } from '@/lib/regime/exposureCopy';
 import type { PaperMarkPayload } from '@/lib/regime/paperLog';
 
 interface StudyRow {
@@ -278,15 +279,7 @@ export function ValidationStudy({
       )}
       <div className="mt-4 rounded-[var(--radius-lg)] border border-white/10 px-4 py-4">
         <h3 className="text-sm font-bold">Prospective paper log</h3>
-        <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
-          {study?.paperLog
-            ? `${study.paperLog.captures} ${study.paperLog.limits} ${study.paperLog.activation}`
-            : 'The paper log is ledger code. It is not applied, and it is not a historical backtest.'}
-          {' '}Database status: {paper.status}. Decisions {paper.decisions}. Marks {paper.marks}.
-          {paper.latest?.nav == null
-            ? ` Latest mark: ${paper.latest?.navStatus ?? 'none'}${paper.latest?.reason ? `. ${paper.latest.reason}` : ''}`
-            : ` Latest AUD unit NAV ${paper.latest.nav.toFixed(4)}.`}
-        </p>
+        <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{paperLogSentence(paper)}</p>
       </div>
     </section>
   );

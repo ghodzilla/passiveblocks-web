@@ -1,4 +1,5 @@
 import type { Desk } from '@/lib/regime/desk';
+import { bookExposureSentence } from '@/lib/regime/exposureCopy';
 import { checklistLines } from '@/lib/regime/plain';
 import { ASPIRATION_LABEL } from '@/lib/regime/sizing';
 import { melbourneClock } from '@/lib/regime/time';
@@ -86,7 +87,7 @@ export function DeskPanels({ desk, settingsNotice = null }: { desk: Desk; settin
             <p className="mt-2">
               Status {desk.paperLedger.status}. {desk.paperLedger.valued ? `AUD value ${audMoney(desk.paperLedger.equity)}.` : 'No AUD net value is shown.'}
               {desk.paperLedger.exposures
-                ? ` Held gross ${(desk.paperLedger.exposures.gross * 100).toFixed(1)}% of the ${(desk.paperLedger.exposures.maxGross * 100).toFixed(0)}% cap. Held net ${(desk.paperLedger.exposures.net * 100).toFixed(1)}% of the ${(desk.paperLedger.exposures.maxNet * 100).toFixed(0)}% cap. Risk ${(desk.paperLedger.exposures.risk * 100).toFixed(1)}%. Defensive ${(desk.paperLedger.exposures.defensive * 100).toFixed(1)}%. Cash ${(desk.paperLedger.exposures.cash * 100).toFixed(1)}%.`
+                ? ` ${bookExposureSentence(desk.paperLedger.exposures)}`
                 : ' Held exposure is not compared with the caps until the book has an AUD value.'}
             </p>
             {desk.paperLedger.fx ? (

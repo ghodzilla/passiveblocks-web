@@ -1,4 +1,3 @@
-import { readFileSync } from 'node:fs';
 import { cookies } from 'next/headers';
 import { RegimeDashboard } from '@/components/regime/RegimeDashboard';
 import { enforceRegimePage } from '@/lib/regime/guard';
@@ -8,6 +7,7 @@ import { readPaperLog } from '@/lib/regime/paperLog';
 import { ATTEMPT_COOKIE, openAttemptCookie, signRefreshCsrf } from '@/lib/regime/refreshHealth';
 import { REGIME_COOKIE } from '@/lib/regime/session';
 import { readSelfCheck } from '@/lib/regime/state';
+import { replayResults, validationStudy } from '@/lib/regime/validationArtifacts';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -28,18 +28,6 @@ export default async function RegimePage({
     readSelfCheck(),
     readPaperLog(),
   ]);
-  let validation = null;
-  let replay = null;
-  try {
-    validation = JSON.parse(readFileSync('research/regime-validation/results.json', 'utf8'));
-  } catch {
-    validation = null;
-  }
-  try {
-    replay = JSON.parse(readFileSync('research/regime-validation/replay-results.json', 'utf8'));
-  } catch {
-    replay = null;
-  }
   const settingsFlag = Array.isArray(searchParams?.settings) ? searchParams?.settings[0] : searchParams?.settings;
   const settingsNotice = settingsFlag === 'store'
     ? 'Capital and the aspiration were not saved. Neon did not keep the write, and this server did not keep a local copy.'
@@ -55,8 +43,8 @@ export default async function RegimePage({
       csrf={csrf}
       auditNote={auditNote}
       evaluation={evaluation}
-      validation={validation}
-      replay={replay}
+      validation={validationStudy}
+      replay={replayResults}
       paperLog={paperLog}
     />
   );
