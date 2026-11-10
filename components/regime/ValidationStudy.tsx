@@ -144,11 +144,11 @@ function PathRow({ label, summary }: { label: string; summary: PathSummary | nul
   return (
     <div className="mt-3 border-t border-white/10 pt-3">
       <p className="text-sm font-bold text-white">{label}</p>
-      <p className="mt-1 text-sm text-[var(--muted)]">
-        {summary.start} to {summary.end}. Unit NAV {summary.unitNavEnd.toFixed(3)}. CAGR {pct(summary.cagr)}. Max drawdown {pct(summary.maxDrawdown)}. Return per unit of drawdown {summary.returnPerDrawdown == null ? '—' : summary.returnPerDrawdown.toFixed(2)}. Sharpe {summary.sharpe == null ? '—' : summary.sharpe.toFixed(2)} with a risk-free rate of 0. Average gross {pct(summary.averageGross)}. Days invested {pct(summary.timeInMarket)}. Turnover {summary.turnover.toFixed(2)}. Trade days {summary.trades}.
+      <p className="mt-1 text-sm leading-relaxed text-[var(--muted)]">
+        {summary.start} to {summary.end}. Value of one unit {summary.unitNavEnd.toFixed(3)} (unit value). Yearly pace {pct(summary.cagr)} (compound growth). Worst fall {pct(summary.maxDrawdown)}. Yearly pace divided by that fall {summary.returnPerDrawdown == null ? '—' : summary.returnPerDrawdown.toFixed(2)}. Smoothness of the ride {summary.sharpe == null ? '—' : summary.sharpe.toFixed(2)} (Sharpe, with cash interest set to zero). Average amount invested {pct(summary.averageGross)}. Share of days invested {pct(summary.timeInMarket)}. How much of the book was traded {summary.turnover.toFixed(2)}. Days that traded {summary.trades}.
       </p>
-      <p className="mt-1 text-sm text-[var(--muted)]">
-        Earlier half CAGR {pct(summary.firstHalfCagr)}, drawdown {pct(summary.firstHalfDrawdown)}. Later half CAGR {pct(summary.secondHalfCagr)}, drawdown {pct(summary.secondHalfDrawdown)}.
+      <p className="mt-1 text-sm leading-relaxed text-[var(--muted)]">
+        What this means: the first half of the test had a yearly pace of {pct(summary.firstHalfCagr)} and a worst fall of {pct(summary.firstHalfDrawdown)}. The second half had a yearly pace of {pct(summary.secondHalfCagr)} and a worst fall of {pct(summary.secondHalfDrawdown)}. A higher number here is a test result, not the return to expect.
       </p>
     </div>
   );
@@ -158,7 +158,7 @@ function ReplayResult({ replay }: { replay: ReplayView }) {
   const coverage = replay.coverage;
   return (
     <div className="mt-4 rounded-[var(--radius-xl)] border border-white/10 px-5 py-4">
-      <h3 className="text-sm font-bold text-white">Point-in-time replay</h3>
+      <h3 className="text-sm font-bold text-white">A replay that only uses information known on each past day</h3>
       <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{replay.reason}</p>
       <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
         {coverage.weekdayDecisions} weekdays, {coverage.spySessions} SPY sessions, {coverage.replayedSessions} replayed. Holidays skipped: {coverage.holidaysSkipped.length}. Last session dropped because the file has no later ASX bar: {coverage.droppedNoLaterAsxSession.join(', ') || 'none'}. Credit below 252 observations: {coverage.creditBelow252.join(', ')}. Sessions with a credit z-score but short of 756 observations: {coverage.creditShortOf756}. First full credit window: {coverage.firstFullCreditWindow}. Fail-closed dates: {replay.production.failClosedDates.join(', ')}.
@@ -168,7 +168,7 @@ function ReplayResult({ replay }: { replay: ReplayView }) {
       </p>
       {replay.hypotheses ? (
         <p className="mt-2 text-sm leading-relaxed text-white">
-          H1 {replay.hypotheses.h1}. H2 {replay.hypotheses.h2}. {replay.hypotheses.because} Time in market: production {pct(replay.hypotheses.timeInMarket.production)}, price-only diagnostic {pct(replay.hypotheses.timeInMarket.priceOnly)}.
+          Test 1 is marked {replay.hypotheses.h1.replaceAll('_', ' ')}. Test 2 is marked {replay.hypotheses.h2.replaceAll('_', ' ')}. {replay.hypotheses.because} Share of days invested: the rules {pct(replay.hypotheses.timeInMarket.production)}, the version without the sit-tight rule {pct(replay.hypotheses.timeInMarket.priceOnly)}.
         </p>
       ) : null}
       {replay.production.binding ? (
@@ -190,7 +190,7 @@ function ReplayResult({ replay }: { replay: ReplayView }) {
       <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-[var(--muted)]">
         {replay.restricted.map((note) => <li key={note}>{note}</li>)}
       </ul>
-      <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">{replay.metricsNote} {replay.production.summary?.dayBasis} Cost {replay.costBps} bps. Cash yield {replay.cashYieldBps} bps. Taxes {replay.taxes}. {replay.currency}. {replay.clock}</p>
+      <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">{replay.metricsNote} {replay.production.summary?.dayBasis} Trading cost {replay.costBps} hundredths of a percent each way. Interest on cash {replay.cashYieldBps} hundredths of a percent a year. Taxes {replay.taxes}. Currency {replay.currency}. {replay.clock}</p>
       <p className="mt-2 text-xs text-[var(--muted)]">Ran {replay.ranAt}. Command: {replay.command}.</p>
     </div>
   );
@@ -206,13 +206,12 @@ export function ValidationStudy({
   paper: { status: string; decisions: number; marks: number; latest: PaperMarkPayload | null };
 }) {
   return (
-    <section className="mt-10" id="validation">
-      <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Validation</p>
-      <h2 className="text-lg font-bold tracking-tight">Has the rule been tested?</h2>
+    <section className="mt-8" id="validation">
+      <h2 className="text-lg font-bold tracking-tight">The research file</h2>
       {study ? (
         <>
           <div className="mt-4 rounded-[var(--radius-xl)] border border-amber-300/40 bg-amber-400/10 px-5 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-amber-100">Full strategy: {study.fullStrategy.replaceAll('_', ' ')}</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-amber-100">Full rule set: {study.fullStrategy.replaceAll('_', ' ')}</p>
             <p className="mt-2 text-sm leading-relaxed text-white">{study.reason}</p>
             <p className="mt-2 text-sm text-[var(--muted)]">
               This block is the earlier public-file availability study. Verdict: {study.verdict}. Completed replays in that study: {study.credit?.completedReplayDates ?? 0}. Portfolio metrics in that file: none. Ran {study.ranAt}.
@@ -278,7 +277,7 @@ export function ValidationStudy({
         <p className="mt-4 text-sm text-[var(--muted)]">The point-in-time replay file is not in this build.</p>
       )}
       <div className="mt-4 rounded-[var(--radius-lg)] border border-white/10 px-4 py-4">
-        <h3 className="text-sm font-bold">Prospective paper log</h3>
+        <h3 className="text-sm font-bold">The running paper record</h3>
         <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{paperLogSentence(paper)}</p>
       </div>
     </section>

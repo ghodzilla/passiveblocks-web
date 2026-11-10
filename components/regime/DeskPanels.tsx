@@ -21,18 +21,17 @@ function audMoney(value: number | null): string {
 function equityLine(desk: Desk): string {
   if (desk.paperLedger?.status === 'legacy_only') return 'Earlier ledger retained. No AUD value.';
   if (desk.equity == null || desk.paperLedger?.valued === false) return 'No AUD paper value yet';
-  if (desk.paperLedger?.currency === 'AUD') return `Equity ${audMoney(desk.equity)}`;
-  return `Equity ${money(desk.equity)}`;
+  if (desk.paperLedger?.currency === 'AUD') return `Worth ${audMoney(desk.equity)}`;
+  return `Worth ${money(desk.equity)}`;
 }
 
 export function DeskPanels({ desk, settingsNotice = null }: { desk: Desk; settingsNotice?: string | null }) {
   return (
     <>
-      <section className="mt-10" id="themes">
-        <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Themes</p>
-        <h2 className="text-lg font-bold tracking-tight">Theme switches, version {desk.configVersion}</h2>
+      <section id="themes">
+        <h2 className="text-lg font-bold tracking-tight">Themes, on or off</h2>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">
-          Each basket is on or off from a written rule. A person reviews the list once a quarter. The weekly job does not rewrite these switches. A theme being on is support for the story, not approval to trade. The sentence under each name is the blocker or the pass. 0% means it is not sized. Cash can pass a check that a share fails, and that is still not an order.
+          Each group is on or off from a written rule. A person reviews the list once a quarter. The weekly job does not rewrite these switches. A theme being on is support for the story, not a buy. The sentence under each name says what passed or what is in the way. 0% means it is not given a size. List version {desk.configVersion}.
         </p>
         <div className="mt-4 grid gap-3">
           {desk.themes.map((theme) => (
@@ -50,7 +49,7 @@ export function DeskPanels({ desk, settingsNotice = null }: { desk: Desk; settin
                   <li key={`${theme.id}-${line.symbol}`} className="text-sm">
                     <span className="font-mono text-xs">{line.symbol}</span>
                     <span className="ml-2 text-[var(--muted)]">{line.name}</span>
-                    <span className="ml-2 font-mono text-xs" title="Share of the paper book. 0% is not a buy.">{pct(line.weight)}</span>
+                    <span className="ml-2 font-mono text-xs" title="Share of the paper book. 0% is not a buy.">{pct(line.weight)} of the book</span>
                     {line.dip ? <span className={`ml-2 text-xs font-semibold ${line.dip.includes('blocked') ? 'text-amber-100' : 'text-emerald-200'}`}>{line.dip}</span> : null}
                     <p className="text-xs text-[var(--muted)]">{line.verdict}</p>
                     <details>
@@ -76,11 +75,16 @@ export function DeskPanels({ desk, settingsNotice = null }: { desk: Desk; settin
       </section>
 
       <section className="mt-10" id="paper-book">
-        <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Paper only</p>
-        <h2 className="text-lg font-bold tracking-tight">AUD paper book{desk.paperLedger?.policy ? `, ${desk.paperLedger.policy}` : ''}</h2>
+        <h2 className="text-lg font-bold tracking-tight">The Australian-dollar paper book{desk.paperLedger?.policy ? ` · ${desk.paperLedger.policy}` : ''}</h2>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">
-          This is a paper ledger, not a brokerage account and not an order. Caps bind the shares already held and any new tranche. A fresh price or a fresh FX rate is not a buy. A missing or stale AUDUSD rate blocks a new buy and leaves the book without an AUD value. 0% on a held name is not an instruction to sell it. The research replay charges 10 bps and fills the next session. This book is a share ledger in AUD with no broker fee, marked at the latest fetched close.
+          This is a paper record of shares and cash. The size limits apply to shares already held and to any new buy. A fresh price or a fresh exchange rate is not itself a buy. A missing or old Australian-dollar rate blocks a new US buy and leaves the book without an Australian-dollar value. A suggested size of 0% on a name you already hold is not an instruction to sell it.
         </p>
+        <details className="mt-2">
+          <summary className="cursor-pointer text-xs text-white/50">How this record is marked</summary>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">
+            The historical test charges 0.10% each way (10 basis points) and fills the next session. This book is a share record in Australian dollars with no broker fee, marked at the latest downloaded close.
+          </p>
+        </details>
         {desk.paperLedger ? (
           <div className="mt-4 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4 text-sm leading-relaxed text-[var(--muted)]">
             <p>{desk.paperLedger.note}</p>
@@ -92,11 +96,11 @@ export function DeskPanels({ desk, settingsNotice = null }: { desk: Desk; settin
             </p>
             {desk.paperLedger.fx ? (
               <p className="mt-2">
-                AUDUSD is USD per 1 AUD. Observation {desk.paperLedger.fx.observationDate ?? 'missing'}. Fetched {desk.paperLedger.fx.fetchedAt ?? 'missing'}. Rate {desk.paperLedger.fx.rate == null ? 'missing' : desk.paperLedger.fx.rate.toFixed(4)}. {desk.paperLedger.fx.fresh ? 'The rate is inside the price window.' : 'The rate is missing or stale, so new USD buys stay off.'}
+                The exchange rate is US dollars per 1 Australian dollar. Day it describes: {desk.paperLedger.fx.observationDate ?? 'missing'}. Downloaded: {desk.paperLedger.fx.fetchedAt ?? 'missing'}. Rate: {desk.paperLedger.fx.rate == null ? 'missing' : desk.paperLedger.fx.rate.toFixed(4)}. {desk.paperLedger.fx.fresh ? 'The rate is fresh enough to use.' : 'The rate is missing or stale, so new US-dollar buys stay off.'}
                 {desk.paperLedger.fx.error ? ` ${desk.paperLedger.fx.error}` : ''}
               </p>
             ) : (
-              <p className="mt-2">No AUDUSD quote is stored on this book yet. US and crypto names stay unvalued until a refresh stores one.</p>
+              <p className="mt-2">No Australian-dollar exchange rate is stored on this book yet. US and crypto names stay without an Australian-dollar value until a refresh stores one.</p>
             )}
             {desk.paperLedger.pending.length > 0 ? (
               <ul className="mt-2 list-disc space-y-1 pl-5">
@@ -115,23 +119,22 @@ export function DeskPanels({ desk, settingsNotice = null }: { desk: Desk; settin
           <input type="hidden" name="capital" value={desk.capital} />
           <input type="hidden" name="targetCagr" value={Math.round(desk.targetCagr * 100)} />
           <button type="submit" className="rounded-full border border-white/20 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
-            Start a new AUD paper book
+            Start a new Australian-dollar paper book
           </button>
         </form>
-        <p className="mt-2 text-xs text-[var(--muted)]">That button keeps the current AUD book and the earlier ledger. It does not delete them. It opens a new book at the saved capital.</p>
+        <p className="mt-2 text-xs text-[var(--muted)]">What this means: that button keeps the current book and the earlier record. It does not delete them. It opens a new book at the saved starting amount.</p>
       </section>
 
       <section className="mt-10" id="improvement">
-        <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Improvement</p>
-        <h2 className="text-lg font-bold tracking-tight">The aim, then the record</h2>
+        <h2 className="text-lg font-bold tracking-tight">The hope, then the record</h2>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">
-          {ASPIRATION_LABEL}. A loss limit always beats chasing that aim. A setting changes only when the out-of-sample test is better on at least 2 of 3 past periods, and only once a month. The gap does not loosen the loss halt, the 0.5–1% risk per idea, or the size caps.
+          {ASPIRATION_LABEL}. What this means: that percentage is an old ceiling from a famous fund. It is not the return to expect, and it does not change today’s action. A loss limit always beats chasing it. A setting changes only when a test on data it was not tuned on is better in at least 2 of 3 past periods, and only once a month. The gap does not loosen the loss halt, the amount risked per idea, or the size caps.
         </p>
         {desk.halted ? (
           <div className="mt-4 rounded-[var(--radius-xl)] border border-rose-400/40 bg-rose-500/10 px-5 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-white/50">Loss halt</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-white/50">New buys are paused</p>
             <p className="mt-2 text-base font-semibold leading-relaxed text-white">
-              The paper portfolio is {pct(desk.drawdown, 1)} below its peak. No new buys until it recovers. The {pct(desk.targetCagr, 0)} a year aim does not override this.
+              The paper book is {pct(desk.drawdown, 1)} below its highest value. No new buys until it recovers. The {pct(desk.targetCagr, 0)} a year hope does not override this.
             </p>
           </div>
         ) : null}
@@ -141,23 +144,23 @@ export function DeskPanels({ desk, settingsNotice = null }: { desk: Desk; settin
             <p className="mt-2 font-mono text-2xl font-bold">{pct(desk.targetCagr, 0)}</p>
           </article>
           <article className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]" title="Compound annual growth of the paper book.">Paper return so far</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]" title="Compound growth of the paper book. This is the result so far, not a forecast.">Yearly pace so far</p>
             <p className="mt-2 font-mono text-2xl font-bold">{desk.realisedText}</p>
             <p className="mt-2 text-[11px] text-[var(--muted)]">{equityLine(desk)}</p>
           </article>
           <article className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]" title="Compound annual growth from the last weekly test.">Tested return</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]" title="Compound growth from the last weekly test. Not a forecast.">Last test’s yearly pace</p>
             <p className="mt-2 font-mono text-2xl font-bold">{desk.backtestedText}</p>
-            <p className="mt-2 text-[11px] text-[var(--muted)]">Last weekly review, versus the US share market and a 60/40 mix</p>
+            <p className="mt-2 text-[11px] text-[var(--muted)]">What this means: the last weekly review, compared with the US share market and a mix of 60% shares and 40% cash. Not a promise.</p>
           </article>
           <article className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]" title="How far the paper return sits from the aspiration. It does not change the risk rules.">Gap to the aim</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]" title="How far the paper result sits from the hope. It does not change the risk rules.">Distance from the hope</p>
             <p className="mt-2 font-mono text-2xl font-bold">{desk.gapText}</p>
-            <p className="mt-2 text-[11px] text-[var(--muted)]">Worst peak-to-trough loss {desk.maxDrawdownText}</p>
+            <p className="mt-2 text-[11px] text-[var(--muted)]">What this means: worst fall from a high was {desk.maxDrawdownText}. The distance does not loosen the rules.</p>
           </article>
         </div>
         <p className="mt-3 text-sm text-[var(--muted)]">
-          Paper capital {desk.paperLedger?.currency === 'AUD' ? audMoney(desk.capital) : money(desk.capital)}. Risk per idea {(desk.params.riskPct * 100).toFixed(2)}% of capital. The stop uses {desk.params.atrK} times the average daily range. A dip is {(desk.params.dipLow * 100).toFixed(0)}–{(desk.params.dipHigh * 100).toFixed(0)}% below the 60-day high.
+          Starting amount {desk.paperLedger?.currency === 'AUD' ? audMoney(desk.capital) : money(desk.capital)}. Amount risked per idea {(desk.params.riskPct * 100).toFixed(2)}% of that. The stop uses {desk.params.atrK} times the average daily range. A dip is {(desk.params.dipLow * 100).toFixed(0)}–{(desk.params.dipHigh * 100).toFixed(0)}% below the 60-day high. What this means: these are the settings the sizes are built from.
         </p>
         {settingsNotice ? <p className="mt-3 text-sm text-amber-100">{settingsNotice}</p> : null}
         <form method="POST" action="/api/regime/settings" className="mt-4 flex flex-wrap items-end gap-3">
@@ -166,7 +169,7 @@ export function DeskPanels({ desk, settingsNotice = null }: { desk: Desk; settin
             <input name="capital" type="number" min="1" step="1" defaultValue={desk.capital} className="mt-1 block w-40 rounded border border-[var(--border)] bg-black/40 px-2 py-1 font-mono text-sm text-foreground" />
           </label>
           <label className="text-xs text-[var(--muted)]">
-            Target % / year
+            Hope, % a year (not a forecast)
             <input name="targetCagr" type="number" min="0" max="200" step="1" defaultValue={Math.round(desk.targetCagr * 100)} className="mt-1 block w-32 rounded border border-[var(--border)] bg-black/40 px-2 py-1 font-mono text-sm text-foreground" />
           </label>
           <button type="submit" className="rounded-full border border-[var(--accent)]/40 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[var(--accent-soft)]">

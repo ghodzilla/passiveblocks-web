@@ -23,12 +23,12 @@ export function EvaluationPanel({ report }: { report: EvaluationReport }) {
   const cost = report.assumptions.oneWayBps;
   const cash = report.assumptions.cashYieldBps;
   return (
-    <section className="mt-10" id="evaluation">
-      <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Research check</p>
+    <section className="mt-2" id="evaluation">
       <h2 className="text-lg font-bold tracking-tight">What the saved prices can and cannot say</h2>
       <div className="mt-4 rounded-[var(--radius-xl)] border border-amber-300/40 bg-amber-400/10 px-5 py-4">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-amber-100">Full strategy: not validated</p>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-amber-100">The full rule set has not been proven on history</p>
         <p className="mt-2 text-sm leading-relaxed text-white">{report.fullStrategyReason}</p>
+        <p className="mt-2 text-sm text-white/70">What this means: this block does not show that the rules make money. It only says what the saved prices are allowed to be used for.</p>
       </div>
       <p className="mt-4 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">{report.lookAhead}</p>
       <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">{report.costNote}</p>
@@ -37,7 +37,7 @@ export function EvaluationPanel({ report }: { report: EvaluationReport }) {
       <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">{report.sampleNote}</p>
       <form action="/private/regime" method="get" className="mt-4 flex flex-wrap items-end gap-3">
         <label className="text-xs text-[var(--muted)]">
-          One-way cost, bps
+          Trading cost each way, in hundredths of a percent
           <input
             name="costBps"
             defaultValue={String(cost)}
@@ -46,7 +46,7 @@ export function EvaluationPanel({ report }: { report: EvaluationReport }) {
           />
         </label>
         <label className="text-xs text-[var(--muted)]">
-          Cash yield, bps a year
+          Interest on cash, in hundredths of a percent a year
           <input
             name="cashBps"
             defaultValue={String(cash)}
@@ -68,10 +68,10 @@ export function EvaluationPanel({ report }: { report: EvaluationReport }) {
           <table className="min-w-full text-left text-sm">
             <thead className="bg-white/[0.03] text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">
               <tr>
-                <th className="px-4 py-3">Symbol</th>
-                <th className="px-4 py-3">Monthly wealth / cash left / costs</th>
-                <th className="px-4 py-3">Tactical wealth / cash left / costs</th>
-                <th className="px-4 py-3">Lump sum, different funding</th>
+                <th className="px-4 py-3">Name</th>
+                <th className="px-4 py-3">Monthly investing: end value per dollar in / cash left / costs</th>
+                <th className="px-4 py-3">Following the price rule: end value per dollar in / cash left / costs</th>
+                <th className="px-4 py-3">One lump sum, a different way of putting money in</th>
               </tr>
             </thead>
             <tbody>
@@ -94,7 +94,7 @@ export function EvaluationPanel({ report }: { report: EvaluationReport }) {
                       {tactical ? `${multiple(tactical.wealthPerUnitContributed)} · cash ${money(tactical.endCash)} · cost ${money(tactical.costsPaid)} · invested ${tactical.sessionsInvested}/${tactical.sessions}` : '—'}
                     </td>
                     <td className="px-4 py-3 font-mono text-xs">
-                      {lump ? `${multiple(lump.wealthPerUnitContributed)} · dd ${pct(lump.maxDrawdown)}` : '—'}
+                      {lump ? `${multiple(lump.wealthPerUnitContributed)} · worst fall ${pct(lump.maxDrawdown)}` : '—'}
                     </td>
                   </tr>
                 );

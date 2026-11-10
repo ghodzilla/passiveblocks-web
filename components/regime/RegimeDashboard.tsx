@@ -2,12 +2,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { DeskPanels } from '@/components/regime/DeskPanels';
 import { EvaluationPanel } from '@/components/regime/EvaluationPanel';
+import { FreshnessPanel, Fold, limitSentence, OwnerBrief } from '@/components/regime/OwnerBrief';
 import { ValidationStudy, type ReplayView } from '@/components/regime/ValidationStudy';
 import type { PaperMarkPayload } from '@/lib/regime/paperLog';
 import { IdeasPanel } from '@/components/regime/IdeasPanel';
 import type { EvaluationReport } from '@/lib/regime/evaluate';
 import { MODEL_BUDGET, REGIME_LABEL, THRESHOLDS, type RegimeId } from '@/lib/regime/constants';
-import { componentPeriodNote, plainBanner, plainZ, regimeWaitCopy, seriesCadence, todayInOneLine, waitingOnRegime } from '@/lib/regime/plain';
+import { budgetMeans, componentPlain, historyColumn, researchPlain } from '@/lib/regime/ownerCopy';
+import { componentPeriodNote, plainZ, regimeWaitCopy, seriesCadence, waitingOnRegime } from '@/lib/regime/plain';
 import type { RefreshHealth } from '@/lib/regime/refreshHealth';
 import type { SelfCheckRecord } from '@/lib/regime/selfcheck';
 import { melbourneClock } from '@/lib/regime/time';
@@ -23,13 +25,6 @@ function formatZ(z: number | null): string {
 
 function pct(value: number): string {
   return `${Math.round(value * 100)}%`;
-}
-
-function regimeTone(regime: RegimeId | null): string {
-  if (regime === 'risk_on') return 'text-[var(--status-ok)]';
-  if (regime === 'tightening') return 'text-[var(--status-warn)]';
-  if (regime === 'crisis') return 'text-[var(--status-danger)]';
-  return 'text-foreground';
 }
 
 const BAND: Record<RegimeId, string> = {
@@ -62,7 +57,7 @@ function HistoryChart({ points }: { points: HistoryPoint[] }) {
     .join(' ');
 
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Composite score and regime history" className="h-auto w-full">
+    <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Overall score and market-call history" className="h-auto w-full">
       {data.map((point, index) => (
         <rect
           key={point.date}
@@ -121,18 +116,20 @@ function RefreshHealthPanel({
   health,
   attempt,
   csrf,
+  showButton = true,
 }: {
   health: RefreshHealth | null;
   attempt: RefreshHealth | null;
   csrf: string | null;
+  showButton?: boolean;
 }) {
   const shown = health ?? attempt;
   const browserOnly = Boolean(attempt && (!health || Date.parse(attempt.attemptedAt) > Date.parse(health.attemptedAt)));
   return (
     <section className="mb-6 rounded-[var(--radius-xl)] border border-[var(--border)] bg-black/30 px-5 py-4" id="refresh-health" data-refresh-outcome={shown?.outcome ?? 'none'} data-refresh-durable={shown?.durable ? 'yes' : 'no'}>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-sm font-bold">Refresh health</h2>
-        {csrf ? (
+        <h2 className="text-sm font-bold">Last attempt to download the data</h2>
+        {showButton && csrf ? (
           <form method="POST" action="/api/regime/refresh">
             <input type="hidden" name="csrf" value={csrf} />
             <button type="submit" className="rounded-full border border-[var(--accent)]/40 bg-[var(--accent-muted)] px-3 py-1.5 text-xs font-bold text-[var(--accent-soft)]">
@@ -140,7 +137,7 @@ function RefreshHealthPanel({
             </button>
           </form>
         ) : (
-          <p className="text-xs text-[var(--muted)]">Refresh now needs the session secret on the server.</p>
+          showButton ? <p className="text-xs text-[var(--muted)]">Refresh now needs the session secret on the server.</p> : null
         )}
       </div>
       <p className="mt-2 text-sm text-white/80">{shown?.note ?? 'No refresh has been recorded.'}</p>
@@ -148,12 +145,12 @@ function RefreshHealthPanel({
         <p className="mt-2 text-sm text-amber-100">This attempt is in this browser only. It was not written to durable storage. New buys stay off. Any scores below are the last saved snapshot.</p>
       ) : null}
       <dl className="mt-3 grid gap-2 text-sm text-[var(--muted)] sm:grid-cols-2">
-        <div>Last attempt: {clock(shown?.attemptedAt ?? null)}</div>
-        <div>Last full provider fetch: {clock(shown?.lastFullySuccessfulFetchAt ?? null)}</div>
-        <div>Last saved snapshot: {clock(shown?.lastPersistedAt ?? null)}</div>
-        <div>Storage: {shown?.storage === 'neon' ? 'Neon Postgres' : 'unavailable'}</div>
-        <div>This attempt: {shown ? `${shown.outcome} (feeds ${shown.fetchOutcome})` : '—'}</div>
-        <div>Saved: {shown?.snapshotSaved ? 'snapshot stored' : 'snapshot not stored'}</div>
+        <div>Last try: {clock(shown?.attemptedAt ?? null)}</div>
+        <div>Last time every required feed arrived: {clock(shown?.lastFullySuccessfulFetchAt ?? null)}</div>
+        <div>Last saved copy: {clock(shown?.lastPersistedAt ?? null)}</div>
+        <div>Where it is saved: {shown?.storage === 'neon' ? 'the database' : 'nowhere yet'}</div>
+        <div>This try: {shown ? `${shown.outcome} (feeds ${shown.fetchOutcome})` : '—'}</div>
+        <div>Saved copy: {shown?.snapshotSaved ? 'the market snapshot was stored' : 'the market snapshot was not stored'}</div>
       </dl>
       {shown && shown.sources.length > 0 ? (
         <div className="mt-4 overflow-x-auto">
@@ -161,9 +158,9 @@ function RefreshHealthPanel({
             <thead className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
               <tr>
                 <th className="py-2 pr-3 font-bold">Feed</th>
-                <th className="py-2 pr-3 font-bold">Period</th>
-                <th className="py-2 pr-3 font-bold">Fetched</th>
-                <th className="py-2 font-bold">Error</th>
+                <th className="py-2 pr-3 font-bold">Day it describes</th>
+                <th className="py-2 pr-3 font-bold">Downloaded</th>
+                <th className="py-2 font-bold">Problem</th>
               </tr>
             </thead>
             <tbody>
@@ -250,23 +247,10 @@ export function RegimeDashboard({
   paperLog: { status: string; decisions: number; marks: number; latest: PaperMarkPayload | null };
 }) {
   const { snapshot, ideas, desk, consistency } = view;
-  const generated = melbourneClock(snapshot.generatedAt);
   const failedRules = consistency.rules.filter((rule) => !rule.pass);
-  const banner = plainBanner({ ...snapshot, blockReason });
-  const oneLine = todayInOneLine({
-    action: snapshot.action,
-    actionable: snapshot.actionable,
-    lines: desk.lines,
-    themes: desk.themes,
-  });
   const waiting = waitingOnRegime(desk.lines);
-  const bannerClass =
-    snapshot.action === 'reduce_risk'
-      ? 'border-rose-400/40 bg-rose-500/10'
-      : snapshot.action === 'do_nothing'
-        ? 'border-amber-300/40 bg-amber-400/10'
-        : 'border-emerald-400/30 bg-emerald-400/10';
   const recent = snapshot.history.slice(-8).reverse();
+  const healthSources = (health ?? attempt)?.sources ?? [];
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
@@ -308,11 +292,11 @@ export function RegimeDashboard({
         </div>
       </header>
 
-      <main className="relative mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12" data-regime={snapshot.regime ?? 'unavailable'} data-action={snapshot.action}>
+      <main className="relative mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10" data-regime={snapshot.regime ?? 'unavailable'} data-action={snapshot.action}>
         {selfCheck && !selfCheck.ok ? (
           <div className="mb-6 rounded-[var(--radius-xl)] border border-rose-400/50 bg-rose-500/15 px-5 py-4" data-selfcheck="fail">
             <p className="text-sm font-semibold text-rose-50">
-              Daily self-check failed{selfCheck.asOf ? ` · ${melbourneClock(selfCheck.asOf)} Australia/Melbourne` : ''}.
+              The daily check failed{selfCheck.asOf ? ` · ${melbourneClock(selfCheck.asOf)} Australia/Melbourne` : ''}. Do not treat today’s sizes as settled.
             </p>
             <ul className="mt-2 space-y-1 text-sm text-rose-50">
               {selfCheck.failures.map((failure) => (
@@ -321,57 +305,22 @@ export function RegimeDashboard({
             </ul>
           </div>
         ) : null}
-        <RefreshHealthPanel health={health} attempt={attempt} csrf={csrf} />
-        <p className="text-base font-semibold leading-relaxed text-white sm:text-lg" data-today-line>{oneLine}</p>
-        <p className="mb-2 mt-6 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Macro regime engine</p>
-        <h1 className={`text-3xl font-extrabold tracking-tight sm:text-4xl ${regimeTone(snapshot.regime)}`}>
-          {snapshot.regimeLabel}
-        </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--muted)] sm:text-base">
-          This page says whether to sit tight or allow new buys. A positive market score means conditions are easier than usual. The label changes slowly so it does not flip every week.
-        </p>
-
-        <section className={`mt-8 rounded-[var(--radius-xl)] border px-5 py-4 ${bannerClass}`}>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-white/50">What to do</p>
-          <p className="mt-2 text-base font-semibold leading-relaxed text-white sm:text-lg">{banner.headline}</p>
-          <p className="mt-2 text-sm text-white/75">{banner.note}</p>
-          <details className="mt-2">
-            <summary className="cursor-pointer text-xs text-white/50">Technical wording</summary>
-            <p className="mt-1 text-xs text-white/60">{snapshot.message}</p>
-          </details>
-        </section>
-
-        {waiting.length > 0 ? (
-          <section className="mt-4 rounded-[var(--radius-xl)] border border-amber-300/40 bg-amber-400/10 px-5 py-4" id="waiting-on-regime">
-            <h2 className="text-sm font-bold">Waiting on the regime</h2>
-            <p className="mt-2 text-sm leading-relaxed text-white/80">{regimeWaitCopy(snapshot)}</p>
-            <ul className="mt-3 space-y-2 text-sm">
-              {waiting.map((line) => (
-                <li key={line.symbol}>
-                  <span className="font-mono text-xs">{line.symbol}</span>
-                  <span className="ml-2 text-white/80">{line.name}</span>
-                  <span className="ml-2 text-white/55">{line.verdict}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
-
-        <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <Tile label="Market score" tip="Composite score. Positive means easier than the trailing window. The quiet band is within 0.35 of zero." value={formatZ(snapshot.composite)} meta={snapshot.weak ? 'In the quiet band (within 0.35 of zero)' : 'Easier or tighter than usual'} />
-          <Tile label="Swing budget" tip="Annualised volatility target for the paper book." value={pct(snapshot.effectiveBudget.volTarget)} meta={snapshot.budgetOverridden ? 'Tightened for this day' : 'Annual swing target'} />
-          <Tile label="Largest book" tip="Maximum gross weight, including cash." value={pct(snapshot.effectiveBudget.maxGross)} meta="Cap on the whole paper book" />
-          <Tile label="Largest non-cash" tip="Maximum weight outside cash and T-bills." value={pct(snapshot.effectiveBudget.maxNet)} meta={snapshot.effectiveBudget.maxNet === 0 ? 'No new non-cash size' : 'Cap outside cash'} />
-        </div>
-
+        <OwnerBrief
+          view={view}
+          paperLog={paperLog}
+          verdict={validation?.verdict ?? null}
+          fullStrategy={validation?.fullStrategy ?? null}
+          h1={replay?.hypotheses?.h1 ?? null}
+          blockReason={blockReason}
+        />
         {failedRules.length === 0 ? (
           <p className="mt-4 text-sm text-[var(--status-ok)]" data-consistency="pass">
-            Consistency check: all {consistency.rules.length} rules pass
+            The internal checks agree ({consistency.rules.length} of {consistency.rules.length}).
           </p>
         ) : (
           <div className="mt-4 rounded-[var(--radius-lg)] border border-rose-400/40 bg-rose-500/10 px-4 py-3" data-consistency="fail">
             <p className="text-sm font-semibold text-rose-100">
-              Consistency check: {failedRules.length} of {consistency.rules.length} rules failed
+              The internal checks disagree: {failedRules.length} of {consistency.rules.length} failed. Read those before acting.
             </p>
             <ul className="mt-2 space-y-1 text-sm text-rose-50">
               {failedRules.map((rule) => (
@@ -380,42 +329,80 @@ export function RegimeDashboard({
             </ul>
           </div>
         )}
+        <FreshnessPanel
+          view={view}
+          healthSources={healthSources}
+          paperLog={paperLog}
+          blockReason={blockReason}
+          csrf={csrf}
+        />
 
-        <p className="mt-3 text-xs text-[var(--muted)]">
-          Downloaded {generated} Australia/Melbourne. Print date {snapshot.printDate ?? '—'} is the latest day used in the score. A date on a series is the period that series covers, not this download. Rules {snapshot.rulesVersion}
-          {snapshot.modelBudget ? ` · model budget for this regime ${pct(snapshot.modelBudget.volTarget)} vol / ${pct(snapshot.modelBudget.maxGross)} gross / ${pct(snapshot.modelBudget.maxNet)} net` : ''}
-        </p>
+        <Fold title="Size limits behind today’s numbers" lede={limitSentence(view)}>
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <Tile label="Overall score" tip="The blended market score. Above zero means easier than usual. Within 0.35 of zero is the quiet band, where new buys stay off." value={formatZ(snapshot.composite)} meta={snapshot.weak ? 'In the quiet band, within 0.35 of zero. What this means: sit tight.' : 'What this means: clearly easier or tighter than usual.'} />
+            <Tile label="How much the book may swing" tip="The yearly up-and-down the rules try to stay inside. This is a risk limit, not a return." value={pct(snapshot.effectiveBudget.volTarget)} meta={budgetMeans('swing', snapshot.effectiveBudget.volTarget, snapshot.budgetOverridden)} />
+            <Tile label="Biggest size of the whole book" tip="The cap on every holding except the cash sitting in the account." value={pct(snapshot.effectiveBudget.maxGross)} meta={budgetMeans('whole', snapshot.effectiveBudget.maxGross, snapshot.budgetOverridden)} />
+            <Tile label="Biggest size outside cash" tip="The cap on holdings that are not cash or short-term government bonds." value={pct(snapshot.effectiveBudget.maxNet)} meta={budgetMeans('outside', snapshot.effectiveBudget.maxNet, snapshot.budgetOverridden)} />
+          </div>
+          <p className="mt-3 text-xs leading-relaxed text-[var(--muted)]">
+            Rule set {snapshot.rulesVersion}.
+            {snapshot.modelBudget ? ` Usual limits for this market call: swing ${pct(snapshot.modelBudget.volTarget)}, whole book ${pct(snapshot.modelBudget.maxGross)}, outside cash ${pct(snapshot.modelBudget.maxNet)}.` : ''}
+            {' '}What this means: these are ceilings. They are not the return to expect.
+          </p>
+        </Fold>
 
-        <section className="mt-10">
-          <h2 className="text-lg font-bold tracking-tight">Components</h2>
-          <div className="mt-4 grid gap-3">
-            {snapshot.components.map((component) => (
+        {waiting.length > 0 ? (
+          <Fold title="Names waiting for an easier market" lede={regimeWaitCopy(snapshot)}>
+            <ul className="space-y-2 text-sm" id="waiting-on-regime">
+              {waiting.map((line) => (
+                <li key={line.symbol}>
+                  <span className="font-semibold text-white">{line.name}</span>
+                  <span className="ml-2 font-mono text-xs text-[var(--muted)]">{line.symbol}</span>
+                  <span className="ml-2 text-white/55">{line.verdict}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 text-sm text-[var(--muted)]">What this means: the story for these names is on, and the market call is the only thing in the way. They are not buys today.</p>
+          </Fold>
+        ) : null}
+
+        <Fold title="What went into the market call" lede="Six pieces. A missing piece is left out, and the others share its weight.">
+          <div className="grid gap-3">
+            {snapshot.components.map((component) => {
+              const plain = componentPlain(component.id, component.z);
+              return (
               <article key={component.id} className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h3 className="text-sm font-bold">{component.label}</h3>
-                  <p className="text-sm text-foreground" title="A negative reading is tighter or less supportive than this series usually is. A positive reading is easier. The number in brackets is the z-score.">
-                    {plainZ(component.label, component.z)}
-                    <span className="ml-3 text-xs text-[var(--muted)]">share of the score {Math.round(component.weight * 100)}%</span>
+                  <h3 className="text-sm font-bold">
+                    {plain.title}
+                    <span className="ml-2 text-xs font-normal text-[var(--muted)]">{component.label}</span>
+                  </h3>
+                  <p className="text-sm text-foreground" title="A negative reading is tighter than usual. A positive reading is easier. The number in brackets is the score.">
+                    {plainZ(plain.title, component.z)}
+                    <span className="ml-3 text-xs text-[var(--muted)]">{Math.round(component.weight * 100)}% of the call</span>
                   </p>
                 </div>
                 <ZBar z={component.z} />
-                <p className="mt-3 text-sm text-[var(--muted)]" title="The raw series behind the score.">{component.reading}</p>
-                <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">{component.detail}</p>
-                <p className="mt-2 text-[11px] uppercase tracking-wider text-white/35">
-                  {component.included ? 'In composite' : 'Excluded'}
-                </p>
-                <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">{componentPeriodNote(component.id, snapshot.freshness)}</p>
+                <p className="mt-3 text-sm leading-relaxed text-white/80">What this means: {plain.means}</p>
+                <p className="mt-2 text-sm text-[var(--muted)]" title="The raw series behind the score.">{component.reading}</p>
+                <details className="mt-2">
+                  <summary className="cursor-pointer text-xs text-white/50">Details</summary>
+                  <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">{component.detail}</p>
+                  <p className="mt-2 text-[11px] uppercase tracking-wider text-white/35">
+                    {component.included ? 'Included in the overall score' : 'Left out of the overall score'}
+                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">{componentPeriodNote(component.id, snapshot.freshness)}</p>
+                </details>
                 {component.gap ? (
                   <p className="mt-2 text-sm text-[var(--status-warn)]">{component.included ? 'Note: ' : 'Gap: '}{component.gap}</p>
                 ) : null}
               </article>
-            ))}
+              );
+            })}
           </div>
-        </section>
+        </Fold>
 
-        <section className="mt-10">
-          <h2 className="text-lg font-bold tracking-tight">History</h2>
-          <p className="mt-1 text-sm text-[var(--muted)]">Weekly spine, causal z-scores, hysteresis applied in order. The AI column is the point-in-time blend. The live card drops a price leg older than 10 days.</p>
+        <Fold title="How the market call has changed" lede="Each week’s call, in order. The label changes slowly so it does not flip every week. A price older than 10 days is dropped from the live card.">
           <div className="mt-4 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 p-3 sm:p-4">
             <HistoryChart points={snapshot.history} />
             <ul className="mt-3 flex flex-wrap gap-3 text-[11px] uppercase tracking-wider text-[var(--muted)]">
@@ -430,18 +417,12 @@ export function RegimeDashboard({
           {recent.length > 0 ? (
             <div className="mt-4 overflow-x-auto">
               <table className="w-full min-w-[720px] text-left text-sm">
-                <caption className="sr-only">Recent composite prints</caption>
+                <caption className="sr-only">Recent market calls</caption>
                 <thead className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
                   <tr>
-                    <th className="py-2 pr-3 font-bold">Date</th>
-                    <th className="py-2 pr-3 font-bold">Regime</th>
-                    <th className="py-2 pr-3 font-bold">Composite</th>
-                    <th className="py-2 pr-3 font-bold">Liq</th>
-                    <th className="py-2 pr-3 font-bold">Policy</th>
-                    <th className="py-2 pr-3 font-bold">Credit</th>
-                    <th className="py-2 pr-3 font-bold">Growth</th>
-                    <th className="py-2 pr-3 font-bold">Pos</th>
-                    <th className="py-2 font-bold">AI</th>
+                    {(['date', 'regime', 'composite', 'liquidity', 'policy', 'credit', 'growth', 'positioning', 'ai'] as const).map((id) => (
+                      <th key={id} className="py-2 pr-3 font-bold" title={historyColumn(id).technical}>{historyColumn(id).label}</th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody className="font-mono text-xs os-tabular">
@@ -462,10 +443,10 @@ export function RegimeDashboard({
               </table>
             </div>
           ) : null}
-        </section>
+          <p className="mt-3 text-sm text-[var(--muted)]">What this means: the line is the overall score. The coloured bands are the market call for that week. A positive score is easier than usual.</p>
+        </Fold>
 
-        <section className="mt-10">
-          <h2 className="text-lg font-bold tracking-tight">Data freshness</h2>
+        <Fold title="Feed table" lede="The same feeds as the list above, in a table. Current means fresh. The date is the day the figure describes, not the download.">
           <div className="mt-4 overflow-x-auto">
             <table className="w-full min-w-[640px] text-left text-sm">
               <thead className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
@@ -487,12 +468,12 @@ export function RegimeDashboard({
                     </td>
                     <td className="py-2.5 pr-3 font-mono text-xs">{row.ageDays == null ? '—' : `${row.ageDays}d`}</td>
                     <td
-                      className={`py-2.5 pr-3 text-xs font-bold uppercase tracking-wider ${row.stale ? 'text-[var(--status-danger)]' : 'text-[var(--status-ok)]'}`}
+                      className={`py-2.5 pr-3 text-xs font-bold uppercase tracking-wider ${!row.asOf ? 'text-[var(--status-danger)]' : row.stale ? 'text-[var(--status-warn)]' : 'text-[var(--status-ok)]'}`}
                       title={row.stale
                         ? `Older than the ${row.staleAfterDays}-day window for this series.`
                         : `Inside the ${row.staleAfterDays}-day window. The date is the period covered, not the download time.`}
                     >
-                      {row.stale ? 'Stale' : 'Current'}
+                      {!row.asOf ? 'Blocked' : row.stale ? 'Stale' : 'Fresh'}
                     </td>
                     <td className="py-2.5">
                       <a href={row.href} className="text-[var(--accent-soft)] underline-offset-2 hover:underline" rel="noreferrer">
@@ -514,35 +495,43 @@ export function RegimeDashboard({
               ))}
             </ul>
           ) : null}
-        </section>
+        </Fold>
 
-        <IdeasPanel ideas={ideas} risk={desk.lines} auditNote={auditNote} />
-        <EvaluationPanel report={evaluation} />
-        <ValidationStudy study={validation} replay={replay} paper={paperLog} />
-        <DeskPanels desk={desk} settingsNotice={settingsNotice} />
+        <Fold title="Each investment" lede="What to hold, name by name. Confirmed means every check passed. Watch means something is in the way. Avoid means today’s lean is away from that group.">
+          <IdeasPanel ideas={ideas} risk={desk.lines} auditNote={auditNote} />
+        </Fold>
+        <Fold title="The paper book and the settings" lede="What the Australian-dollar paper book is worth, the aim written on the settings, and the buttons that change them. The aim is not the return to expect.">
+          <DeskPanels desk={desk} settingsNotice={settingsNotice} />
+        </Fold>
+        <Fold
+          title="Has this beaten a simple index fund?"
+          lede={researchPlain({ h1: replay?.hypotheses?.h1 ?? null, h2: replay?.hypotheses?.h2 ?? null })}
+        >
+          <EvaluationPanel report={evaluation} />
+          <ValidationStudy study={validation} replay={replay} paper={paperLog} />
+        </Fold>
 
-        <section className="mt-10 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/20 px-4 py-4">
-          <h2 className="text-lg font-bold tracking-tight">Rules, in plain English</h2>
+        <Fold title="The rules, written out" lede="The thresholds and the size limits. The small labels are the technical names.">
+          <h2 className="text-lg font-bold tracking-tight">The rules, in everyday words</h2>
           <dl className="mt-3 grid gap-2 text-sm text-[var(--muted)] sm:grid-cols-2">
-            <div title="Risk-on entry: composite ≥ the enter band and liquidity still easy.">Risk-On starts when the market score is at least {THRESHOLDS.riskOnEnter} and liquidity is still easy (at least {THRESHOLDS.riskOnLiquidityMin}). It ends if the score falls below {THRESHOLDS.riskOnExit} or liquidity turns tight.</div>
-            <div>Tightening starts at a score of {THRESHOLDS.tightEnter} or lower, and holds until the score is back above {THRESHOLDS.tightExit}.</div>
-            <div>Crisis starts at {THRESHOLDS.crisisEnter} or lower, or when credit is very tight and the score is also weak.</div>
+            <div title="Supportive starts when the overall score clears the enter band and money in the system is still easy.">Supportive starts when the overall score is at least {THRESHOLDS.riskOnEnter} and money in the system is still easy (at least {THRESHOLDS.riskOnLiquidityMin}). It ends if the score falls below {THRESHOLDS.riskOnExit} or money in the system turns tight. Technical name: Risk-On.</div>
+            <div>Cautious starts at a score of {THRESHOLDS.tightEnter} or lower, and holds until the score is back above {THRESHOLDS.tightExit}. Technical name: Tightening.</div>
+            <div>Stressed starts at {THRESHOLDS.crisisEnter} or lower, or when lenders are very nervous and the score is also weak. Technical name: Crisis.</div>
             <div>Quiet band: a score within {THRESHOLDS.weakAbsComposite} of zero means sit tight. No new share, crypto, or theme buys.</div>
-            <div title="Vol / gross / net.">Size limits: Risk-On {pct(MODEL_BUDGET.risk_on.volTarget)} swing, {pct(MODEL_BUDGET.risk_on.maxGross)} of the book, {pct(MODEL_BUDGET.risk_on.maxNet)} outside cash. Transitional swing {pct(MODEL_BUDGET.transitional.volTarget)}. Tightening {pct(MODEL_BUDGET.tightening.volTarget)}. Crisis {pct(MODEL_BUDGET.crisis.volTarget)}.</div>
-            <div>A missing piece is left out and the others share its weight. Missing liquidity, policy, or credit blocks new buys.</div>
-            <div>The AI spending gauge is 8% of the score. The page still works without it.</div>
-            <div>A name is given a size only when it is Confirmed, and never more than 20% of the book. One stock is capped at 2%.</div>
-            <div title="Average pairwise correlation.">When holdings move together (average correlation above 0.55), non-cash sizes shrink, down to half at 0.70. Related AI and crypto names share a 25% cap.</div>
-            <div>A signal that has been wrong on both its score and its hit rate is retired and stops blocking or confirming. If both the past-year move and the 200-day trend are retired, nothing new is confirmed.</div>
-            <div>AI infrastructure, crypto, and gold/scarcity switch on from written rules. A person reviews that list each quarter. The weekly job does not edit it.</div>
-            <div title="ATR is the average true range. 1R is the original cash risk on the trade.">The stop sits 2.5 average daily ranges below the price. The size risks 0.75% of capital to that stop. Add only after the trade is ahead by that original risk. A 10% paper loss from the peak blocks new buys.</div>
-            <div>A dip is called confirmed only when the name would actually be sized. Otherwise it says “Dip spotted — blocked” and names the first thing in the way. The price pattern is 10–20% under the 60-day high and back above the 20-day average, with the theme on, and never in Tightening, Crisis, or a loss halt.</div>
+            <div title="Swing, whole book, and outside cash.">Size limits when supportive: swing {pct(MODEL_BUDGET.risk_on.volTarget)}, whole book {pct(MODEL_BUDGET.risk_on.maxGross)}, outside cash {pct(MODEL_BUDGET.risk_on.maxNet)}. Mixed: swing {pct(MODEL_BUDGET.transitional.volTarget)}. Cautious: swing {pct(MODEL_BUDGET.tightening.volTarget)}. Stressed: swing {pct(MODEL_BUDGET.crisis.volTarget)}.</div>
+            <div>A missing piece is left out and the others share its weight. Missing money-in-the-system, interest rates, or lender nerves blocks new buys.</div>
+            <div>AI spending is 8% of the score. The page still works without it.</div>
+            <div>A name is given a size only when it is confirmed, and never more than 20% of the book. One stock is capped at 2%.</div>
+            <div title="How much the holdings move together.">When holdings move together (average likeness above 0.55), sizes outside cash shrink, down to half at 0.70. Related AI and crypto names share a 25% cap.</div>
+            <div>A check that has been wrong on both its score and its hit rate is turned off. If both the past-year move and the long-term trend are turned off, nothing new is confirmed.</div>
+            <div>AI infrastructure, crypto, and gold switch on from written rules. A person reviews that list each quarter. The weekly job does not edit it.</div>
+            <div title="The stop uses the average daily range. The original cash at risk is the amount that would be lost if the stop is hit.">The stop sits 2.5 average daily ranges below the price. The size risks 0.75% of capital to that stop. Add only after the trade is ahead by that original risk. A 10% paper loss from the peak blocks new buys.</div>
+            <div>A dip is called confirmed only when the name would actually be sized. Otherwise it says “Dip spotted — blocked” and names the first thing in the way. The price pattern is 10–20% under the 60-day high and back above the 20-day average, with the theme on, and never when the market is cautious, stressed, or the loss halt is on.</div>
           </dl>
-        </section>
-
-        <p className="mt-10 max-w-3xl text-xs leading-relaxed text-[var(--muted)]">
-          Educational research tool for the owner. Not financial advice, not a solicitation to buy or sell any instrument, and not a forecast. The regime sets a risk budget. A Confirmed idea is a research label, not an order. Cash is a valid output.
-        </p>
+        </Fold>
+        <Fold title="Download log" lede="When the data was last fetched, whether it was saved, and any error on each feed.">
+          <RefreshHealthPanel health={health} attempt={attempt} csrf={csrf} showButton={false} />
+        </Fold>
       </main>
     </div>
   );

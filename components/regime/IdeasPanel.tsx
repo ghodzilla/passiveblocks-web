@@ -52,33 +52,32 @@ export function IdeasPanel({ ideas, risk, auditNote = null }: {
   const avoided = ideas.rows.filter((row) => row.status === 'avoid');
 
   return (
-    <section className="mt-10" id="macro-plays">
-      <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Macro plays and stock ideas</p>
-      <h2 className="text-lg font-bold tracking-tight">What to hold, then each name</h2>
+    <section className="mt-2" id="macro-plays">
+      <h2 className="text-lg font-bold tracking-tight">Name by name</h2>
       <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">
-        Confirmed means every checklist item passed and the size is above zero. Watch means something blocked it, and the sentence names that item. Avoid means today’s lean is away from the group. None of those words is a recommendation to buy or sell. A theme that is on is not approval to trade. Cash and defensive sleeves can pass checks that a share fails, and that is still not an order. One fund is capped at {pct(ideas.singlePositionCap)} and one stock at {pct(ideas.systematicCap)}.
+        Confirmed means every check passed and the size is above zero. Watch means something is in the way, and the sentence names it. Avoid means today’s lean is away from that group. A theme being on is support for the story, not a buy. One fund is capped at {pct(ideas.singlePositionCap)} of the book and one stock at {pct(ideas.systematicCap)}.
       </p>
       {auditNote ? <p className="mt-2 max-w-3xl text-sm leading-relaxed text-white/80">{auditNote}</p> : null}
 
       {ideas.crowding.warning ? (
         <div className="mt-4 rounded-[var(--radius-xl)] border border-amber-300/50 bg-amber-400/15 px-5 py-4">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-amber-100">Crowding and correlation</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-amber-100">These holdings are moving together</p>
           <p className="mt-2 text-base font-semibold leading-relaxed text-white">{ideas.crowding.warning}</p>
         </div>
       ) : (
         <p className="mt-4 text-sm text-[var(--muted)]">
           {ideas.crowding.average == null
             ? ideas.crowding.gap
-            : `These holdings move together with a correlation of ${ideas.crowding.average.toFixed(2)} across ${ideas.crowding.names} names. At or below ${CORR_WARN.toFixed(2)}, so suggested sizes are not reduced.`}
+            : `These holdings move together with a likeness of ${ideas.crowding.average.toFixed(2)} across ${ideas.crowding.names} names. At or below ${CORR_WARN.toFixed(2)}, so suggested sizes are not reduced. Likeness is the correlation.`}
           {ideas.crowding.dispersion != null ? ` ${DISPERSION_WINDOW}-day dispersion ${(ideas.crowding.dispersion * 100).toFixed(1)}%.` : ''}
         </p>
       )}
 
       {ideas.overlap.groups.length > 0 ? (
         <div className="mt-4 rounded-[var(--radius-lg)] border border-amber-300/40 bg-black/25 px-4 py-4">
-          <h3 className="text-sm font-bold">Overlap</h3>
+          <h3 className="text-sm font-bold">The same bet, counted twice</h3>
           <p className="mt-1 text-sm text-[var(--muted)]">
-            Confirmed names that are the same AI or mega-cap bet, or that move almost alike (correlation at least 0.80), share a cap of {pct(ideas.overlap.cap)}.
+            Confirmed names that are the same AI or giant-company bet, or that move almost alike (likeness at least 0.80), share a cap of {pct(ideas.overlap.cap)} of the book. What this means: owning two versions of the same idea does not double the allowed size.
           </p>
           <ul className="mt-3 space-y-2 text-sm">
             {ideas.overlap.groups.map((group) => (
@@ -101,7 +100,7 @@ export function IdeasPanel({ ideas, risk, auditNote = null }: {
         <div className="mt-4 rounded-[var(--radius-xl)] border border-rose-400/40 bg-rose-500/10 px-5 py-4">
           <p className="text-base font-semibold leading-relaxed text-white">On a sit-tight day this list keeps defensive holdings and cash. New share, crypto, and theme buys stay at 0%.</p>
           <p className="mt-2 text-sm text-white/75">
-            Broad shares, cyclicals, and the stock list are not sized. Theme names such as Bitcoin and Ether are on the theme cards, not in this table, so a paused stock list does not hide them.
+            What this means: broad shares, companies that do well when the economy is hot, and the stock list are not given a size. Bitcoin and Ether stay on the theme cards, so a paused stock list does not hide them.
           </p>
         </div>
       ) : null}
@@ -129,12 +128,12 @@ export function IdeasPanel({ ideas, risk, auditNote = null }: {
         <table className="w-full min-w-[860px] text-left text-sm">
           <thead className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
             <tr>
-              <th className="px-3 py-2 font-bold">Idea</th>
-              <th className="px-3 py-2 font-bold">Status</th>
+              <th className="px-3 py-2 font-bold">Name</th>
+              <th className="px-3 py-2 font-bold">Call</th>
               <th className="px-3 py-2 font-bold" title="12–1 momentum: the gain from 12 months ago to 1 month ago, skipping the last month.">Past year</th>
-              <th className="px-3 py-2 font-bold" title="Whether the last price is above its 200-day average.">200-day</th>
-              <th className="px-3 py-2 font-bold" title="Annualised swing from the last 20 sessions.">20-day swing</th>
-              <th className="px-3 py-2 font-bold" title="How unusual the last 5 sessions are. Above 1.5 blocks a buy. This is a z-score.">5-day stretch</th>
+              <th className="px-3 py-2 font-bold" title="Whether the last price is above its 200-day average.">Long-term trend</th>
+              <th className="px-3 py-2 font-bold" title="Annualised swing from the last 20 sessions.">Recent swing</th>
+              <th className="px-3 py-2 font-bold" title="How unusual the last 5 sessions are. Above 1.5 blocks a buy. The number is a score versus that name’s own history.">Last few days</th>
               <th className="px-3 py-2 font-bold" title="Share of the paper book. 0% means it is not a buy today.">Suggested size</th>
               <th className="px-3 py-2 font-bold" title="The exchange session date, not Melbourne time.">Price date</th>
             </tr>
@@ -142,7 +141,7 @@ export function IdeasPanel({ ideas, risk, auditNote = null }: {
           <tbody>
             <tr className="border-t border-[var(--border)]">
               <td colSpan={8} className="px-3 py-2 text-[11px] leading-relaxed text-[var(--muted)]">
-                Past year skips the latest month. 200-day is the long average. 5-day stretch above 1.5 blocks a buy. Suggested size is the share of the paper book, and 0% is not a buy. Price date is the exchange session, not Melbourne time.
+                What this means: past year skips the latest month. The long-term trend is the 200-day average. A last-few-days score above 1.5 blocks a buy. Suggested size is the share of the paper book, and 0% is not a buy. Price date is the exchange session, not Melbourne time.
                 {ideas.defensiveOnly ? ' Theme names are not in this table while the stock list is stood down. Look at Waiting on the regime and the theme cards.' : ''}
               </td>
             </tr>
@@ -215,17 +214,17 @@ export function IdeasPanel({ ideas, risk, auditNote = null }: {
       ) : null}
 
       <div className="mt-6">
-        <h3 className="text-sm font-bold">Are the signals still useful?</h3>
+        <h3 className="text-sm font-bold">Are the checks still useful?</h3>
         <p className="mt-1 max-w-3xl text-sm text-[var(--muted)]">
-          This table is not the price feed. Insufficient performance evidence means fewer than 40 non-overlapping 20-session windows. That 40 is a heuristic, not a statistical test, and later windows can still move with earlier ones. It does not mean a price is missing. A degraded score does not block a buy. It keeps the price check and, when only some signals are weak, halves that signal’s rank weight. If all three are weak together, the mix scales back to the normal weights. Insufficient evidence does not apply the haircut. Neither label changes the size. Size still comes from the risk budget, the caps, and today’s regime. Turned off means both scores failed, and only then does that check drop out. Holding up lately is a recent score, not a forecast.
+          What this means: this table is not the price feed. “Not enough evidence” means fewer than 40 separate 20-day windows. That 40 is a rule of thumb, not a statistical test, and later windows can still move with earlier ones. It does not mean a price is missing. “Weak lately” does not block a buy. It keeps the price check and, when only some checks are weak, halves that check’s say. If all three are weak together, the mix goes back to the normal weights. Not enough evidence does not apply that haircut. Neither label changes the size. Size still comes from the risk limits and today’s market call. “Turned off” means both scores failed, and only then does that check drop out. “Holding up lately” is a recent score, not a forecast.
         </p>
         <div className="mt-3 overflow-x-auto">
           <table className="w-full min-w-[520px] text-left text-sm">
             <thead className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
               <tr>
-                <th className="py-2 pr-3 font-bold">Signal</th>
-                <th className="py-2 pr-3 font-bold" title="Information coefficient: how well the signal lined up with the next 20 days. Negative means it pointed the wrong way.">Score</th>
-                <th className="py-2 pr-3 font-bold" title="Share of samples where the signal pointed the right way.">Hit rate</th>
+                <th className="py-2 pr-3 font-bold">Check</th>
+                <th className="py-2 pr-3 font-bold" title="Information coefficient: how well the check lined up with the next 20 days. Negative means it pointed the wrong way.">How well it lined up</th>
+                <th className="py-2 pr-3 font-bold" title="Share of samples where the check pointed the right way.">How often it was right</th>
                 <th className="py-2 pr-3 font-bold">Samples</th>
                 <th className="py-2 font-bold">Health</th>
               </tr>
@@ -257,10 +256,7 @@ export function IdeasPanel({ ideas, risk, auditNote = null }: {
       ) : null}
 
       <p className="mt-4 text-xs leading-relaxed text-[var(--muted)]">
-        Prices are adjusted daily closes from the Yahoo chart endpoint, which does not need a paid key. {ideas.pricesFetchedAt ? `Book fetched ${fetched} Australia/Melbourne.` : 'The price book has not been fetched.'} The date on each row is that name&apos;s exchange session, not a Melbourne clock. A missing bar is left blank. No price is filled in.
-      </p>
-      <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">
-        Educational research for the owner. Not financial advice, not a recommendation to buy or sell any security, and not a personalised instruction to size a position. Confirmed means this playbook and these simple signals agree. It is not a forecast.
+        Prices are adjusted daily closes from Yahoo, which does not need a paid key. {ideas.pricesFetchedAt ? `Prices downloaded ${fetched} Australia/Melbourne.` : 'The prices have not been downloaded.'} The date on each row is that name&apos;s exchange session, not a Melbourne clock. A missing price is left blank. No price is filled in.
       </p>
     </section>
   );
