@@ -21,14 +21,17 @@ export function paperLogSentence(paper: {
   latest: PaperMarkPayload | null;
 }): string {
   if (paper.status === 'ok' && (paper.decisions > 0 || paper.marks > 0)) {
-    const latest = paper.latest
-      ? ` Mark gross ${(paper.latest.gross * 100).toFixed(1)}% is the weight outside cash-role names. Mark cash weight ${(paper.latest.cashWeight * 100).toFixed(1)}% includes AAA.AX, BILL.AX, SHY, and the AUD cash balance. The book panel gross includes those cash-like holdings.`
-      : '';
     const nav = !paper.latest
       ? ''
       : paper.latest.nav == null
         ? ` Latest mark: ${paper.latest.navStatus}${paper.latest.reason ? `. ${paper.latest.reason}` : ''}`
         : ` Latest AUD unit NAV ${paper.latest.nav.toFixed(4)}.`;
+    if (paper.latest && paper.latest.basis !== 'held-book') {
+      return `Paper log active: ${paper.decisions} decisions, ${paper.marks} marks. The latest stored mark used that day's suggestion weights, not the shares in the AUD book. A suggestion of 0% was stored as a sale. The row is kept and is not comparable with the book. Stored mark gross ${(paper.latest.gross * 100).toFixed(1)}%. Stored cash weight ${(paper.latest.cashWeight * 100).toFixed(1)}%.${nav} The first stored mark includes entry cost only and is not a performance record.`;
+    }
+    const latest = paper.latest
+      ? ` Held-book gross ${(paper.latest.gross * 100).toFixed(1)}% counts every holding except the AUD cash balance, including AAA.AX, BILL.AX, and SHY. Cash weight ${(paper.latest.cashWeight * 100).toFixed(1)}% is the AUD cash balance.`
+      : '';
     return `Paper log active: ${paper.decisions} decisions, ${paper.marks} marks; first mark includes entry cost only, not a performance record.${latest}${nav}`;
   }
   if (paper.status === 'ok') {

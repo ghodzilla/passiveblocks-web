@@ -32,6 +32,8 @@ export interface AudPaperBook {
   openedOn: string | null;
   fx: FxStamp | null;
   note: string;
+  /** Asset buys and sells from the latest roll. Price drift is not a trade. */
+  sessionTrades?: { date: string; symbol: string; side: 'buy' | 'sell'; notionalAud: number }[];
 }
 
 export interface PaperLedger {
@@ -101,6 +103,7 @@ function emptyAudBook(date: string, capital: number | null, note: string): AudPa
     openedOn: date,
     fx: null,
     note,
+    sessionTrades: [],
   };
 }
 
@@ -179,6 +182,7 @@ export function rollAudPaper(book: AudPaperBook, input: {
     : book;
   const fx = fxStamp(input.fxBars, input.date, input.fxFetchedAt, input.fxError);
   const pending: { symbol: string; reason: string }[] = [];
+  const trades: { date: string; symbol: string; side: 'buy' | 'sell'; notionalAud: number }[] = [];
   let cash = start.cash ?? 0;
   const kept: PaperPosition[] = [];
   const stopped = new Set<string>();
@@ -195,8 +199,10 @@ export function rollAudPaper(book: AudPaperBook, input: {
         kept.push({ ...position });
         pending.push({ symbol: position.symbol, reason: 'Stop touched in the instrument price. The sell is unfilled because AUDUSD is missing or stale.' });
       } else {
-        cash += position.qty * aud;
+        const notionalAud = position.qty * aud;
+        cash += notionalAud;
         stopped.add(position.symbol);
+        trades.push({ date: input.date, symbol: position.symbol, side: 'sell', notionalAud });
       }
     } else {
       kept.push({ ...position });
@@ -214,7 +220,7 @@ export function rollAudPaper(book: AudPaperBook, input: {
       }
     } else valued.set(position.symbol, aud);
   }
-  const base: AudPaperBook = { ...start, cash, fx, pending, positions: kept };
+  const base: AudPaperBook = { ...start, cash, fx, pending, positions: kept, sessionTrades: trades };
   if (blocked || kept.some((position) => !valued.has(position.symbol))) {
     return finish(base, input.date, null, 'unvalued', null);
   }
@@ -266,7 +272,9 @@ export function rollAudPaper(book: AudPaperBook, input: {
     const current = position.qty * aud / equity;
     if (!(current > 0)) continue;
     const sold = position.qty * Math.min(1, sale.weight / current);
-    cash += sold * aud;
+    const notionalAud = sold * aud;
+    cash += notionalAud;
+    trades.push({ date: input.date, symbol: sale.symbol, side: 'sell', notionalAud });
     position.qty -= sold;
     if (!(position.qty > 1e-10)) open.delete(sale.symbol);
   }
@@ -301,7 +309,9 @@ export function rollAudPaper(book: AudPaperBook, input: {
     if (planned.kind === 'pyramid' && existing && (existing.tranches ?? 1) < 2) {
       existing.qty += buy.notional / aud;
       existing.tranches = 2;
+      trades.push({ date: input.date, symbol: buy.symbol, side: 'buy', notionalAud: buy.notional });
     } else if (planned.kind === 'new' && !existing) {
+      trades.push({ date: input.date, symbol: buy.symbol, side: 'buy', notionalAud: buy.notional });
       open.set(buy.symbol, {
         symbol: buy.symbol,
         qty: buy.notional / aud,

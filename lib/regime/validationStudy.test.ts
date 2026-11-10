@@ -3,8 +3,10 @@ import { existsSync, readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { PGlite } from '@electric-sql/pglite';
 import type { RegimeSql } from './db';
+import { openAudBook, rollAudPaper } from './audPaper';
 import { bookExposureSentence, paperLogSentence } from './exposureCopy';
-import { decisionFromRefresh, paperMark, readPaperLog, recordPaperSnapshot, type PaperDecisionPayload } from './paperLog';
+import { emptyJournal } from './journal';
+import { decisionFromRefresh, heldPortfolioFromBook, paperMark, readPaperLog, recordPaperSnapshot, selectPreviousMark, type PaperDecisionPayload, type PaperMarkPayload } from './paperLog';
 import { replayResults, validationStudy } from './validationArtifacts';
 import { creditSpan, nextCalendarDay } from '../../research/regime-validation/creditSpan';
 import type { PriceBook } from './prices';
@@ -246,6 +248,149 @@ describe('decision record', () => {
   });
 });
 
+describe('held paper marks', () => {
+  const tactical = ['XLV', 'USMV', 'XLP', 'UUP', 'XLRE'];
+  const cashRole = ['AAA.AX', 'BILL.AX', 'SHY'];
+  const symbols = tactical.concat(cashRole);
+
+  function lines(weightFor: (symbol: string) => number, status: string): PaperDecisionPayload['lines'] {
+    return symbols.map((symbol) => ({
+      symbol,
+      role: tactical.includes(symbol) ? 'tactical' as const : 'cash' as const,
+      weight: weightFor(symbol),
+      status,
+    }));
+  }
+
+  function prices(date: string, local: Record<string, number> = {}): { symbol: string; bars: Bar[] }[] {
+    return symbols.map((symbol) => ({
+      symbol,
+      bars: [{ date, close: local[symbol] ?? 100 }],
+    }));
+  }
+
+  function roll(date: string, weightFor: (symbol: string) => number, status: string, prior: ReturnType<typeof emptyJournal>, local?: Record<string, number>) {
+    const opened = openAudBook(prior, date, 100000);
+    const book = opened.audBook;
+    if (!book) throw new Error('missing book');
+    const quotes = local ?? {};
+    const next = rollAudPaper(book, {
+      date,
+      lines: symbols.map((symbol) => ({
+        symbol,
+        weight: weightFor(symbol),
+        stop: 90,
+        role: tactical.includes(symbol) ? 'tactical' as const : 'cash' as const,
+        defensive: false,
+      })),
+      local: Object.fromEntries(symbols.map((symbol) => [symbol, quotes[symbol] ?? 100])),
+      asOf: Object.fromEntries(symbols.map((symbol) => [symbol, date])),
+      fxBars: [{ date: '2026-11-08', close: 0.65 }, { date: '2026-11-09', close: 0.65 }, { date: '2026-11-10', close: 0.65 }],
+      fxFetchedAt: `${date}T13:15:00.000Z`,
+      fxError: null,
+      maxGross: 1,
+      maxNet: 1,
+      haltNewEntries: false,
+      overlapGroups: [],
+    });
+    return { ...opened, audBook: next };
+  }
+
+  it('keeps the 8 Nov book when 9 and 10 Nov suggestions are zero', () => {
+    const buy = (symbol: string) => tactical.includes(symbol) ? 0.02 : 0.1;
+    const none = () => 0;
+    const day1 = roll('2026-11-08', buy, 'confirmed', emptyJournal());
+    const book1 = day1.audBook;
+    assert.ok(book1);
+    assert.equal(book1.positions.length, 8);
+    assert.ok(book1.exposures);
+    assert.ok(Math.abs(book1.exposures.gross - 0.4) < 1e-6);
+    assert.ok(Math.abs(book1.exposures.net - 0.1) < 1e-6);
+    const priceBook = book(prices('2026-11-08'));
+    const fx = [{ date: '2026-11-08', close: 0.65 }];
+    const held1 = heldPortfolioFromBook(book1, priceBook, fx, '2026-11-08');
+    assert.ok(held1);
+    const mark1 = paperMark({
+      decision: decision(lines(buy, 'confirmed')),
+      sessionDate: '2026-11-08',
+      previous: null,
+      book: priceBook,
+      fx,
+      held: held1,
+    });
+    assert.equal(mark1.basis, 'held-book');
+    assert.ok(Math.abs(mark1.gross - 0.4) < 1e-6);
+    assert.ok(Math.abs(mark1.cashWeight - 0.6) < 1e-6);
+    assert.ok(mark1.turnover > 0.3);
+    assert.equal(mark1.weights.filter((row) => row.symbol !== 'CASH').length, 8);
+
+    const day2 = roll('2026-11-09', none, 'watch', day1);
+    const book2 = day2.audBook;
+    assert.ok(book2);
+    assert.equal(book2.positions.length, 8);
+    assert.equal(book2.sessionTrades?.length ?? 0, 0);
+    const held2 = heldPortfolioFromBook(book2, book(prices('2026-11-09')), fx, '2026-11-09');
+    const mark2 = paperMark({
+      decision: decision(lines(none, 'watch')),
+      sessionDate: '2026-11-09',
+      previous: mark1,
+      book: book(prices('2026-11-09')),
+      fx,
+      held: held2,
+    });
+    assert.equal(mark2.turnover, 0);
+    assert.equal(mark2.costsPaid, 0);
+    assert.ok(Math.abs(mark2.gross - mark1.gross) < 1e-6);
+    assert.equal(mark2.nav, mark1.nav);
+
+    const day3 = roll('2026-11-10', none, 'watch', day2);
+    assert.equal(day3.audBook?.positions.length, 8);
+    const held3 = heldPortfolioFromBook(day3.audBook!, book(prices('2026-11-10')), fx, '2026-11-10');
+    const mark3 = paperMark({
+      decision: decision(lines(none, 'watch')),
+      sessionDate: '2026-11-10',
+      previous: mark2,
+      book: book(prices('2026-11-10')),
+      fx,
+      held: held3,
+    });
+    assert.equal(mark3.turnover, 0);
+    assert.ok(Math.abs((mark3.gross ?? 0) - 0.4) < 1e-6);
+    assert.equal(mark3.basis, 'held-book');
+
+    const suggestionCash: PaperMarkPayload = {
+      currency: 'AUD',
+      nav: 0.9998,
+      navStatus: 'ok',
+      reason: 'suggestion',
+      gross: 0,
+      cashWeight: 1,
+      turnover: 0.1,
+      costsPaid: 0.0001,
+      weights: [{ symbol: 'CASH', weight: 1 }],
+      prices: [],
+    };
+    const chosen = selectPreviousMark([suggestionCash, { ...suggestionCash, nav: 0.9998 }, mark1], symbols);
+    assert.equal(chosen, mark1);
+    const stopped = roll('2026-11-09', none, 'watch', day1, { XLV: 80 });
+    assert.equal(stopped.audBook?.positions.some((position) => position.symbol === 'XLV'), false);
+    assert.equal(stopped.audBook?.positions.length, 7);
+    assert.ok((stopped.audBook?.sessionTrades ?? []).some((trade) => trade.symbol === 'XLV' && trade.side === 'sell'));
+    const heldStop = heldPortfolioFromBook(stopped.audBook!, book(prices('2026-11-09', { XLV: 80 })), fx, '2026-11-09');
+    const markStop = paperMark({
+      decision: decision(lines(none, 'watch')),
+      sessionDate: '2026-11-09',
+      previous: mark1,
+      book: book(prices('2026-11-09', { XLV: 80 })),
+      fx,
+      held: heldStop,
+    });
+    assert.ok(markStop.turnover > 0);
+    assert.equal(markStop.weights.some((row) => row.symbol === 'XLV'), false);
+    assert.ok(markStop.weights.some((row) => row.symbol === 'USMV'));
+  });
+});
+
 describe('validation artifact', () => {
   it('resolves the study and the replay for the production page', () => {
     assert.notEqual(validationStudy, null);
@@ -295,10 +440,33 @@ describe('validation artifact', () => {
         prices: [],
       },
     });
-    assert.match(active, /Paper log active: 1 decisions, 1 marks; first mark includes entry cost only, not a performance record/);
+    assert.match(active, /Paper log active: 1 decisions, 1 marks/);
+    assert.match(active, /suggestion weights/);
+    assert.match(active, /not comparable with the book/);
     assert.equal(active.includes('not applied'), false);
-    assert.match(active, /Mark gross 10\.0%/);
-    assert.match(active, /Mark cash weight 90\.0%/);
+    assert.match(active, /Stored mark gross 10\.0%/);
+    assert.match(active, /Stored cash weight 90\.0%/);
+    const heldCopy = paperLogSentence({
+      status: 'ok',
+      decisions: 1,
+      marks: 1,
+      latest: {
+        currency: 'AUD',
+        nav: 0.9996,
+        navStatus: 'awaiting_next_session',
+        reason: 'First mark.',
+        gross: 0.4,
+        cashWeight: 0.6,
+        turnover: 0.4,
+        costsPaid: 0.0004,
+        weights: [],
+        prices: [],
+        basis: 'held-book',
+      },
+    });
+    assert.match(heldCopy, /Held-book gross 40\.0%/);
+    assert.match(heldCopy, /including AAA\.AX, BILL\.AX, and SHY/);
+    assert.equal(heldCopy.includes('not comparable'), false);
     const missing = paperLogSentence({ status: 'missing_schema', decisions: 0, marks: 0, latest: null });
     assert.match(missing, /not applied/);
     const book = bookExposureSentence({
