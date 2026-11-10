@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { PGlite } from '@electric-sql/pglite';
 import type { RegimeSql } from './db';
+import { bookExposureSentence, paperLogSentence } from './exposureCopy';
 import { decisionFromRefresh, paperMark, readPaperLog, recordPaperSnapshot, type PaperDecisionPayload } from './paperLog';
+import { replayResults, validationStudy } from './validationArtifacts';
 import { creditSpan, nextCalendarDay } from '../../research/regime-validation/creditSpan';
 import type { PriceBook } from './prices';
 import type { StoredRefresh } from './refreshStore';
@@ -245,6 +247,74 @@ describe('decision record', () => {
 });
 
 describe('validation artifact', () => {
+  it('resolves the study and the replay for the production page', () => {
+    assert.notEqual(validationStudy, null);
+    assert.notEqual(replayResults, null);
+    assert.equal(validationStudy.fullStrategy, 'not_validated');
+    assert.equal(validationStudy.metrics, null);
+    assert.ok(validationStudy.rows.length > 0);
+    assert.equal(replayResults.policy, 'book-limits-2026-11-07');
+    assert.ok(replayResults.production.summary);
+    const page = readFileSync('app/private/regime/page.tsx', 'utf8');
+    const artifacts = readFileSync('lib/regime/validationArtifacts.ts', 'utf8');
+    const config = readFileSync('next.config.mjs', 'utf8');
+    assert.equal(page.includes('readFileSync'), false);
+    assert.equal(page.includes('validationStudy'), true);
+    assert.equal(page.includes('replayResults'), true);
+    assert.equal(artifacts.includes('prices/book.json'), false);
+    assert.equal(config.includes('./research/regime-validation/results.json'), true);
+    assert.equal(config.includes('./research/regime-validation/replay-results.json'), true);
+    assert.equal(config.includes('prices/book.json'), false);
+    const built = '.next/server/app/private/regime/page.js';
+    if (!existsSync(built)) return;
+    const bundle = readFileSync(built, 'utf8');
+    const nftPath = `${built}.nft.json`;
+    const files: string[] = existsSync(nftPath) ? JSON.parse(readFileSync(nftPath, 'utf8')).files : [];
+    const inlined = bundle.includes('not_validated') && bundle.includes('repaired_policy_not_the_historical_rule');
+    const traced = files.some((file) => file.endsWith('research/regime-validation/results.json'))
+      && files.some((file) => file.endsWith('research/regime-validation/replay-results.json'));
+    assert.equal(inlined || traced, true);
+    assert.equal(files.some((file) => file.endsWith('prices/book.json')), false);
+  });
+
+  it('states the live paper log and names the two gross definitions', () => {
+    const active = paperLogSentence({
+      status: 'ok',
+      decisions: 1,
+      marks: 1,
+      latest: {
+        currency: 'AUD',
+        nav: 0.999,
+        navStatus: 'awaiting_next_session',
+        reason: 'First mark. Entry cost is charged. The next session’s price change is not in this NAV.',
+        gross: 0.1,
+        cashWeight: 0.9,
+        turnover: 0.1,
+        costsPaid: 0.0001,
+        weights: [],
+        prices: [],
+      },
+    });
+    assert.match(active, /Paper log active: 1 decisions, 1 marks; first mark includes entry cost only, not a performance record/);
+    assert.equal(active.includes('not applied'), false);
+    assert.match(active, /Mark gross 10\.0%/);
+    assert.match(active, /Mark cash weight 90\.0%/);
+    const missing = paperLogSentence({ status: 'missing_schema', decisions: 0, marks: 0, latest: null });
+    assert.match(missing, /not applied/);
+    const book = bookExposureSentence({
+      gross: 0.4,
+      net: 0.1,
+      risk: 0.1,
+      defensive: 0,
+      cash: 0.6,
+      maxGross: 0.4,
+      maxNet: 0.2,
+    });
+    assert.match(book, /Held gross 40\.0%/);
+    assert.match(book, /AAA\.AX, BILL\.AX, and SHY count in it/);
+    assert.match(book, /AUD cash balance 60\.0%/);
+  });
+
   it('does not report a portfolio result while the full strategy is not validated', () => {
     const study = JSON.parse(readFileSync('research/regime-validation/results.json', 'utf8'));
     assert.equal(study.fullStrategy, 'not_validated');

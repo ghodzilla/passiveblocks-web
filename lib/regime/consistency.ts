@@ -1,5 +1,6 @@
 import type { PaperLedger } from './audPaper';
 import { BOOK_LIMITS_VERSION, BOOK_LIMIT_TOLERANCE } from './bookLimits';
+import { bookExposureSentence } from './exposureCopy';
 import { budgetsFor } from './classify';
 import { defensiveOnly, type IdeasReport } from './ideas';
 import { OVERLAP_GROUP_CAP } from './overlap';
@@ -27,7 +28,7 @@ export function heldBookRule(ledger: PaperLedger | null): ConsistencyRule {
     : ledger.status === 'unvalued'
       ? `Policy ${ledger.policy ?? BOOK_LIMITS_VERSION}. The AUD book is unvalued. No net value is shown and no new buy is added.`
       : ledger.exposures
-        ? `Policy ${ledger.policy ?? BOOK_LIMITS_VERSION}. Paper only. Held gross ${(ledger.exposures.gross * 100).toFixed(1)}% against ${(ledger.exposures.maxGross * 100).toFixed(0)}%, net ${(ledger.exposures.net * 100).toFixed(1)}% against ${(ledger.exposures.maxNet * 100).toFixed(0)}%. Pending ${ledger.pending.length}.`
+        ? `Policy ${ledger.policy ?? BOOK_LIMITS_VERSION}. Paper only. ${bookExposureSentence(ledger.exposures)} Pending ${ledger.pending.length}.`
         : `Policy ${ledger.policy ?? BOOK_LIMITS_VERSION}. Paper only. The AUD book has no held exposure to compare. Pending ${ledger.pending.length}.`;
   return {
     id: 'held-book',
