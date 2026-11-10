@@ -305,7 +305,7 @@ export async function executeRegimeRefresh(input: {
     const stored = writeOk ? nextRecord(previous, health, live, decision) : previous;
     if (writeOk && sql && stored?.decision && stored.snapshot) {
       const fx = stored.fx && !stored.fx.error && stored.fx.bars.length > 0 ? stored.fx.bars : null;
-      const paper = await recordPaperSnapshot(sql, stored, fx);
+      const paper = await recordPaperSnapshot(sql, stored, fx, journal?.audBook ?? null);
       if (paper === 'outage') writeRefreshLog('failure', { trigger: input.trigger, message: 'paper decision log was not appended' });
     }
     writeRefreshLog('end', {

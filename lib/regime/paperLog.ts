@@ -1,3 +1,4 @@
+import type { AudPaperBook } from './audPaper';
 import { storeProblem, type RegimeSql } from './db';
 import type { StoredDecision } from './decision';
 import { RULE_VERSION } from './decision';
@@ -78,6 +79,8 @@ export interface PaperMarkPayload {
   costsPaid: number;
   weights: { symbol: string; weight: number }[];
   prices: PaperPrice[];
+  /** Present when the weights come from the AUD book rather than suggestion lines. */
+  basis?: 'held-book';
 }
 
 function asMark(value: unknown): PaperMarkPayload | null {
@@ -149,7 +152,7 @@ export function decisionFromRefresh(refresh: StoredRefresh, fx: Bar[] | null = n
     benchmark: '60% SPY and 40% cash in AUD, same cost and zero cash yield, only once AUDUSD and the prices exist.',
     valuation: {
       unit: 'time-weighted AUD NAV excluding contributions',
-      needs: 'A later mark uses the previous mark’s stored AUD prices for the held weights, then today’s close and AUDUSD. A missing price or AUDUSD leaves NAV empty. The first insert for a session date is kept. This is not a historical backtest.',
+      needs: 'A later mark values the shares the AUD book still holds. A suggestion of 0% is not a sale. The price change uses the previous mark’s stored AUD prices. A missing price or AUDUSD leaves NAV empty. The first insert for a session date is kept. This is not a historical backtest.',
     },
   };
 }
@@ -177,6 +180,63 @@ function priceOnOrBefore(book: PriceBook, symbol: string, date: string): Bar | n
     if (bar.date <= date && bar.close > 0) found = bar;
   }
   return found;
+}
+
+export interface HeldPortfolio {
+  weights: { symbol: string; weight: number }[];
+  trades: { symbol: string; side: 'buy' | 'sell'; notionalAud: number }[];
+  equity: number;
+}
+
+/** Half the sum of asset-weight changes and the matching cash change. Drift is not included. */
+export function turnoverFromTrades(trades: { side: 'buy' | 'sell'; notionalAud: number }[], equity: number): number {
+  if (!(equity > 0)) return 0;
+  let asset = 0;
+  let signed = 0;
+  for (const trade of trades) {
+    if (!(trade.notionalAud > 0)) continue;
+    const weight = trade.notionalAud / equity;
+    asset += weight;
+    signed += trade.side === 'buy' ? weight : -weight;
+  }
+  return (asset + Math.abs(signed)) / 2;
+}
+
+/**
+ * Newest first. An all-cash suggestion mark is not the portfolio while the book
+ * still holds names. Those rows stay in the table; the chain steps back to the
+ * last mark that still listed a holding, or to a held-book mark.
+ */
+export function selectPreviousMark(marksNewestFirst: PaperMarkPayload[], heldSymbols: string[]): PaperMarkPayload | null {
+  const held = heldSymbols.length > 0;
+  for (const mark of marksNewestFirst) {
+    if (mark.basis === 'held-book') return mark;
+    const invested = mark.weights.some((row) => row.symbol !== 'CASH' && row.weight > 0);
+    if (!invested && held) continue;
+    return mark;
+  }
+  return null;
+}
+
+export function heldPortfolioFromBook(book: AudPaperBook, priceBook: PriceBook, fx: Bar[] | null, sessionDate: string): HeldPortfolio | null {
+  const latest = book.marks[book.marks.length - 1];
+  if (!latest || latest.date !== sessionDate || latest.status !== 'valued' || latest.equity == null || !(latest.equity > 0)) return null;
+  const equity = latest.equity;
+  const weights: { symbol: string; weight: number }[] = [];
+  for (const position of book.positions) {
+    if (!(position.qty > 0)) continue;
+    const bar = priceOnOrBefore(priceBook, position.symbol, sessionDate);
+    if (!bar) return null;
+    const rate = position.symbol.endsWith('.AX') ? null : fxOnOrBefore(fx, bar.date);
+    const aud = audClose(position.symbol, bar, rate);
+    if (aud == null || !(aud > 0)) return null;
+    weights.push({ symbol: position.symbol, weight: position.qty * aud / equity });
+  }
+  weights.push({ symbol: 'CASH', weight: Math.max(0, (book.cash ?? 0) / equity) });
+  const trades = (book.sessionTrades ?? [])
+    .filter((trade) => trade.date === sessionDate)
+    .map((trade) => ({ symbol: trade.symbol, side: trade.side, notionalAud: trade.notionalAud }));
+  return { weights, trades, equity };
 }
 
 function weightsOf(lines: PaperLine[]): { symbol: string; weight: number }[] {
@@ -214,11 +274,21 @@ export function paperMark(input: {
   previous: PaperMarkPayload | null;
   book: PriceBook;
   fx: Bar[] | null;
+  /** Post-policy AUD book. When present, suggestion weights are not the portfolio. */
+  held?: HeldPortfolio | null;
+  /** Set when earlier all-cash suggestion marks were left in the log and skipped. */
+  skippedSuggestionMarks?: boolean;
 }): PaperMarkPayload {
-  const weights = weightsOf(input.decision.lines);
+  const suggested = weightsOf(input.decision.lines);
+  const carried = input.previous && suggested.every((row) => row.symbol === 'CASH' || !(row.weight > 0))
+    ? input.previous.weights
+    : suggested;
+  const weights = input.held?.weights?.length ? input.held.weights : carried;
   const gross = weights.filter((row) => row.symbol !== 'CASH').reduce((sum, row) => sum + row.weight, 0);
   const cashWeight = weights.find((row) => row.symbol === 'CASH')?.weight ?? 0;
-  const turnover = tradedFraction(weights, input.previous?.weights ?? [{ symbol: 'CASH', weight: 1 }]);
+  const turnover = input.held
+    ? turnoverFromTrades(input.held.trades, input.held.equity)
+    : tradedFraction(weights, input.previous?.weights ?? [{ symbol: 'CASH', weight: 1 }]);
   const cost = turnover * (input.decision.costBps / 10_000);
   const prices: PaperPrice[] = [];
   const missing: string[] = [];
@@ -238,7 +308,11 @@ export function paperMark(input: {
     if (aud == null || !(aud > 0)) continue;
     prices.push({ symbol, date: bar.date, aud });
   }
-  const base = { currency: 'AUD' as const, gross, cashWeight, turnover, costsPaid: cost, weights, prices };
+  const basis = input.held ? 'held-book' as const : undefined;
+  const heldReason = input.skippedSuggestionMarks
+    ? 'Held book. A suggestion of 0% is not a sale. Earlier marks that dropped the holdings are kept and are not comparable. This row continues the last mark that still listed holdings.'
+    : 'Held book. A suggestion of 0% is not a sale. Costs follow buys, stops, cap trims, and stale-price exits.';
+  const base = { currency: 'AUD' as const, gross, cashWeight, turnover, costsPaid: cost, weights, prices, basis };
   if (missing.length > 0) {
     return { ...base, nav: null, costsPaid: 0, navStatus: 'prices_incomplete', reason: `No price on or before ${input.sessionDate} for ${missing.join(', ')}.` };
   }
@@ -252,7 +326,9 @@ export function paperMark(input: {
       navStatus: input.previous ? 'prices_incomplete' : 'awaiting_next_session',
       reason: input.previous
         ? 'The previous mark has no NAV, so this one does not invent a continuation.'
-        : 'First mark. Entry cost is charged. The next session’s price change is not in this NAV.',
+        : input.held
+          ? `First mark. Entry cost is charged on the shares bought into the AUD book. The next session’s price change is not in this NAV. ${heldReason}`
+          : 'First mark. Entry cost is charged. The next session’s price change is not in this NAV.',
     };
   }
   let gain = 0;
@@ -269,7 +345,9 @@ export function paperMark(input: {
     ...base,
     nav: input.previous.nav * (1 + gain - cost),
     navStatus: 'ok',
-    reason: 'Time-weighted AUD NAV from the frozen weights. Contributions are not included. Taxes are excluded. Cash yield is 0.',
+    reason: input.held
+      ? heldReason
+      : 'Time-weighted AUD NAV from the frozen weights. Contributions are not included. Taxes are excluded. Cash yield is 0.',
   };
 }
 
@@ -277,6 +355,7 @@ export async function recordPaperSnapshot(
   sql: RegimeSql,
   refresh: StoredRefresh,
   fx: Bar[] | null,
+  audBook?: AudPaperBook | null,
 ): Promise<'recorded' | 'skipped' | 'missing_schema' | 'outage'> {
   const decision = decisionFromRefresh(refresh, fx);
   if (!decision || !refresh.book) return 'skipped';
@@ -286,16 +365,27 @@ export async function recordPaperSnapshot(
       `SELECT payload FROM regime_paper_event
        WHERE rule_version = $1 AND event_type = 'mark' AND session_date < $2::date
        ORDER BY session_date DESC, id DESC
-       LIMIT 1`,
+       LIMIT 30`,
       [decision.ruleVersion, decision.sessionDate],
     );
-    const previous = priorRows.length ? asMark(priorRows[0].payload) : null;
+    const held = audBook ? heldPortfolioFromBook(audBook, refresh.book, fx, decision.sessionDate) : null;
+    const priorMarks: PaperMarkPayload[] = [];
+    for (const row of priorRows) {
+      const parsed = asMark(row.payload);
+      if (parsed) priorMarks.push(parsed);
+    }
+    const heldSymbols = (held?.weights ?? []).filter((row) => row.symbol !== 'CASH' && row.weight > 0).map((row) => row.symbol);
+    const linked = held ? selectPreviousMark(priorMarks, heldSymbols) : (priorMarks[0] ?? null);
+    const previous = linked;
+    const skippedSuggestionMarks = Boolean(held && priorMarks.length > 0 && previous !== priorMarks[0]);
     const mark = paperMark({
       decision,
       sessionDate: decision.sessionDate,
       previous,
       book: refresh.book,
       fx,
+      held,
+      skippedSuggestionMarks,
     });
     await sql.query(INSERT_EVENT, [decision.ruleVersion, 'mark', decision.sessionDate, JSON.stringify(mark)]);
     return 'recorded';
