@@ -30,13 +30,13 @@ export function EvaluationPanel({ report }: { report: EvaluationReport }) {
         <p className="mt-2 text-sm leading-relaxed text-white">{report.fullStrategyReason}</p>
         <p className="mt-2 text-sm text-[var(--text-2)]">This block says what the saved prices are allowed to be used for.</p>
       </div>
-      <p className="mt-4 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">{report.lookAhead}</p>
-      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">{report.costNote}</p>
-      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">{report.cashNote}</p>
-      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">{report.dividendNote}</p>
-      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">{report.sampleNote}</p>
+      <p className="mt-4 max-w-3xl text-sm leading-relaxed text-[var(--text-3)]">{report.lookAhead}</p>
+      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--text-3)]">{report.costNote}</p>
+      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--text-3)]">{report.cashNote}</p>
+      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--text-3)]">{report.dividendNote}</p>
+      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--text-3)]">{report.sampleNote}</p>
       <form action="/private/regime" method="get" className="mt-4 flex flex-wrap items-end gap-3">
-        <label className="text-xs text-[var(--muted)]">
+        <label className="text-xs text-[var(--text-3)]">
           Trading cost each way, in hundredths of a percent
           <input
             name="costBps"
@@ -45,7 +45,7 @@ export function EvaluationPanel({ report }: { report: EvaluationReport }) {
             className="mt-1 block w-28 rounded border border-white/15 bg-black/30 px-2 py-1 text-sm text-white"
           />
         </label>
-        <label className="text-xs text-[var(--muted)]">
+        <label className="text-xs text-[var(--text-3)]">
           Interest on cash, in hundredths of a percent a year
           <input
             name="cashBps"
@@ -59,14 +59,14 @@ export function EvaluationPanel({ report }: { report: EvaluationReport }) {
         </button>
       </form>
       {report.unavailableReason ? (
-        <p className="mt-4 text-sm text-[var(--muted)]">{report.unavailableReason}</p>
+        <p className="mt-4 text-sm text-[var(--text-3)]">{report.unavailableReason}</p>
       ) : null}
       {shown.length === 0 ? (
-        <p className="mt-4 text-sm text-[var(--muted)]">No saved price series is long enough for this check.</p>
+        <p className="mt-4 text-sm text-[var(--text-3)]">No saved price series is long enough for this check.</p>
       ) : (
         <div className="mt-4 overflow-x-auto rounded-[var(--radius-xl)] border border-white/10">
           <table className="min-w-full text-left text-sm">
-            <thead className="bg-white/[0.03] text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">
+            <thead className="bg-white/[0.03] text-xs font-semibold text-[var(--text-3)]">
               <tr>
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Monthly investing: end value per dollar in / cash left / costs</th>
@@ -84,8 +84,8 @@ export function EvaluationPanel({ report }: { report: EvaluationReport }) {
                   <tr key={symbol.symbol} className="border-t border-white/10">
                     <td className="px-4 py-3 font-semibold text-white">
                       {symbol.symbol}
-                      <p className="text-[11px] font-normal text-[var(--muted)]">{symbol.firstDate} → {symbol.lastDate}</p>
-                      <p className="text-[11px] font-normal text-[var(--muted)]">{symbol.months} contributions · {priceLabel}</p>
+                      <p className="text-[11px] font-normal text-[var(--text-3)]">{symbol.firstDate} → {symbol.lastDate}</p>
+                      <p className="text-[11px] font-normal text-[var(--text-3)]">{symbol.months} contributions · {priceLabel}</p>
                     </td>
                     <td className="px-4 py-3 font-mono text-xs">
                       {monthly ? `${multiple(monthly.wealthPerUnitContributed)} · cash ${money(monthly.endCash)} · cost ${money(monthly.costsPaid)}` : '—'}
@@ -103,7 +103,7 @@ export function EvaluationPanel({ report }: { report: EvaluationReport }) {
           </table>
         </div>
       )}
-      <p className="mt-3 max-w-3xl text-xs leading-relaxed text-[var(--muted)]">
+      <p className="mt-3 max-w-3xl text-xs leading-relaxed text-[var(--text-3)]">
         {report.returnLabel} The monthly and tactical columns share contribution dates. The lump-sum column does not, so a higher lump-sum number is not evidence of skill. A higher tactical number is not a reason to change a live threshold. Rule {report.ruleVersion}. {report.included} symbols included, {report.skipped} skipped.
       </p>
     </section>

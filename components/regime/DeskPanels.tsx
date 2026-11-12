@@ -1,6 +1,6 @@
 import type { Desk } from '@/lib/regime/desk';
 import { bookExposureSentence } from '@/lib/regime/exposureCopy';
-import { checklistLines } from '@/lib/regime/plain';
+import { CheckRow } from './ui/Chip';
 import { ASPIRATION_LABEL } from '@/lib/regime/sizing';
 import { themesForSymbol } from '@/lib/regime/themes';
 import { sydneyClock } from '@/lib/regime/time';
@@ -63,7 +63,7 @@ export function DeskPanels({
                   {theme.enabled ? (theme.on ? '● On' : '○ Off') : 'Switch off'}
                 </p>
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{theme.objective}</p>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--text-3)]">{theme.objective}</p>
               <p className="mt-2 text-sm leading-relaxed text-white/80">{theme.reason}</p>
               <ul className="mt-3 space-y-2">
                 {theme.lines.map((line) => (
@@ -75,11 +75,8 @@ export function DeskPanels({
                     ) : null}
                     <span className="ml-2 font-mono text-xs text-[var(--text-3)]" title="Share of the paper book.">{pct(line.weight)} of the book</span>
                     {line.dip ? <span className={`ml-2 text-xs font-semibold ${line.dip.startsWith('Dip buy') ? 'text-[var(--call-buy)]' : 'text-[var(--call-watch)]'}`}>{line.dip}</span> : null}
-                    <p className="text-xs text-[var(--muted)]">{line.verdict}</p>
-                    <details>
-                      <summary className="cursor-pointer text-xs text-[var(--accent-soft)]">Why?</summary>
-                      <p className="whitespace-pre-line text-xs text-white/70">{checklistLines(line.gates)}</p>
-                    </details>
+                    <p className="text-xs text-[var(--text-3)]">{line.verdict}</p>
+                    <CheckRow gates={line.gates} />
                   </li>
                 ))}
               </ul>
@@ -88,7 +85,7 @@ export function DeskPanels({
         </div>
         <div className="mt-4">
           <h3 className="text-sm font-bold">Theme change log</h3>
-          <ul className="mt-2 space-y-2 text-sm text-[var(--muted)]">
+          <ul className="mt-2 space-y-2 text-sm text-[var(--text-3)]">
             {desk.changelog.map((entry) => (
               <li key={entry.date}>
                 <span className="font-mono text-xs text-white/70">{entry.date}</span> {entry.note}
@@ -108,12 +105,12 @@ export function DeskPanels({
         </p>
         <details className="mt-2">
           <summary className="min-h-11 cursor-pointer text-sm text-[var(--text-2)]">How this record is marked</summary>
-          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--text-3)]">
             The historical test charges 0.10% each way (10 basis points) and fills the next session. This book is a share record in Australian dollars with no broker fee, marked at the latest downloaded close.
           </p>
         </details>
         {desk.paperLedger ? (
-          <div className="mt-4 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4 text-sm leading-relaxed text-[var(--muted)]">
+          <div className="mt-4 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4 text-sm leading-relaxed text-[var(--text-3)]">
             <p>{desk.paperLedger.note}</p>
             <p className="mt-2">
                 Limits applied {desk.paperLedger.status === 'enforced' ? '✓' : desk.paperLedger.status}. {desk.paperLedger.valued ? `AUD value ${audMoney(desk.paperLedger.equity)}.` : 'No AUD net value is shown.'}
@@ -207,9 +204,9 @@ export function DeskPanels({
             {desk.changes.map((change) => (
               <li key={`${change.at}-${change.ruleId}-${change.action}`}>
                 <span className="font-mono text-xs text-[var(--text-3)]">{sydneyClock(change.at)}</span>
-                <span className="ml-2 text-[11px] font-bold uppercase tracking-wider text-white/60">{change.action}</span>
+                <span className="ml-2 text-xs font-semibold text-[var(--text-3)]">{change.action}</span>
                 <span className="ml-2 font-mono text-xs">{change.ruleId}</span>
-                <p className="text-[var(--muted)]">{change.detail}</p>
+                <p className="text-[var(--text-3)]">{change.detail}</p>
               </li>
             ))}
           </ul>

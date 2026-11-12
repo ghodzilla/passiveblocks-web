@@ -27,9 +27,11 @@ export function Chip({ tone, children, title }: { tone: ChipTone; children: stri
   );
 }
 
-export function CheckChip({ pass, children }: { pass: boolean; children: string }) {
+export function CheckChip({ pass, children, title }: { pass: boolean; children: string; title?: string }) {
   return (
     <span
+      title={title}
+      aria-label={`${pass ? 'Passed' : 'Failed'}: ${children}${title ? `. ${title}` : ''}`}
       className="inline-flex items-center gap-1 rounded-full border px-2 py-1 text-xs font-semibold"
       style={{
         color: pass ? 'var(--call-buy)' : 'var(--call-sell)',
@@ -39,5 +41,19 @@ export function CheckChip({ pass, children }: { pass: boolean; children: string 
       <span aria-hidden>{pass ? '✓' : '✕'}</span>
       {children}
     </span>
+  );
+}
+
+export function CheckRow({ gates }: { gates: { label: string; pass: boolean; detail: string; themeState?: string }[] }) {
+  const shown = gates.filter((gate) => gate.themeState !== 'none');
+  if (shown.length === 0) return null;
+  return (
+    <ul className="mt-2 flex flex-wrap gap-1.5">
+      {shown.map((gate) => (
+        <li key={gate.label}>
+          <CheckChip pass={gate.pass} title={gate.detail}>{gate.label}</CheckChip>
+        </li>
+      ))}
+    </ul>
   );
 }

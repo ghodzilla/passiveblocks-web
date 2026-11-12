@@ -140,14 +140,14 @@ function pct(value: number | null | undefined): string {
 }
 
 function PathRow({ label, summary }: { label: string; summary: PathSummary | null }) {
-  if (!summary) return <p className="mt-2 text-sm text-[var(--muted)]">{label}: no completed path.</p>;
+  if (!summary) return <p className="mt-2 text-sm text-[var(--text-3)]">{label}: no completed path.</p>;
   return (
     <div className="mt-3 border-t border-white/10 pt-3">
       <p className="text-sm font-bold text-white">{label}</p>
-      <p className="mt-1 text-sm leading-relaxed text-[var(--muted)]">
+      <p className="mt-1 text-sm leading-relaxed text-[var(--text-3)]">
         {summary.start} to {summary.end}. Value of one unit {summary.unitNavEnd.toFixed(3)} (unit value). Yearly pace {pct(summary.cagr)} (compound growth). Worst fall {pct(summary.maxDrawdown)}. Yearly pace divided by that fall {summary.returnPerDrawdown == null ? '—' : summary.returnPerDrawdown.toFixed(2)}. Smoothness of the ride {summary.sharpe == null ? '—' : summary.sharpe.toFixed(2)} (Sharpe, with cash interest set to zero). Average amount invested {pct(summary.averageGross)}. Share of days invested {pct(summary.timeInMarket)}. How much of the book was traded {summary.turnover.toFixed(2)}. Days that traded {summary.trades}.
       </p>
-      <p className="mt-1 text-sm leading-relaxed text-[var(--muted)]">
+      <p className="mt-1 text-sm leading-relaxed text-[var(--text-3)]">
         First half: yearly pace {pct(summary.firstHalfCagr)}, worst fall {pct(summary.firstHalfDrawdown)}. Second half: yearly pace {pct(summary.secondHalfCagr)}, worst fall {pct(summary.secondHalfDrawdown)}.
       </p>
     </div>
@@ -159,11 +159,11 @@ function ReplayResult({ replay }: { replay: ReplayView }) {
   return (
     <div className="mt-4 rounded-[var(--radius-xl)] border border-white/10 px-5 py-4">
       <h3 className="text-sm font-bold text-white">A replay that only uses information known on each past day</h3>
-      <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{replay.reason}</p>
-      <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
+      <p className="mt-2 text-sm leading-relaxed text-[var(--text-3)]">{replay.reason}</p>
+      <p className="mt-2 text-sm leading-relaxed text-[var(--text-3)]">
         {coverage.weekdayDecisions} weekdays, {coverage.spySessions} SPY sessions, {coverage.replayedSessions} replayed. Holidays skipped: {coverage.holidaysSkipped.length}. Last session dropped because the file has no later ASX bar: {coverage.droppedNoLaterAsxSession.join(', ') || 'none'}. Credit below 252 observations: {coverage.creditBelow252.join(', ')}. Sessions with a credit z-score but short of 756 observations: {coverage.creditShortOf756}. First full credit window: {coverage.firstFullCreditWindow}. Fail-closed dates: {replay.production.failClosedDates.join(', ')}.
       </p>
-      <p className="mt-2 text-sm text-[var(--muted)]">
+      <p className="mt-2 text-sm text-[var(--text-3)]">
         Regime days: {Object.entries(replay.production.regimeCounts).map(([name, count]) => `${name} ${count}`).join(', ')}.
       </p>
       {replay.hypotheses ? (
@@ -172,12 +172,12 @@ function ReplayResult({ replay }: { replay: ReplayView }) {
         </p>
       ) : null}
       {replay.production.binding ? (
-        <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
+        <p className="mt-2 text-sm leading-relaxed text-[var(--text-3)]">
           Policy {replay.production.binding.version}. Tolerance {(replay.production.binding.tolerance * 100).toFixed(2)} percentage points. Decision-time order breaches, in sessions: gross {replay.production.binding.decisionBreachDays.gross}, net {replay.production.binding.decisionBreachDays.net}, name {replay.production.binding.decisionBreachDays.name}, theme {replay.production.binding.decisionBreachDays.theme}, overlap {replay.production.binding.decisionBreachDays.overlap}. Pre-trade fill drift: gross {replay.production.binding.preTradeDriftDays.gross}, net {replay.production.binding.preTradeDriftDays.net}, name {replay.production.binding.preTradeDriftDays.name}, theme {replay.production.binding.preTradeDriftDays.theme}, overlap {replay.production.binding.preTradeDriftDays.overlap}. Post-fill drift: gross {replay.production.binding.postFillDriftDays.gross}, net {replay.production.binding.postFillDriftDays.net}, name {replay.production.binding.postFillDriftDays.name}, theme {replay.production.binding.postFillDriftDays.theme}, overlap {replay.production.binding.postFillDriftDays.overlap}. Dates a planned reduction could not be filled: {replay.production.binding.unresolvedDates.join(', ') || 'none'}. Pending marks {replay.production.binding.pendingCount}. Pyramid tranches {replay.production.binding.pyramidTranches}. Trims {replay.production.binding.trims}. Cash shortfalls {replay.production.binding.cashShortfalls}. Fees paid {replay.production.binding.feesPaid.toFixed(4)} of starting equity, before later contributions.
         </p>
       ) : null}
       {replay.production.ledger ? (
-        <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
+        <p className="mt-2 text-sm leading-relaxed text-[var(--text-3)]">
           Recommended weights stayed inside the day’s gross cap on {replay.production.ledger.recommendedDaysOverGross === 0 ? 'every session' : `${replay.production.ledger.recommendedDaysOverGross} sessions`}. Post-fill book versus that day’s cap, which includes market drift: gross {replay.production.ledger.daysHeldGrossOverBudget} sessions, net {replay.production.ledger.daysHeldNetOverBudget} sessions, a single name {replay.production.ledger.daysHeldSingleOverCap} sessions. Largest held name {replay.production.ledger.heldMaxSingleSymbol ?? '—'} at {(replay.production.ledger.heldMaxSingle * 100).toFixed(1)}%. Average sleeves: risk {(replay.production.ledger.averageRiskGross * 100).toFixed(1)}%, defensive {(replay.production.ledger.averageDefensiveGross * 100).toFixed(1)}%, cash {(replay.production.ledger.averageCash * 100).toFixed(1)}%.
         </p>
       ) : null}
@@ -187,11 +187,11 @@ function ReplayResult({ replay }: { replay: ReplayView }) {
       <PathRow label="60% SPY / 40% cash, same contributions" summary={replay.staticSixtyForty.summary} />
       <PathRow label="SPY, same contributions" summary={replay.spySameContributions.summary} />
       {replay.spyLumpSum ? <PathRow label="SPY buy and hold, one unit and no later contribution" summary={replay.spyLumpSum.summary} /> : null}
-      <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-[var(--muted)]">
+      <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-[var(--text-3)]">
         {replay.restricted.map((note) => <li key={note}>{note}</li>)}
       </ul>
-      <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">{replay.metricsNote} {replay.production.summary?.dayBasis} Trading cost {replay.costBps} hundredths of a percent each way. Interest on cash {replay.cashYieldBps} hundredths of a percent a year. Taxes {replay.taxes}. Currency {replay.currency}. {replay.clock}</p>
-      <p className="mt-2 text-xs text-[var(--muted)]">Ran {replay.ranAt}. Command: {replay.command}.</p>
+      <p className="mt-2 text-xs leading-relaxed text-[var(--text-3)]">{replay.metricsNote} {replay.production.summary?.dayBasis} Trading cost {replay.costBps} hundredths of a percent each way. Interest on cash {replay.cashYieldBps} hundredths of a percent a year. Taxes {replay.taxes}. Currency {replay.currency}. {replay.clock}</p>
+      <p className="mt-2 text-xs text-[var(--text-3)]">Ran {replay.ranAt}. Command: {replay.command}.</p>
     </div>
   );
 }
@@ -213,13 +213,13 @@ export function ValidationStudy({
           <div className="mt-4 rounded-[var(--radius-xl)] border border-amber-300/40 bg-amber-400/10 px-5 py-4">
             <p className="text-xs font-semibold text-[var(--call-watch)]">Full rule set: {study.fullStrategy.replaceAll('_', ' ')}</p>
             <p className="mt-2 text-sm leading-relaxed text-white">{study.reason}</p>
-            <p className="mt-2 text-sm text-[var(--muted)]">
+            <p className="mt-2 text-sm text-[var(--text-3)]">
               This block is the earlier public-file availability study. Verdict: {study.verdict}. Completed replays in that study: {study.credit?.completedReplayDates ?? 0}. Portfolio metrics in that file: none. Ran {study.ranAt}.
             </p>
             {study.blocking ? <p className="mt-2 text-sm leading-relaxed text-white">{study.blocking}</p> : null}
           </div>
           {study.credit ? (
-            <div className="mt-4 rounded-[var(--radius-lg)] border border-white/10 px-4 py-4 text-sm leading-relaxed text-[var(--muted)]">
+            <div className="mt-4 rounded-[var(--radius-lg)] border border-white/10 px-4 py-4 text-sm leading-relaxed text-[var(--text-3)]">
               <h3 className="text-sm font-bold text-white">Credit window on the tested free FRED file</h3>
               <p className="mt-2">{study.credit.rule}</p>
               <p className="mt-2">{study.credit.constraint}</p>
@@ -233,17 +233,17 @@ export function ValidationStudy({
               <p className="mt-2">{study.credit.failClosed}</p>
             </div>
           ) : null}
-          <ul className="mt-4 space-y-2 text-sm text-[var(--muted)]">
+          <ul className="mt-4 space-y-2 text-sm text-[var(--text-3)]">
             {study.hypotheses.map((item) => (
               <li key={item.id}><span className="text-white">{item.id} {item.status}.</span> {item.because}</li>
             ))}
           </ul>
-          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">{study.preExposure}</p>
-          {study.survivorship ? <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">{study.survivorship}</p> : null}
-          {study.cftc ? <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">{study.cftc.publication}</p> : null}
+          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[var(--text-3)]">{study.preExposure}</p>
+          {study.survivorship ? <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--text-3)]">{study.survivorship}</p> : null}
+          {study.cftc ? <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--text-3)]">{study.cftc.publication}</p> : null}
           <div className="mt-4 overflow-x-auto rounded-[var(--radius-xl)] border border-white/10">
             <table className="min-w-full text-left text-sm">
-              <thead className="bg-white/[0.03] text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">
+              <thead className="bg-white/[0.03] text-xs font-semibold text-[var(--text-3)]">
                 <tr>
                   <th className="px-4 py-3">Input</th>
                   <th className="px-4 py-3">Availability</th>
@@ -256,29 +256,29 @@ export function ValidationStudy({
                   <tr key={row.id} className="border-t border-white/10">
                     <td className="px-4 py-3 text-white">
                       {row.id}
-                      <p className="text-[11px] font-normal text-[var(--muted)]">{row.role}</p>
+                      <p className="text-[11px] font-normal text-[var(--text-3)]">{row.role}</p>
                     </td>
                     <td className="px-4 py-3 font-mono text-xs">{row.availability}</td>
                     <td className="px-4 py-3 font-mono text-xs">{row.bytes}</td>
-                    <td className="px-4 py-3 text-xs text-[var(--muted)]">{row.note}</td>
+                    <td className="px-4 py-3 text-xs text-[var(--text-3)]">{row.note}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <p className="mt-3 max-w-3xl text-xs leading-relaxed text-[var(--muted)]">
+          <p className="mt-3 max-w-3xl text-xs leading-relaxed text-[var(--text-3)]">
             Command: {study.command}. Checksums are in research/regime-validation/manifest.json. Omitted: {study.omitted.join(' ')}
           </p>
         </>
       ) : (
-        <p className="mt-4 text-sm text-[var(--muted)]">The validation artifact is not in this build.</p>
+        <p className="mt-4 text-sm text-[var(--text-3)]">The validation artifact is not in this build.</p>
       )}
       {replay ? <ReplayResult replay={replay} /> : (
-        <p className="mt-4 text-sm text-[var(--muted)]">The point-in-time replay file is not in this build.</p>
+        <p className="mt-4 text-sm text-[var(--text-3)]">The point-in-time replay file is not in this build.</p>
       )}
       <div className="mt-4 rounded-[var(--radius-lg)] border border-white/10 px-4 py-4">
         <h3 className="text-sm font-bold">The running paper record</h3>
-        <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{paperLogSentence(paper)}</p>
+        <p className="mt-2 text-sm leading-relaxed text-[var(--text-3)]">{paperLogSentence(paper)}</p>
       </div>
     </section>
   );

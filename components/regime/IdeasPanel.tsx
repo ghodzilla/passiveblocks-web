@@ -2,9 +2,9 @@ import { CORR_WARN } from '@/lib/regime/correlation';
 import { signalHealthSentence } from '@/lib/regime/health';
 import { trendWord, type GateCheck } from '@/lib/regime/gates';
 import type { IdeasReport, IdeaStatus } from '@/lib/regime/ideas';
-import { checklistLines, plainDrivers, stanceWords } from '@/lib/regime/plain';
+import { plainDrivers, stanceWords } from '@/lib/regime/plain';
 import { sydneyClock, sessionDateLabel } from '@/lib/regime/time';
-import { Chip, type ChipTone } from './ui/Chip';
+import { CheckRow, Chip, type ChipTone } from './ui/Chip';
 
 function pct(value: number | null, digits = 0): string {
   if (value == null || !Number.isFinite(value)) return '—';
@@ -159,6 +159,7 @@ export function IdeasPanel({
               <p className="mt-2 text-sm text-[var(--text-2)]">You hold {holdText(held[row.symbol], bookAud)}</p>
               {stop ? <p className="mt-1 text-xs text-[var(--text-3)]">{stop}</p> : null}
               {line?.verdict ? <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{line.verdict}</p> : null}
+              {line?.gates?.length ? <CheckRow gates={line.gates} /> : null}
               {line?.dip ? <p className="mt-2 text-sm font-semibold text-[var(--text-1)]">{line.dip}</p> : null}
             </article>
           );
@@ -197,12 +198,7 @@ export function IdeasPanel({
                     <p className="mt-1 text-xs text-[var(--text-3)]" title="Each number is a score versus that series’ own history. Negative is tighter or less supportive.">{plainDrivers(row.drivers)}</p>
                     <p className="mt-2 text-xs leading-relaxed text-[var(--text-2)]">{row.invalidation}</p>
                     {line?.verdict ? <p className="mt-2 text-xs leading-relaxed text-[var(--text-1)]">{line.verdict}</p> : null}
-                    {line?.gates?.length ? (
-                      <details className="mt-1">
-                        <summary className="min-h-11 cursor-pointer text-xs text-[var(--call-hold)]">Why?</summary>
-                        <p className="mt-1 whitespace-pre-line text-xs leading-relaxed text-[var(--text-2)]">{checklistLines(line.gates)}</p>
-                      </details>
-                    ) : null}
+                    {line?.gates?.length ? <CheckRow gates={line.gates} /> : null}
                     {line?.dip ? <p className="mt-2 text-xs font-semibold text-[var(--text-1)]">{line.dip}</p> : null}
                   </td>
                   <td className="px-3 py-3 font-mono text-xs text-[var(--text-2)]">{pct(row.signals.momentum12_1, 1)}</td>

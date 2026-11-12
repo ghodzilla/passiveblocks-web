@@ -46,7 +46,7 @@ const BAND: Record<RegimeId, string> = {
 function HistoryChart({ points }: { points: HistoryPoint[] }) {
   const data = points.filter((point) => point.composite != null && point.regime);
   if (data.length < 2) {
-    return <p className="text-sm text-[var(--muted)]">Not enough history to chart yet.</p>;
+    return <p className="text-sm text-[var(--text-3)]">Not enough history to chart yet.</p>;
   }
   const width = 800;
   const height = 240;
@@ -141,7 +141,7 @@ function RefreshHealthPanel({
       {browserOnly ? (
         <p className="mt-2 text-sm text-amber-100">This attempt is in this browser only. It was not written to durable storage. New buys stay off. Any scores below are the last saved snapshot.</p>
       ) : null}
-      <dl className="mt-3 grid gap-2 text-sm text-[var(--muted)] sm:grid-cols-2">
+      <dl className="mt-3 grid gap-2 text-sm text-[var(--text-3)] sm:grid-cols-2">
         <div>Last try: {clock(shown?.attemptedAt ?? null)}</div>
         <div>Last time every required feed arrived: {clock(shown?.lastFullySuccessfulFetchAt ?? null)}</div>
         <div>Last saved copy: {clock(shown?.lastPersistedAt ?? null)}</div>
@@ -335,8 +335,8 @@ export function RegimeDashboard({
               {waiting.map((line) => (
                 <li key={line.symbol}>
                   <span className="font-semibold text-white">{line.name}</span>
-                  <span className="ml-2 font-mono text-xs text-[var(--muted)]">{line.symbol}</span>
-                  <span className="ml-2 text-white/55">{line.verdict}</span>
+                  <span className="ml-2 font-mono text-xs text-[var(--text-3)]">{line.symbol}</span>
+                  <span className="ml-2 text-[var(--text-3)]">{line.verdict}</span>
                 </li>
               ))}
             </ul>
@@ -375,7 +375,7 @@ export function RegimeDashboard({
         <Fold title="How the market call has changed" lede="The line is the overall score. The coloured bands show each week’s mood.">
           <div className="mt-4 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 p-3 sm:p-4">
             <HistoryChart points={snapshot.history.slice(-52)} />
-            <ul className="mt-3 flex flex-wrap gap-3 text-[11px] uppercase tracking-wider text-[var(--muted)]">
+            <ul className="mt-3 flex flex-wrap gap-3 text-xs text-[var(--text-3)]">
               {(Object.keys(REGIME_LABEL) as RegimeId[]).map((id) => (
                 <li key={id} className="flex items-center gap-1.5">
                   <span className="inline-block h-2 w-2 rounded-full" style={{ background: BAND[id] }} />
@@ -437,7 +437,7 @@ export function RegimeDashboard({
 
         <Fold title="The rules, written out" lede="The thresholds and the size limits. The small labels are the technical names.">
           <h2 className="text-lg font-bold tracking-tight">The rules, in everyday words</h2>
-          <dl className="mt-3 grid gap-2 text-sm text-[var(--muted)] sm:grid-cols-2">
+          <dl className="mt-3 grid gap-2 text-sm text-[var(--text-3)] sm:grid-cols-2">
             <div><strong>Supportive</strong> starts when the score reaches +{THRESHOLDS.riskOnEnter.toFixed(2)} and money in the system is +{THRESHOLDS.riskOnLiquidityMin.toFixed(2)} or more. It switches off below +{THRESHOLDS.riskOnExit.toFixed(2)}, or if money falls below {THRESHOLDS.riskOnLiquidityExit.toFixed(2)}. It is the only mood where new shares, crypto or themes can be bought.</div>
             <div><strong>Mixed</strong> is everything between Cautious and Supportive. The rules hold and buy nothing new.</div>
             <div><strong>Cautious</strong> starts at {THRESHOLDS.tightEnter.toFixed(2)} and lasts until the score recovers past {THRESHOLDS.tightExit.toFixed(2)}. Only defensive holdings are kept.</div>
