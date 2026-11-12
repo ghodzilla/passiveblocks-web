@@ -1,31 +1,53 @@
 import type { PaperMarkPayload } from '@/lib/regime/paperLog';
 import {
   bookAudValue,
-  budgetMeans,
   describeFeeds,
+  distanceToBuy,
+  GLOSSARY,
   holdingsNow,
   knownGapLines,
-  marketCall,
-  paperComparabilityNote,
   performanceSinceStart,
   plainRegime,
   sydneyWhen,
   todayAction,
   trustLine,
+  whyLine,
   type FeedStatus,
+  type ReplaySummary,
 } from '@/lib/regime/ownerCopy';
+import { sydneyClock } from '@/lib/regime/time';
 import type { RegimeView } from '@/lib/regime/view';
-
-const STATUS_CLASS: Record<FeedStatus, string> = {
-  fresh: 'text-[var(--status-ok)]',
-  stale: 'text-[var(--status-warn)]',
-  blocked: 'text-[var(--status-danger)]',
-};
+import { AllocationBar } from './viz/AllocationBar';
+import { CapBars } from './viz/CapBar';
+import { EquitySpark } from './viz/EquitySpark';
+import { RegimeGauge } from './viz/RegimeGauge';
+import { Chip, type ChipTone } from './ui/Chip';
 
 const STATUS_WORD: Record<FeedStatus, string> = {
   fresh: 'Fresh',
   stale: 'Stale',
-  blocked: 'Blocked',
+  blocked: 'Missing',
+};
+
+const PLAIN_NAME: Record<string, string> = {
+  SHY: 'US 1–3 yr government bonds',
+  'AAA.AX': 'Australian cash fund',
+  'BILL.AX': 'Australian cash fund',
+  UUP: 'US dollar fund',
+  XLRE: 'US property shares',
+  USMV: 'US low-volatility shares',
+  XLP: 'US consumer staples',
+  XLV: 'US health care',
+  XLU: 'US utilities',
+  GLD: 'Gold',
+  'GOLD.AX': 'Gold',
+  'VAF.AX': 'Australian bonds',
+  IEF: 'US medium-term bonds',
+  TLT: 'US long bonds',
+  SPY: 'US shares',
+  'BTC-USD': 'Bitcoin',
+  'ETH-USD': 'Ether',
+  'SOL-USD': 'Solana',
 };
 
 export function Fold({
@@ -34,18 +56,29 @@ export function Fold({
   children,
 }: {
   title: string;
-  lede: string;
+  lede?: string;
   children: React.ReactNode;
 }) {
   return (
-    <details className="mt-8 rounded-[var(--radius-xl)] border border-[var(--border)] bg-black/20">
-      <summary className="cursor-pointer px-5 py-4">
-        <span className="text-base font-bold tracking-tight">{title}</span>
-        <span className="mt-1 block text-sm font-normal leading-relaxed text-[var(--muted)]">{lede}</span>
+    <details className="mt-10 rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface-1)] px-5 py-2 sm:px-6">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-3 text-xl font-bold tracking-tight text-[var(--text-1)]">
+        <span>{title}</span>
+        <span aria-hidden className="text-sm text-[var(--text-3)]">▾</span>
       </summary>
-      <div className="border-t border-[var(--border)] px-5 py-5">{children}</div>
+      {lede ? <p className="max-w-3xl text-[15px] leading-relaxed text-[var(--text-2)]">{lede}</p> : null}
+      <div className="pb-5 pt-4">{children}</div>
     </details>
   );
+}
+
+function toneFor(verb: string, regime: string | null): ChipTone {
+  if (verb === 'BUY') return 'buy';
+  if (verb === 'TRIM' || verb === 'SELL') return 'sell';
+  if (verb === 'PLAY SAFE') return 'off';
+  if (regime === 'crisis') return 'sell';
+  if (regime === 'tightening') return 'caution';
+  if (regime === 'risk_on') return 'buy';
+  return verb === 'HOLD' ? 'hold' : 'watch';
 }
 
 export function OwnerBrief({
@@ -54,118 +87,199 @@ export function OwnerBrief({
   verdict,
   fullStrategy,
   h1,
-  blockReason,
+  blockReason = null,
+  rules = null,
+  spy = null,
+  mix = null,
 }: {
   view: RegimeView;
-  paperLog: { status: string; decisions: number; marks: number; latest: PaperMarkPayload | null };
+  paperLog: { status: string; decisions: number; marks: number; latest: PaperMarkPayload | null } | null;
   verdict: string | null;
   fullStrategy: string | null;
   h1: string | null;
-  blockReason: string | null;
+  blockReason?: string | null;
+  rules?: ReplaySummary | null;
+  spy?: ReplaySummary | null;
+  mix?: ReplaySummary | null;
 }) {
   const { snapshot, desk } = view;
-  const tone = plainRegime(snapshot.regime);
-  const call = marketCall({
-    actionable: snapshot.actionable,
-    action: snapshot.action,
-    regime: snapshot.regime,
-  });
-  const aud = bookAudValue({
+  const regime = plainRegime(snapshot.regime);
+  const names = Object.fromEntries(desk.lines.map((line) => [line.symbol, PLAIN_NAME[line.symbol] ?? line.name]));
+  const book = bookAudValue({
     currency: desk.paperLedger?.currency ?? null,
-    equity: desk.equity,
+    equity: desk.paperLedger?.equity ?? null,
     capital: desk.capital,
     valued: desk.paperLedger?.valued === true,
   });
+  const weights = paperLog?.latest?.basis === 'held-book' ? paperLog.latest.weights : null;
+  const held = weights?.map((row) => ({
+    symbol: row.symbol,
+    name: row.symbol === 'CASH' ? 'Cash' : (names[row.symbol] ?? row.symbol),
+    weight: row.weight,
+    role: desk.lines.find((line) => line.symbol === row.symbol)?.role,
+  }));
+  const liquidity = snapshot.components.find((item) => item.id === 'liquidity')?.z ?? null;
   const action = todayAction({
     actionable: snapshot.actionable,
     action: snapshot.action,
     halted: desk.halted,
     lines: desk.lines,
-    bookAud: aud.amount,
+    bookAud: book.amount,
     pending: desk.paperLedger?.pending,
+    held,
+    trades: desk.paperLedger?.sessionTrades,
+    drawdown: desk.drawdown,
+    composite: snapshot.composite,
+    maxGross: snapshot.effectiveBudget.maxGross,
+    maxNet: snapshot.effectiveBudget.maxNet,
+    staleFeed: blockReason,
   });
-  const held = holdingsNow({
+  const heldBook = holdingsNow({
     lines: desk.lines,
     exposures: desk.paperLedger?.exposures ?? null,
-    heldWeights: paperLog.latest?.basis === 'held-book' ? paperLog.latest.weights : null,
-    heldBasis: paperLog.latest?.basis,
-    bookAud: aud.amount,
+    heldWeights: weights,
+    heldBasis: paperLog?.latest?.basis,
+    names,
+    bookAud: book.amount,
   });
   const performance = performanceSinceStart({
     capital: desk.capital,
-    equity: desk.equity,
+    equity: desk.paperLedger?.currency === 'AUD' ? desk.paperLedger.equity : null,
     currency: desk.paperLedger?.currency ?? null,
-    valued: desk.paperLedger?.valued === true && desk.equity != null,
+    valued: desk.paperLedger?.valued === true,
     realisedText: desk.realisedText,
     drawdown: desk.drawdown,
-    comparable: paperComparabilityNote(paperLog) == null,
+    comparable: paperLog?.latest?.basis === 'held-book',
   });
-  const trust = trustLine({ verdict, fullStrategy, h1 });
-  const dollarMeans = aud.basis === 'value'
-    ? 'Dollars use the current value of the Australian-dollar paper book.'
-    : aud.basis === 'starting amount'
-      ? 'Dollars use the starting amount, because the book has no current Australian-dollar value.'
-      : action.means;
+  const afterCosts = paperLog?.latest?.basis === 'held-book' && paperLog.latest.nav != null
+    ? `${((paperLog.latest.nav - 1) * 100).toFixed(2)}%`
+    : null;
+  const trust = trustLine({ verdict, fullStrategy, h1, rules, spy, mix });
+  const previous = snapshot.history.length > 1 ? snapshot.history[snapshot.history.length - 2]?.composite ?? null : null;
+  const exposures = desk.paperLedger?.exposures ?? null;
+  const cashLikeWeight = (weights ?? [])
+    .filter((row) => row.symbol === 'SHY' || row.symbol === 'AAA.AX' || row.symbol === 'BILL.AX')
+    .reduce((sum, row) => sum + row.weight, 0);
+  const components = snapshot.components.map((item) => ({
+    id: item.id,
+    title: item.id === 'liquidity' ? 'Money in the system'
+      : item.id === 'policy' ? 'Interest rates'
+        : item.id === 'credit' ? 'Lender nerves'
+          : item.id === 'growth' ? 'Growth'
+            : item.id === 'positioning' ? 'Crowded bets'
+              : 'AI spending',
+    z: item.z,
+    weight: item.weight,
+  }));
+  const tone = toneFor(action.verb, snapshot.regime);
+  const moodTone: ChipTone = snapshot.regime === 'risk_on'
+    ? 'buy'
+    : snapshot.regime === 'crisis'
+      ? 'sell'
+      : snapshot.regime === 'tightening'
+        ? 'caution'
+        : 'watch';
+  const ranked = (weights ?? []).slice().sort((a, b) => b.weight - a.weight);
 
   return (
-    <section className="rounded-[var(--radius-xl)] border border-[var(--border)] bg-black/30 px-5 py-6 sm:px-7" id="today" data-owner-brief>
-      <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--accent-soft)]">Today</p>
-      <h1 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl" data-regime-plain>
-        {tone.title}
-        <span className="ml-3 align-middle text-sm font-semibold text-[var(--muted)]" title={snapshot.regimeLabel}>
-          {snapshot.regimeLabel}
-        </span>
-      </h1>
-      <p className="mt-2 text-sm text-[var(--muted)]">{tone.means}</p>
-      <p className="mt-5 text-lg font-semibold leading-relaxed text-white sm:text-xl" data-market-call data-today-line>
-        {call}
-      </p>
-
-      <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        <article className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4" data-today-action>
-          <h2 className="text-sm font-bold">What to do today</h2>
-          <p className="mt-2 text-base font-semibold leading-relaxed text-white">{action.headline}</p>
-          <ul className="mt-3 space-y-2 text-sm leading-relaxed text-white/85">
-            {action.steps.map((step) => (
-              <li key={step}>{step}</li>
-            ))}
-          </ul>
-          <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">
-            What this means: {aud.basis === 'unavailable' ? action.means : `${dollarMeans} ${action.means}`}
+    <section className="grid gap-8">
+      <article
+        className="rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface-2)] p-5 sm:p-6"
+        style={{ borderLeftWidth: 4, borderLeftColor: tone === 'hold' ? 'var(--call-hold)' : tone === 'buy' ? 'var(--call-buy)' : tone === 'sell' ? 'var(--call-sell)' : 'var(--call-watch)' }}
+      >
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="grid gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <Chip tone={tone}>{action.verb}</Chip>
+              <p className="text-2xl font-extrabold tracking-tight text-[var(--text-1)] sm:text-4xl">{action.headline}</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <Chip tone={moodTone} title={regime.means}>
+                {`${regime.title}${snapshot.weak ? ' · no clear signal' : ''}`}
+              </Chip>
+            </div>
+          </div>
+          <p className="text-xs text-[var(--text-3)]">
+            Data as of {snapshot.today} · refreshed {sydneyClock(snapshot.generatedAt)}
           </p>
-          {blockReason ? (
-            <details className="mt-3">
-              <summary className="cursor-pointer text-xs text-white/50">Why new buys are off</summary>
-              <p className="mt-2 text-sm leading-relaxed text-white/70">{blockReason}</p>
-            </details>
-          ) : null}
-          <details className="mt-2">
-            <summary className="cursor-pointer text-xs text-white/50">The original rule sentence</summary>
-            <p className="mt-2 text-xs leading-relaxed text-white/60">{snapshot.message}</p>
-          </details>
-        </article>
-
-        <article className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4" data-holdings>
-          <h2 className="text-sm font-bold">What the book holds</h2>
-          <p className="mt-2 text-base font-semibold leading-relaxed text-white">{held.sentence}</p>
-          {held.items.length > 0 ? (
-            <ul className="mt-3 space-y-1.5 text-sm leading-relaxed text-white/85">
-              {held.items.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          ) : null}
-          <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">What this means: {held.means}</p>
-        </article>
-      </div>
-
-      <article className="mt-4 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4" data-performance>
-        <h2 className="text-sm font-bold">How the paper book has done since it started</h2>
-        <p className="mt-2 text-base font-semibold leading-relaxed text-white">{performance.sentence}</p>
-        <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">What this means: {performance.means}</p>
+        </div>
+        <div className="mt-5">
+          <RegimeGauge composite={snapshot.composite} previous={previous} liquidity={liquidity} />
+        </div>
+        <p className="mt-3 text-[15px] leading-relaxed text-[var(--text-2)]">
+          <span className="font-semibold text-[var(--text-1)]">Why. </span>
+          The market score is {snapshot.composite == null ? 'unavailable' : snapshot.composite.toFixed(2)}. {regime.means} {whyLine(components)}
+        </p>
+        <p className="mt-2 text-[15px] leading-relaxed text-[var(--text-2)]">
+          <span className="font-semibold text-[var(--text-1)]">What would change it. </span>
+          {distanceToBuy({ composite: snapshot.composite, liquidity })}
+        </p>
+        <p className="mt-2 text-sm text-[var(--text-3)]">{action.reason}</p>
+        <details className="mt-4">
+          <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-[var(--text-2)]">How to read this page</summary>
+          <dl className="mt-2 grid gap-2 sm:grid-cols-2">
+            {GLOSSARY.map((item) => (
+              <div key={item.term}>
+                <dt className="text-sm font-semibold text-[var(--text-1)]">{item.term}</dt>
+                <dd className="text-sm leading-relaxed text-[var(--text-3)]">{item.means}</dd>
+              </div>
+            ))}
+          </dl>
+        </details>
       </article>
 
-      <p className="mt-5 text-sm leading-relaxed text-white/80" data-trust>{trust}</p>
+      <section>
+        <h2 className="text-xl font-bold text-[var(--text-1)]">Your paper book</h2>
+        <p className="mt-2 text-[15px] leading-relaxed text-[var(--text-2)]">{performance.sentence}</p>
+        {afterCosts ? <p className="mt-1 text-sm text-[var(--text-3)]">Share record, before trading costs: {book.amount == null ? '—' : `A$${Math.round(book.amount).toLocaleString('en-AU')}`}. Paper log, after the 0.10% cost: {afterCosts}.</p> : null}
+        <p className="mt-1 text-[15px] text-[var(--text-2)]">{heldBook.sentence}</p>
+        {book.amount != null ? <p className="mt-1 text-xs text-[var(--text-3)]">{action.means}</p> : null}
+        <div className="mt-4">
+          <EquitySpark marks={desk.paperLedger?.marks ?? []} baseline={desk.capital} />
+        </div>
+        {exposures ? (
+          <div className="mt-5 grid gap-5">
+            <CapBars
+              invested={exposures.gross}
+              investedCap={exposures.maxGross}
+              investedUsual={snapshot.modelBudget?.maxGross ?? null}
+              nonCash={exposures.net}
+              nonCashCap={exposures.maxNet}
+              nonCashUsual={snapshot.modelBudget?.maxNet ?? null}
+            />
+            <AllocationBar
+              cash={exposures.cash}
+              cashLike={cashLikeWeight}
+              defensive={Math.max(0, exposures.defensive)}
+              risk={Math.max(0, exposures.risk)}
+            />
+          </div>
+        ) : null}
+        <div className="mt-4 grid gap-2">
+          {ranked.map((row) => {
+            const line = desk.lines.find((item) => item.symbol === row.symbol);
+            const call = row.symbol === 'CASH' ? 'Hold' : (line?.status === 'hold' ? 'Hold' : line?.status === 'confirmed' ? 'Buy' : line?.status === 'avoid' ? 'Avoid' : 'Hold');
+            const callTone: ChipTone = call === 'Buy' ? 'buy' : call === 'Avoid' ? 'off' : 'hold';
+            const aud = book.amount == null ? '—' : `A$${Math.round(row.weight * book.amount).toLocaleString('en-AU')}`;
+            return (
+              <article key={row.symbol} className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-1)] px-4 py-3 sm:grid sm:grid-cols-[1fr_auto_auto_auto] sm:items-center sm:gap-4">
+                <p className="font-semibold text-[var(--text-1)]">
+                  {row.symbol === 'CASH' ? 'Cash' : (names[row.symbol] ?? row.symbol)}
+                  {row.symbol !== 'CASH' ? <span className="ml-2 font-mono text-xs font-normal text-[var(--text-3)]">{row.symbol}</span> : null}
+                </p>
+                <p className="mt-1 font-mono text-sm tabular-nums text-[var(--text-2)] sm:mt-0">{aud}</p>
+                <p className="font-mono text-sm tabular-nums text-[var(--text-3)]">{(row.weight * 100).toFixed(1)}%</p>
+                <div className="mt-2 sm:mt-0"><Chip tone={callTone}>{call}</Chip></div>
+                {line?.verdict && row.symbol !== 'CASH' ? <p className="mt-2 text-sm text-[var(--text-3)] sm:col-span-4">{line.verdict}</p> : null}
+              </article>
+            );
+          })}
+        </div>
+        <ul className="mt-3 space-y-1 text-[15px] text-[var(--text-2)]">
+          {action.steps.map((step) => <li key={step}>{step}</li>)}
+        </ul>
+        <p className="mt-4 text-[15px] leading-relaxed text-[var(--text-2)]">{trust}</p>
+      </section>
     </section>
   );
 }
@@ -175,16 +289,14 @@ export function FreshnessPanel({
   healthSources,
   paperLog,
   blockReason,
-  csrf,
 }: {
   view: RegimeView;
-  healthSources: { id: string; label: string; observationDate: string | null; fetchedAt: string | null; error: string | null }[];
-  paperLog: { status: string; decisions: number; marks: number; latest: PaperMarkPayload | null };
-  blockReason: string | null;
-  csrf: string | null;
+  healthSources: { id: string; label: string; observationDate: string | null; fetchedAt: string | null; error: string | null; sourceName?: string | null }[];
+  paperLog: { status: string; decisions: number; marks: number; latest: PaperMarkPayload | null } | null;
+  blockReason?: string | null;
+  csrf?: string | null;
 }) {
-  const names: Record<string, string> = {};
-  for (const line of view.desk.lines) names[line.symbol] = line.name;
+  const names = Object.fromEntries(view.desk.lines.map((line) => [line.symbol, line.name]));
   const feeds = describeFeeds({
     rows: view.snapshot.freshness,
     sources: healthSources,
@@ -192,83 +304,86 @@ export function FreshnessPanel({
     names,
     pricesFetchedAt: view.ideas.pricesFetchedAt,
   });
-  const paperNote = paperComparabilityNote(paperLog);
-  const gaps = knownGapLines({
-    snapshotGaps: view.snapshot.gaps,
-    priceGaps: view.ideas.gaps,
-    deskGaps: view.desk.gaps,
-    paperNote,
-  });
   const counts = {
     fresh: feeds.filter((feed) => feed.status === 'fresh').length,
     stale: feeds.filter((feed) => feed.status === 'stale').length,
     blocked: feeds.filter((feed) => feed.status === 'blocked').length,
   };
-
+  const gaps = knownGapLines({
+    snapshotGaps: view.snapshot.gaps,
+    priceGaps: view.ideas.gaps,
+    deskGaps: view.desk.gaps,
+    paperNote: paperLog?.status === 'missing_schema' ? 'The paper record is not stored yet.' : null,
+  });
+  const problems = feeds.filter((feed) => feed.status !== 'fresh');
   return (
-    <section className="mt-8 rounded-[var(--radius-xl)] border border-[var(--border)] bg-black/30 px-5 py-5" id="data-freshness" data-freshness>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-bold tracking-tight">How fresh and accurate is this data?</h2>
-        {csrf ? (
-          <form method="POST" action="/api/regime/refresh">
-            <input type="hidden" name="csrf" value={csrf} />
-            <button type="submit" className="rounded-full border border-[var(--accent)]/40 bg-[var(--accent-muted)] px-3 py-1.5 text-xs font-bold text-[var(--accent-soft)]">
-              Refresh now
-            </button>
-          </form>
-        ) : (
-          <p className="text-xs text-[var(--muted)]">Refresh now needs the session secret on the server.</p>
-        )}
-      </div>
-      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">
-        {counts.fresh} fresh, {counts.stale} stale, {counts.blocked} blocked.
-        {' '}Fresh means the figure is new enough to use. Stale means it is too old for a new buy. Blocked means the feed did not arrive.
-        Times are Sydney time. A date marked as the day a figure describes is the period the statistic covers, not the moment it was downloaded.
+    <section id="data-freshness" className="mt-10">
+      <h2 className="text-xl font-bold text-[var(--text-1)]">How fresh is this data</h2>
+      <p className="mt-2 text-[15px] text-[var(--text-2)]">
+        {counts.stale === 0 && counts.blocked === 0
+          ? `All ${feeds.length} feeds arrived (${sydneyClock(view.snapshot.generatedAt)}).`
+          : `${counts.fresh} fresh, ${counts.stale} stale, ${counts.blocked} missing.`}
+        {gaps.length ? ` ${gaps.length} known gap${gaps.length === 1 ? '' : 's'}.` : ''}
       </p>
-      <ul className="mt-4 divide-y divide-[var(--border)]">
-        {feeds.map((feed) => (
-          <li key={feed.id} className="py-3" data-feed={feed.id} data-feed-status={feed.status}>
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <p className="text-sm font-semibold text-white">{feed.name}</p>
-              <p className={`text-xs font-bold uppercase tracking-wider ${STATUS_CLASS[feed.status]}`}>{STATUS_WORD[feed.status]}</p>
-            </div>
-            <p className="mt-1 text-sm text-white/80">{feed.updated}</p>
-            <p className="mt-1 text-xs text-[var(--muted)]">Source: {feed.source}{feed.detail !== feed.name ? ` · ${feed.detail}` : ''}</p>
-            <p className="mt-1 text-sm leading-relaxed text-[var(--muted)]">What this means: {feed.means}</p>
-          </li>
-        ))}
-      </ul>
-      {feeds.length === 0 ? (
-        <p className="mt-4 text-sm text-[var(--muted)]">No feed has been saved yet.</p>
+      {blockReason ? <p className="mt-2 text-sm text-[var(--call-sell)]">{blockReason}</p> : null}
+      {problems.length > 0 ? (
+        <ul className="mt-3 space-y-2">
+          {problems.map((feed) => (
+            <li key={feed.id} className="text-sm text-[var(--text-2)]">
+              <span className="font-semibold">{STATUS_WORD[feed.status]}. </span>
+              {feed.name} · {feed.updated}
+            </li>
+          ))}
+        </ul>
       ) : null}
-      <div className="mt-4 rounded-[var(--radius-lg)] border border-white/10 px-4 py-4">
-        <h3 className="text-sm font-bold">Known gaps</h3>
-        {gaps.length === 0 && !blockReason ? (
-          <p className="mt-2 text-sm text-[var(--muted)]">No gap is recorded on this saved copy.</p>
-        ) : (
-          <ul className="mt-2 space-y-2 text-sm leading-relaxed text-amber-100">
-            {blockReason ? <li>{blockReason}</li> : null}
-            {gaps.map((gap) => (
-              <li key={gap}>{gap}</li>
-            ))}
+      {gaps.length > 0 ? (
+        <div className="mt-4">
+          <h3 className="text-base font-semibold text-[var(--text-1)]">What we can&apos;t measure yet</h3>
+          <ul className="mt-2 space-y-1 text-sm text-[var(--text-3)]">
+            {gaps.map((gap) => <li key={gap}>{gap}</li>)}
           </ul>
-        )}
-        <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">
-          What this means: a gap is something the page could not load or could not compare. The words above are the saved notes, not a guess.
-        </p>
-      </div>
-      <p className="mt-3 text-xs text-[var(--muted)]">
-        Page opened {sydneyWhen(view.snapshot.generatedAt)}. The latest day used in the score is {view.snapshot.printDate ?? 'not available'}.
-      </p>
+        </div>
+      ) : null}
+      <details className="mt-3">
+        <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-[var(--text-2)]">Every feed</summary>
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px] text-left text-sm">
+            <caption className="sr-only">Feed dates and status</caption>
+            <thead className="text-xs text-[var(--text-3)]">
+              <tr>
+                <th scope="col" className="py-2 pr-3 text-left font-semibold">Series</th>
+                <th scope="col" className="py-2 pr-3 text-left font-semibold">Period</th>
+                <th scope="col" className="py-2 pr-3 text-left font-semibold">Status</th>
+                <th scope="col" className="py-2 text-left font-semibold">Source</th>
+              </tr>
+            </thead>
+            <tbody>
+              {view.snapshot.freshness.map((row) => (
+                <tr key={row.id} className="border-t border-[var(--border)]">
+                  <td className="py-2 pr-3 text-[var(--text-2)]">{row.label}</td>
+                  <td className="py-2 pr-3 font-mono text-xs text-[var(--text-3)]">{row.asOf ? sydneyWhen(row.asOf) : '—'}</td>
+                  <td className="py-2 pr-3 text-xs font-semibold text-[var(--text-2)]">{!row.asOf ? 'Missing' : row.stale ? 'Stale' : 'Fresh'}</td>
+                  <td className="py-2"><a href={row.href} className="text-[var(--call-hold)]">{row.source}</a></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
     </section>
   );
 }
 
 export function limitSentence(view: RegimeView): string {
   const budget = view.snapshot.effectiveBudget;
-  return [
-    budgetMeans('swing', budget.volTarget, view.snapshot.budgetOverridden),
-    budgetMeans('whole', budget.maxGross, view.snapshot.budgetOverridden),
-    budgetMeans('outside', budget.maxNet, view.snapshot.budgetOverridden),
-  ].join(' ');
+  const usual = view.snapshot.modelBudget;
+  const swingTighter = usual != null && budget.volTarget < usual.volTarget - 1e-9;
+  const investedTighter = usual != null && budget.maxGross < usual.maxGross - 1e-9;
+  const nonCashTighter = usual != null && budget.maxNet < usual.maxNet - 1e-9;
+  const notes = [
+    swingTighter ? `swing target tighter than the usual ${(usual.volTarget * 100).toFixed(0)}%` : null,
+    investedTighter ? `invested cap tighter than the usual ${(usual.maxGross * 100).toFixed(0)}%` : null,
+    nonCashTighter ? `non-cash cap tighter than the usual ${(usual.maxNet * 100).toFixed(0)}%` : null,
+  ].filter((item): item is string => Boolean(item));
+  return notes.length ? `Today: ${notes.join('; ')}.` : 'Today’s limits match the usual limits for this mood.';
 }

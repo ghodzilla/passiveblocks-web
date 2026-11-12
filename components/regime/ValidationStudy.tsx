@@ -148,7 +148,7 @@ function PathRow({ label, summary }: { label: string; summary: PathSummary | nul
         {summary.start} to {summary.end}. Value of one unit {summary.unitNavEnd.toFixed(3)} (unit value). Yearly pace {pct(summary.cagr)} (compound growth). Worst fall {pct(summary.maxDrawdown)}. Yearly pace divided by that fall {summary.returnPerDrawdown == null ? '—' : summary.returnPerDrawdown.toFixed(2)}. Smoothness of the ride {summary.sharpe == null ? '—' : summary.sharpe.toFixed(2)} (Sharpe, with cash interest set to zero). Average amount invested {pct(summary.averageGross)}. Share of days invested {pct(summary.timeInMarket)}. How much of the book was traded {summary.turnover.toFixed(2)}. Days that traded {summary.trades}.
       </p>
       <p className="mt-1 text-sm leading-relaxed text-[var(--muted)]">
-        What this means: the first half of the test had a yearly pace of {pct(summary.firstHalfCagr)} and a worst fall of {pct(summary.firstHalfDrawdown)}. The second half had a yearly pace of {pct(summary.secondHalfCagr)} and a worst fall of {pct(summary.secondHalfDrawdown)}. A higher number here is a test result, not the return to expect.
+        First half: yearly pace {pct(summary.firstHalfCagr)}, worst fall {pct(summary.firstHalfDrawdown)}. Second half: yearly pace {pct(summary.secondHalfCagr)}, worst fall {pct(summary.secondHalfDrawdown)}.
       </p>
     </div>
   );
@@ -207,11 +207,11 @@ export function ValidationStudy({
 }) {
   return (
     <section className="mt-8" id="validation">
-      <h2 className="text-lg font-bold tracking-tight">The research file</h2>
+      <h2 className="text-lg font-bold tracking-tight">Earlier data-availability check (no returns calculated)</h2>
       {study ? (
         <>
           <div className="mt-4 rounded-[var(--radius-xl)] border border-amber-300/40 bg-amber-400/10 px-5 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-amber-100">Full rule set: {study.fullStrategy.replaceAll('_', ' ')}</p>
+            <p className="text-xs font-semibold text-[var(--call-watch)]">Full rule set: {study.fullStrategy.replaceAll('_', ' ')}</p>
             <p className="mt-2 text-sm leading-relaxed text-white">{study.reason}</p>
             <p className="mt-2 text-sm text-[var(--muted)]">
               This block is the earlier public-file availability study. Verdict: {study.verdict}. Completed replays in that study: {study.credit?.completedReplayDates ?? 0}. Portfolio metrics in that file: none. Ran {study.ranAt}.

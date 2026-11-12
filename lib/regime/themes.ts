@@ -57,6 +57,11 @@ export function evaluateThemes(input: {
   btcAbove200: boolean | null;
   realYield: SeriesDirection;
   dollar: SeriesDirection;
+  /** Display only. Does not change whether a theme is on. */
+  aiAsOf?: string | null;
+  aiPriorAsOf?: string | null;
+  realYieldDetail?: string | null;
+  dollarDetail?: string | null;
 }): ThemeVerdict[] {
   const themes = input.themes ?? THEMES;
   return themes.map((theme) => {
@@ -76,12 +81,14 @@ export function evaluateThemes(input: {
       if (rising == null) {
         return verdict(theme, false, 'Off. The AI capex component does not have two prints, so a rise cannot be claimed.');
       }
+      const latestBit = input.aiAsOf ? ` (${input.aiAsOf})` : '';
+      const priorBit = input.aiPriorAsOf ? ` (${input.aiPriorAsOf})` : '';
       return verdict(
         theme,
         rising,
         rising
-          ? `On. The AI spending score moved from ${formatZ(input.aiPrior as number)} to ${formatZ(input.aiLatest as number)}.`
-          : `Off. The AI spending score is ${formatZ(input.aiLatest as number)}, not above the prior print of ${formatZ(input.aiPrior as number)}.`,
+          ? `On — AI spending rose from ${formatZ(input.aiPrior as number)}${priorBit} to ${formatZ(input.aiLatest as number)}${latestBit}.`
+          : `Off — AI spending ${formatZ(input.aiLatest as number)}${latestBit} vs ${formatZ(input.aiPrior as number)}${priorBit}. Turns on if the latest reading is higher.`,
       );
     }
     if (theme.id === 'crypto') {
@@ -117,10 +124,12 @@ export function evaluateThemes(input: {
         ].filter((item): item is string => Boolean(item));
         return verdict(theme, true, `On. ${bits.join(', and ')}. ${unknown.join(' ')}`.trim());
       }
+      const yieldBit = input.realYieldDetail ? ` (${input.realYieldDetail})` : '';
+      const dollarBit = input.dollarDetail ? ` (${input.dollarDetail})` : '';
       return verdict(
         theme,
         false,
-        `Off. Real yields are ${input.realYield}, and the dollar is ${input.dollar}. The theme needs falling real yields or a weaker dollar.`,
+        `Off — real interest rates ${input.realYield === 'rising' ? 'rose' : `are ${input.realYield}`}${yieldBit} and the US dollar ${input.dollar === 'rising' ? 'rose' : `is ${input.dollar}`}${dollarBit}. Turns on if either falls.`,
       );
     }
     return verdict(theme, false, 'Off. This theme id has no rule.');

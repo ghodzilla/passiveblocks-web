@@ -1,9 +1,10 @@
-import { CORR_WARN, DISPERSION_WINDOW } from '@/lib/regime/correlation';
+import { CORR_WARN } from '@/lib/regime/correlation';
 import { signalHealthSentence } from '@/lib/regime/health';
 import { trendWord, type GateCheck } from '@/lib/regime/gates';
 import type { IdeasReport, IdeaStatus } from '@/lib/regime/ideas';
 import { checklistLines, plainDrivers, stanceWords } from '@/lib/regime/plain';
-import { melbourneClock, sessionDateLabel } from '@/lib/regime/time';
+import { sydneyClock, sessionDateLabel } from '@/lib/regime/time';
+import { Chip, type ChipTone } from './ui/Chip';
 
 function pct(value: number | null, digits = 0): string {
   if (value == null || !Number.isFinite(value)) return '—';
@@ -17,21 +18,17 @@ function num(value: number | null, digits = 2): string {
 }
 
 const STATUS_LABEL: Record<IdeaStatus, string> = {
-  confirmed: 'Confirmed',
+  confirmed: 'Buy',
+  hold: 'Hold',
   watch: 'Watch',
   avoid: 'Avoid',
 };
 
-const STATUS_CLASS: Record<IdeaStatus, string> = {
-  confirmed: 'border-emerald-400/40 bg-emerald-400/10 text-emerald-200',
-  watch: 'border-amber-300/40 bg-amber-400/10 text-amber-100',
-  avoid: 'border-rose-400/40 bg-rose-500/10 text-rose-100',
-};
-
-const STANCE_CLASS = {
-  prefer: 'text-emerald-200',
-  neutral: 'text-[var(--muted)]',
-  avoid: 'text-rose-200',
+const STATUS_TONE: Record<IdeaStatus, ChipTone> = {
+  confirmed: 'buy',
+  hold: 'hold',
+  watch: 'watch',
+  avoid: 'off',
 };
 
 const HEALTH_WORD = {
@@ -41,172 +38,199 @@ const HEALTH_WORD = {
   unknown: 'Not enough evidence',
 } as const;
 
-export function IdeasPanel({ ideas, risk, auditNote = null }: {
+function spikeText(z: number | null): string {
+  if (z == null || !Number.isFinite(z)) return '—';
+  const shown = `${z > 0 ? '+' : ''}${z.toFixed(1)}`;
+  return Math.abs(z) >= 1.5 ? `${shown} · spike (blocks buy)` : `${shown} · normal`;
+}
+
+function holdText(weight: number | undefined, bookAud: number | null): string {
+  if (weight == null || !(weight > 0)) return '—';
+  const share = `${(weight * 100).toFixed(1)}%`;
+  if (bookAud == null) return share;
+  return `A$${Math.round(weight * bookAud).toLocaleString('en-AU')} · ${share}`;
+}
+
+function stopText(symbol: string, stop: number | null, qty: number | null, last: number | null): string | null {
+  if (stop == null) return null;
+  const currency = symbol.endsWith('.AX') ? 'A$' : 'US$';
+  const below = last != null && last > 0 ? ` (${(((last - stop) / last) * 100).toFixed(1)}% below)` : '';
+  const units = qty == null ? '' : ` · ${qty.toFixed(1)} units`;
+  return `Sell-stop ${currency}${stop.toFixed(2)}${below}${units}`;
+}
+
+export function IdeasPanel({
+  ideas,
+  risk,
+  auditNote = null,
+  held = {},
+  bookAud = null,
+}: {
   ideas: IdeasReport;
   risk: { symbol: string; stop: number | null; qty: number | null; weight: number; verdict: string; gates: GateCheck[]; dip: string | null }[];
   auditNote?: string | null;
+  held?: Record<string, number>;
+  bookAud?: number | null;
 }) {
   const riskBySymbol = new Map(risk.map((line) => [line.symbol, line]));
-  const fetched = melbourneClock(ideas.pricesFetchedAt);
+  const fetched = ideas.pricesFetchedAt ? sydneyClock(ideas.pricesFetchedAt) : null;
   const candidates = ideas.rows.filter((row) => row.status !== 'avoid');
   const avoided = ideas.rows.filter((row) => row.status === 'avoid');
 
   return (
     <section className="mt-2" id="macro-plays">
-      <h2 className="text-lg font-bold tracking-tight">Name by name</h2>
-      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">
-        Confirmed means every check passed and the size is above zero. Watch means something is in the way, and the sentence names it. Avoid means today’s lean is away from that group. A theme being on is support for the story, not a buy. One fund is capped at {pct(ideas.singlePositionCap)} of the book and one stock at {pct(ideas.systematicCap)}.
+      <p className="max-w-3xl text-[15px] leading-relaxed text-[var(--text-2)]">
+        One fund is capped at {pct(ideas.singlePositionCap)} of the book and one stock at {pct(ideas.systematicCap)}.
       </p>
-      {auditNote ? <p className="mt-2 max-w-3xl text-sm leading-relaxed text-white/80">{auditNote}</p> : null}
+      {auditNote ? <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--text-2)]">{auditNote}</p> : null}
 
       {ideas.crowding.warning ? (
         <div className="mt-4 rounded-[var(--radius-xl)] border border-amber-300/50 bg-amber-400/15 px-5 py-4">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-amber-100">These holdings are moving together</p>
-          <p className="mt-2 text-base font-semibold leading-relaxed text-white">{ideas.crowding.warning}</p>
+          <p className="text-xs font-semibold text-[var(--call-watch)]">These holdings are moving together</p>
+          <p className="mt-2 text-base font-semibold leading-relaxed text-[var(--text-1)]">{ideas.crowding.warning}</p>
         </div>
       ) : (
-        <p className="mt-4 text-sm text-[var(--muted)]">
+        <p className="mt-4 text-sm text-[var(--text-2)]">
           {ideas.crowding.average == null
             ? ideas.crowding.gap
-            : `These holdings move together with a likeness of ${ideas.crowding.average.toFixed(2)} across ${ideas.crowding.names} names. At or below ${CORR_WARN.toFixed(2)}, so suggested sizes are not reduced. Likeness is the correlation.`}
-          {ideas.crowding.dispersion != null ? ` ${DISPERSION_WINDOW}-day dispersion ${(ideas.crowding.dispersion * 100).toFixed(1)}%.` : ''}
+            : `Holdings aren't moving in lockstep (${ideas.crowding.average.toFixed(2)}; sizes shrink above ${CORR_WARN.toFixed(2)}).`}
         </p>
       )}
 
       {ideas.overlap.groups.length > 0 ? (
-        <div className="mt-4 rounded-[var(--radius-lg)] border border-amber-300/40 bg-black/25 px-4 py-4">
-          <h3 className="text-sm font-bold">The same bet, counted twice</h3>
-          <p className="mt-1 text-sm text-[var(--muted)]">
-            Confirmed names that are the same AI or giant-company bet, or that move almost alike (likeness at least 0.80), share a cap of {pct(ideas.overlap.cap)} of the book. What this means: owning two versions of the same idea does not double the allowed size.
+        <div className="mt-4 rounded-[var(--radius-lg)] border border-amber-300/40 bg-[var(--surface-1)] px-4 py-4">
+          <h3 className="text-sm font-bold text-[var(--text-1)]">The same bet, counted twice</h3>
+          <p className="mt-1 text-sm text-[var(--text-2)]">
+            These are really the same bet, so together they are capped at {pct(ideas.overlap.cap)} of the book.
           </p>
           <ul className="mt-3 space-y-2 text-sm">
             {ideas.overlap.groups.map((group) => (
               <li key={group.symbols.join('-')}>
-                <span className="font-mono text-xs">{group.symbols.join(' · ')}</span>
-                <span className="ml-2 text-[var(--muted)]">
+                <span className="font-mono text-xs text-[var(--text-2)]">{group.symbols.join(' · ')}</span>
+                <span className="ml-2 text-[var(--text-3)]">
                   combined {pct(group.combinedBefore, 1)} → {pct(group.combinedAfter, 1)}
                 </span>
-                <p className="text-xs text-[var(--muted)]">{group.reason}</p>
+                <p className="text-xs text-[var(--text-3)]">{group.reason}</p>
               </li>
             ))}
           </ul>
-          {ideas.overlap.gap ? <p className="mt-2 text-xs text-[var(--status-warn)]">{ideas.overlap.gap}</p> : null}
+          {ideas.overlap.gap ? <p className="mt-2 text-xs text-[var(--call-watch)]">{ideas.overlap.gap}</p> : null}
         </div>
       ) : ideas.overlap.gap ? (
-        <p className="mt-3 text-xs text-[var(--status-warn)]">{ideas.overlap.gap}</p>
+        <p className="mt-3 text-xs text-[var(--call-watch)]">{ideas.overlap.gap}</p>
       ) : null}
 
       {ideas.defensiveOnly ? (
-        <div className="mt-4 rounded-[var(--radius-xl)] border border-rose-400/40 bg-rose-500/10 px-5 py-4">
-          <p className="text-base font-semibold leading-relaxed text-white">On a sit-tight day this list keeps defensive holdings and cash. New share, crypto, and theme buys stay at 0%.</p>
-          <p className="mt-2 text-sm text-white/75">
-            What this means: broad shares, companies that do well when the economy is hot, and the stock list are not given a size. Bitcoin and Ether stay on the theme cards, so a paused stock list does not hide them.
-          </p>
+        <div className="mt-4 rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface-1)] px-5 py-4">
+          <p className="text-base font-semibold leading-relaxed text-[var(--text-1)]">On a sit-tight day this list keeps defensive holdings and cash. New share, crypto, and theme buys stay at 0%.</p>
+          <p className="mt-2 text-sm text-[var(--text-2)]">Crypto and silver are listed under Themes.</p>
         </div>
       ) : null}
 
       <div className="mt-4 grid gap-3 md:grid-cols-2">
         {ideas.playbook.map((row) => (
-          <article key={row.id} className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25 px-4 py-4">
+          <article key={row.id} className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-1)] px-4 py-4">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h3 className="text-sm font-bold">{row.label}</h3>
-              <p className={`text-[11px] font-bold uppercase tracking-wider ${STANCE_CLASS[row.printStance]}`} title="Today is the lean after the sit-tight rule. The usual lean is the written map for this regime, before that rule.">
+              <h3 className="text-sm font-bold text-[var(--text-1)]">{row.label}</h3>
+              <p className="text-xs font-semibold text-[var(--text-2)]" title="Today is the lean after the sit-tight rule. The usual lean is the written map for this regime, before that rule.">
                 {stanceWords(row.printStance, row.mapStance).today}
                 {stanceWords(row.printStance, row.mapStance).usual ? ` · ${stanceWords(row.printStance, row.mapStance).usual}` : ''}
               </p>
             </div>
-            <p className="mt-2 font-mono text-xs text-[var(--muted)]">{row.symbols.join(' · ')}</p>
-            <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{row.rationale}</p>
-            <p className="mt-2 text-xs text-white/55">{row.drivers}</p>
+            <p className="mt-2 font-mono text-xs text-[var(--text-3)]">{row.symbols.join(' · ')}</p>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{row.rationale}</p>
+            <p className="mt-2 text-xs text-[var(--text-3)]">{plainDrivers(row.drivers)}</p>
           </article>
         ))}
       </div>
 
-      {ideas.watchlistNote ? <p className="mt-4 text-sm text-[var(--status-warn)]">{ideas.watchlistNote}</p> : null}
+      {ideas.watchlistNote ? <p className="mt-4 text-sm text-[var(--call-watch)]">{ideas.watchlistNote}</p> : null}
 
-      <div className="mt-6 overflow-x-auto rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/25">
+      <div className="mt-6 grid gap-3 md:hidden">
+        {candidates.map((row) => {
+          const line = riskBySymbol.get(row.symbol);
+          const stop = stopText(row.symbol, line?.stop ?? null, line?.qty ?? null, row.signals.lastClose);
+          return (
+            <article key={row.symbol} className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-1)] px-4 py-3">
+              <div className="flex items-start justify-between gap-3">
+                <p className="font-semibold text-[var(--text-1)]">{row.name} <span className="font-mono text-xs font-normal text-[var(--text-3)]">{row.symbol}</span></p>
+                <Chip tone={STATUS_TONE[row.status]}>{STATUS_LABEL[row.status]}</Chip>
+              </div>
+              <p className="mt-2 text-sm text-[var(--text-2)]">You hold {holdText(held[row.symbol], bookAud)}</p>
+              {stop ? <p className="mt-1 text-xs text-[var(--text-3)]">{stop}</p> : null}
+              {line?.verdict ? <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{line.verdict}</p> : null}
+              {line?.dip ? <p className="mt-2 text-sm font-semibold text-[var(--text-1)]">{line.dip}</p> : null}
+            </article>
+          );
+        })}
+      </div>
+
+      <div className="mt-6 hidden overflow-x-auto rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-1)] md:block">
         <table className="w-full min-w-[860px] text-left text-sm">
-          <thead className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
+          <thead className="text-xs text-[var(--text-3)]">
             <tr>
-              <th className="px-3 py-2 font-bold">Name</th>
-              <th className="px-3 py-2 font-bold">Call</th>
-              <th className="px-3 py-2 font-bold" title="12–1 momentum: the gain from 12 months ago to 1 month ago, skipping the last month.">Past year</th>
-              <th className="px-3 py-2 font-bold" title="Whether the last price is above its 200-day average.">Long-term trend</th>
-              <th className="px-3 py-2 font-bold" title="Annualised swing from the last 20 sessions.">Recent swing</th>
-              <th className="px-3 py-2 font-bold" title="How unusual the last 5 sessions are. Above 1.5 blocks a buy. The number is a score versus that name’s own history.">Last few days</th>
-              <th className="px-3 py-2 font-bold" title="Share of the paper book. 0% means it is not a buy today.">Suggested size</th>
-              <th className="px-3 py-2 font-bold" title="The exchange session date, not Melbourne time.">Price date</th>
+              <th className="px-3 py-2 font-semibold">Name</th>
+              <th className="px-3 py-2 font-semibold" title="The gain from 12 months ago to 1 month ago, skipping the last month.">Past year</th>
+              <th className="px-3 py-2 font-semibold" title="Whether the last price is above its 200-day average.">Long-term trend</th>
+              <th className="px-3 py-2 font-semibold" title="Typical yearly up-and-down, from the last month.">How jumpy</th>
+              <th className="px-3 py-2 font-semibold" title="How unusual the last 5 sessions are. Above 1.5 blocks a buy.">Recent spike</th>
+              <th className="px-3 py-2 font-semibold">You hold</th>
+              <th className="px-3 py-2 font-semibold">Today</th>
+              <th className="px-3 py-2 font-semibold" title="The exchange session date.">Price date</th>
             </tr>
           </thead>
           <tbody>
-            <tr className="border-t border-[var(--border)]">
-              <td colSpan={8} className="px-3 py-2 text-[11px] leading-relaxed text-[var(--muted)]">
-                What this means: past year skips the latest month. The long-term trend is the 200-day average. A last-few-days score above 1.5 blocks a buy. Suggested size is the share of the paper book, and 0% is not a buy. Price date is the exchange session, not Melbourne time.
-                {ideas.defensiveOnly ? ' Theme names are not in this table while the stock list is stood down. Look at Waiting on the regime and the theme cards.' : ''}
-              </td>
-            </tr>
             {candidates.length === 0 ? (
               <tr className="border-t border-[var(--border)]">
-                <td colSpan={8} className="px-3 py-4 text-sm text-[var(--muted)]">Nothing to buy or watch in this table today.</td>
+                <td colSpan={8} className="px-3 py-4 text-sm text-[var(--text-2)]">Nothing to buy or watch in this table today.</td>
               </tr>
             ) : null}
-            {candidates.map((row) => (
-              <tr key={row.symbol} className="border-t border-[var(--border)] align-top">
-                <td className="px-3 py-3">
-                  <p className="font-semibold">{row.symbol} <span className="font-normal text-[var(--muted)]">{row.name}</span></p>
-                  <p className="mt-1 text-[11px] uppercase tracking-wider text-white/40">{row.venue} · {row.sleeve}</p>
-                  <p className="mt-2 max-w-md text-xs leading-relaxed text-[var(--muted)]">{row.rationale}</p>
-                  <p className="mt-1 text-xs text-white/55" title="Each number is a z-score versus that series’ own history. Negative is tighter or less supportive.">{plainDrivers(row.drivers)}</p>
-                  <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">{row.invalidation}</p>
-                  {riskBySymbol.get(row.symbol)?.verdict ? (
-                    <p className="mt-2 text-xs leading-relaxed text-white/80">{riskBySymbol.get(row.symbol)?.verdict}</p>
-                  ) : null}
-                  {riskBySymbol.get(row.symbol)?.gates?.length ? (
-                    <details className="mt-1">
-                      <summary className="cursor-pointer text-xs text-[var(--accent-soft)]">Why?</summary>
-                      <p className="mt-1 whitespace-pre-line text-xs leading-relaxed text-white/70">{checklistLines(riskBySymbol.get(row.symbol)?.gates ?? [])}</p>
-                    </details>
-                  ) : null}
-                  {riskBySymbol.get(row.symbol)?.dip ? (
-                    <p className={`mt-2 text-xs font-semibold ${riskBySymbol.get(row.symbol)?.dip?.includes('blocked') ? 'text-amber-100' : 'text-emerald-200'}`}>{riskBySymbol.get(row.symbol)?.dip}</p>
-                  ) : null}
-                </td>
-                <td className="px-3 py-3">
-                  <span className={`inline-block rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${STATUS_CLASS[row.status]}`}>
-                    {STATUS_LABEL[row.status]}
-                  </span>
-                  {riskBySymbol.get(row.symbol)?.dip ? (
-                    <span className={`mt-2 inline-block rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${riskBySymbol.get(row.symbol)?.dip?.includes('blocked') ? 'border-amber-300/40 bg-amber-400/10 text-amber-100' : 'border-emerald-400/40 bg-emerald-400/10 text-emerald-200'}`}>
-                      {riskBySymbol.get(row.symbol)?.dip?.includes('blocked') ? 'Dip blocked' : 'Dip'}
-                    </span>
-                  ) : null}
-                  {row.priceStale ? <p className="mt-2 text-[11px] text-[var(--status-warn)]">Stale price</p> : null}
-                </td>
-                <td className="px-3 py-3 font-mono text-xs">{pct(row.signals.momentum12_1, 1)}</td>
-                <td className="px-3 py-3 font-mono text-xs">{trendWord(row.signals.above200)}</td>
-                <td className="px-3 py-3 font-mono text-xs">{pct(row.signals.annVol20, 1)}</td>
-                <td className="px-3 py-3 font-mono text-xs">{num(row.signals.reversionZ)}</td>
-                <td className="px-3 py-3 font-mono text-xs">
-                  {pct(riskBySymbol.get(row.symbol)?.weight ?? row.maxWeight, 1)}
-                  {riskBySymbol.get(row.symbol)?.stop != null ? (
-                    <p className="mt-1 text-[11px] text-[var(--muted)]">stop {riskBySymbol.get(row.symbol)?.stop?.toFixed(2)} · qty {riskBySymbol.get(row.symbol)?.qty?.toFixed(2) ?? '—'}</p>
-                  ) : null}
-                </td>
-                <td className="px-3 py-3 font-mono text-xs">{sessionDateLabel(row.signals.asOf)}</td>
-              </tr>
-            ))}
+            {candidates.map((row) => {
+              const line = riskBySymbol.get(row.symbol);
+              const stop = stopText(row.symbol, line?.stop ?? null, line?.qty ?? null, row.signals.lastClose);
+              return (
+                <tr key={row.symbol} className="border-t border-[var(--border)] align-top">
+                  <td className="px-3 py-3">
+                    <p className="font-semibold text-[var(--text-1)]">{row.symbol} <span className="font-normal text-[var(--text-3)]">{row.name}</span></p>
+                    <p className="mt-1 text-xs text-[var(--text-3)]">{row.venue} · {row.sleeve}</p>
+                    <p className="mt-2 max-w-md text-xs leading-relaxed text-[var(--text-2)]">{row.rationale}</p>
+                    <p className="mt-1 text-xs text-[var(--text-3)]" title="Each number is a score versus that series’ own history. Negative is tighter or less supportive.">{plainDrivers(row.drivers)}</p>
+                    <p className="mt-2 text-xs leading-relaxed text-[var(--text-2)]">{row.invalidation}</p>
+                    {line?.verdict ? <p className="mt-2 text-xs leading-relaxed text-[var(--text-1)]">{line.verdict}</p> : null}
+                    {line?.gates?.length ? (
+                      <details className="mt-1">
+                        <summary className="min-h-11 cursor-pointer text-xs text-[var(--call-hold)]">Why?</summary>
+                        <p className="mt-1 whitespace-pre-line text-xs leading-relaxed text-[var(--text-2)]">{checklistLines(line.gates)}</p>
+                      </details>
+                    ) : null}
+                    {line?.dip ? <p className="mt-2 text-xs font-semibold text-[var(--text-1)]">{line.dip}</p> : null}
+                  </td>
+                  <td className="px-3 py-3 font-mono text-xs text-[var(--text-2)]">{pct(row.signals.momentum12_1, 1)}</td>
+                  <td className="px-3 py-3 font-mono text-xs text-[var(--text-2)]">{trendWord(row.signals.above200)}</td>
+                  <td className="px-3 py-3 font-mono text-xs text-[var(--text-2)]">{pct(row.signals.annVol20, 1)}</td>
+                  <td className="px-3 py-3 font-mono text-xs text-[var(--text-2)]">{spikeText(row.signals.reversionZ)}</td>
+                  <td className="px-3 py-3 font-mono text-xs text-[var(--text-2)]">{holdText(held[row.symbol], bookAud)}</td>
+                  <td className="px-3 py-3">
+                    <Chip tone={STATUS_TONE[row.status]}>{STATUS_LABEL[row.status]}</Chip>
+                    {row.status === 'confirmed' ? <p className="mt-2 font-mono text-xs text-[var(--text-2)]">{pct(line?.weight ?? row.maxWeight, 1)}</p> : null}
+                    {stop ? <p className="mt-1 text-xs text-[var(--text-3)]">{stop}</p> : null}
+                    {row.priceStale ? <p className="mt-2 text-xs text-[var(--call-watch)]">Stale price</p> : null}
+                  </td>
+                  <td className="px-3 py-3 font-mono text-xs text-[var(--text-2)]">{sessionDateLabel(row.signals.asOf)}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
 
       {avoided.length > 0 ? (
         <div className="mt-4">
-          <h3 className="text-sm font-bold">Avoid today</h3>
+          <h3 className="text-sm font-bold text-[var(--text-1)]">Avoid today</h3>
           <ul className="mt-2 flex flex-wrap gap-2">
             {avoided.map((row) => (
-              <li key={row.symbol} className="rounded-full border border-rose-400/30 px-2.5 py-1 text-[11px] text-rose-100">
-                {row.symbol}
-                <span className="ml-1 text-white/45">{row.signals.asOf ?? 'no price'}</span>
+              <li key={row.symbol}>
+                <Chip tone="off">{`${row.symbol} · ${row.name}`}</Chip>
               </li>
             ))}
           </ul>
@@ -214,31 +238,31 @@ export function IdeasPanel({ ideas, risk, auditNote = null }: {
       ) : null}
 
       <div className="mt-6">
-        <h3 className="text-sm font-bold">Are the checks still useful?</h3>
-        <p className="mt-1 max-w-3xl text-sm text-[var(--muted)]">
-          What this means: this table is not the price feed. “Not enough evidence” means fewer than 40 separate 20-day windows. That 40 is a rule of thumb, not a statistical test, and later windows can still move with earlier ones. It does not mean a price is missing. “Weak lately” does not block a buy. It keeps the price check and, when only some checks are weak, halves that check’s say. If all three are weak together, the mix goes back to the normal weights. Not enough evidence does not apply that haircut. Neither label changes the size. Size still comes from the risk limits and today’s market call. “Turned off” means both scores failed, and only then does that check drop out. “Holding up lately” is a recent score, not a forecast.
+        <h3 className="text-sm font-bold text-[var(--text-1)]">Are the checks still useful?</h3>
+        <p className="mt-1 max-w-3xl text-sm text-[var(--text-2)]">
+          Each check is graded against what prices did next. Turned-off checks are ignored. Weak ones count half.
         </p>
         <div className="mt-3 overflow-x-auto">
           <table className="w-full min-w-[520px] text-left text-sm">
-            <thead className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
+            <thead className="text-xs text-[var(--text-3)]">
               <tr>
-                <th className="py-2 pr-3 font-bold">Check</th>
-                <th className="py-2 pr-3 font-bold" title="Information coefficient: how well the check lined up with the next 20 days. Negative means it pointed the wrong way.">How well it lined up</th>
-                <th className="py-2 pr-3 font-bold" title="Share of samples where the check pointed the right way.">How often it was right</th>
-                <th className="py-2 pr-3 font-bold">Samples</th>
-                <th className="py-2 font-bold">Health</th>
+                <th className="py-2 pr-3 font-semibold">Check</th>
+                <th className="py-2 pr-3 font-semibold" title="−1 to +1; above 0 means it pointed the right way.">Accuracy score</th>
+                <th className="py-2 pr-3 font-semibold" title="Share of samples where the check pointed the right way.">Right %</th>
+                <th className="py-2 pr-3 font-semibold">Samples</th>
+                <th className="py-2 font-semibold">Health</th>
               </tr>
             </thead>
             <tbody className="font-mono text-xs">
               {ideas.signalHealth.map((signal) => (
                 <tr key={signal.id} className="border-t border-[var(--border)]">
-                  <td className="py-2 pr-3 font-sans">{signal.label}</td>
-                  <td className="py-2 pr-3">{num(signal.ic, 2)}</td>
-                  <td className="py-2 pr-3">{signal.hitRate == null ? '—' : pct(signal.hitRate, 0)}</td>
-                  <td className="py-2 pr-3">{signal.samples}</td>
-                  <td className={`py-2 font-sans text-[11px] font-bold uppercase tracking-wider ${signal.status === 'retired' ? 'text-rose-200' : signal.status === 'degraded' ? 'text-amber-100' : signal.status === 'healthy' ? 'text-emerald-200' : 'text-[var(--muted)]'}`}>
+                  <td className="py-2 pr-3 font-sans text-[var(--text-1)]">{signal.label}</td>
+                  <td className="py-2 pr-3 text-[var(--text-2)]">{num(signal.ic, 2)}</td>
+                  <td className="py-2 pr-3 text-[var(--text-2)]">{signal.hitRate == null ? '—' : pct(signal.hitRate, 0)}</td>
+                  <td className="py-2 pr-3 text-[var(--text-2)]">{signal.samples}</td>
+                  <td className="py-2 font-sans text-xs font-semibold text-[var(--text-2)]">
                     {HEALTH_WORD[signal.status]}
-                    <p className="mt-1 font-normal normal-case tracking-normal text-[var(--muted)]">{signalHealthSentence(signal)}</p>
+                    <p className="mt-1 font-normal text-[var(--text-3)]">{signalHealthSentence(signal)}</p>
                   </td>
                 </tr>
               ))}
@@ -248,15 +272,15 @@ export function IdeasPanel({ ideas, risk, auditNote = null }: {
       </div>
 
       {ideas.gaps.length > 0 ? (
-        <ul className="mt-4 space-y-1 text-sm text-[var(--status-warn)]">
+        <ul className="mt-4 space-y-1 text-sm text-[var(--call-watch)]">
           {ideas.gaps.map((gap) => (
             <li key={gap}>{gap}</li>
           ))}
         </ul>
       ) : null}
 
-      <p className="mt-4 text-xs leading-relaxed text-[var(--muted)]">
-        Prices are adjusted daily closes from Yahoo, which does not need a paid key. {ideas.pricesFetchedAt ? `Prices downloaded ${fetched} Australia/Melbourne.` : 'The prices have not been downloaded.'} The date on each row is that name&apos;s exchange session, not a Melbourne clock. A missing price is left blank. No price is filled in.
+      <p className="mt-4 text-xs leading-relaxed text-[var(--text-3)]">
+        Prices: Yahoo Finance daily closes (dividends included){fetched ? `, downloaded ${fetched}` : ''}. A missing price is left blank.
       </p>
     </section>
   );

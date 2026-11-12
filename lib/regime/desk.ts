@@ -26,7 +26,7 @@ import {
   THEME_WEIGHT_CAP,
 } from './sizing';
 import { computeSignals, type Bar } from './signals';
-import { evaluateThemes, priorPrint, seriesDirection, themesForSymbol, type ThemeVerdict } from './themes';
+import { evaluateThemes, seriesDirection, themesForSymbol, type ThemeVerdict } from './themes';
 import { THEME_CHANGELOG, THEME_CONFIG_VERSION, THEMES } from './themes.config';
 import type { RegimeSnapshot } from './types';
 import { cagrFromCurve } from './improve';
@@ -89,6 +89,14 @@ function barsOf(book: PriceBook, symbol: string): Bar[] {
   return book.series.find((series) => series.symbol === symbol)?.bars ?? [];
 }
 
+function seriesMove(points: SeriesPoint[], digits: number, suffix: string): string | null {
+  if (points.length < 2) return null;
+  const prev = points[points.length - 2];
+  const last = points[points.length - 1];
+  if (!Number.isFinite(prev.value) || !Number.isFinite(last.value)) return null;
+  return `${prev.value.toFixed(digits)}${suffix} → ${last.value.toFixed(digits)}${suffix}, ${last.date.slice(0, 10)}`;
+}
+
 function themeIdsFor(symbol: string): string[] {
   return themesForSymbol(symbol).map((theme) => theme.id);
 }
@@ -123,14 +131,22 @@ export function buildDesk(input: {
   const ai = latestComponent(input.snapshot, 'ai');
   const liquidity = latestComponent(input.snapshot, 'liquidity');
   const btc = computeSignals(barsOf(input.book, 'BTC-USD'));
+  const aiHistory = input.snapshot.history.map((point) => ({ date: point.date, value: point.ai }));
+  const liqHistory = input.snapshot.history.map((point) => ({ date: point.date, value: point.liquidity }));
+  const aiPriorRow = [...aiHistory].reverse().find((row) => row.value != null && Number.isFinite(row.value) && (ai.date == null || row.date < ai.date));
+  const liqPriorRow = [...liqHistory].reverse().find((row) => row.value != null && Number.isFinite(row.value) && (liquidity.date == null || row.date < liquidity.date));
   const themes = evaluateThemes({
     aiLatest: ai.value,
-    aiPrior: priorPrint(input.snapshot.history.map((point) => ({ date: point.date, value: point.ai })), ai.date),
+    aiPrior: aiPriorRow?.value ?? null,
+    aiAsOf: ai.date,
+    aiPriorAsOf: aiPriorRow?.date ?? null,
     liquidityLatest: liquidity.value,
-    liquidityPrior: priorPrint(input.snapshot.history.map((point) => ({ date: point.date, value: point.liquidity })), liquidity.date),
+    liquidityPrior: liqPriorRow?.value ?? null,
     btcAbove200: btc.above200,
     realYield: seriesDirection(input.realYield, input.snapshot.today),
     dollar: seriesDirection(input.dollar, input.snapshot.today),
+    realYieldDetail: seriesMove(input.realYield, 2, '%'),
+    dollarDetail: seriesMove(input.dollar, 2, ''),
   });
 
   const heldPositions = aud ? aud.positions : input.journal.paper.positions;
@@ -189,6 +205,9 @@ export function buildDesk(input: {
       health: input.ideas.signalHealth,
       halted,
       pyramid,
+      symbol: row.symbol,
+      composite: input.snapshot.composite,
+      drawdown: drawdown.drawdown,
     });
     const dip = mapped.length
       ? dipSignal({
@@ -308,7 +327,16 @@ export function buildDesk(input: {
     const qty = raw[index].qty != null && raw[index].raw > 0
       ? Math.round((raw[index].qty as number) * (weight / raw[index].raw) * 1e6) / 1e6
       : null;
-    const sized = sizingVerdict({ gates: row.gates, stance: row.stance, pyramid: row.pyramid, weight });
+    const position = heldPositions.find((item) => item.symbol === row.symbol);
+    const sized = sizingVerdict({
+      gates: row.gates,
+      stance: row.stance,
+      pyramid: row.pyramid,
+      weight,
+      owned: position
+        ? { entry: position.entry, stop: position.stop, currency: row.symbol.endsWith('.AX') ? 'A$' : 'US$' }
+        : undefined,
+    });
     const failedGate = row.gates.find((gate) => !gate.pass);
     const dip = row.dipFact
       ? dipDisplay({
@@ -345,7 +373,11 @@ export function buildDesk(input: {
   });
 
   const displayed = applyOverlapCaps(
-    lines.map((line) => ({ symbol: line.symbol, status: line.status, weight: line.weight })),
+    lines.map((line) => ({
+      symbol: line.symbol,
+      status: line.status === 'hold' ? 'watch' as const : line.status,
+      weight: line.weight,
+    })),
     pairResult.unavailable ? null : pairResult.pairs,
   );
   const overlapView = {

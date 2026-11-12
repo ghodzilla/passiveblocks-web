@@ -186,18 +186,17 @@ export function selectNonOverlappingDates(
 }
 
 export function signalHealthSentence(signal: SignalHealth): string {
-  const score = signal.ic == null ? '—' : signal.ic.toFixed(2);
-  const hits = signal.hitRate == null ? '—' : `${Math.round(signal.hitRate * 100)}%`;
+  const hits = signal.hitRate == null ? 'not scored' : `right ${Math.round(signal.hitRate * 100)}% of the time`;
   if (signal.status === 'unknown') {
-    return `${signal.label} has insufficient performance evidence. There are ${signal.samples} non-overlapping 20-session windows, and ${IC_MIN} is the heuristic floor before a weak or healthy label. That floor is not a statistical test. Later windows can still move with earlier ones. This is not a missing price feed. It does not block a buy and it does not halve rank weight. The price checks stay as they are.`;
+    return `${signal.label}: not enough history yet (${signal.samples} periods; ${IC_MIN} needed) — not a missing price.`;
   }
   if (signal.status === 'degraded') {
-    return `${signal.label} has at least ${IC_MIN} non-overlapping windows and one of the two scores failed (${score}, hit rate ${hits}, ${signal.samples} windows). It does not by itself block a buy. It keeps the price check and halves this signal’s rank weight. Size still comes from the risk budget. The price feed is a separate question.`;
+    return `${signal.label}: ${hits} over ${signal.samples} periods — weak, so it counts half.`;
   }
   if (signal.status === 'retired') {
-    return `${signal.label} failed both scores (${score}, hit rate ${hits}, ${signal.samples} non-overlapping windows), so this check no longer blocks or confirms a buy. If the past-year move and the 200-day trend are both retired, nothing new is confirmed.`;
+    return `${signal.label}: ${hits} over ${signal.samples} periods — turned off.`;
   }
-  return `${signal.label} lined up with later prices on ${signal.samples} non-overlapping windows (${score}, hit rate ${hits}). The windows are not independent draws, and ${IC_MIN} is not a statistical pass. This is not a promise it will keep working.`;
+  return `${signal.label}: ${hits} over ${signal.samples} periods — holding up.`;
 }
 
 function summarize(id: SignalId, rows: Map<string, { signal: number[]; forward: number[]; sessions: SessionStamp[] }>): SignalHealth {

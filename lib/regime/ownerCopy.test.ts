@@ -46,7 +46,7 @@ describe('owner brief', () => {
     });
     assert.match(action.headline, /New buys are allowed/);
     assert.match(action.steps.join(' '), /Buy Gold \(GLD\) for about \$12,000 \(8% of the book\)/);
-    assert.match(action.steps.join(' '), /Hold cash and short-term government bonds, about \$60,000 \(40% of the book\)/);
+    assert.match(action.steps.join(' '), /Hold BetaShares cash \(AAA\.AX\)/);
   });
 
   it('says hold when the window is shut, and does not invent a sale', () => {
@@ -57,10 +57,10 @@ describe('owner brief', () => {
       bookAud: 100_000,
       lines: [line('XLV', 'Health care', 0.05, 'tactical', 'hold')],
     });
-    assert.match(action.headline, /^Hold\./);
-    assert.match(action.steps[0], /^Hold Health care/);
+    assert.match(action.headline, /No buys, no sells today/);
+    assert.match(action.steps.join(' '), /Keep all 1 holdings/);
     assert.equal(action.steps.some((step) => step.startsWith('Sell')), false);
-    assert.match(action.means, /0% is not an instruction to sell/);
+    assert.match(action.means, /paper book's value/);
   });
 
   it('keeps a waiting sale in the original words', () => {
@@ -72,7 +72,7 @@ describe('owner brief', () => {
       lines: [],
       pending: [{ symbol: 'BTC-USD', reason: 'Stop touched in the instrument price. The sell is unfilled because AUDUSD is missing or stale.' }],
     });
-    assert.match(action.headline, /Do not buy/);
+    assert.match(action.headline, /TRIM/);
     assert.match(action.steps.join(' '), /BTC-USD/);
     assert.match(action.steps.join(' '), /sell is unfilled/);
   });
@@ -115,7 +115,8 @@ describe('owner brief', () => {
       heldBasis: 'held-book',
       bookAud: 100_000,
     });
-    assert.match(held.sentence, /holds cash and Gold/);
+    assert.match(held.sentence, /in cash/);
+    assert.match(held.sentence, /1 holdings/);
     assert.match(held.items.join(' '), /Gold \(GLD\), about \$8,000/);
     const suggested = holdingsNow({
       lines: [line('GLD', 'Gold', 0.2)],
@@ -139,10 +140,8 @@ describe('owner brief', () => {
       drawdown: 0.03,
       comparable: false,
     });
-    assert.match(done.sentence, /up, at \$103,000 from \$100,000/);
-    assert.match(done.sentence, /yearly pace so far is 4\.2%/);
-    assert.match(done.sentence, /not comparable/);
-    assert.match(done.means, /not a forecast/);
+    assert.match(done.sentence, /Up .*\$3,000/);
+    assert.match(done.sentence, /Yearly rate so far 4\.2%/);
     assert.equal(done.sentence.includes('66'), false);
     const empty = performanceSinceStart({
       capital: 100_000,
@@ -158,18 +157,22 @@ describe('owner brief', () => {
 
   it('takes the trust line from the research status and does not hard-code a return', () => {
     const unsupported = trustLine({ verdict: 'inconclusive', fullStrategy: 'not_validated', h1: 'unsupported' });
-    assert.equal(
-      unsupported,
-      'These rules have not yet beaten a simple index fund on the tested history. Treat sizes as a starting point.',
-    );
+    assert.equal(unsupported, 'Not proven yet. Sizes follow the written rules.');
     assert.equal(unsupported.includes('66'), false);
     assert.equal(/\d/.test(unsupported), false);
-    const open = trustLine({ verdict: 'inconclusive', fullStrategy: 'not_validated', h1: null });
-    assert.match(open, /still open/);
-    const passed = trustLine({ verdict: 'pass', fullStrategy: 'validated', h1: 'supported' });
-    assert.match(passed, /not a forecast/);
-    assert.match(researchPlain({ h1: 'unsupported', h2: 'not_tested' }), /Test 1 is marked unsupported/);
-    assert.match(researchPlain({ h1: 'unsupported', h2: 'not_tested' }), /Test 2 is marked not tested/);
+    const measured = trustLine({
+      verdict: 'inconclusive',
+      fullStrategy: 'not_validated',
+      h1: 'unsupported',
+      rules: { start: '2024-10-18', end: '2026-11-05', cagr: 0.0517, maxDrawdown: 0.0321 },
+      spy: { cagr: 0.11, maxDrawdown: 0.1767 },
+    });
+    assert.match(measured, /Not proven yet/);
+    assert.match(measured, /5\.2%/);
+    assert.match(measured, /11\.0%/);
+    assert.equal(measured.includes('starting point'), false);
+    assert.match(researchPlain({ h1: 'unsupported', h2: 'not_tested' }), /unsupported/);
+    assert.match(researchPlain({ h1: 'unsupported', h2: 'not_tested' }), /data-availability check/);
   });
 });
 
@@ -188,10 +191,10 @@ describe('freshness words', () => {
   });
 
   it('formats a calendar day and a download clock in Sydney', () => {
-    assert.equal(sydneyWhen('2026-11-09'), '9 Nov 2026 (the day this figure describes)');
+    assert.equal(sydneyWhen('2026-11-09'), '9 Nov 2026');
     assert.match(sydneyWhen('2026-11-10T00:30:00.000Z'), /10 Nov 2026/);
     assert.match(sydneyWhen('2026-11-10T00:30:00.000Z'), /11:30/);
-    assert.match(sydneyWhen('2026-11-10T00:30:00.000Z'), /Sydney time/);
+    assert.match(sydneyWhen('2026-11-10T00:30:00.000Z'), /AEDT/);
   });
 
   it('marks feeds fresh, stale, or blocked from the data', () => {
@@ -211,7 +214,7 @@ describe('freshness words', () => {
     const byId = new Map(feeds.map((feed) => [feed.id, feed]));
     assert.equal(byId.get('WALCL')?.status, 'fresh');
     assert.equal(byId.get('WALCL')?.name, 'Money at the US central bank');
-    assert.match(byId.get('WALCL')?.updated ?? '', /Sydney time/);
+    assert.match(byId.get('WALCL')?.updated ?? '', /AEDT|AEST/);
     assert.equal(byId.get('BAMLH0A0HYM2')?.status, 'stale');
     assert.equal(byId.get('SPY')?.status, 'blocked');
     assert.match(byId.get('SPY')?.means ?? '', /SPY HTTP 403/);
@@ -248,7 +251,9 @@ describe('freshness words', () => {
   });
 
   it('explains a limit without calling it a return', () => {
-    assert.match(budgetMeans('swing', 0.04, false), /risk limit, not a return target/);
+    assert.match(budgetMeans('swing', 0.04, false), /Calmer funds get bigger sizes/);
+    assert.equal(budgetMeans('swing', 0.06, true, 0.06).includes('Tighter than usual'), false);
+    assert.match(budgetMeans('whole', 0.4, true, 0.8), /Tighter than usual \(normally 80%\)/);
     assert.match(componentPlain('credit', -0.8).means, /tighter/);
     assert.equal(componentPlain('credit', -0.8).title, 'Lender nerves');
   });

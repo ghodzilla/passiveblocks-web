@@ -26,9 +26,9 @@ export function EvaluationPanel({ report }: { report: EvaluationReport }) {
     <section className="mt-2" id="evaluation">
       <h2 className="text-lg font-bold tracking-tight">What the saved prices can and cannot say</h2>
       <div className="mt-4 rounded-[var(--radius-xl)] border border-amber-300/40 bg-amber-400/10 px-5 py-4">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-amber-100">The full rule set has not been proven on history</p>
+        <p className="text-xs font-semibold text-[var(--call-watch)]">The full rule set has not been proven on history</p>
         <p className="mt-2 text-sm leading-relaxed text-white">{report.fullStrategyReason}</p>
-        <p className="mt-2 text-sm text-white/70">What this means: this block does not show that the rules make money. It only says what the saved prices are allowed to be used for.</p>
+        <p className="mt-2 text-sm text-[var(--text-2)]">This block says what the saved prices are allowed to be used for.</p>
       </div>
       <p className="mt-4 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">{report.lookAhead}</p>
       <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--muted)]">{report.costNote}</p>

@@ -1,4 +1,5 @@
-import type { ComponentId, RegimeId } from './constants';
+import { THRESHOLDS, type ComponentId, type RegimeId } from './constants';
+import { sydneyClock } from './time';
 import type { FreshnessRow } from './types';
 
 export type OwnerAction = 'risk_budget_open' | 'do_nothing' | 'reduce_risk';
@@ -70,6 +71,9 @@ const FEED_PLAIN: Record<string, string> = {
   DGS2: 'US 2-year interest rate',
   DFEDTARU: 'US policy interest rate',
   DFF: 'US policy interest rate',
+  DFII10: 'US interest rate after inflation (10-yr)',
+  DTWEXBGS: 'US dollar vs trading partners',
+  'AUDUSD=X': 'A$ in US$',
   BAMLH0A0HYM2: 'Extra yield lenders demand from risky bonds',
   T10Y2Y: 'Gap between long and short US interest rates',
   USALOLITOAASTSAM: 'US growth indicator',
@@ -124,7 +128,7 @@ export function bookAudValue(input: {
 
 export function plainRegime(regime: RegimeId | null): { title: string; means: string } {
   if (regime === 'risk_on') {
-    return { title: 'Supportive', means: 'Conditions look easier than usual, so new buys can be considered.' };
+    return { title: 'Supportive', means: 'Money is flowing and lenders are relaxed. New buys are allowed inside the limits; each name must still pass its checks.' };
   }
   if (regime === 'tightening') {
     return { title: 'Cautious', means: 'Conditions look tighter than usual, so the plan favours defence and cash.' };
@@ -133,7 +137,7 @@ export function plainRegime(regime: RegimeId | null): { title: string; means: st
     return { title: 'Stressed', means: 'Conditions look dangerous, so the plan favours cash and cuts risky bets.' };
   }
   if (regime === 'transitional') {
-    return { title: 'Mixed', means: 'Conditions are neither clearly easy nor clearly tight, so the plan is to wait.' };
+    return { title: 'Mixed', means: `Not clearly good or bad for investors. The rules hold and wait. Buying restarts at a score of +${THRESHOLDS.riskOnEnter.toFixed(2)}.` };
   }
   return { title: 'No call', means: 'There is not enough current data to say what the market is doing.' };
 }
@@ -168,6 +172,19 @@ function cashLike(line: OwnerLine): boolean {
   return line.role === 'cash' || CASH.has(line.symbol);
 }
 
+export interface HeldSlice {
+  symbol: string;
+  name: string;
+  weight: number;
+  role?: OwnerLine['role'];
+}
+
+export interface SessionTrade {
+  symbol: string;
+  side: 'buy' | 'sell';
+  notionalAud: number;
+}
+
 export function todayAction(input: {
   actionable: boolean;
   action: OwnerAction;
@@ -175,53 +192,111 @@ export function todayAction(input: {
   lines: OwnerLine[];
   bookAud: number | null;
   pending?: { symbol: string; reason: string }[];
-}): { headline: string; steps: string[]; means: string } {
-  const sized = input.lines.filter((line) => line.weight > 0).slice().sort((a, b) => b.weight - a.weight);
-  const cash = sized.filter(cashLike);
-  const rest = sized.filter((line) => !cashLike(line));
-  const steps: string[] = [];
+  held?: HeldSlice[] | null;
+  trades?: SessionTrade[];
+  drawdown?: number | null;
+  composite?: number | null;
+  maxGross?: number | null;
+  maxNet?: number | null;
+  staleFeed?: string | null;
+}): { verb: 'HOLD' | 'BUY' | 'TRIM' | 'SELL' | 'PLAY SAFE'; headline: string; reason: string; steps: string[]; means: string } {
+  const planned = (input.held && input.held.length > 0)
+    ? input.held
+    : input.lines.filter((line) => line.weight > 0).map((line) => ({
+      symbol: line.symbol,
+      name: line.name,
+      weight: line.weight,
+      role: line.role,
+    }));
+  const cashRows = planned.filter((row) => row.symbol === 'CASH');
+  const holdings = planned.filter((row) => row.symbol !== 'CASH');
+  const cashWeight = cashRows.reduce((sum, row) => sum + row.weight, 0);
+  const investedWeight = holdings.reduce((sum, row) => sum + row.weight, 0);
+  const sells = (input.trades ?? []).filter((trade) => trade.side === 'sell');
+  const buys = (input.trades ?? []).filter((trade) => trade.side === 'buy');
   const open = input.actionable && input.action === 'risk_budget_open' && !input.halted;
-
-  const cashWeight = cash.reduce((sum, line) => sum + line.weight, 0);
-  if (cashWeight > 0) {
-    steps.push(`Hold cash and short-term government bonds, ${sizedAmount(cashWeight, input.bookAud)}.`);
-  }
-  for (const line of rest) {
-    const amount = sizedAmount(line.weight, input.bookAud);
-    const verb = !open
-      ? 'Hold'
-      : line.pyramid === 'add'
-        ? 'Buy more'
-        : line.pyramid === 'hold' || line.pyramid === 'no-add-loser'
-          ? 'Hold'
-          : 'Buy';
-    const joiner = verb === 'Hold' || input.bookAud == null ? ',' : ' for';
-    steps.push(`${verb} ${line.name} (${line.symbol})${joiner} ${amount}.`);
-  }
-  for (const item of input.pending ?? []) {
-    const name = input.lines.find((line) => line.symbol === item.symbol)?.name ?? item.symbol;
-    steps.push(`A change for ${name} (${item.symbol}) is waiting: ${item.reason}`);
-  }
-
-  let headline = 'Hold. Do not buy anything new today.';
-  if (input.halted) {
-    headline = 'Hold. The paper book is far enough below its high that new buys stay off until it recovers.';
-  } else if (!input.actionable) {
-    headline = 'Hold. Do not buy anything new until the data is current.';
-  } else if (input.action === 'reduce_risk') {
-    headline = 'Do not buy. Hold the defensive assets and cash already in the plan.';
-  } else if (open && rest.some((line) => line.pyramid !== 'hold' && line.pyramid !== 'no-add-loser')) {
-    headline = 'New buys are allowed today, inside the size limits.';
-  } else if (input.action === 'do_nothing') {
-    headline = 'Hold. Do not buy anything new today.';
-  }
-
+  const steps: string[] = [];
   const means = input.bookAud == null
     ? 'Percentages are shares of the paper book. Dollar amounts are left blank because this book has no Australian-dollar value.'
-    : 'Dollar amounts are that percentage times the Australian-dollar paper book. A suggested size of 0% is not an instruction to sell.';
+    : `A$ amounts use the paper book's value of ${audMoney(input.bookAud)}.`;
 
-  if (steps.length === 0) steps.push('Nothing is sized today. Cash is the position.');
-  return { headline, steps, means };
+  if (!input.actionable) {
+    return {
+      verb: 'PLAY SAFE',
+      headline: `PLAY SAFE — ${input.staleFeed ?? 'a key feed'} is missing or out of date. No buys, and the book can be trimmed back to 20% invested.`,
+      reason: 'A missing or old key feed makes the rules play safe.',
+      steps: holdings.length ? [`Keep the ${holdings.length} holdings already in the book.`] : ['No new buys.'],
+      means,
+    };
+  }
+  if (input.halted) {
+    const below = input.drawdown != null ? `${(input.drawdown * 100).toFixed(1)}%` : '10% or more';
+    return {
+      verb: 'HOLD',
+      headline: `HOLD — the book is ${below} below its high (limit 10%). New buys are paused; top-ups of winners are still allowed.`,
+      reason: 'The loss limit is on.',
+      steps: [`Keep the holdings already in the book. Buy nothing new.`],
+      means,
+    };
+  }
+
+  const score = input.composite == null ? 'unknown' : `${input.composite > 0 ? '+' : ''}${input.composite.toFixed(2)}`;
+  if (sells.length > 0 || (input.action === 'reduce_risk' && (input.pending?.length ?? 0) > 0)) {
+    const sold = sells.map((trade) => `${trade.symbol} ${input.bookAud == null ? '' : audMoney(trade.notionalAud)}`.trim());
+    const waiting = (input.pending ?? []).map((item) => `${item.symbol}: ${item.reason}`);
+    const cap = input.maxGross != null && input.maxNet != null
+      ? `cut back to ${bookPercent(input.maxGross)} invested / ${bookPercent(input.maxNet)} non-cash`
+      : 'cut the book back';
+    return {
+      verb: 'TRIM',
+      headline: `TRIM — ${cap}${sold.length ? `: sell ${sold.join(', ')}` : ''}.`,
+      reason: 'The rules are reducing the book.',
+      steps: waiting.length ? waiting : (sold.length ? sold.map((item) => `Sell ${item}.`) : ['Sell enough to get back inside the limits.']),
+      means,
+    };
+  }
+  if (open && (buys.length > 0 || input.lines.some((line) => line.weight > 0 && line.pyramid !== 'hold' && line.pyramid !== 'no-add-loser' && line.symbol !== 'CASH' && !cashLike(line)))) {
+    for (const line of input.lines.filter((item) => item.weight > 0 && item.symbol !== 'CASH')) {
+      const verb = line.pyramid === 'add' ? 'Top up' : line.pyramid === 'hold' || line.pyramid === 'no-add-loser' || cashLike(line) ? 'Hold' : 'Buy';
+      const joiner = verb === 'Hold' || input.bookAud == null ? ',' : ' for';
+      steps.push(`${verb} ${line.name} (${line.symbol})${joiner} ${sizedAmount(line.weight, input.bookAud)}.`);
+    }
+    return {
+      verb: 'BUY',
+      headline: 'New buys are allowed today, inside the size limits.',
+      reason: 'The market mood is Supportive and each named buy passed its checks.',
+      steps: steps.length ? steps : ['Buy only the names that passed every check.'],
+      means,
+    };
+  }
+  if (holdings.length === 0 && cashWeight >= 0.999) {
+    return {
+      verb: 'HOLD',
+      headline: 'Cash is the position.',
+      reason: 'The book is entirely cash.',
+      steps: [`Keep ${input.bookAud == null ? 'the cash' : audMoney(cashWeight * input.bookAud)} in cash.`],
+      means,
+    };
+  }
+  if (holdings.length > 0) {
+    steps.push(`Keep all ${holdings.length} holdings as they are (${input.bookAud == null ? bookPercent(investedWeight) : `${audMoney(investedWeight * input.bookAud)}, ${bookPercent(investedWeight)} of the book`}). Buy nothing. Sell nothing.`);
+    if (cashWeight > 0 && input.bookAud != null) steps.push(`Keep ${audMoney(cashWeight * input.bookAud)} in cash.`);
+    else if (input.bookAud != null && investedWeight < 0.999) steps.push(`Keep ${audMoney((1 - investedWeight) * input.bookAud)} in cash.`);
+    return {
+      verb: 'HOLD',
+      headline: 'No buys, no sells today.',
+      reason: `Reason: no clear market signal (score ${score}; buys need +${THRESHOLDS.riskOnEnter.toFixed(2)}).`,
+      steps,
+      means,
+    };
+  }
+  return {
+    verb: 'HOLD',
+    headline: 'Cash is the position.',
+    reason: `Reason: no clear market signal (score ${score}; buys need +${THRESHOLDS.riskOnEnter.toFixed(2)}).`,
+    steps: ['Buy nothing. Sell nothing.'],
+    means,
+  };
 }
 
 export function holdingsNow(input: {
@@ -246,10 +321,18 @@ export function holdingsNow(input: {
         ? 'cash'
         : (names[row.symbol] ?? input.lines.find((line) => line.symbol === row.symbol)?.name ?? row.symbol)
     ));
+    const cashRow = ranked.find((row) => row.symbol === 'CASH');
+    const namesOnly = ranked.filter((row) => row.symbol !== 'CASH');
+    const cashAud = cashRow && input.bookAud != null ? audMoney(cashRow.weight * input.bookAud) : null;
+    const invested = namesOnly.reduce((sum, row) => sum + row.weight, 0);
+    const investedAud = input.bookAud != null ? audMoney(invested * input.bookAud) : null;
+    const atCap = input.exposures != null && input.exposures.gross >= input.exposures.maxGross - 0.005;
     return {
-      sentence: `The paper book holds ${joinAnd(labels)}.`,
+      sentence: cashAud && investedAud
+        ? `${cashAud} in cash (${cashRow ? bookPercent(cashRow.weight) : ''}) and ${namesOnly.length} holdings worth ${investedAud} (${bookPercent(invested)}${atCap ? ', the most allowed today' : ''}).`
+        : `The paper book holds ${joinAnd(labels)}.`,
       items,
-      means: 'This list is the shares recorded in the Australian-dollar paper book.',
+      means: '',
     };
   }
 
@@ -295,21 +378,15 @@ export function performanceSinceStart(input: {
   }
   const delta = input.equity - input.capital;
   const direction = delta > 1 ? 'up' : delta < -1 ? 'down' : 'flat';
+  const signed = `${delta > 0 ? '+' : ''}${((delta / input.capital) * 100).toFixed(2)}%`;
+  const verb = direction === 'down' ? 'Down' : direction === 'flat' ? 'Flat' : 'Up';
+  const amount = `${verb} ${audMoney(Math.abs(delta))} (${signed})`;
   const pace = input.realisedText === 'Not enough history yet'
-    ? 'There is not enough history yet to turn that into a yearly pace.'
-    : `The yearly pace so far is ${input.realisedText}.`;
-  const dip = input.drawdown != null && input.drawdown > 0
-    ? ` It is ${bookPercent(input.drawdown)} below its highest value.`
-    : '';
-  const compare = input.comparable
-    ? ''
-    : ' Stored marks that are labelled not comparable are not used as this result.';
-  const from = direction === 'flat'
-    ? `worth ${audMoney(input.equity)}, the same as the ${audMoney(input.capital)} put in`
-    : `${direction}, at ${audMoney(input.equity)} from ${audMoney(input.capital)} put in`;
+    ? 'There are not enough marks yet for a yearly rate.'
+    : `Yearly rate so far ${input.realisedText}.`;
   return {
-    sentence: `Since it started, the paper book is ${from}. ${pace}${dip}${compare}`,
-    means: 'Yearly pace compounds the saved paper values. It is the result so far, not a forecast and not a target.',
+    sentence: `${amount} from ${audMoney(input.capital)} put in. ${pace}`,
+    means: '',
   };
 }
 
@@ -317,36 +394,39 @@ export function performanceSinceStart(input: {
  * One honest line from the research file. Status words come from that file.
  * No return figure is copied in, so a target or a backtest number cannot leak into the summary.
  */
+export interface ReplaySummary {
+  start?: string | null;
+  end?: string | null;
+  cagr?: number | null;
+  maxDrawdown?: number | null;
+}
+
 export function trustLine(input: {
   verdict: string | null;
   fullStrategy: string | null;
   h1: string | null;
+  rules?: ReplaySummary | null;
+  spy?: ReplaySummary | null;
+  mix?: ReplaySummary | null;
 }): string {
-  const h1 = (input.h1 ?? '').trim().toLowerCase();
-  const verdict = (input.verdict ?? '').trim().toLowerCase();
-  const strategy = (input.fullStrategy ?? '').trim().toLowerCase();
-  if (h1 === 'unsupported' || h1 === 'fail' || h1 === 'failed') {
-    return 'These rules have not yet beaten a simple index fund on the tested history. Treat sizes as a starting point.';
+  const rules = input.rules;
+  const spy = input.spy;
+  if (rules?.cagr != null && rules.maxDrawdown != null && spy?.cagr != null && spy.maxDrawdown != null) {
+    const window = rules.start && rules.end ? ` (${rules.start.slice(0, 7)}–${rules.end.slice(0, 7)})` : '';
+    const mix = input.mix?.cagr != null && input.mix.maxDrawdown != null
+      ? ` A 60/40 mix of the S&P 500 and cash made ${(input.mix.cagr * 100).toFixed(1)}% a year with a worst fall of ${(input.mix.maxDrawdown * 100).toFixed(1)}%.`
+      : '';
+    return `Not proven yet. In a 2-year replay${window} the rules made about ${(rules.cagr * 100).toFixed(1)}% a year with a worst fall of ${(rules.maxDrawdown * 100).toFixed(1)}%. The S&P 500 with the same deposits made ${(spy.cagr * 100).toFixed(1)}% a year with a worst fall of ${(spy.maxDrawdown * 100).toFixed(1)}%.${mix} Much steadier so far, but it earned less.`;
   }
-  if (h1 === 'supported' || h1 === 'pass' || h1 === 'passed') {
-    return 'On the tested history these rules beat a simple index fund on the written test. That test is not a forecast. Treat sizes as a starting point.';
-  }
-  if (verdict === 'inconclusive' || strategy.includes('not_validated') || h1 === 'not_tested' || h1 === '') {
-    return 'These rules have not been shown to beat a simple index fund. The research verdict is still open. Treat sizes as a starting point.';
-  }
-  const status = (input.h1 ?? input.verdict ?? 'unsettled').replaceAll('_', ' ');
-  return `The research file marks this comparison as ${status}. Treat sizes as a starting point.`;
+  return 'Not proven yet. Sizes follow the written rules.';
 }
 
 export function researchPlain(input: { h1: string | null; h2: string | null }): string {
-  const test = (id: string, status: string | null, question: string) => {
-    if (!status) return `${id} was not in the research file.`;
-    return `${id} is marked ${status.replaceAll('_', ' ')}. ${question}`;
-  };
-  return [
-    test('Test 1', input.h1, 'It asks whether these rules beat a simple index fund after costs.'),
-    test('Test 2', input.h2, 'It asks whether dropping the sit-tight rule changes how often money is invested.'),
-  ].join(' ');
+  const replay = [
+    input.h1 ? `The 2-year replay marks the index-fund test ${input.h1.replaceAll('_', ' ')}.` : 'The 2-year replay is the result to read.',
+    input.h2 ? `The sit-tight test is ${input.h2.replaceAll('_', ' ')}.` : '',
+  ].filter(Boolean).join(' ');
+  return `${replay} The older file is an earlier data-availability check (no returns calculated).`;
 }
 
 export function componentPlain(id: ComponentId, z: number | null): { title: string; means: string } {
@@ -361,17 +441,19 @@ export function componentPlain(id: ComponentId, z: number | null): { title: stri
   return { title: copy.title, means: `${lean} ${copy.about}` };
 }
 
-export function budgetMeans(kind: 'swing' | 'whole' | 'outside', value: number, tightened: boolean): string {
+export function budgetMeans(kind: 'swing' | 'whole' | 'outside', value: number, tightened: boolean, usual?: number | null): string {
   const size = bookPercent(value);
+  const lower = usual != null && value < usual - 1e-9;
+  const tighter = tightened && lower ? ` Tighter than usual (normally ${bookPercent(usual as number)}).` : '';
   if (kind === 'swing') {
-    return `The rules try to keep the book’s yearly up-and-down near ${size}. ${tightened ? 'That limit is tighter than usual today.' : 'This is a risk limit, not a return target.'}`;
+    return `Each new holding is sized so the book should move about ${size} a year. Calmer funds get bigger sizes.${tighter}`;
   }
   if (kind === 'whole') {
-    return `All holdings except the cash sitting in the account can add up to ${size} of the book.`;
+    return `Invested (everything except plain cash) can add up to ${size} of the book.${tighter}`;
   }
   return value === 0
-    ? 'Nothing new is allowed outside cash and short-term government bonds.'
-    : `Holdings that are not cash or short-term government bonds can add up to ${size} of the book.`;
+    ? 'Nothing new is allowed outside cash and cash-like funds.'
+    : `Non-cash (invested minus SHY, AAA.AX and BILL.AX) can add up to ${size} of the book.${tighter}`;
 }
 
 export function sydneyWhen(value: string | null): string {
@@ -384,16 +466,9 @@ export function sydneyWhen(value: string | null): string {
       month: 'short',
       year: 'numeric',
     }).format(new Date(Date.UTC(year, month - 1, day)));
-    return `${formatted} (the day this figure describes)`;
+    return formatted;
   }
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  const formatted = new Intl.DateTimeFormat('en-AU', {
-    timeZone: 'Australia/Sydney',
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(date);
-  return `${formatted} Sydney time`;
+  return sydneyClock(value);
 }
 
 function statusMeans(status: FeedStatus, error: string | null): string {
@@ -440,7 +515,7 @@ export function describeFeeds(input: {
     const downloaded = source?.fetchedAt ? ` Downloaded ${sydneyWhen(source.fetchedAt)}.` : '';
     lines.push({
       id: row.id,
-      name: names[row.id] ?? FEED_PLAIN[row.id] ?? row.label,
+      name: names[row.id] ?? FEED_PLAIN[row.id] ?? (row.id.startsWith('CFTC-') ? 'Trader positioning report' : row.label),
       source: row.source,
       updated: `${sydneyWhen(observed)}.${downloaded}`.trim(),
       status,
@@ -535,3 +610,72 @@ export function ageInWords(ageDays: number | null): string {
   if (ageDays === 1) return '1 day old';
   return `${ageDays} days old`;
 }
+
+export function whyLine(components: { id: string; title: string; z: number | null; weight: number }[]): string {
+  const live = components.filter((item) => item.z != null && Number.isFinite(item.z));
+  if (live.length === 0) return 'The score has no pieces today.';
+  const ranked = live.slice().sort((a, b) => Math.abs((b.z as number) * b.weight) - Math.abs((a.z as number) * a.weight));
+  const drag = ranked.find((item) => (item.z as number) < 0);
+  const help = ranked.find((item) => (item.z as number) > 0);
+  const bit = (item: { title: string; z: number | null } | undefined, role: string) => {
+    if (!item || item.z == null) return null;
+    return `${item.title} ${role} (${item.z > 0 ? '+' : ''}${item.z.toFixed(2)})`;
+  };
+  const parts = [bit(drag, 'is the biggest drag'), bit(help, 'is the biggest help')].filter((item): item is string => Boolean(item));
+  return parts.length ? `${parts.join('; ')}.` : 'The pieces are close to normal.';
+}
+
+export function distanceToBuy(input: { composite: number | null; liquidity: number | null }): string {
+  const score = input.composite == null ? 'unknown' : `${input.composite > 0 ? '+' : ''}${input.composite.toFixed(2)}`;
+  const liq = input.liquidity == null ? 'unknown' : `${input.liquidity > 0 ? '+' : ''}${input.liquidity.toFixed(2)}`;
+  const gap = input.composite == null ? '' : ` It needs +${Math.max(0, THRESHOLDS.riskOnEnter - input.composite).toFixed(2)} more.`;
+  return `Buying restarts at +${THRESHOLDS.riskOnEnter.toFixed(2)} (today ${score}).${gap} Money in the system must be +${THRESHOLDS.riskOnLiquidityMin.toFixed(2)} or more (today ${liq}). A fall to ${THRESHOLDS.tightEnter.toFixed(2)} would switch the mood to Cautious.`;
+}
+
+export function plainReading(id: ComponentId, reading: string): string {
+  if (id === 'liquidity') {
+    const match = reading.match(/(-?\$[\d.]+bn)/);
+    if (match) {
+      const down = match[1].startsWith('-') || reading.includes('−');
+      return `US money in the system ${down ? 'fell' : 'rose'} ${match[1].replace('-', '')} over 13 weeks`;
+    }
+  }
+  if (id === 'policy') {
+    const match = reading.match(/(-?[\d.]+)\s*pp/);
+    if (match) return `The 2-year rate is ${match[1].replace('-', '')} points ${Number(match[1]) < 0 ? 'below' : 'above'} the Fed rate`;
+  }
+  if (id === 'credit') {
+    const match = reading.match(/([\d.]+)%/);
+    if (match) return `Risky-bond extra yield: ${match[1]}%`;
+  }
+  if (id === 'growth') return reading
+    .replace('Curve', 'Long rates')
+    .replace('pp', 'points')
+    .replace('US−AU CLI', 'US growth outlook versus Australia');
+  if (id === 'positioning') return 'Speculators lean against the crowd in the futures markets';
+  if (id === 'ai') return 'Chip shares, market breadth, and factory output, blended into the AI spending score';
+  return reading;
+}
+
+export const GLOSSARY: { term: string; means: string }[] = [
+  { term: 'Market score', means: 'One number for how easy (+) or hard (−) conditions are. 0 is normal, ±1 is noticeably unusual, ±2 is rare.' },
+  { term: 'Supportive', means: 'Score of +0.65 or more, with money flowing. Buys are allowed.' },
+  { term: 'Mixed', means: 'Between Cautious and Supportive. Hold, and buy nothing new.' },
+  { term: 'Cautious', means: 'Score of −0.75 or lower. Defensive holdings only.' },
+  { term: 'Stressed', means: 'Score of −1.75 or lower. Mostly cash.' },
+  { term: 'No clear signal', means: 'Score between −0.35 and +0.35. Too close to normal to act on.' },
+  { term: 'Invested', means: 'Everything except plain cash. Cash-like funds still count.' },
+  { term: 'Non-cash', means: 'Invested minus the cash-like funds SHY, AAA.AX and BILL.AX.' },
+  { term: '200-day average', means: 'The average price over about 10 months. Above it means an uptrend.' },
+  { term: 'Past-year trend', means: 'Price 1 month ago versus 12 months ago. The latest month is skipped.' },
+  { term: 'Sudden spike', means: 'The last 5 days moved unusually far, so wait.' },
+  { term: 'Sell-stop', means: 'The automatic sell price, 2.5 typical daily moves below the buy price.' },
+  { term: 'Top-up', means: 'One extra buy, allowed only after the holding gains as much as it was risking.' },
+  { term: 'Loss limit', means: 'New buys pause if the book falls 10% from its high.' },
+  { term: 'Theme', means: 'A story basket (AI build-out, Crypto, Scarcity) with a written on/off rule.' },
+  { term: 'Buy', means: 'All checks passed and there is room.' },
+  { term: 'Hold', means: 'You own it. Keep it.' },
+  { term: 'Watch', means: 'Not owned, and something is in the way.' },
+  { term: 'Avoid', means: 'This group is not bought in today’s mood.' },
+  { term: 'Fresh / Stale / Missing', means: 'Whether a figure is new enough to act on.' },
+];

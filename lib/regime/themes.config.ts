@@ -19,7 +19,7 @@ export const THEME_CHANGELOG: ThemeChangelogEntry[] = [
   {
     version: '2026-Q4.2',
     date: '2026-11-04',
-    note: 'Scarcity now includes GOLD.AX with GLD and SLV, so the ASX gold ETF reads the same live switch as the US listing. Bonds such as IEF and VAF.AX stay outside every theme. The weekly job still cannot edit this list.',
+    note: 'Scarcity: GLD, GOLD.AX, SLV, BTC. The ASX gold ETF reads the same live switch as the US listing. Bonds such as IEF and VAF.AX stay outside every theme. The weekly job still cannot edit this list.',
   },
 ];
 
@@ -45,7 +45,7 @@ export const THEMES: ThemeConfig[] = [
     id: 'ai-infrastructure',
     label: 'AI infrastructure',
     enabled: true,
-    objective: 'On when the AI capex component z-score is rising versus the prior print. Semiconductors, power, and data-centre landlords are the same buildout.',
+    objective: 'On when the AI spending score rose since its last reading.',
     symbols: [
       { symbol: 'SMH', name: 'Semiconductors', yahoo: 'SMH', kind: 'etf' },
       { symbol: 'XLU', name: 'Utilities / power', yahoo: 'XLU', kind: 'etf' },
@@ -57,7 +57,7 @@ export const THEMES: ThemeConfig[] = [
     id: 'crypto',
     label: 'Crypto',
     enabled: true,
-    objective: 'On when Bitcoin is above its 200-day average and the liquidity component z-score is rising. Both have to be true.',
+    objective: 'On when Bitcoin is above its 200-day average and money in the system is rising.',
     symbols: [
       { symbol: 'BTC-USD', name: 'Bitcoin', yahoo: 'BTC-USD', kind: 'crypto' },
       { symbol: 'ETH-USD', name: 'Ether', yahoo: 'ETH-USD', kind: 'crypto' },
@@ -68,7 +68,7 @@ export const THEMES: ThemeConfig[] = [
     id: 'scarcity',
     label: 'Scarcity',
     enabled: true,
-    objective: 'On when the 10-year real yield (FRED DFII10) is falling, or the trade-weighted dollar (FRED DTWEXBGS) is weakening. Either one is enough.',
+    objective: 'On when US interest rates after inflation, or the US dollar, dipped on their latest reading. Either is enough. (FRED DFII10, DTWEXBGS)',
     symbols: [
       { symbol: 'GLD', name: 'Gold', yahoo: 'GLD', kind: 'etf' },
       { symbol: 'GOLD.AX', name: 'ASX physical gold', yahoo: 'GOLD.AX', kind: 'etf' },
