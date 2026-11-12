@@ -1,6 +1,7 @@
 import type { PaperMarkPayload } from '@/lib/regime/paperLog';
 import {
   bookAudValue,
+  bookParts,
   describeFeeds,
   distanceToBuy,
   GLOSSARY,
@@ -157,9 +158,7 @@ export function OwnerBrief({
   const trust = trustLine({ verdict, fullStrategy, h1, rules, spy, mix });
   const previous = snapshot.history.length > 1 ? snapshot.history[snapshot.history.length - 2]?.composite ?? null : null;
   const exposures = desk.paperLedger?.exposures ?? null;
-  const cashLikeWeight = (weights ?? [])
-    .filter((row) => row.symbol === 'SHY' || row.symbol === 'AAA.AX' || row.symbol === 'BILL.AX')
-    .reduce((sum, row) => sum + row.weight, 0);
+  const parts = bookParts({ weights, exposures });
   const components = snapshot.components.map((item) => ({
     id: item.id,
     title: item.id === 'liquidity' ? 'Money in the system'
@@ -240,18 +239,18 @@ export function OwnerBrief({
         {exposures ? (
           <div className="mt-5 grid gap-5">
             <CapBars
-              invested={exposures.gross}
+              invested={parts.invested}
               investedCap={exposures.maxGross}
               investedUsual={snapshot.modelBudget?.maxGross ?? null}
-              nonCash={exposures.net}
+              nonCash={parts.nonCash}
               nonCashCap={exposures.maxNet}
               nonCashUsual={snapshot.modelBudget?.maxNet ?? null}
             />
             <AllocationBar
-              cash={exposures.cash}
-              cashLike={cashLikeWeight}
-              defensive={Math.max(0, exposures.defensive)}
-              risk={Math.max(0, exposures.risk)}
+              cash={parts.cash}
+              cashLike={parts.cashLike}
+              defensive={parts.defensive}
+              risk={parts.risk}
             />
           </div>
         ) : null}

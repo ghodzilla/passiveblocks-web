@@ -36,6 +36,58 @@ export interface FeedLine {
 }
 
 const CASH = new Set(['SHY', 'AAA.AX', 'BILL.AX', 'CASH']);
+const CASH_LIKE = ['SHY', 'AAA.AX', 'BILL.AX'];
+
+export interface BookParts {
+  cash: number;
+  cashLike: number;
+  defensive: number;
+  risk: number;
+  invested: number;
+  nonCash: number;
+}
+
+/**
+ * One split for the sentence, the invested bar and the allocation bar.
+ * Invested is the engine's gross (everything except the cash balance) when that
+ * exists, so a mismatched weight list cannot print a different total.
+ * Cash-like funds sit inside invested and outside non-cash. They are not added again as defensive.
+ */
+export function bookParts(input: {
+  weights: { symbol: string; weight: number }[] | null;
+  exposures: Pick<OwnerExposure, 'gross' | 'net' | 'risk' | 'defensive' | 'cash'> | null;
+}): BookParts {
+  const weights = input.weights ?? [];
+  const cashLikeWeights = weights
+    .filter((row) => CASH_LIKE.includes(row.symbol))
+    .reduce((sum, row) => sum + row.weight, 0);
+  const holdingsWeight = weights
+    .filter((row) => row.symbol !== 'CASH')
+    .reduce((sum, row) => sum + row.weight, 0);
+  const exp = input.exposures;
+  const invested = exp ? exp.gross : holdingsWeight;
+  const nonCash = exp ? exp.net : Math.max(0, holdingsWeight - cashLikeWeights);
+  const cash = exp
+    ? exp.cash
+    : (weights.find((row) => row.symbol === 'CASH')?.weight ?? Math.max(0, 1 - invested));
+  const cashLike = exp ? Math.max(0, exp.gross - exp.net) : cashLikeWeights;
+  const room = Math.max(0, invested - cashLike);
+  let defensive = exp?.defensive ?? room;
+  let risk = exp?.risk ?? 0;
+  const bucket = defensive + risk;
+  if (!(room > 0)) {
+    defensive = 0;
+    risk = 0;
+  } else if (!(bucket > 0)) {
+    defensive = room;
+    risk = 0;
+  } else if (Math.abs(bucket - room) > 1e-6) {
+    const scale = room / bucket;
+    defensive *= scale;
+    risk *= scale;
+  }
+  return { cash, cashLike, defensive, risk, invested, nonCash };
+}
 
 const COMPONENT_PLAIN: Record<ComponentId, { title: string; about: string }> = {
   liquidity: {
@@ -324,9 +376,12 @@ export function holdingsNow(input: {
     const cashRow = ranked.find((row) => row.symbol === 'CASH');
     const namesOnly = ranked.filter((row) => row.symbol !== 'CASH');
     const cashAud = cashRow && input.bookAud != null ? audMoney(cashRow.weight * input.bookAud) : null;
-    const invested = namesOnly.reduce((sum, row) => sum + row.weight, 0);
+    const parts = bookParts({ weights: held, exposures: input.exposures });
+    const invested = parts.invested;
     const investedAud = input.bookAud != null ? audMoney(invested * input.bookAud) : null;
-    const atCap = input.exposures != null && input.exposures.gross >= input.exposures.maxGross - 0.005;
+    const atCap = input.exposures != null
+      && invested <= input.exposures.maxGross + 0.005
+      && invested >= input.exposures.maxGross - 0.005;
     return {
       sentence: cashAud && investedAud
         ? `${cashAud} in cash (${cashRow ? bookPercent(cashRow.weight) : ''}) and ${namesOnly.length} holdings worth ${investedAud} (${bookPercent(invested)}${atCap ? ', the most allowed today' : ''}).`

@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 import type { FreshnessRow } from './types';
 import {
   bookAudValue,
+  bookParts,
   budgetMeans,
   componentPlain,
   describeFeeds,
@@ -128,6 +129,51 @@ describe('owner brief', () => {
     assert.match(suggested.sentence, /split of the paper book/);
     assert.equal(suggested.items.some((item) => item.includes('QQQ')), false);
     assert.match(suggested.items.join(' '), /Cash in the account: 60%/);
+  });
+
+  it('uses one invested figure for the holdings total, the bar and the allocation', () => {
+    const weights = [
+      { symbol: 'CASH', weight: 0.599 },
+      { symbol: 'SHY', weight: 0.101 },
+      { symbol: 'AAA.AX', weight: 0.1 },
+      { symbol: 'BILL.AX', weight: 0.1 },
+      { symbol: 'UUP', weight: 0.022 },
+      { symbol: 'XLRE', weight: 0.021 },
+      { symbol: 'USMV', weight: 0.021 },
+      { symbol: 'XLP', weight: 0.018 },
+      { symbol: 'XLV', weight: 0.018 },
+    ];
+    const exposures = { gross: 0.401, net: 0.1, risk: 0, defensive: 0.1, cash: 0.599, maxGross: 0.4, maxNet: 0.2 };
+    const parts = bookParts({ weights, exposures });
+    const holdings = weights.filter((row) => row.symbol !== 'CASH').reduce((sum, row) => sum + row.weight, 0);
+    assert.ok(Math.abs(parts.invested - holdings) < 1e-9);
+    assert.ok(Math.abs(parts.invested - exposures.gross) < 1e-9);
+    assert.ok(Math.abs(parts.cash + parts.cashLike + parts.defensive + parts.risk - 1) < 1e-9);
+    assert.ok(Math.abs(parts.cashLike + parts.defensive + parts.risk - parts.invested) < 1e-9);
+    assert.ok(parts.defensive < parts.cashLike);
+    const held = holdingsNow({
+      lines: weights.filter((row) => row.symbol !== 'CASH').map((row) => line(row.symbol, row.symbol, 0)),
+      exposures,
+      heldWeights: weights,
+      heldBasis: 'held-book',
+      bookAud: 100_464,
+    });
+    assert.match(held.sentence, /\$40,286/);
+    assert.match(held.sentence, /40\.1%/);
+    assert.equal(held.sentence.includes('49.3%'), false);
+    const overstated = weights.map((row) => (row.symbol === 'SHY' ? { ...row, weight: 0.191 } : row));
+    const mismatched = bookParts({ weights: overstated, exposures });
+    assert.ok(Math.abs(mismatched.invested - 0.401) < 1e-9);
+    assert.ok(Math.abs(mismatched.cash + mismatched.cashLike + mismatched.defensive + mismatched.risk - 1) < 1e-6);
+    const mismatchedHeld = holdingsNow({
+      lines: overstated.filter((row) => row.symbol !== 'CASH').map((row) => line(row.symbol, row.symbol, 0)),
+      exposures,
+      heldWeights: overstated,
+      heldBasis: 'held-book',
+      bookAud: 100_464,
+    });
+    assert.match(mismatchedHeld.sentence, /40\.1%/);
+    assert.equal(mismatchedHeld.sentence.includes('49.3%'), false);
   });
 
   it('reports the paper result without turning the aim into a forecast', () => {
