@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { actionFor, budgetsFor } from './classify';
 import { auditRegime } from './consistency';
-import { componentPeriodNote, plainZ, regimeWaitCopy, seriesCadence, todayInOneLine, waitingOnRegime } from './plain';
+import { componentPeriodNote, plainZ, regimeWaitCopy, seriesCadence, waitingOnRegime } from './plain';
 import { selfCheckFromReport } from './selfcheck';
 import { buildDesk } from './desk';
 import { ideaGates, verdictFromGates } from './gates';
@@ -48,7 +48,10 @@ describe('idea gates', () => {
       halted: false,
       pyramid: 'new',
     });
-    assert.equal(verdictFromGates(gates, 'prefer'), 'Watching: theme on, but price is below its 200-day average');
+    const verdict = verdictFromGates(gates, 'prefer');
+    assert.match(verdict, /price is below its 200-day average/);
+    assert.match(verdict, /Scarcity is on|1 thing/);
+    assert.doesNotMatch(verdict, /theme on/);
     assert.equal(gates.find((gate) => gate.id === 'theme')?.pass, true);
     assert.equal(gates.find((gate) => gate.id === 'trend')?.pass, false);
   });
@@ -64,7 +67,8 @@ describe('idea gates', () => {
       halted: false,
       pyramid: 'new',
     });
-    assert.equal(verdictFromGates(gates, 'avoid'), 'Avoid. the AI infrastructure theme is off.');
+    assert.match(verdictFromGates(gates, 'avoid'), /^Avoid —/);
+    assert.doesNotMatch(verdictFromGates(gates, 'avoid'), /theme on/);
     const both = ideaGates({
       themes: [
         { id: 'crypto', label: 'Crypto', on: false },
@@ -78,7 +82,9 @@ describe('idea gates', () => {
       halted: false,
       pyramid: 'new',
     });
-    assert.equal(verdictFromGates(both, null), 'Watching: the Crypto and Scarcity themes are off.');
+    const bothVerdict = verdictFromGates(both, null);
+    assert.match(bothVerdict, /Crypto and Scarcity themes are off/);
+    assert.match(bothVerdict, /things in the way/);
     const preferred = ideaGates({
       themes: [{ id: 'ai-infrastructure', label: 'AI infrastructure', on: false }],
       stance: 'prefer',
@@ -105,7 +111,9 @@ describe('idea gates', () => {
       pyramid: 'new',
     });
     assert.match(gates[0].detail, /^No theme/);
-    assert.equal(verdictFromGates(gates, 'prefer'), 'Watching: no theme basket, but price is below its 200-day average');
+    const bondVerdict = verdictFromGates(gates, 'prefer');
+    assert.match(bondVerdict, /price is below its 200-day average/);
+    assert.doesNotMatch(bondVerdict, /theme on/);
   });
 
   it('does not confirm a name when momentum and trend are both retired', () => {
@@ -207,7 +215,8 @@ describe('published regime view', () => {
     const ief = view.desk.lines.find((line) => line.symbol === 'IEF');
     assert.equal(gld?.theme, 'scarcity');
     assert.equal(gold?.theme, 'scarcity');
-    assert.match(gld?.verdict ?? '', /Watching: theme on, but price is below its 200-day average/);
+    assert.match(gld?.verdict ?? '', /below its 200-day/);
+    assert.doesNotMatch(gld?.verdict ?? '', /theme on/);
     assert.equal(gld?.weight, 0);
     assert.notEqual(gld?.status, 'confirmed');
     assert.match(ief?.gates[0].detail ?? '', /^No theme/);
@@ -268,19 +277,10 @@ describe('plain English', () => {
       { symbol: 'AAA.AX', name: 'Cash', role: 'cash' as const, weight: 0.1, verdict: 'Confirmed', gates: gates(true, false) },
     ];
     assert.deepEqual(waitingOnRegime(lines).map((line) => line.symbol), ['ETH-USD']);
-    const line = todayInOneLine({
-      action: 'do_nothing',
-      actionable: true,
-      lines,
-      themes: [
-        { id: 'crypto', label: 'Crypto', on: true, lines: [{ weight: 0 }] },
-        { id: 'scarcity', label: 'Scarcity', on: true, lines: [{ weight: 0 }] },
-      ],
-    });
-    assert.match(line, /^Sit tight: hold cash and T-bills\./);
-    assert.match(line, /Crypto and gold are on watch/);
-    assert.match(regimeWaitCopy({ action: 'do_nothing', actionable: true, weak: true, regimeLabel: 'Transitional' }), /above \+0\.35 into Risk-On/);
-    assert.match(regimeWaitCopy({ action: 'do_nothing', actionable: true, weak: true, regimeLabel: 'Transitional' }), /Transitional/);
+    const wait = regimeWaitCopy({ action: 'do_nothing', actionable: true, weak: true, regimeLabel: 'Transitional', composite: -0.2, liquidity: -0.2 });
+    assert.match(wait, /\+0\.65/);
+    assert.match(wait, /\+0\.10/);
+    assert.doesNotMatch(wait, /above \+0\.35 into Risk-On/);
   });
 
   it('does not label a blended score with only the older monthly date', () => {

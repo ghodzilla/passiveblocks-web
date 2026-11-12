@@ -23,6 +23,17 @@
   --status-warn: #fbbf24;
   --status-danger: #f87171;
   --status-neutral: #94a3b8;
+  --call-buy: #34d399;
+  --call-hold: #60a5fa;
+  --call-watch: #fbbf24;
+  --call-caution: #f59e0b;
+  --call-sell: #f87171;
+  --call-off: #94a3b8;
+  --surface-1: #0f1017;
+  --surface-2: #161824;
+  --text-1: #f4f4f5;
+  --text-2: #c4c4cc;
+  --text-3: #9a9aa8;
 
   /* Radius */
   --radius-sm: 8px;
