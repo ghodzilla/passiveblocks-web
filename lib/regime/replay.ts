@@ -743,6 +743,11 @@ export function walkAudPaper(input: {
   panel?: (date: string) => VintagePanel;
   oneWayBps?: number;
   contribute: (date: string, index: number) => number;
+  /**
+   * Research replay only. Unset keeps the live credit window
+   * (756 observations, minimum 252).
+   */
+  creditWindow?: { window: number; min: number };
 }): { points: NavPoint[]; missing: string[]; days: AudDay[]; heldSymbols: string[]; ledger: BookLedger; binding: BindingAudit | null } {
   const fx = input.book.series.find((series) => series.symbol === 'AUDUSD=X');
   const oneWay = (input.oneWayBps ?? REPLAY_ONE_WAY_BPS) / 10_000;
@@ -799,7 +804,11 @@ export function walkAudPaper(input: {
   for (let index = 0; index < input.dates.length; index++) {
     const date = input.dates[index];
     const panel = input.panel?.(date);
-    const produced = panel ? snapshotFromBundle(bundleFromPanel(panel, input.book)) : priceOnlySnapshot(date);
+    const produced = panel
+      ? snapshotFromBundle(input.creditWindow
+        ? { ...bundleFromPanel(panel, input.book), creditWindow: input.creditWindow }
+        : bundleFromPanel(panel, input.book))
+      : priceOnlySnapshot(date);
     const snapshot = input.mode === 'price_only'
       ? {
         ...produced,

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { snapshotFromBundle, type DataBundle } from './assemble';
 import { actionFor, budgetsFor, classifyRegime } from './classify';
-import { BASE_WEIGHTS, COMPONENT_IDS, MODEL_BUDGET, THRESHOLDS } from './constants';
+import { BASE_WEIGHTS, COMPONENT_IDS, MODEL_BUDGET, THRESHOLDS, WINDOWS } from './constants';
 import { buildModel, weightedComposite, type ModelInput } from './model';
 import {
   netLiquidityMillions,
@@ -149,6 +149,24 @@ describe('series transforms', () => {
       },
     ]), [{ date: '2024-01-02', value: 0.1 }]);
     assert.deepEqual(parseCotNetOi({ error: true }), []);
+  });
+});
+
+describe('credit window', () => {
+  it('keeps the live 756-observation credit window unless a research replay passes an override', () => {
+    assert.equal(WINDOWS.credit.window, 756);
+    assert.equal(WINDOWS.credit.min, 252);
+    const values = Array.from({ length: 400 }, (_, index) => (index < 300 ? 0 : 1));
+    const creditEase = dated('2022-01-01', 1, values);
+    const live = buildModel(modelInput({ creditEase }));
+    const research = buildModel(modelInput({ creditEase, creditWindow: { window: 252, min: 252 } }));
+    const creditZ = (snapshot: ReturnType<typeof buildModel>) => snapshot.components.find((component) => component.id === 'credit')?.z ?? null;
+    const expectedLive = zScoreLatest(values, 756, 252);
+    const expectedShort = zScoreLatest(values, 252, 252);
+    assert.notEqual(expectedLive, expectedShort);
+    assert.ok(expectedLive != null && expectedShort != null);
+    assert.ok(Math.abs((creditZ(live) ?? NaN) - expectedLive) < 1e-9);
+    assert.ok(Math.abs((creditZ(research) ?? NaN) - expectedShort) < 1e-9);
   });
 });
 

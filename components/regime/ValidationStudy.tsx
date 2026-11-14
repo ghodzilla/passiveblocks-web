@@ -1,5 +1,6 @@
 import { paperLogSentence } from '@/lib/regime/exposureCopy';
 import type { PaperMarkPayload } from '@/lib/regime/paperLog';
+import type { PathSummary as VintagePath, VariantResult, VintageReplay } from '@/lib/regime/vintageReplay';
 
 interface StudyRow {
   id: string;
@@ -139,6 +140,106 @@ function pct(value: number | null | undefined): string {
   return `${(value * 100).toFixed(1)}%`;
 }
 
+function num(value: number | null | undefined): string {
+  if (value == null || !Number.isFinite(value)) return '—';
+  return value.toFixed(2);
+}
+
+function MetricCells({ summary }: { summary: VintagePath | null }) {
+  if (!summary) return <td className="px-3 py-3 text-[var(--muted)]" colSpan={6}>No completed path.</td>;
+  return (
+    <>
+      <td className="px-3 py-3 font-mono text-xs">{pct(summary.cagr)}</td>
+      <td className="px-3 py-3 font-mono text-xs">{pct(summary.maxDrawdown)}</td>
+      <td className="px-3 py-3 font-mono text-xs">{pct(summary.volatility)}</td>
+      <td className="px-3 py-3 font-mono text-xs">{num(summary.sharpe)}</td>
+      <td className="px-3 py-3 font-mono text-xs">{num(summary.turnover)}</td>
+      <td className="px-3 py-3 font-mono text-xs">{pct(summary.timeInMarket)}</td>
+    </>
+  );
+}
+
+function VintageReplayBlock({ vintage }: { vintage: VintageReplay }) {
+  const validated = vintage.fullStrategy === 'criteria_met';
+  return (
+    <div className="mt-4">
+      <div className={`rounded-[var(--radius-xl)] border px-5 py-4 ${validated ? 'border-white/15 bg-white/[0.03]' : 'border-amber-300/40 bg-amber-400/10'}`}>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-amber-100">
+          {validated ? 'Pre-set comparison met on this past sample' : 'Full strategy: not validated'}
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-white">{vintage.headline}</p>
+        <p className="mt-2 text-sm leading-relaxed text-white">{vintage.advice}</p>
+      </div>
+      <div className="mt-4 overflow-x-auto rounded-[var(--radius-xl)] border border-white/10">
+        <table className="min-w-full text-left text-sm">
+          <thead className="bg-white/[0.03] text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">
+            <tr>
+              <th className="px-3 py-3">Path</th>
+              <th className="px-3 py-3">Sessions</th>
+              <th className="px-3 py-3">Span</th>
+              <th className="px-3 py-3">CAGR</th>
+              <th className="px-3 py-3">Max drawdown</th>
+              <th className="px-3 py-3">Volatility</th>
+              <th className="px-3 py-3">Sharpe</th>
+              <th className="px-3 py-3">Turnover</th>
+              <th className="px-3 py-3">Time invested</th>
+            </tr>
+          </thead>
+          <tbody>
+            {vintage.variants.map((variant) => (
+              <VariantRows key={variant.id} variant={variant} />
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {vintage.variants.map((variant) => (
+        <p key={`${variant.id}-copy`} className="mt-3 text-sm leading-relaxed text-[var(--muted)]">{variant.paragraph}</p>
+      ))}
+      <p className="mt-3 text-sm leading-relaxed text-white">{vintage.lookahead.sentence}</p>
+      <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{vintage.limits}</p>
+      <div className="mt-3 text-sm leading-relaxed text-[var(--muted)]">
+        <p>Data gaps in the ALFRED download:</p>
+        <ul className="mt-2 list-disc space-y-1 pl-5">
+          {vintage.dataGaps.map((gap) => <li key={gap}>{gap}</li>)}
+        </ul>
+      </div>
+      <p className="mt-2 text-xs text-[var(--muted)]">
+        Policy {vintage.policy}. Cost {vintage.costBps} bps one way. Cash yield {vintage.cashYieldBps} bps. {vintage.currency}. {vintage.calendar.note} Ran {vintage.ranAt}. Command: {vintage.command}.
+      </p>
+    </div>
+  );
+}
+
+function VariantRows({ variant }: { variant: VariantResult }) {
+  const rows: { name: string; summary: VintagePath | null }[] = [
+    { name: variant.role === 'primary' ? variant.label : variant.label, summary: variant.summary },
+    { name: 'SPY, same deposits', summary: variant.benchmarks.spy },
+    { name: 'VAS.AX, same deposits', summary: variant.benchmarks.vas },
+    { name: '60% SPY / 40% cash, same deposits', summary: variant.benchmarks.sixtyForty },
+  ];
+  return (
+    <>
+      {rows.map((row, index) => (
+        <tr key={`${variant.id}-${row.name}`} className="border-t border-white/10">
+          <td className="px-3 py-3 text-white">
+            {row.name}
+            {index === 0 ? (
+              <p className="text-[11px] font-normal text-[var(--muted)]">
+                {variant.completed} completed, {variant.skipped} skipped{variant.summary ? `, ${variant.summary.start} to ${variant.summary.end}` : ''}
+              </p>
+            ) : (
+              <p className="text-[11px] font-normal text-[var(--muted)]">Same sessions as the row above</p>
+            )}
+          </td>
+          <td className="px-3 py-3 font-mono text-xs">{row.summary?.observations ?? '—'}</td>
+          <td className="px-3 py-3 font-mono text-xs">{row.summary ? `${row.summary.start} to ${row.summary.end}` : '—'}</td>
+          <MetricCells summary={row.summary} />
+        </tr>
+      ))}
+    </>
+  );
+}
+
 function PathRow({ label, summary }: { label: string; summary: PathSummary | null }) {
   if (!summary) return <p className="mt-2 text-sm text-[var(--muted)]">{label}: no completed path.</p>;
   return (
@@ -199,20 +300,25 @@ function ReplayResult({ replay }: { replay: ReplayView }) {
 export function ValidationStudy({
   study,
   replay,
+  vintage,
   paper,
 }: {
   study: StudyFile | null;
   replay: ReplayView | null;
+  vintage: VintageReplay | null;
   paper: { status: string; decisions: number; marks: number; latest: PaperMarkPayload | null };
 }) {
   return (
     <section className="mt-10" id="validation">
       <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Validation</p>
       <h2 className="text-lg font-bold tracking-tight">Has the rule been tested?</h2>
+      {vintage ? <VintageReplayBlock vintage={vintage} /> : (
+        <p className="mt-4 text-sm text-[var(--muted)]">The point-in-time vintage replay is not in this build.</p>
+      )}
       {study ? (
         <>
-          <div className="mt-4 rounded-[var(--radius-xl)] border border-amber-300/40 bg-amber-400/10 px-5 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-amber-100">Full strategy: {study.fullStrategy.replaceAll('_', ' ')}</p>
+          <div className="mt-4 rounded-[var(--radius-xl)] border border-white/10 px-5 py-4">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Earlier availability check: {study.fullStrategy.replaceAll('_', ' ')}</p>
             <p className="mt-2 text-sm leading-relaxed text-white">{study.reason}</p>
             <p className="mt-2 text-sm text-[var(--muted)]">
               This block is the earlier public-file availability study. Verdict: {study.verdict}. Completed replays in that study: {study.credit?.completedReplayDates ?? 0}. Portfolio metrics in that file: none. Ran {study.ranAt}.

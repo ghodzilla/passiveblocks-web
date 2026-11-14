@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { DeskPanels } from '@/components/regime/DeskPanels';
 import { EvaluationPanel } from '@/components/regime/EvaluationPanel';
 import { ValidationStudy, type ReplayView } from '@/components/regime/ValidationStudy';
+import type { VintageReplay } from '@/lib/regime/vintageReplay';
 import type { PaperMarkPayload } from '@/lib/regime/paperLog';
 import { IdeasPanel } from '@/components/regime/IdeasPanel';
 import type { EvaluationReport } from '@/lib/regime/evaluate';
@@ -195,6 +196,7 @@ export function RegimeDashboard({
   evaluation,
   validation,
   replay,
+  vintageReplay,
   paperLog,
 }: {
   view: RegimeView;
@@ -247,6 +249,7 @@ export function RegimeDashboard({
     }[];
   } | null;
   replay: ReplayView | null;
+  vintageReplay: VintageReplay | null;
   paperLog: { status: string; decisions: number; marks: number; latest: PaperMarkPayload | null };
 }) {
   const { snapshot, ideas, desk, consistency } = view;
@@ -518,7 +521,7 @@ export function RegimeDashboard({
 
         <IdeasPanel ideas={ideas} risk={desk.lines} auditNote={auditNote} />
         <EvaluationPanel report={evaluation} />
-        <ValidationStudy study={validation} replay={replay} paper={paperLog} />
+        <ValidationStudy study={validation} replay={replay} vintage={vintageReplay} paper={paperLog} />
         <DeskPanels desk={desk} settingsNotice={settingsNotice} />
 
         <section className="mt-10 rounded-[var(--radius-lg)] border border-[var(--border)] bg-black/20 px-4 py-4">
