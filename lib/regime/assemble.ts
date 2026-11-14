@@ -35,6 +35,11 @@ export interface DataBundle {
   capex?: SeriesPoint[];
   gaps: string[];
   reports: ProviderSource[];
+  /**
+   * Research replay only. Live refresh leaves this unset, so credit keeps
+   * WINDOWS.credit (756 observations, minimum 252).
+   */
+  creditWindow?: { window: number; min: number };
 }
 
 function fredHref(id: string): string {
@@ -238,6 +243,7 @@ export function bundleToModelInput(bundle: DataBundle): ModelInput {
     freshness: freshnessRows,
     gaps: bundle.gaps,
     policyRateSeriesId: bundle.policyRateSeriesId,
+    creditWindow: bundle.creditWindow,
   };
 }
 

@@ -7,7 +7,7 @@ import { readPaperLog } from '@/lib/regime/paperLog';
 import { ATTEMPT_COOKIE, openAttemptCookie, signRefreshCsrf } from '@/lib/regime/refreshHealth';
 import { REGIME_COOKIE } from '@/lib/regime/session';
 import { readSelfCheck } from '@/lib/regime/state';
-import { replayResults, validationStudy } from '@/lib/regime/validationArtifacts';
+import { replayResults, validationStudy, vintageReplay } from '@/lib/regime/validationArtifacts';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -45,6 +45,7 @@ export default async function RegimePage({
       evaluation={evaluation}
       validation={validationStudy}
       replay={replayResults}
+      vintageReplay={vintageReplay}
       paperLog={paperLog}
     />
   );

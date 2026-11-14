@@ -6,6 +6,7 @@ const nextConfig = {
       '/private/regime': [
         './research/regime-validation/results.json',
         './research/regime-validation/replay-results.json',
+        './research/regime-validation/vintage-replay.json',
       ],
     },
   },

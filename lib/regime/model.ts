@@ -48,6 +48,11 @@ export interface ModelInput {
   freshness: FreshnessRow[];
   gaps: string[];
   policyRateSeriesId: string;
+  /**
+   * Research replay only. Unset means WINDOWS.credit, the live window.
+   * Production refresh does not set this.
+   */
+  creditWindow?: { window: number; min: number };
 }
 
 interface Leg {
@@ -290,10 +295,11 @@ const DETAIL: Record<ComponentId, string> = {
 };
 
 export function buildModel(input: ModelInput): RegimeSnapshot {
+  const creditWindow = input.creditWindow ?? WINDOWS.credit;
   const prepared: Prepared = {
     liquidity: prepare(input.liquidityChange, WINDOWS.liquidity.window, WINDOWS.liquidity.min),
     policy: prepare(input.policyGap, WINDOWS.policy.window, WINDOWS.policy.min),
-    credit: prepare(input.creditEase, WINDOWS.credit.window, WINDOWS.credit.min),
+    credit: prepare(input.creditEase, creditWindow.window, creditWindow.min),
     curve: prepare(input.curve, WINDOWS.curve.window, WINDOWS.curve.min),
     growthDiff: prepare(input.growthDiff, WINDOWS.growthDiff.window, WINDOWS.growthDiff.min),
     usMomentum: prepare(input.usMomentum, WINDOWS.growthDiff.window, WINDOWS.growthDiff.min),
