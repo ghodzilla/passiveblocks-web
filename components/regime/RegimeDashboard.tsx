@@ -11,8 +11,8 @@ import { ValidationStudy, type ReplayView } from '@/components/regime/Validation
 import type { PaperMarkPayload } from '@/lib/regime/paperLog';
 import { IdeasPanel } from '@/components/regime/IdeasPanel';
 import type { EvaluationReport } from '@/lib/regime/evaluate';
-import { MODEL_BUDGET, REGIME_LABEL, THRESHOLDS, type RegimeId } from '@/lib/regime/constants';
-import { historyColumn, plainReading, researchPlain, trustLine } from '@/lib/regime/ownerCopy';
+import { MODEL_BUDGET, PRESERVATION_BUDGET, REGIME_LABEL, THRESHOLDS, type RegimeId } from '@/lib/regime/constants';
+import { GLOSSARY, historyColumn, plainReading, researchPlain, trustLine } from '@/lib/regime/ownerCopy';
 import { buildPresentation } from '@/lib/regime/presentation';
 import { marketRuleCards } from '@/lib/regime/presentCall';
 import { componentPeriodNote } from '@/lib/regime/plain';
@@ -278,7 +278,7 @@ export function RegimeDashboard({
         }}
       />
       <header className="relative border-b border-[var(--border)]/80 bg-background/70 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
             <Link href="/">
               <Image
@@ -307,7 +307,7 @@ export function RegimeDashboard({
         </div>
       </header>
 
-      <main className="relative mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10" data-regime={snapshot.regime ?? 'unavailable'} data-action={snapshot.action}>
+      <main className="relative mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-6" data-regime={snapshot.regime ?? 'unavailable'} data-action={snapshot.action}>
         {selfCheck && !selfCheck.ok ? (
           <div className="mb-6 rounded-[var(--radius-xl)] border border-rose-400/50 bg-rose-500/15 px-5 py-4" data-selfcheck="fail">
             <p className="text-sm font-semibold text-rose-50">
@@ -320,7 +320,7 @@ export function RegimeDashboard({
             </ul>
           </div>
         ) : null}
-        <div className="grid gap-8">
+        <div className="grid gap-3">
           <FeedBanner blockReason={blockReason} health={health ?? attempt} />
           <OwnerBrief
             view={view}
@@ -328,6 +328,7 @@ export function RegimeDashboard({
             calls={presented.calls}
             drivers={presented.market.drivers}
             blockReason={blockReason}
+            part="hero"
           />
           <PathToBuyPanel
             market={presented.market}
@@ -335,8 +336,28 @@ export function RegimeDashboard({
             calls={presented.calls}
             capKnown={presented.capKnown}
           />
-          <RuleCards cards={marketRuleCards({ regime: snapshot.regime, actionable: snapshot.actionable })} />
         </div>
+        <OwnerBrief
+          view={view}
+          paperLog={paperLog}
+          calls={presented.calls}
+          drivers={presented.market.drivers}
+          blockReason={blockReason}
+          part="book"
+        />
+        <Fold title="If this, then that" lede="The rule that applies today is marked.">
+          <RuleCards cards={marketRuleCards({ regime: snapshot.regime, actionable: snapshot.actionable })} />
+        </Fold>
+        <Fold title="How to read the words">
+          <dl className="grid gap-2 sm:grid-cols-2">
+            {GLOSSARY.map((item) => (
+              <div key={item.term}>
+                <dt className="text-sm font-semibold text-[var(--text-1)]">{item.term}</dt>
+                <dd className="text-sm leading-relaxed text-[var(--text-3)]">{item.means}</dd>
+              </div>
+            ))}
+          </dl>
+        </Fold>
         {failedRules.length === 0 ? (
           <p className="mt-4 text-xs text-[var(--text-3)]" data-consistency="pass">
             Self-checks ✓ {consistency.rules.length}/{consistency.rules.length}
@@ -459,8 +480,9 @@ export function RegimeDashboard({
             <div><strong>Mixed</strong> is everything between Cautious and Supportive. The rules hold and buy nothing new.</div>
             <div><strong>Cautious</strong> starts at {THRESHOLDS.tightEnter.toFixed(2)} and lasts until the score recovers past {THRESHOLDS.tightExit.toFixed(2)}. Only defensive holdings are kept.</div>
             <div><strong>Stressed</strong> starts at {THRESHOLDS.crisisEnter.toFixed(2)}, or at {THRESHOLDS.crisisCompositeConfirm.toFixed(2)} when the lender score is {THRESHOLDS.crisisCreditEnter.toFixed(1)} or worse. It ends when the score is above {THRESHOLDS.crisisExitComposite.toFixed(2)} and lenders are above {THRESHOLDS.crisisExitCredit.toFixed(1)}.</div>
-            <div><strong>No clear signal</strong> ({`-${THRESHOLDS.weakAbsComposite}`} to +{THRESHOLDS.weakAbsComposite}): too close to normal, so nothing new is bought. If money, rates or lender nerves are missing, the book can be trimmed back to 20% invested.</div>
-            <div>Size limits, swing / invested / non-cash. Supportive {pct(MODEL_BUDGET.risk_on.volTarget)} / {pct(MODEL_BUDGET.risk_on.maxGross)} / {pct(MODEL_BUDGET.risk_on.maxNet)}. Mixed {pct(MODEL_BUDGET.transitional.volTarget)} / {pct(MODEL_BUDGET.transitional.maxGross)} / {pct(MODEL_BUDGET.transitional.maxNet)}. Cautious {pct(MODEL_BUDGET.tightening.volTarget)} / {pct(MODEL_BUDGET.tightening.maxGross)} / {pct(MODEL_BUDGET.tightening.maxNet)}. Stressed {pct(MODEL_BUDGET.crisis.volTarget)} / {pct(MODEL_BUDGET.crisis.maxGross)} / {pct(MODEL_BUDGET.crisis.maxNet)}. The paper book never borrows, so it cannot go above 100% invested. A no-clear-signal day uses the tighter 40% / 20% cap.</div>
+            <div><strong>No clear signal</strong> ({`-${THRESHOLDS.weakAbsComposite}`} to +{THRESHOLDS.weakAbsComposite}): too close to normal, so nothing new is bought. The Mixed caps on that day are 40% invested and 20% non-cash.</div>
+            <div><strong>Missing feed</strong>: if money, rates or lender nerves are missing, new buys stay off and nothing is sold. The limit is {pct(PRESERVATION_BUDGET.maxGross)} invested and {pct(PRESERVATION_BUDGET.maxNet)} non-cash.</div>
+            <div>Size limits, swing / invested / non-cash. Supportive {pct(MODEL_BUDGET.risk_on.volTarget)} / {pct(MODEL_BUDGET.risk_on.maxGross)} / {pct(MODEL_BUDGET.risk_on.maxNet)}. Mixed {pct(MODEL_BUDGET.transitional.volTarget)} / {pct(MODEL_BUDGET.transitional.maxGross)} / {pct(MODEL_BUDGET.transitional.maxNet)}. Cautious {pct(MODEL_BUDGET.tightening.volTarget)} / {pct(MODEL_BUDGET.tightening.maxGross)} / {pct(MODEL_BUDGET.tightening.maxNet)}. Stressed {pct(MODEL_BUDGET.crisis.volTarget)} / {pct(MODEL_BUDGET.crisis.maxGross)} / {pct(MODEL_BUDGET.crisis.maxNet)}. The paper book never borrows, so it cannot go above 100% invested. A no-clear-signal day uses 40% invested and 20% non-cash.</div>
             <div>No fund over 20% of the book. No single company over 2%. All names in one theme together: 20% max. Names that are really the same bet share one 25% limit. If holdings start moving together, new sizes shrink, down to half.</div>
             <div>Every holding has an automatic sell price 2.5 typical daily moves below where it was bought, including cash-like funds. If a new buy hits that stop, the book loses about 0.75%. You can top up once, only after the holding has gained as much as it was risking. New buys pause if the book falls 10% from its high. A dip is a 10–20% pullback that has started to recover. It only becomes a buy in a Supportive market.</div>
             <div>Each check is graded against what prices did next. One that keeps being wrong is switched off automatically.</div>

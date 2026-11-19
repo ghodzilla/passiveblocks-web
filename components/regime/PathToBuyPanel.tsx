@@ -124,10 +124,10 @@ export function PathToBuyPanel({
   const drags = market.drivers.filter((driver) => driver.role === 'drag');
   const helps = market.drivers.filter((driver) => driver.role === 'help');
   return (
-    <section id="path-to-buy" className="grid gap-6">
+    <section id="path-to-buy" className="grid gap-3">
       <div>
         <h2 className="text-xl font-bold text-[var(--text-1)]">Path to a buy</h2>
-        <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-[var(--text-2)]">{market.note}</p>
+        <p className="mt-1 max-w-3xl text-sm leading-relaxed text-[var(--text-2)]">{market.note}</p>
         {!capKnown ? <p className="mt-2 text-sm text-[var(--text-3)]">The book’s room under the cap is not on this page, so “at cap” is not claimed from a guess.</p> : null}
       </div>
       <div className="grid gap-4 sm:grid-cols-2">

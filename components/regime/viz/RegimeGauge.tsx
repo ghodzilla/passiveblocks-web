@@ -42,7 +42,7 @@ export function RegimeGauge({
     : `Market score ${signed(score)}. Buys need +${THRESHOLDS.riskOnEnter.toFixed(2)}.`;
   return (
     <div>
-      <svg viewBox="0 0 320 168" className="mx-auto w-full max-w-md" role="img" aria-label={label}>
+      <svg viewBox="0 0 320 160" className="mx-auto w-full max-w-[14rem]" role="img" aria-label={label}>
         {ZONES.map((zone) => (
           <path key={zone.name} d={arc(zone.from, zone.to, 108)} fill="none" stroke={zone.color} strokeWidth="16" strokeLinecap="butt" />
         ))}
@@ -54,11 +54,11 @@ export function RegimeGauge({
         ) : null}
         <circle cx={160} cy={150} r="5" fill="var(--text-1)" />
       </svg>
-      <p className="text-center font-mono text-4xl font-bold tabular-nums text-[var(--text-1)]">
+      <p className="text-center font-mono text-3xl font-bold tabular-nums text-[var(--text-1)]">
         {composite == null ? '—' : signed(score)}
       </p>
       <p className="text-center text-xs text-[var(--text-3)]">{`buys at +${THRESHOLDS.riskOnEnter.toFixed(2)}`}</p>
-      <ul className="mt-1 flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-[var(--text-3)]">
+      <ul className="mt-1 flex flex-wrap justify-center gap-x-3 gap-y-0.5 text-[11px] text-[var(--text-3)]">
         {ZONES.map((zone) => (
           <li key={zone.name} className="inline-flex items-center gap-1.5">
             <span aria-hidden className="inline-block h-2 w-2 rounded-full" style={{ background: zone.color }} />
@@ -67,7 +67,7 @@ export function RegimeGauge({
         ))}
         {previous != null ? <li>Ring is last week</li> : null}
       </ul>
-      <p className="mt-3 text-center text-sm text-[var(--text-2)]">
+      <p className="mt-1 text-center text-xs text-[var(--text-2)]">
         {liquidity == null
           ? 'Money in the system is missing, so its distance to +0.10 is not shown.'
           : `Money in the system ${signed(liquidity)}. Buys need +${THRESHOLDS.riskOnLiquidityMin.toFixed(2)} or more.`}

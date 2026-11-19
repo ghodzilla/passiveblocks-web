@@ -50,6 +50,25 @@ describe('owner brief', () => {
     assert.match(action.steps.join(' '), /Hold BetaShares cash \(AAA\.AX\)/);
   });
 
+  it('does not invent a trim when a failed feed only blocks new buys', () => {
+    const action = todayAction({
+      actionable: false,
+      action: 'reduce_risk',
+      halted: false,
+      bookAud: 100_464,
+      lines: [line('UUP', 'US dollar fund', 0.022, 'tactical', 'hold')],
+      maxGross: 0.2,
+      maxNet: 0,
+      staleFeed: 'A mandatory feed',
+    });
+    assert.match(action.headline, /No new buys/);
+    assert.equal(action.headline.includes('trimmed'), false);
+    assert.equal(action.headline.includes('20% invested'), false);
+    assert.match(action.reason, /Do not add risk/);
+    assert.match(action.reason, /Nothing is being sold/);
+    assert.match(action.reason, /20% invested and 0% non-cash/);
+  });
+
   it('says hold when the window is shut, and does not invent a sale', () => {
     const action = todayAction({
       actionable: true,

@@ -273,10 +273,14 @@ export function todayAction(input: {
     : `A$ amounts use the paper book's value of ${audMoney(input.bookAud)}.`;
 
   if (!input.actionable) {
+    const limit = input.maxGross != null && input.maxNet != null
+      ? ` While the feed is down the limit is ${bookPercent(input.maxGross)} invested and ${bookPercent(input.maxNet)} non-cash.`
+      : '';
+    const selling = sells.length > 0 || (input.pending?.length ?? 0) > 0;
     return {
       verb: 'PLAY SAFE',
-      headline: `PLAY SAFE — ${input.staleFeed ?? 'a key feed'} is missing or out of date. No buys, and the book can be trimmed back to 20% invested.`,
-      reason: 'A missing or old key feed makes the rules play safe.',
+      headline: `PLAY SAFE — ${input.staleFeed ?? 'a key feed'} is missing or out of date. No new buys.`,
+      reason: `Do not add risk. ${selling ? 'A sale is still waiting.' : 'Nothing is being sold.'}${limit}`,
       steps: holdings.length ? [`Keep the ${holdings.length} holdings already in the book.`] : ['No new buys.'],
       means,
     };

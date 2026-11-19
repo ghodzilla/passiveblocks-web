@@ -1,4 +1,4 @@
-import { THRESHOLDS, type RegimeId } from './constants';
+import { PRESERVATION_BUDGET, THRESHOLDS, type RegimeId } from './constants';
 import type { IdeaStatus } from './ideas';
 import { ADD_AFTER_R } from './sizing';
 
@@ -182,7 +182,7 @@ export function marketRuleCards(input: { regime: RegimeId | null; actionable: bo
     {
       id: 'feed',
       when: 'A mandatory feed is missing or the refresh did not save',
-      then: 'Play safe. No new buys until a refresh succeeds. The book can be trimmed back toward 20% invested.',
+      then: `Play safe. No new buys until a refresh succeeds. Do not add risk. The limit while the feed is down is ${(PRESERVATION_BUDGET.maxGross * 100).toFixed(0)}% invested and ${(PRESERVATION_BUDGET.maxNet * 100).toFixed(0)}% non-cash. A failed refresh does not sell the held book.`,
       active: !input.actionable,
     },
     {

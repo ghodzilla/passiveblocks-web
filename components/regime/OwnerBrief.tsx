@@ -6,7 +6,6 @@ import {
   bookAudValue,
   bookParts,
   describeFeeds,
-  GLOSSARY,
   holdingsNow,
   knownGapLines,
   performanceSinceStart,
@@ -14,7 +13,6 @@ import {
   plainRegime,
   sydneyWhen,
   todayAction,
-  whyLine,
   type FeedStatus,
 } from '@/lib/regime/ownerCopy';
 import { sydneyClock } from '@/lib/regime/time';
@@ -89,12 +87,14 @@ export function OwnerBrief({
   calls,
   drivers,
   blockReason = null,
+  part = 'all',
 }: {
   view: RegimeView;
   paperLog: { status: string; decisions: number; marks: number; latest: PaperMarkPayload | null } | null;
   calls: Map<string, PresentCall>;
   drivers: DriverPath[];
   blockReason?: string | null;
+  part?: 'all' | 'hero' | 'book';
 }) {
   const { snapshot, desk } = view;
   const regime = plainRegime(snapshot.regime);
@@ -151,17 +151,6 @@ export function OwnerBrief({
   const previous = snapshot.history.length > 1 ? snapshot.history[snapshot.history.length - 2]?.composite ?? null : null;
   const exposures = desk.paperLedger?.exposures ?? null;
   const parts = bookParts({ weights, exposures });
-  const components = snapshot.components.map((item) => ({
-    id: item.id,
-    title: item.id === 'liquidity' ? 'Money in the system'
-      : item.id === 'policy' ? 'Interest rates'
-        : item.id === 'credit' ? 'Lender nerves'
-          : item.id === 'growth' ? 'Growth'
-            : item.id === 'positioning' ? 'Crowded bets'
-              : 'AI spending',
-    z: item.z,
-    weight: item.weight,
-  }));
   const tone = toneFor(action.verb, snapshot.regime);
   const moodTone: ChipTone = snapshot.regime === 'risk_on'
     ? 'buy'
@@ -173,16 +162,17 @@ export function OwnerBrief({
   const ranked = (weights ?? []).slice().sort((a, b) => b.weight - a.weight);
 
   return (
-    <section className="grid gap-8">
+    <section className={part === 'book' ? '' : 'grid gap-8'}>
+      {part === 'book' ? null : (
       <article
-        className="rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface-2)] p-5 sm:p-6"
+        className="rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface-2)] p-4 sm:p-5"
         style={{ borderLeftWidth: 4, borderLeftColor: tone === 'hold' ? 'var(--call-hold)' : tone === 'buy' ? 'var(--call-buy)' : tone === 'sell' ? 'var(--call-sell)' : 'var(--call-watch)' }}
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="grid gap-3">
             <div className="flex flex-wrap items-center gap-3">
               <Chip tone={tone}>{action.verb}</Chip>
-              <p className="text-2xl font-extrabold tracking-tight text-[var(--text-1)] sm:text-4xl">{action.headline}</p>
+              <p className="text-xl font-extrabold tracking-tight text-[var(--text-1)] sm:text-2xl">{action.headline}</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <Chip tone={moodTone} title={regime.means}>
@@ -194,34 +184,19 @@ export function OwnerBrief({
             Data as of {snapshot.today} · refreshed {sydneyClock(snapshot.generatedAt)}
           </p>
         </div>
-        <div className="mt-5 grid items-center gap-6 lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)]">
+        <div className="mt-3 grid items-center gap-3 lg:grid-cols-[14rem_minmax(0,1fr)]">
           <RegimeGauge composite={snapshot.composite} previous={previous} liquidity={liquidity} />
           <DriverBoard
             drivers={drivers}
             readings={Object.fromEntries(snapshot.components.map((component) => [component.id, plainReading(component.id, component.reading)]))}
           />
         </div>
-        <p className="mt-4 text-[15px] leading-relaxed text-[var(--text-2)]">
-          <span className="font-semibold text-[var(--text-1)]">Why. </span>
-          {regime.means} {whyLine(components)}
-        </p>
-        <p className="mt-2 text-sm text-[var(--text-3)]">{action.reason}</p>
-        <details className="mt-4">
-          <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-[var(--text-2)]">How to read this page</summary>
-          <dl className="mt-2 grid gap-2 sm:grid-cols-2">
-            {GLOSSARY.map((item) => (
-              <div key={item.term}>
-                <dt className="text-sm font-semibold text-[var(--text-1)]">{item.term}</dt>
-                <dd className="text-sm leading-relaxed text-[var(--text-3)]">{item.means}</dd>
-              </div>
-            ))}
-          </dl>
-        </details>
+        <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{action.reason}</p>
       </article>
-
-      <section>
-        <h2 className="text-xl font-bold text-[var(--text-1)]">Your paper book</h2>
-        <p className="mt-2 text-[15px] leading-relaxed text-[var(--text-2)]">{performance.sentence}</p>
+      )}
+      {part === 'hero' ? null : (
+      <Fold title="Your paper book" lede={heldBook.sentence}>
+        <p className="text-[15px] leading-relaxed text-[var(--text-2)]">{performance.sentence}</p>
         {afterCosts ? <p className="mt-1 text-sm text-[var(--text-3)]">Share record, before trading costs: {book.amount == null ? '—' : `A$${Math.round(book.amount).toLocaleString('en-AU')}`}. Paper log, after the 0.10% cost: {afterCosts}.</p> : null}
         <p className="mt-1 text-[15px] text-[var(--text-2)]">{heldBook.sentence}</p>
         {book.amount != null ? <p className="mt-1 text-xs text-[var(--text-3)]">{action.means}</p> : null}
@@ -266,10 +241,17 @@ export function OwnerBrief({
             );
           })}
         </div>
+        {!snapshot.actionable && exposures ? (
+          <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">
+            The bars are the caps on the held book: {(exposures.maxGross * 100).toFixed(0)}% invested and {(exposures.maxNet * 100).toFixed(0)}% non-cash.
+            A failed refresh does not sell that book. New buys use the feed-down limit of {(snapshot.effectiveBudget.maxGross * 100).toFixed(0)}% invested and {(snapshot.effectiveBudget.maxNet * 100).toFixed(0)}% non-cash.
+          </p>
+        ) : null}
         <ul className="mt-3 space-y-1 text-[15px] text-[var(--text-2)]">
           {action.steps.map((step) => <li key={step}>{step}</li>)}
         </ul>
-      </section>
+      </Fold>
+      )}
     </section>
   );
 }

@@ -140,7 +140,7 @@ function snapshot(input: {
       : { volTarget: 0.03, maxGross: 0.2, maxNet: 0 };
   return {
     rulesVersion: 'regime-v2',
-    generatedAt: '2026-11-19T06:20:00.000Z',
+    generatedAt: '2026-11-18T13:15:30.000Z',
     today: '2026-11-19',
     printDate: '2026-11-19',
     regime: input.regime,
@@ -204,7 +204,7 @@ function deskFor(lines: RiskLine[], input: {
       pending: [],
       equity: input.equity,
       valued: true,
-      fx: { symbol: FX_SYMBOL, convention: FX_CONVENTION, rate: 0.652, observationDate: '2026-11-19', fetchedAt: '2026-11-19T06:20:00.000Z', fresh: true, error: null },
+      fx: { symbol: FX_SYMBOL, convention: FX_CONVENTION, rate: 0.652, observationDate: '2026-11-19', fetchedAt: '2026-11-18T13:15:30.000Z', fresh: true, error: null },
       note: 'AUD paper book.',
       marks: [
         { date: '2026-11-07', equity: 100000 },
@@ -237,7 +237,7 @@ function ideasFor(rows: IdeaRow[], defensiveOnly: boolean): RegimeView['ideas'] 
     rows,
     watchlistNote: null,
     gaps: [],
-    pricesFetchedAt: '2026-11-19T06:20:00.000Z',
+    pricesFetchedAt: '2026-11-18T13:15:30.000Z',
     singlePositionCap: 0.2,
     systematicCap: 0.02,
     crowding: { average: 0.42, dispersion: 0.03, scale: 1, names: 8, pairs: 28, warning: null, gap: null },
@@ -445,14 +445,14 @@ export function quietProps(): DashboardProps {
       persisted: true,
       snapshotSaved: false,
       durable: true,
-      attemptedAt: '2026-11-20T02:15:00.000Z',
-      lastFullySuccessfulFetchAt: '2026-11-19T02:15:00.000Z',
-      lastPersistedAt: '2026-11-19T02:15:00.000Z',
+      attemptedAt: '2026-11-19T13:15:30.000Z',
+      lastFullySuccessfulFetchAt: '2026-11-18T13:15:30.000Z',
+      lastPersistedAt: '2026-11-18T13:15:30.000Z',
       storage: 'neon',
       note: 'Mandatory feeds failed. The previous saved snapshot was kept and new buys stay off.',
       sources: [
-        { id: 'WALCL', label: 'Fed total assets', mandatory: true, observationDate: '2026-11-12', fetchedAt: '2026-11-20T02:15:00.000Z', error: 'FRED returned 403' },
-        { id: 'BAMLH0A0HYM2', label: 'US high-yield spread', mandatory: true, observationDate: '2026-11-19', fetchedAt: '2026-11-20T02:15:00.000Z', error: 'FRED returned 403' },
+        { id: 'WALCL', label: 'Fed total assets', mandatory: true, observationDate: '2026-11-12', fetchedAt: '2026-11-19T13:15:30.000Z', error: 'FRED returned 403' },
+        { id: 'BAMLH0A0HYM2', label: 'US high-yield spread', mandatory: true, observationDate: '2026-11-19', fetchedAt: '2026-11-19T13:15:30.000Z', error: 'FRED returned 403' },
       ],
     },
     paperLog: {
