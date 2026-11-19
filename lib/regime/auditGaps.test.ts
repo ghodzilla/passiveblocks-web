@@ -61,9 +61,8 @@ describe('signal health samples', () => {
     const empty = evaluateSignalHealth([]);
     assert.deepEqual(empty.map((signal) => signal.status), ['unknown', 'unknown', 'unknown']);
     assert.deepEqual(empty.map((signal) => signal.samples), [0, 0, 0]);
-    assert.match(signalHealthSentence(empty[0]), /insufficient performance evidence/);
-    assert.match(signalHealthSentence(empty[0]), /not a missing price feed/);
-    assert.match(signalHealthSentence(empty[0]), /heuristic/);
+    assert.match(signalHealthSentence(empty[0]), /not enough history/);
+    assert.match(signalHealthSentence(empty[0]), /not a missing price/);
     const one = evaluateSignalHealth([{ symbol: 'SPY', bars: barsFrom(Array.from({ length: 80 }, () => 100)) }]);
     assert.ok(one.every((signal) => signal.samples < IC_MIN && signal.status === 'unknown'));
   });
@@ -121,10 +120,10 @@ describe('stale price checklist', () => {
     });
     const trend = share.find((gate) => gate.id === 'trend');
     assert.equal(trend?.pass, false);
-    assert.equal(trend?.detail, 'the last price is stale');
+    assert.match(trend?.detail ?? '', /no new price for \d+ days \(limit 7\)/);
     const sized = sizingVerdict({ gates: share, stance: 'prefer', pyramid: 'new', weight: 0.05 });
     assert.equal(sized.status, 'watch');
-    assert.match(sized.verdict, /stale/);
+    assert.match(sized.verdict, /no new price/);
 
     const cash = ideaGates({
       themes: [],

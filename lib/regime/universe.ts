@@ -73,85 +73,85 @@ export const EXPRESSIONS: Expression[] = [
   {
     id: 'equity-beta',
     assetClass: 'equities',
-    label: 'Equity beta',
+    label: 'Shares',
     symbols: ['SPY', 'VAS.AX', 'VGS.AX', 'IOZ.AX'],
     defensive: false,
     role: 'tactical',
     drivers: ['liquidity', 'credit', 'growth'],
     rationale:
-      'Broad equity beta is the liquid expression of easier liquidity and open credit. It is a candidate only when those legs and the composite confirm risk-on.',
+      'The whole share market. Bought only when the mood is Supportive.',
     stance: S('prefer', 'neutral', 'avoid', 'avoid', 'avoid'),
   },
   {
     id: 'growth-momentum',
     assetClass: 'equities',
-    label: 'Growth and momentum',
+    label: 'Growth',
     symbols: ['QQQ', 'MTUM', 'XLK', 'XLC'],
     defensive: false,
     role: 'tactical',
     drivers: ['liquidity', 'growth'],
     rationale:
-      'Growth and momentum follow the liquidity and growth-differential legs. They are the first equity sleeve to stand down when those z-scores fade.',
+      'Tech and fast-growing companies; first to be dropped when money tightens.',
     stance: S('prefer', 'avoid', 'avoid', 'avoid', 'avoid'),
   },
   {
     id: 'cyclicals',
     assetClass: 'equities',
-    label: 'Cyclical sectors',
+    label: 'Cyclicals',
     symbols: ['XLY', 'XLI', 'XLE', 'XLF', 'XLB', 'IWM'],
     defensive: false,
     role: 'tactical',
     drivers: ['liquidity', 'credit', 'growth'],
     rationale:
-      'Discretionary, industrials, energy, financials, materials, and small caps need liquidity and credit together. A negative credit z is an avoid.',
+      'Companies that need a strong economy (shops, factories, energy, banks, miners, small caps).',
     stance: S('prefer', 'avoid', 'avoid', 'avoid', 'avoid'),
   },
   {
     id: 'defensive-equity',
     assetClass: 'equities',
-    label: 'Defensive equity',
+    label: 'Defensive shares',
     symbols: ['XLP', 'XLU', 'XLV', 'XLRE', 'USMV'],
     defensive: true,
     role: 'tactical',
     drivers: ['credit', 'liquidity'],
     rationale:
-      'Staples, utilities, healthcare, real estate, and minimum volatility are the equity ballast when the composite is not a clean risk-on. They are still equities, so a crisis print prefers cash over this sleeve.',
+      'Steady businesses people need in any economy (food, health, power, property).',
     stance: S('neutral', 'prefer', 'prefer', 'avoid', 'avoid'),
   },
   {
     id: 'long-duration',
     assetClass: 'rates',
-    label: 'Long duration',
+    label: 'Long bonds',
     symbols: ['TLT'],
     defensive: false,
     role: 'tactical',
     drivers: ['policy', 'growth'],
     rationale:
-      'Long Treasuries are a policy-path and stress hedge, not a risk-on expression. Positive growth z usually argues against adding duration. The sleeve is not sized while the action is do nothing or reduce risk.',
+      'Long-term US government bonds; they tend to rise when rates fall or markets panic.',
     stance: S('avoid', 'neutral', 'prefer', 'prefer', 'neutral'),
   },
   {
     id: 'intermediate-bonds',
     assetClass: 'rates',
-    label: 'Intermediate bonds',
+    label: 'Medium-term bonds',
     symbols: ['IEF', 'VAF.AX'],
     defensive: true,
     role: 'tactical',
     drivers: ['policy', 'liquidity'],
     rationale:
-      'Intermediate government bonds are the defensive duration sleeve, via IEF or the ASX composite bond ETF VAF. They are preferred when policy z is the support and equity beta is not.',
+      'Medium-term government bonds (US and Australia); a calmer hedge.',
     stance: S('neutral', 'prefer', 'prefer', 'prefer', 'prefer'),
   },
   {
     id: 'cash',
     assetClass: 'cash',
-    label: 'Cash and T-bills',
+    label: 'Cash',
     symbols: ['SHY', 'AAA.AX', 'BILL.AX'],
     defensive: true,
     role: 'cash',
     drivers: ['liquidity', 'credit'],
     rationale:
-      'T-bills and Australian cash ETFs are the ballast. A flat price is the point, so 12–1 momentum does not have to be positive for cash to be confirmed.',
+      'Australian and US cash funds. A flat price is the point.',
     stance: S('avoid', 'prefer', 'prefer', 'prefer', 'prefer'),
   },
   {
@@ -163,7 +163,7 @@ export const EXPRESSIONS: Expression[] = [
     role: 'tactical',
     drivers: ['liquidity', 'growth'],
     rationale:
-      'UUP is the liquid USD expression. It is preferred when liquidity z is tight, and avoided when liquidity is easy.',
+      'Holds US dollars; tends to rise when money is tight.',
     stance: S('avoid', 'neutral', 'prefer', 'prefer', 'prefer'),
   },
   {
@@ -175,7 +175,7 @@ export const EXPRESSIONS: Expression[] = [
     role: 'tactical',
     drivers: ['liquidity', 'growth'],
     rationale:
-      'FXA is the AUD expression. It is preferred when liquidity and the US−AU growth differential are supportive, and it is not a defensive holding.',
+      'Bets on the A$ rising; only when growth and money are supportive.',
     stance: S('prefer', 'neutral', 'avoid', 'avoid', 'avoid'),
   },
   {
@@ -187,7 +187,7 @@ export const EXPRESSIONS: Expression[] = [
     role: 'tactical',
     drivers: ['liquidity', 'credit'],
     rationale:
-      'Gold is the hedge when liquidity or credit z is stressed. It is not the risk-on expression. GLD is US-listed; GOLD.AX is the ASX physical gold ETF.',
+      'Gold tends to hold value when money is tight or lenders are nervous, and when US interest rates after inflation or the US dollar fall. GLD is US-listed; GOLD.AX trades on the ASX.',
     stance: S('avoid', 'neutral', 'prefer', 'prefer', 'prefer'),
   },
 ];

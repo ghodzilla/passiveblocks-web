@@ -440,12 +440,12 @@ describe('validation artifact', () => {
         prices: [],
       },
     });
-    assert.match(active, /Paper log active: 1 decisions, 1 marks/);
+    assert.match(active, /Paper record: 1 stored marks/);
     assert.match(active, /suggestion weights/);
     assert.match(active, /not comparable with the book/);
     assert.equal(active.includes('not applied'), false);
-    assert.match(active, /Stored mark gross 10\.0%/);
-    assert.match(active, /Stored cash weight 90\.0%/);
+    assert.match(active, /Invested in that mark 10\.0%/);
+    assert.match(active, /Cash 90\.0%/);
     const heldCopy = paperLogSentence({
       status: 'ok',
       decisions: 1,
@@ -464,8 +464,8 @@ describe('validation artifact', () => {
         basis: 'held-book',
       },
     });
-    assert.match(heldCopy, /Held-book gross 40\.0%/);
-    assert.match(heldCopy, /including AAA\.AX, BILL\.AX, and SHY/);
+    assert.match(heldCopy, /Paper record: 1 daily values/);
+    assert.match(heldCopy, /after trading costs/);
     assert.equal(heldCopy.includes('not comparable'), false);
     const missing = paperLogSentence({ status: 'missing_schema', decisions: 0, marks: 0, latest: null });
     assert.match(missing, /not applied/);
@@ -478,9 +478,9 @@ describe('validation artifact', () => {
       maxGross: 0.4,
       maxNet: 0.2,
     });
-    assert.match(book, /Held gross 40\.0%/);
-    assert.match(book, /AAA\.AX, BILL\.AX, and SHY count in it/);
-    assert.match(book, /AUD cash balance 60\.0%/);
+    assert.match(book, /Invested 40\.0% of 40% max/);
+    assert.match(book, /Non-cash 10\.0% of 20% max/);
+    assert.match(book, /Cash 60\.0%/);
   });
 
   it('does not report a portfolio result while the full strategy is not validated', () => {

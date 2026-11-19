@@ -1,6 +1,6 @@
 import { auditRegime, type ConsistencyReport } from './consistency';
 import type { Desk } from './desk';
-import type { IdeasReport } from './ideas';
+import { invalidationText, type IdeasReport } from './ideas';
 import type { RegimeSnapshot } from './types';
 
 export interface RegimeView {
@@ -23,7 +23,18 @@ export function publishRegime(input: { snapshot: RegimeSnapshot; ideas: IdeasRep
     rows: input.ideas.rows.map((row) => {
       const line = bySymbol.get(row.symbol);
       if (!line) return row;
-      return { ...row, status: line.status, maxWeight: line.weight };
+      return {
+        ...row,
+        status: line.status,
+        maxWeight: line.weight,
+        invalidation: invalidationText({
+          status: line.status,
+          role: row.role,
+          ma200: row.signals.ma200,
+          regimeLabel: input.snapshot.regimeLabel,
+          standDown: input.ideas.defensiveOnly,
+        }),
+      };
     }),
   };
   const view = { snapshot: input.snapshot, ideas, desk: input.desk };

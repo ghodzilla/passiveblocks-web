@@ -25,7 +25,7 @@ export const SYSTEMATIC_CAP = 0.02;
 export const CASH_VOL_FLOOR = 0.03;
 export const PRICE_STALE_DAYS = 7;
 
-export type IdeaStatus = 'confirmed' | 'watch' | 'avoid';
+export type IdeaStatus = 'confirmed' | 'hold' | 'watch' | 'avoid';
 
 export interface IdeaRow {
   symbol: string;
@@ -144,20 +144,20 @@ export function invalidationText(input: {
   standDown: boolean;
 }): string {
   if (input.status === 'avoid') {
-    return 'Not a sized idea. It is sized only if the playbook prefers it on an open budget and the quant signals agree.';
+    return 'Not bought in this mood. Becomes a candidate when the market is Supportive and its price checks pass.';
   }
   if (input.role === 'cash') {
-    return input.standDown
-      ? 'Invalid if the action leaves do nothing / reduce risk, or cash stops being the ballast.'
-      : 'Invalid if the regime stops preferring cash. A price trend is not the invalidation.';
+    return 'Cash funds are reduced when the market turns Supportive and money moves into shares.';
   }
-  const trend = input.ma200 != null
-    ? `close falls through the 200-day average (${input.ma200.toFixed(2)})`
-    : 'the 200-day trend breaks';
-  const regime = input.standDown
-    ? 'the action leaves do nothing / reduce risk'
-    : `the regime leaves ${input.regimeLabel}`;
-  return `Invalid if ${trend}, 12–1 month momentum flips negative, or ${regime}.`;
+  if (input.status === 'hold') {
+    return 'Sells automatically at the stop, 2.5 typical daily moves below the buy price.';
+  }
+  if (input.status === 'confirmed') {
+    const level = input.ma200 != null ? ` (${input.ma200.toFixed(2)})` : '';
+    return `Sells automatically at the stop, 2.5 typical daily moves below the buy price. It also drops out if the close falls through the 200-day average${level}.`;
+  }
+  const level = input.ma200 != null ? input.ma200.toFixed(2) : 'its 200-day average';
+  return `Becomes a buy candidate if it closes above ${level} and the past-year trend turns up (market mood permitting).`;
 }
 
 function driverText(drivers: ComponentId[], components: ComponentScore[]): string {
@@ -236,7 +236,7 @@ export function buildIdeas(input: {
       : driverText(['liquidity', 'credit', 'growth'], input.snapshot.components);
     const rationale = expression
       ? expression.rationale
-      : 'Watchlist stock. It is a candidate only when equity beta is preferred on an open risk budget, and only when 12–1 momentum, the 200-day trend, and the 5-session return z-score agree.';
+      : 'Not bought in this mood. Becomes a candidate when the market is Supportive and its price checks pass.';
     drafted.push({
       instrument,
       sleeve: expression?.label ?? 'Watchlist',
@@ -302,7 +302,7 @@ export function buildIdeas(input: {
   }));
 
   rows.sort((a, b) => {
-    const order = { confirmed: 0, watch: 1, avoid: 2 };
+    const order = { confirmed: 0, hold: 1, watch: 2, avoid: 3 };
     if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
     const as = a.strength == null ? -Infinity : a.strength;
     const bs = b.strength == null ? -Infinity : b.strength;
@@ -319,7 +319,7 @@ export function buildIdeas(input: {
     rows,
     watchlistNote: stocksLive
       ? null
-      : 'The stock list is stood down on a sit-tight day, so individual shares are not in this table. Theme names such as Bitcoin, Ether, Solana, and silver are not listed here either. They stay on the theme cards. The ones waiting only on the market score are in Waiting on the regime.',
+      : 'The stock list is stood down on a no-clear-signal day, so individual shares are not listed here. Crypto and silver are listed under Themes.',
     gaps: input.book.gaps.slice(),
     pricesFetchedAt: input.book.fetchedAt,
     singlePositionCap: SINGLE_POSITION_CAP,

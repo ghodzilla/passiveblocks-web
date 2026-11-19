@@ -11,7 +11,7 @@ export interface GrossSplit {
 }
 
 export function bookExposureSentence(exposures: GrossSplit): string {
-  return `Held gross ${(exposures.gross * 100).toFixed(1)}% of the ${(exposures.maxGross * 100).toFixed(0)}% cap. This gross is every holding except the AUD cash balance, so cash-like AAA.AX, BILL.AX, and SHY count in it. Held net ${(exposures.net * 100).toFixed(1)}% of the ${(exposures.maxNet * 100).toFixed(0)}% cap. Net leaves those cash-like names out. Risk ${(exposures.risk * 100).toFixed(1)}%. Defensive ${(exposures.defensive * 100).toFixed(1)}%. AUD cash balance ${(exposures.cash * 100).toFixed(1)}%.`;
+  return `Invested ${(exposures.gross * 100).toFixed(1)}% of ${(exposures.maxGross * 100).toFixed(0)}% max · Non-cash ${(exposures.net * 100).toFixed(1)}% of ${(exposures.maxNet * 100).toFixed(0)}% max · Cash ${(exposures.cash * 100).toFixed(1)}%.`;
 }
 
 export function paperLogSentence(paper: {
@@ -21,18 +21,12 @@ export function paperLogSentence(paper: {
   latest: PaperMarkPayload | null;
 }): string {
   if (paper.status === 'ok' && (paper.decisions > 0 || paper.marks > 0)) {
-    const nav = !paper.latest
-      ? ''
-      : paper.latest.nav == null
-        ? ` Latest mark: ${paper.latest.navStatus}${paper.latest.reason ? `. ${paper.latest.reason}` : ''}`
-        : ` Latest AUD unit NAV ${paper.latest.nav.toFixed(4)}.`;
     if (paper.latest && paper.latest.basis !== 'held-book') {
-      return `Paper log active: ${paper.decisions} decisions, ${paper.marks} marks. The latest stored mark used that day's suggestion weights, not the shares in the AUD book. A suggestion of 0% was stored as a sale. The row is kept and is not comparable with the book. Stored mark gross ${(paper.latest.gross * 100).toFixed(1)}%. Stored cash weight ${(paper.latest.cashWeight * 100).toFixed(1)}%.${nav} The first stored mark includes entry cost only and is not a performance record.`;
+      const change = paper.latest.nav == null ? '' : ` Latest stored unit value ${paper.latest.nav.toFixed(4)} used that day's suggestion weights, not the shares in the book, so it is not comparable with the book.`;
+      return `Paper record: ${paper.marks} stored marks from ${paper.decisions} decisions.${change} Invested in that mark ${(paper.latest.gross * 100).toFixed(1)}%. Cash ${(paper.latest.cashWeight * 100).toFixed(1)}%.`;
     }
-    const latest = paper.latest
-      ? ` Held-book gross ${(paper.latest.gross * 100).toFixed(1)}% counts every holding except the AUD cash balance, including AAA.AX, BILL.AX, and SHY. Cash weight ${(paper.latest.cashWeight * 100).toFixed(1)}% is the AUD cash balance.`
-      : '';
-    return `Paper log active: ${paper.decisions} decisions, ${paper.marks} marks; first mark includes entry cost only, not a performance record.${latest}${nav}`;
+    const after = paper.latest?.nav == null ? '' : ` Latest: ${((paper.latest.nav - 1) * 100).toFixed(2)}% after trading costs.`;
+    return `Paper record: ${paper.marks} daily values.${after}`;
   }
   if (paper.status === 'ok') {
     return 'Paper log table is present. Decisions 0. Marks 0. A first mark, once written, includes entry cost only and is not a performance record.';

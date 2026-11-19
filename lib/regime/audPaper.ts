@@ -48,6 +48,12 @@ export interface PaperLedger {
   valued: boolean;
   fx: FxStamp | null;
   note: string;
+  /** Copied for the page. Not used by the roll. */
+  openedOn?: string | null;
+  marks?: { date: string; equity: number }[];
+  positions?: PaperPosition[];
+  sessionTrades?: { date: string; symbol: string; side: 'buy' | 'sell'; notionalAud: number }[];
+  cash?: number | null;
 }
 
 export interface RollLine {
@@ -129,6 +135,11 @@ export function paperLedgerFrom(journal: Journal): PaperLedger {
       note: legacy
         ? 'The earlier paper ledger is retained. Its cash and cost bases are not an AUD value, and this page does not convert them.'
         : 'No AUD paper book is stored yet.',
+      openedOn: null,
+      marks: [],
+      positions: [],
+      sessionTrades: [],
+      cash: null,
     };
   }
   const latest = book.marks[book.marks.length - 1];
@@ -145,6 +156,11 @@ export function paperLedgerFrom(journal: Journal): PaperLedger {
     valued,
     fx: book.fx,
     note: book.note,
+    openedOn: book.openedOn,
+    marks: valuedMarks(book),
+    positions: book.positions,
+    sessionTrades: book.sessionTrades ?? [],
+    cash: book.cash,
   };
 }
 

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Macro Regime',
+  title: 'Today’s market plan',
   robots: { index: false, follow: false },
 };
 

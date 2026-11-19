@@ -191,9 +191,9 @@ describe('dip buying', () => {
     assert.match(flagged.reason, /60-day high/);
     assert.doesNotMatch(flagged.reason, /confirmed/i);
     const sizedLabel = dipDisplay({ fact: flagged.reason, sized: true, failure: null });
-    assert.match(sizedLabel, /Buy the dip — confirmed/);
+    assert.match(sizedLabel, /^Dip buy/);
     const blockedLabel = dipDisplay({ fact: flagged.reason, sized: false, failure: 'the market score does not allow a new buy yet' });
-    assert.match(blockedLabel, /^Dip spotted — blocked: the market score does not allow a new buy yet/);
+    assert.match(blockedLabel, /^Dip, not a buy yet: the market score does not allow a new buy yet/);
     assert.doesNotMatch(blockedLabel, /confirmed/i);
     assert.equal(dipSignal({ regime: 'transitional', themeOn: true, halted: false, closes: dipCloses(85) }).flagged, true);
     assert.equal(dipSignal({ regime: 'risk_on', themeOn: true, halted: false, closes: dipCloses(95) }).flagged, false);

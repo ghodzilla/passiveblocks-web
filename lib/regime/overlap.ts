@@ -38,7 +38,7 @@ export interface OverlapResult {
 
 interface Row {
   symbol: string;
-  status: 'confirmed' | 'watch' | 'avoid';
+  status: 'confirmed' | 'hold' | 'watch' | 'avoid';
   weight: number;
 }
 
