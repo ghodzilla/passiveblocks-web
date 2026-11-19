@@ -4,6 +4,8 @@ import { trendWord, type GateCheck } from '@/lib/regime/gates';
 import type { IdeasReport, IdeaStatus } from '@/lib/regime/ideas';
 import { plainDrivers, stanceWords } from '@/lib/regime/plain';
 import { sydneyClock, sessionDateLabel } from '@/lib/regime/time';
+import type { PresentCall } from '@/lib/regime/presentCall';
+import { presentGateDetail } from '@/lib/regime/presentCall';
 import { CheckRow, Chip, type ChipTone } from './ui/Chip';
 
 function pct(value: number | null, digits = 0): string {
@@ -65,12 +67,14 @@ export function IdeasPanel({
   auditNote = null,
   held = {},
   bookAud = null,
+  calls,
 }: {
   ideas: IdeasReport;
   risk: { symbol: string; stop: number | null; qty: number | null; weight: number; verdict: string; gates: GateCheck[]; dip: string | null }[];
   auditNote?: string | null;
   held?: Record<string, number>;
   bookAud?: number | null;
+  calls?: Map<string, PresentCall>;
 }) {
   const riskBySymbol = new Map(risk.map((line) => [line.symbol, line]));
   const fetched = ideas.pricesFetchedAt ? sydneyClock(ideas.pricesFetchedAt) : null;
@@ -154,12 +158,17 @@ export function IdeasPanel({
             <article key={row.symbol} className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-1)] px-4 py-3">
               <div className="flex items-start justify-between gap-3">
                 <p className="font-semibold text-[var(--text-1)]">{row.name} <span className="font-mono text-xs font-normal text-[var(--text-3)]">{row.symbol}</span></p>
-                <Chip tone={STATUS_TONE[row.status]}>{STATUS_LABEL[row.status]}</Chip>
+                <Chip tone={(calls?.get(row.symbol)?.tone ?? STATUS_TONE[row.status]) as ChipTone}>{calls?.get(row.symbol)?.label ?? STATUS_LABEL[row.status]}</Chip>
               </div>
               <p className="mt-2 text-sm text-[var(--text-2)]">You hold {holdText(held[row.symbol], bookAud)}</p>
               {stop ? <p className="mt-1 text-xs text-[var(--text-3)]">{stop}</p> : null}
-              {line?.verdict ? <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{line.verdict}</p> : null}
-              {line?.gates?.length ? <CheckRow gates={line.gates} /> : null}
+              {calls?.get(row.symbol)?.sentence ? <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{calls.get(row.symbol)?.sentence}</p> : line?.verdict ? <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{line.verdict}</p> : null}
+              {line?.gates?.length ? (
+                <CheckRow gates={line.gates.map((gate) => {
+                  const call = calls?.get(row.symbol);
+                  return { ...gate, detail: call ? presentGateDetail(gate, call.themeOn, call.offLabels) : gate.detail };
+                })} />
+              ) : null}
               {line?.dip ? <p className="mt-2 text-sm font-semibold text-[var(--text-1)]">{line.dip}</p> : null}
             </article>
           );
@@ -197,8 +206,13 @@ export function IdeasPanel({
                     <p className="mt-2 max-w-md text-xs leading-relaxed text-[var(--text-2)]">{row.rationale}</p>
                     <p className="mt-1 text-xs text-[var(--text-3)]" title="Each number is a score versus that series’ own history. Negative is tighter or less supportive.">{plainDrivers(row.drivers)}</p>
                     <p className="mt-2 text-xs leading-relaxed text-[var(--text-2)]">{row.invalidation}</p>
-                    {line?.verdict ? <p className="mt-2 text-xs leading-relaxed text-[var(--text-1)]">{line.verdict}</p> : null}
-                    {line?.gates?.length ? <CheckRow gates={line.gates} /> : null}
+                    {calls?.get(row.symbol)?.sentence ? <p className="mt-2 text-xs leading-relaxed text-[var(--text-1)]">{calls.get(row.symbol)?.sentence}</p> : line?.verdict ? <p className="mt-2 text-xs leading-relaxed text-[var(--text-1)]">{line.verdict}</p> : null}
+                    {line?.gates?.length ? (
+                      <CheckRow gates={line.gates.map((gate) => {
+                        const call = calls?.get(row.symbol);
+                        return { ...gate, detail: call ? presentGateDetail(gate, call.themeOn, call.offLabels) : gate.detail };
+                      })} />
+                    ) : null}
                     {line?.dip ? <p className="mt-2 text-xs font-semibold text-[var(--text-1)]">{line.dip}</p> : null}
                   </td>
                   <td className="px-3 py-3 font-mono text-xs text-[var(--text-2)]">{pct(row.signals.momentum12_1, 1)}</td>
@@ -207,7 +221,7 @@ export function IdeasPanel({
                   <td className="px-3 py-3 font-mono text-xs text-[var(--text-2)]">{spikeText(row.signals.reversionZ)}</td>
                   <td className="px-3 py-3 font-mono text-xs text-[var(--text-2)]">{holdText(held[row.symbol], bookAud)}</td>
                   <td className="px-3 py-3">
-                    <Chip tone={STATUS_TONE[row.status]}>{STATUS_LABEL[row.status]}</Chip>
+                    <Chip tone={(calls?.get(row.symbol)?.tone ?? STATUS_TONE[row.status]) as ChipTone}>{calls?.get(row.symbol)?.label ?? STATUS_LABEL[row.status]}</Chip>
                     {row.status === 'confirmed' ? <p className="mt-2 font-mono text-xs text-[var(--text-2)]">{pct(line?.weight ?? row.maxWeight, 1)}</p> : null}
                     {stop ? <p className="mt-1 text-xs text-[var(--text-3)]">{stop}</p> : null}
                     {row.priceStale ? <p className="mt-2 text-xs text-[var(--call-watch)]">Stale price</p> : null}

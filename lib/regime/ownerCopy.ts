@@ -730,7 +730,8 @@ export const GLOSSARY: { term: string; means: string }[] = [
   { term: 'Theme', means: 'A story basket (AI build-out, Crypto, Scarcity) with a written on/off rule.' },
   { term: 'Buy', means: 'All checks passed and there is room.' },
   { term: 'Hold', means: 'You own it. Keep it.' },
-  { term: 'Watch', means: 'Not owned, and something is in the way.' },
-  { term: 'Avoid', means: 'This group is not bought in today’s mood.' },
+  { term: 'Would buy', means: 'The checklist passed, but a failed feed or a full book blocks the buy.' },
+  { term: 'Watch', means: 'Not owned, and one of its own checks is in the way.' },
+  { term: 'Avoid', means: 'This group is not bought in today’s mood, even if its own price checks pass.' },
   { term: 'Fresh / Stale / Missing', means: 'Whether a figure is new enough to act on.' },
 ];

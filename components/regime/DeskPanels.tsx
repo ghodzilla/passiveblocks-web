@@ -1,4 +1,6 @@
 import type { Desk } from '@/lib/regime/desk';
+import type { PresentCall } from '@/lib/regime/presentCall';
+import { presentGateDetail, scrubFalseTheme } from '@/lib/regime/presentCall';
 import { bookExposureSentence } from '@/lib/regime/exposureCopy';
 import { CheckRow } from './ui/Chip';
 import { ASPIRATION_LABEL } from '@/lib/regime/sizing';
@@ -39,10 +41,12 @@ export function DeskPanels({
   desk,
   settingsNotice = null,
   part = 'all',
+  calls,
 }: {
   desk: Desk;
   settingsNotice?: string | null;
   part?: 'all' | 'themes' | 'settings';
+  calls?: Map<string, PresentCall>;
 }) {
   const names = desk.themes.reduce((sum, theme) => sum + theme.lines.length, 0);
   const bought = desk.themes.reduce((sum, theme) => sum + theme.lines.filter((line) => line.weight > 0).length, 0);
@@ -75,8 +79,11 @@ export function DeskPanels({
                     ) : null}
                     <span className="ml-2 font-mono text-xs text-[var(--text-3)]" title="Share of the paper book.">{pct(line.weight)} of the book</span>
                     {line.dip ? <span className={`ml-2 text-xs font-semibold ${line.dip.startsWith('Dip buy') ? 'text-[var(--call-buy)]' : 'text-[var(--call-watch)]'}`}>{line.dip}</span> : null}
-                    <p className="text-xs text-[var(--text-3)]">{line.verdict}</p>
-                    <CheckRow gates={line.gates} />
+                    <p className="text-xs text-[var(--text-3)]">{calls?.get(line.symbol)?.sentence ?? scrubFalseTheme(line.verdict, calls?.get(line.symbol)?.themeOn ?? null, calls?.get(line.symbol)?.offLabels ?? [])}</p>
+                    <CheckRow gates={line.gates.map((gate) => {
+                      const call = calls?.get(line.symbol);
+                      return { ...gate, detail: call ? presentGateDetail(gate, call.themeOn, call.offLabels) : gate.detail };
+                    })} />
                   </li>
                 ))}
               </ul>
@@ -86,8 +93,8 @@ export function DeskPanels({
         <div className="mt-4">
           <h3 className="text-sm font-bold">Theme change log</h3>
           <ul className="mt-2 space-y-2 text-sm text-[var(--text-3)]">
-            {desk.changelog.map((entry) => (
-              <li key={entry.date}>
+            {desk.changelog.map((entry, index) => (
+              <li key={`${entry.date}-${index}`}>
                 <span className="font-mono text-xs text-white/70">{entry.date}</span> {entry.note}
               </li>
             ))}

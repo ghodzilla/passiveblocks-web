@@ -1,15 +1,21 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { BenchmarkBoard } from '@/components/regime/BenchmarkBoard';
 import { DeskPanels } from '@/components/regime/DeskPanels';
 import { EvaluationPanel } from '@/components/regime/EvaluationPanel';
+import { FeedBanner } from '@/components/regime/FeedBanner';
 import { FreshnessPanel, Fold, OwnerBrief } from '@/components/regime/OwnerBrief';
+import { PathToBuyPanel } from '@/components/regime/PathToBuyPanel';
+import { RuleCards } from '@/components/regime/RuleCards';
 import { ValidationStudy, type ReplayView } from '@/components/regime/ValidationStudy';
 import type { PaperMarkPayload } from '@/lib/regime/paperLog';
 import { IdeasPanel } from '@/components/regime/IdeasPanel';
 import type { EvaluationReport } from '@/lib/regime/evaluate';
 import { MODEL_BUDGET, REGIME_LABEL, THRESHOLDS, type RegimeId } from '@/lib/regime/constants';
-import { historyColumn, plainReading, researchPlain } from '@/lib/regime/ownerCopy';
-import { componentPeriodNote, regimeWaitCopy, waitingOnRegime } from '@/lib/regime/plain';
+import { historyColumn, plainReading, researchPlain, trustLine } from '@/lib/regime/ownerCopy';
+import { buildPresentation } from '@/lib/regime/presentation';
+import { marketRuleCards } from '@/lib/regime/presentCall';
+import { componentPeriodNote } from '@/lib/regime/plain';
 import type { RefreshHealth } from '@/lib/regime/refreshHealth';
 import type { SelfCheckRecord } from '@/lib/regime/selfcheck';
 import { sydneyClock } from '@/lib/regime/time';
@@ -96,8 +102,8 @@ function HistoryChart({ points }: { points: HistoryPoint[] }) {
         </g>
       ))}
       <path d={line} fill="none" stroke="#f4f4f5" strokeWidth="1.7" />
-      <text x={padL} y={height - 8} fill="rgba(255,255,255,0.4)" fontSize="11">{data[0].date}</text>
-      <text x={width - padR} y={height - 8} fill="rgba(255,255,255,0.4)" fontSize="11" textAnchor="end">
+      <text x={padL} y={height - 8} fill="#9a9aa8" fontSize="11">{data[0].date}</text>
+      <text x={width - padR} y={height - 8} fill="#9a9aa8" fontSize="11" textAnchor="end">
         {data[data.length - 1].date}
       </text>
     </svg>
@@ -245,8 +251,20 @@ export function RegimeDashboard({
 }) {
   const { snapshot, ideas, desk, consistency } = view;
   const failedRules = consistency.rules.filter((rule) => !rule.pass);
-  const waiting = waitingOnRegime(desk.lines);
   const recent = snapshot.history.slice(-8).reverse();
+  const heldWeights = Object.fromEntries((paperLog?.latest?.basis === 'held-book' ? paperLog.latest.weights : []).map((row) => [row.symbol, row.weight]));
+  const presented = buildPresentation({ view, held: heldWeights });
+  const trust = trustLine({
+    verdict: validation?.verdict ?? null,
+    fullStrategy: validation?.fullStrategy ?? null,
+    h1: replay?.hypotheses?.h1 ?? null,
+    rules: replay?.production?.summary ?? null,
+    spy: replay?.spySameContributions?.summary ?? null,
+    mix: replay?.staticSixtyForty?.summary ?? null,
+  });
+  const replayWindow = replay?.production?.summary?.start && replay.production.summary.end
+    ? `${replay.production.summary.start} to ${replay.production.summary.end}`
+    : null;
   const healthSources = (health ?? attempt)?.sources ?? [];
 
   return (
@@ -278,11 +296,11 @@ export function RegimeDashboard({
           </div>
           <div className="flex items-center gap-4">
             <form method="POST" action="/api/regime/logout">
-              <button type="submit" className="text-xs text-[var(--muted)] transition-colors hover:text-foreground">
+              <button type="submit" className="text-xs text-[var(--text-3)] transition-colors hover:text-foreground">
                 Log out
               </button>
             </form>
-            <Link href="/" className="text-xs text-[var(--muted)] transition-colors hover:text-foreground">
+            <Link href="/" className="text-xs text-[var(--text-3)] transition-colors hover:text-foreground">
               Public site
             </Link>
           </div>
@@ -302,17 +320,23 @@ export function RegimeDashboard({
             </ul>
           </div>
         ) : null}
-        <OwnerBrief
-          view={view}
-          paperLog={paperLog}
-          verdict={validation?.verdict ?? null}
-          fullStrategy={validation?.fullStrategy ?? null}
-          h1={replay?.hypotheses?.h1 ?? null}
-          blockReason={blockReason}
-          rules={replay?.production?.summary ?? null}
-          spy={replay?.spySameContributions?.summary ?? null}
-          mix={replay?.staticSixtyForty?.summary ?? null}
-        />
+        <div className="grid gap-8">
+          <FeedBanner blockReason={blockReason} health={health ?? attempt} />
+          <OwnerBrief
+            view={view}
+            paperLog={paperLog}
+            calls={presented.calls}
+            drivers={presented.market.drivers}
+            blockReason={blockReason}
+          />
+          <PathToBuyPanel
+            market={presented.market}
+            names={presented.names}
+            calls={presented.calls}
+            capKnown={presented.capKnown}
+          />
+          <RuleCards cards={marketRuleCards({ regime: snapshot.regime, actionable: snapshot.actionable })} />
+        </div>
         {failedRules.length === 0 ? (
           <p className="mt-4 text-xs text-[var(--text-3)]" data-consistency="pass">
             Self-checks ✓ {consistency.rules.length}/{consistency.rules.length}
@@ -329,21 +353,6 @@ export function RegimeDashboard({
             </ul>
           </div>
         )}
-        {waiting.length > 0 ? (
-          <Fold title="Watch list" lede={regimeWaitCopy({ ...snapshot, liquidity: snapshot.components.find((item) => item.id === 'liquidity')?.z ?? null })}>
-            <ul className="space-y-2 text-sm" id="waiting-on-regime">
-              {waiting.map((line) => (
-                <li key={line.symbol}>
-                  <span className="font-semibold text-white">{line.name}</span>
-                  <span className="ml-2 font-mono text-xs text-[var(--text-3)]">{line.symbol}</span>
-                  <span className="ml-2 text-[var(--text-3)]">{line.verdict}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-3 text-sm text-[var(--text-3)]">These pass everything except the market mood. They become buys once the mood turns Supportive.</p>
-          </Fold>
-        ) : null}
-
         <Fold title={`Why the market is ${plainRegimeTitle(snapshot.regime)}`} lede="Six pieces. A missing piece is left out, and the others share its weight. Money, interest rates and lender nerves must all be present.">
           <ComponentBars
             rows={snapshot.components.map((component) => ({
@@ -416,21 +425,29 @@ export function RegimeDashboard({
         </Fold>
 
         <Fold title="Themes" lede="Three story baskets, each with a written on/off rule.">
-          <DeskPanels desk={desk} part="themes" />
+          <DeskPanels desk={desk} part="themes" calls={presented.calls} />
         </Fold>
         <Fold title="All names" lede="Every name, with the checks that passed and the ones in the way.">
           <IdeasPanel
             ideas={ideas}
             risk={desk.lines}
             auditNote={auditNote}
-            held={Object.fromEntries((paperLog?.latest?.basis === 'held-book' ? paperLog.latest.weights : []).map((row) => [row.symbol, row.weight]))}
+            held={heldWeights}
             bookAud={desk.paperLedger?.currency === 'AUD' ? desk.paperLedger.equity : null}
+            calls={presented.calls}
           />
         </Fold>
         <Fold
           title="Has this beaten a simple index fund?"
           lede={researchPlain({ h1: replay?.hypotheses?.h1 ?? null, h2: replay?.hypotheses?.h2 ?? null })}
         >
+          <BenchmarkBoard
+            rules={replay?.production?.summary ?? null}
+            spy={replay?.spySameContributions?.summary ?? null}
+            mix={replay?.staticSixtyForty?.summary ?? null}
+            windowLabel={replayWindow}
+          />
+          <p className="mt-4 text-[15px] leading-relaxed text-[var(--text-2)]">{trust}</p>
           <EvaluationPanel report={evaluation} />
           <ValidationStudy study={validation} replay={replay} paper={paperLog} />
         </Fold>
@@ -460,7 +477,7 @@ export function RegimeDashboard({
           <RefreshHealthPanel health={health} attempt={attempt} csrf={csrf} showButton={false} />
         </Fold>
         <Fold title="Settings" lede="Starting amount, the long-term aspiration, and starting the paper book over.">
-          <DeskPanels desk={desk} settingsNotice={settingsNotice} part="settings" />
+          <DeskPanels desk={desk} settingsNotice={settingsNotice} part="settings" calls={presented.calls} />
         </Fold>
       </main>
     </div>

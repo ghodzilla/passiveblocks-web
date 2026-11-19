@@ -1,20 +1,21 @@
 import type { PaperMarkPayload } from '@/lib/regime/paperLog';
+import { DriverBoard } from '@/components/regime/DriverBoard';
+import type { DriverPath } from '@/lib/regime/pathToBuy';
+import type { PresentCall } from '@/lib/regime/presentCall';
 import {
   bookAudValue,
   bookParts,
   describeFeeds,
-  distanceToBuy,
   GLOSSARY,
   holdingsNow,
   knownGapLines,
   performanceSinceStart,
+  plainReading,
   plainRegime,
   sydneyWhen,
   todayAction,
-  trustLine,
   whyLine,
   type FeedStatus,
-  type ReplaySummary,
 } from '@/lib/regime/ownerCopy';
 import { sydneyClock } from '@/lib/regime/time';
 import type { RegimeView } from '@/lib/regime/view';
@@ -85,23 +86,15 @@ function toneFor(verb: string, regime: string | null): ChipTone {
 export function OwnerBrief({
   view,
   paperLog,
-  verdict,
-  fullStrategy,
-  h1,
+  calls,
+  drivers,
   blockReason = null,
-  rules = null,
-  spy = null,
-  mix = null,
 }: {
   view: RegimeView;
   paperLog: { status: string; decisions: number; marks: number; latest: PaperMarkPayload | null } | null;
-  verdict: string | null;
-  fullStrategy: string | null;
-  h1: string | null;
+  calls: Map<string, PresentCall>;
+  drivers: DriverPath[];
   blockReason?: string | null;
-  rules?: ReplaySummary | null;
-  spy?: ReplaySummary | null;
-  mix?: ReplaySummary | null;
 }) {
   const { snapshot, desk } = view;
   const regime = plainRegime(snapshot.regime);
@@ -133,7 +126,7 @@ export function OwnerBrief({
     composite: snapshot.composite,
     maxGross: snapshot.effectiveBudget.maxGross,
     maxNet: snapshot.effectiveBudget.maxNet,
-    staleFeed: blockReason,
+    staleFeed: blockReason ? 'A mandatory feed' : null,
   });
   const heldBook = holdingsNow({
     lines: desk.lines,
@@ -155,7 +148,6 @@ export function OwnerBrief({
   const afterCosts = paperLog?.latest?.basis === 'held-book' && paperLog.latest.nav != null
     ? `${((paperLog.latest.nav - 1) * 100).toFixed(2)}%`
     : null;
-  const trust = trustLine({ verdict, fullStrategy, h1, rules, spy, mix });
   const previous = snapshot.history.length > 1 ? snapshot.history[snapshot.history.length - 2]?.composite ?? null : null;
   const exposures = desk.paperLedger?.exposures ?? null;
   const parts = bookParts({ weights, exposures });
@@ -202,16 +194,16 @@ export function OwnerBrief({
             Data as of {snapshot.today} · refreshed {sydneyClock(snapshot.generatedAt)}
           </p>
         </div>
-        <div className="mt-5">
+        <div className="mt-5 grid items-center gap-6 lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)]">
           <RegimeGauge composite={snapshot.composite} previous={previous} liquidity={liquidity} />
+          <DriverBoard
+            drivers={drivers}
+            readings={Object.fromEntries(snapshot.components.map((component) => [component.id, plainReading(component.id, component.reading)]))}
+          />
         </div>
-        <p className="mt-3 text-[15px] leading-relaxed text-[var(--text-2)]">
+        <p className="mt-4 text-[15px] leading-relaxed text-[var(--text-2)]">
           <span className="font-semibold text-[var(--text-1)]">Why. </span>
-          The market score is {snapshot.composite == null ? 'unavailable' : snapshot.composite.toFixed(2)}. {regime.means} {whyLine(components)}
-        </p>
-        <p className="mt-2 text-[15px] leading-relaxed text-[var(--text-2)]">
-          <span className="font-semibold text-[var(--text-1)]">What would change it. </span>
-          {distanceToBuy({ composite: snapshot.composite, liquidity })}
+          {regime.means} {whyLine(components)}
         </p>
         <p className="mt-2 text-sm text-[var(--text-3)]">{action.reason}</p>
         <details className="mt-4">
@@ -256,9 +248,9 @@ export function OwnerBrief({
         ) : null}
         <div className="mt-4 grid gap-2">
           {ranked.map((row) => {
-            const line = desk.lines.find((item) => item.symbol === row.symbol);
-            const call = row.symbol === 'CASH' ? 'Hold' : (line?.status === 'hold' ? 'Hold' : line?.status === 'confirmed' ? 'Buy' : line?.status === 'avoid' ? 'Avoid' : 'Hold');
-            const callTone: ChipTone = call === 'Buy' ? 'buy' : call === 'Avoid' ? 'off' : 'hold';
+            const call = row.symbol === 'CASH'
+              ? { label: 'Hold' as const, tone: 'hold' as const, sentence: '' }
+              : (calls.get(row.symbol) ?? { label: 'Hold' as const, tone: 'hold' as const, sentence: '' });
             const aud = book.amount == null ? '—' : `A$${Math.round(row.weight * book.amount).toLocaleString('en-AU')}`;
             return (
               <article key={row.symbol} className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-1)] px-4 py-3 sm:grid sm:grid-cols-[1fr_auto_auto_auto] sm:items-center sm:gap-4">
@@ -268,8 +260,8 @@ export function OwnerBrief({
                 </p>
                 <p className="mt-1 font-mono text-sm tabular-nums text-[var(--text-2)] sm:mt-0">{aud}</p>
                 <p className="font-mono text-sm tabular-nums text-[var(--text-3)]">{(row.weight * 100).toFixed(1)}%</p>
-                <div className="mt-2 sm:mt-0"><Chip tone={callTone}>{call}</Chip></div>
-                {line?.verdict && row.symbol !== 'CASH' ? <p className="mt-2 text-sm text-[var(--text-3)] sm:col-span-4">{line.verdict}</p> : null}
+                <div className="mt-2 sm:mt-0"><Chip tone={call.tone}>{call.label}</Chip></div>
+                {call.sentence && row.symbol !== 'CASH' ? <p className="mt-2 text-sm text-[var(--text-3)] sm:col-span-4">{call.sentence}</p> : null}
               </article>
             );
           })}
@@ -277,7 +269,6 @@ export function OwnerBrief({
         <ul className="mt-3 space-y-1 text-[15px] text-[var(--text-2)]">
           {action.steps.map((step) => <li key={step}>{step}</li>)}
         </ul>
-        <p className="mt-4 text-[15px] leading-relaxed text-[var(--text-2)]">{trust}</p>
       </section>
     </section>
   );
