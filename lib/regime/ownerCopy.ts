@@ -273,10 +273,14 @@ export function todayAction(input: {
     : `A$ amounts use the paper book's value of ${audMoney(input.bookAud)}.`;
 
   if (!input.actionable) {
+    const limit = input.maxGross != null && input.maxNet != null
+      ? ` While the feed is down the limit is ${bookPercent(input.maxGross)} invested and ${bookPercent(input.maxNet)} non-cash.`
+      : '';
+    const selling = sells.length > 0 || (input.pending?.length ?? 0) > 0;
     return {
       verb: 'PLAY SAFE',
-      headline: `PLAY SAFE — ${input.staleFeed ?? 'a key feed'} is missing or out of date. No buys, and the book can be trimmed back to 20% invested.`,
-      reason: 'A missing or old key feed makes the rules play safe.',
+      headline: `PLAY SAFE — ${input.staleFeed ?? 'a key feed'} is missing or out of date. No new buys.`,
+      reason: `Do not add risk. ${selling ? 'A sale is still waiting.' : 'Nothing is being sold.'}${limit}`,
       steps: holdings.length ? [`Keep the ${holdings.length} holdings already in the book.`] : ['No new buys.'],
       means,
     };
@@ -730,7 +734,8 @@ export const GLOSSARY: { term: string; means: string }[] = [
   { term: 'Theme', means: 'A story basket (AI build-out, Crypto, Scarcity) with a written on/off rule.' },
   { term: 'Buy', means: 'All checks passed and there is room.' },
   { term: 'Hold', means: 'You own it. Keep it.' },
-  { term: 'Watch', means: 'Not owned, and something is in the way.' },
-  { term: 'Avoid', means: 'This group is not bought in today’s mood.' },
+  { term: 'Would buy', means: 'The checklist passed, but a failed feed or a full book blocks the buy.' },
+  { term: 'Watch', means: 'Not owned, and one of its own checks is in the way.' },
+  { term: 'Avoid', means: 'This group is not bought in today’s mood, even if its own price checks pass.' },
   { term: 'Fresh / Stale / Missing', means: 'Whether a figure is new enough to act on.' },
 ];

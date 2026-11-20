@@ -1,15 +1,20 @@
-function sydneyParts(date: Date): { zone: 'AEDT' | 'AEST'; label: string } {
+function sydneyZone(date: Date): 'AEDT' | 'AEST' | null {
   const offset = new Intl.DateTimeFormat('en-AU', {
     timeZone: 'Australia/Sydney',
     timeZoneName: 'shortOffset',
   }).formatToParts(date).find((part) => part.type === 'timeZoneName')?.value ?? '';
-  const zone = offset.includes('AEST') || (offset.includes('+10') && !offset.includes('+11')) ? 'AEST' : 'AEDT';
+  if (offset.includes('AEST') || /\+10(?!\d)/.test(offset)) return 'AEST';
+  if (offset.includes('AEDT') || /\+11(?!\d)/.test(offset)) return 'AEDT';
+  return null;
+}
+
+function sydneyParts(date: Date): { zone: 'AEDT' | 'AEST' | null; label: string } {
   const label = new Intl.DateTimeFormat('en-AU', {
     timeZone: 'Australia/Sydney',
     dateStyle: 'medium',
-    timeStyle: 'short',
+    timeStyle: 'medium',
   }).format(date);
-  return { zone, label };
+  return { zone: sydneyZone(date), label };
 }
 
 /** Display clock. The engine's "today" stays on the Melbourne calendar, which shares this offset. */
@@ -18,7 +23,7 @@ export function sydneyClock(iso: string | null | undefined): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
   const parts = sydneyParts(date);
-  return `${parts.label} ${parts.zone}`;
+  return parts.zone ? `${parts.label} ${parts.zone}` : parts.label;
 }
 
 /** One clock for every timestamp on the regime page. */

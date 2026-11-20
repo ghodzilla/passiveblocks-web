@@ -55,11 +55,7 @@ export function EvaluationPanel({ report }: { report: EvaluationReport }) {
   return (
     <section className="mt-2" id="evaluation">
       <h2 className="text-lg font-bold tracking-tight text-[var(--text-1)]">What the saved prices can and cannot say</h2>
-      <div className="mt-4 rounded-[var(--radius-xl)] border border-amber-300/40 bg-amber-400/10 px-5 py-4">
-        <p className="text-sm font-semibold text-[var(--call-watch)]">The full rule set has not been proven on history</p>
-        <p className="mt-2 text-sm leading-relaxed text-[var(--text-1)]">{report.fullStrategyReason}</p>
-        <p className="mt-2 text-sm text-[var(--text-2)]">This block says what the saved prices are allowed to be used for.</p>
-      </div>
+      <p className="mt-4 text-sm leading-relaxed text-[var(--text-2)]">{report.fullStrategyReason}</p>
 
       <div className="mt-4 grid max-w-3xl gap-3 text-sm leading-relaxed text-[var(--text-2)]">
         <p>Three ways of counting the same saved prices. This is not the live paper book, and it does not change a rule.</p>

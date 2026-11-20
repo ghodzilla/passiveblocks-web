@@ -1,15 +1,21 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { BenchmarkBoard } from '@/components/regime/BenchmarkBoard';
 import { DeskPanels } from '@/components/regime/DeskPanels';
 import { EvaluationPanel } from '@/components/regime/EvaluationPanel';
+import { FeedBanner } from '@/components/regime/FeedBanner';
 import { FreshnessPanel, Fold, OwnerBrief } from '@/components/regime/OwnerBrief';
+import { PathToBuyPanel } from '@/components/regime/PathToBuyPanel';
+import { RuleCards } from '@/components/regime/RuleCards';
 import { ValidationStudy, type ReplayView } from '@/components/regime/ValidationStudy';
 import type { PaperMarkPayload } from '@/lib/regime/paperLog';
 import { IdeasPanel } from '@/components/regime/IdeasPanel';
 import type { EvaluationReport } from '@/lib/regime/evaluate';
-import { MODEL_BUDGET, REGIME_LABEL, THRESHOLDS, type RegimeId } from '@/lib/regime/constants';
-import { historyColumn, plainReading, researchPlain } from '@/lib/regime/ownerCopy';
-import { componentPeriodNote, regimeWaitCopy, waitingOnRegime } from '@/lib/regime/plain';
+import { MODEL_BUDGET, PRESERVATION_BUDGET, REGIME_LABEL, THRESHOLDS, type RegimeId } from '@/lib/regime/constants';
+import { GLOSSARY, historyColumn, plainReading, researchPlain, trustLine } from '@/lib/regime/ownerCopy';
+import { buildPresentation } from '@/lib/regime/presentation';
+import { marketRuleCards } from '@/lib/regime/presentCall';
+import { componentPeriodNote } from '@/lib/regime/plain';
 import type { RefreshHealth } from '@/lib/regime/refreshHealth';
 import type { SelfCheckRecord } from '@/lib/regime/selfcheck';
 import { sydneyClock } from '@/lib/regime/time';
@@ -96,8 +102,8 @@ function HistoryChart({ points }: { points: HistoryPoint[] }) {
         </g>
       ))}
       <path d={line} fill="none" stroke="#f4f4f5" strokeWidth="1.7" />
-      <text x={padL} y={height - 8} fill="rgba(255,255,255,0.4)" fontSize="11">{data[0].date}</text>
-      <text x={width - padR} y={height - 8} fill="rgba(255,255,255,0.4)" fontSize="11" textAnchor="end">
+      <text x={padL} y={height - 8} fill="#9a9aa8" fontSize="11">{data[0].date}</text>
+      <text x={width - padR} y={height - 8} fill="#9a9aa8" fontSize="11" textAnchor="end">
         {data[data.length - 1].date}
       </text>
     </svg>
@@ -245,8 +251,20 @@ export function RegimeDashboard({
 }) {
   const { snapshot, ideas, desk, consistency } = view;
   const failedRules = consistency.rules.filter((rule) => !rule.pass);
-  const waiting = waitingOnRegime(desk.lines);
   const recent = snapshot.history.slice(-8).reverse();
+  const heldWeights = Object.fromEntries((paperLog?.latest?.basis === 'held-book' ? paperLog.latest.weights : []).map((row) => [row.symbol, row.weight]));
+  const presented = buildPresentation({ view, held: heldWeights });
+  const trust = trustLine({
+    verdict: validation?.verdict ?? null,
+    fullStrategy: validation?.fullStrategy ?? null,
+    h1: replay?.hypotheses?.h1 ?? null,
+    rules: replay?.production?.summary ?? null,
+    spy: replay?.spySameContributions?.summary ?? null,
+    mix: replay?.staticSixtyForty?.summary ?? null,
+  });
+  const replayWindow = replay?.production?.summary?.start && replay.production.summary.end
+    ? `${replay.production.summary.start} to ${replay.production.summary.end}`
+    : null;
   const healthSources = (health ?? attempt)?.sources ?? [];
 
   return (
@@ -260,7 +278,7 @@ export function RegimeDashboard({
         }}
       />
       <header className="relative border-b border-[var(--border)]/80 bg-background/70 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
             <Link href="/">
               <Image
@@ -278,18 +296,18 @@ export function RegimeDashboard({
           </div>
           <div className="flex items-center gap-4">
             <form method="POST" action="/api/regime/logout">
-              <button type="submit" className="text-xs text-[var(--muted)] transition-colors hover:text-foreground">
+              <button type="submit" className="text-xs text-[var(--text-3)] transition-colors hover:text-foreground">
                 Log out
               </button>
             </form>
-            <Link href="/" className="text-xs text-[var(--muted)] transition-colors hover:text-foreground">
+            <Link href="/" className="text-xs text-[var(--text-3)] transition-colors hover:text-foreground">
               Public site
             </Link>
           </div>
         </div>
       </header>
 
-      <main className="relative mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10" data-regime={snapshot.regime ?? 'unavailable'} data-action={snapshot.action}>
+      <main className="relative mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-6" data-regime={snapshot.regime ?? 'unavailable'} data-action={snapshot.action}>
         {selfCheck && !selfCheck.ok ? (
           <div className="mb-6 rounded-[var(--radius-xl)] border border-rose-400/50 bg-rose-500/15 px-5 py-4" data-selfcheck="fail">
             <p className="text-sm font-semibold text-rose-50">
@@ -302,17 +320,44 @@ export function RegimeDashboard({
             </ul>
           </div>
         ) : null}
+        <div className="grid gap-3">
+          <FeedBanner blockReason={blockReason} health={health ?? attempt} />
+          <OwnerBrief
+            view={view}
+            paperLog={paperLog}
+            calls={presented.calls}
+            drivers={presented.market.drivers}
+            blockReason={blockReason}
+            part="hero"
+          />
+          <PathToBuyPanel
+            market={presented.market}
+            names={presented.names}
+            calls={presented.calls}
+            capKnown={presented.capKnown}
+          />
+        </div>
         <OwnerBrief
           view={view}
           paperLog={paperLog}
-          verdict={validation?.verdict ?? null}
-          fullStrategy={validation?.fullStrategy ?? null}
-          h1={replay?.hypotheses?.h1 ?? null}
+          calls={presented.calls}
+          drivers={presented.market.drivers}
           blockReason={blockReason}
-          rules={replay?.production?.summary ?? null}
-          spy={replay?.spySameContributions?.summary ?? null}
-          mix={replay?.staticSixtyForty?.summary ?? null}
+          part="book"
         />
+        <Fold title="If this, then that" lede="The rule that applies today is marked.">
+          <RuleCards cards={marketRuleCards({ regime: snapshot.regime, actionable: snapshot.actionable })} />
+        </Fold>
+        <Fold title="How to read the words">
+          <dl className="grid gap-2 sm:grid-cols-2">
+            {GLOSSARY.map((item) => (
+              <div key={item.term}>
+                <dt className="text-sm font-semibold text-[var(--text-1)]">{item.term}</dt>
+                <dd className="text-sm leading-relaxed text-[var(--text-3)]">{item.means}</dd>
+              </div>
+            ))}
+          </dl>
+        </Fold>
         {failedRules.length === 0 ? (
           <p className="mt-4 text-xs text-[var(--text-3)]" data-consistency="pass">
             Self-checks ✓ {consistency.rules.length}/{consistency.rules.length}
@@ -329,21 +374,6 @@ export function RegimeDashboard({
             </ul>
           </div>
         )}
-        {waiting.length > 0 ? (
-          <Fold title="Watch list" lede={regimeWaitCopy({ ...snapshot, liquidity: snapshot.components.find((item) => item.id === 'liquidity')?.z ?? null })}>
-            <ul className="space-y-2 text-sm" id="waiting-on-regime">
-              {waiting.map((line) => (
-                <li key={line.symbol}>
-                  <span className="font-semibold text-white">{line.name}</span>
-                  <span className="ml-2 font-mono text-xs text-[var(--text-3)]">{line.symbol}</span>
-                  <span className="ml-2 text-[var(--text-3)]">{line.verdict}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-3 text-sm text-[var(--text-3)]">These pass everything except the market mood. They become buys once the mood turns Supportive.</p>
-          </Fold>
-        ) : null}
-
         <Fold title={`Why the market is ${plainRegimeTitle(snapshot.regime)}`} lede="Six pieces. A missing piece is left out, and the others share its weight. Money, interest rates and lender nerves must all be present.">
           <ComponentBars
             rows={snapshot.components.map((component) => ({
@@ -416,21 +446,29 @@ export function RegimeDashboard({
         </Fold>
 
         <Fold title="Themes" lede="Three story baskets, each with a written on/off rule.">
-          <DeskPanels desk={desk} part="themes" />
+          <DeskPanels desk={desk} part="themes" calls={presented.calls} />
         </Fold>
         <Fold title="All names" lede="Every name, with the checks that passed and the ones in the way.">
           <IdeasPanel
             ideas={ideas}
             risk={desk.lines}
             auditNote={auditNote}
-            held={Object.fromEntries((paperLog?.latest?.basis === 'held-book' ? paperLog.latest.weights : []).map((row) => [row.symbol, row.weight]))}
+            held={heldWeights}
             bookAud={desk.paperLedger?.currency === 'AUD' ? desk.paperLedger.equity : null}
+            calls={presented.calls}
           />
         </Fold>
         <Fold
           title="Has this beaten a simple index fund?"
           lede={researchPlain({ h1: replay?.hypotheses?.h1 ?? null, h2: replay?.hypotheses?.h2 ?? null })}
         >
+          <BenchmarkBoard
+            rules={replay?.production?.summary ?? null}
+            spy={replay?.spySameContributions?.summary ?? null}
+            mix={replay?.staticSixtyForty?.summary ?? null}
+            windowLabel={replayWindow}
+          />
+          <p className="mt-4 text-[15px] leading-relaxed text-[var(--text-2)]">{trust}</p>
           <EvaluationPanel report={evaluation} />
           <ValidationStudy study={validation} replay={replay} paper={paperLog} />
         </Fold>
@@ -442,8 +480,9 @@ export function RegimeDashboard({
             <div><strong>Mixed</strong> is everything between Cautious and Supportive. The rules hold and buy nothing new.</div>
             <div><strong>Cautious</strong> starts at {THRESHOLDS.tightEnter.toFixed(2)} and lasts until the score recovers past {THRESHOLDS.tightExit.toFixed(2)}. Only defensive holdings are kept.</div>
             <div><strong>Stressed</strong> starts at {THRESHOLDS.crisisEnter.toFixed(2)}, or at {THRESHOLDS.crisisCompositeConfirm.toFixed(2)} when the lender score is {THRESHOLDS.crisisCreditEnter.toFixed(1)} or worse. It ends when the score is above {THRESHOLDS.crisisExitComposite.toFixed(2)} and lenders are above {THRESHOLDS.crisisExitCredit.toFixed(1)}.</div>
-            <div><strong>No clear signal</strong> ({`-${THRESHOLDS.weakAbsComposite}`} to +{THRESHOLDS.weakAbsComposite}): too close to normal, so nothing new is bought. If money, rates or lender nerves are missing, the book can be trimmed back to 20% invested.</div>
-            <div>Size limits, swing / invested / non-cash. Supportive {pct(MODEL_BUDGET.risk_on.volTarget)} / {pct(MODEL_BUDGET.risk_on.maxGross)} / {pct(MODEL_BUDGET.risk_on.maxNet)}. Mixed {pct(MODEL_BUDGET.transitional.volTarget)} / {pct(MODEL_BUDGET.transitional.maxGross)} / {pct(MODEL_BUDGET.transitional.maxNet)}. Cautious {pct(MODEL_BUDGET.tightening.volTarget)} / {pct(MODEL_BUDGET.tightening.maxGross)} / {pct(MODEL_BUDGET.tightening.maxNet)}. Stressed {pct(MODEL_BUDGET.crisis.volTarget)} / {pct(MODEL_BUDGET.crisis.maxGross)} / {pct(MODEL_BUDGET.crisis.maxNet)}. The paper book never borrows, so it cannot go above 100% invested. A no-clear-signal day uses the tighter 40% / 20% cap.</div>
+            <div><strong>No clear signal</strong> ({`-${THRESHOLDS.weakAbsComposite}`} to +{THRESHOLDS.weakAbsComposite}): too close to normal, so nothing new is bought. The Mixed caps on that day are 40% invested and 20% non-cash.</div>
+            <div><strong>Missing feed</strong>: if money, rates or lender nerves are missing, new buys stay off and nothing is sold. The limit is {pct(PRESERVATION_BUDGET.maxGross)} invested and {pct(PRESERVATION_BUDGET.maxNet)} non-cash.</div>
+            <div>Size limits, swing / invested / non-cash. Supportive {pct(MODEL_BUDGET.risk_on.volTarget)} / {pct(MODEL_BUDGET.risk_on.maxGross)} / {pct(MODEL_BUDGET.risk_on.maxNet)}. Mixed {pct(MODEL_BUDGET.transitional.volTarget)} / {pct(MODEL_BUDGET.transitional.maxGross)} / {pct(MODEL_BUDGET.transitional.maxNet)}. Cautious {pct(MODEL_BUDGET.tightening.volTarget)} / {pct(MODEL_BUDGET.tightening.maxGross)} / {pct(MODEL_BUDGET.tightening.maxNet)}. Stressed {pct(MODEL_BUDGET.crisis.volTarget)} / {pct(MODEL_BUDGET.crisis.maxGross)} / {pct(MODEL_BUDGET.crisis.maxNet)}. The paper book never borrows, so it cannot go above 100% invested. A no-clear-signal day uses 40% invested and 20% non-cash.</div>
             <div>No fund over 20% of the book. No single company over 2%. All names in one theme together: 20% max. Names that are really the same bet share one 25% limit. If holdings start moving together, new sizes shrink, down to half.</div>
             <div>Every holding has an automatic sell price 2.5 typical daily moves below where it was bought, including cash-like funds. If a new buy hits that stop, the book loses about 0.75%. You can top up once, only after the holding has gained as much as it was risking. New buys pause if the book falls 10% from its high. A dip is a 10–20% pullback that has started to recover. It only becomes a buy in a Supportive market.</div>
             <div>Each check is graded against what prices did next. One that keeps being wrong is switched off automatically.</div>
@@ -460,7 +499,7 @@ export function RegimeDashboard({
           <RefreshHealthPanel health={health} attempt={attempt} csrf={csrf} showButton={false} />
         </Fold>
         <Fold title="Settings" lede="Starting amount, the long-term aspiration, and starting the paper book over.">
-          <DeskPanels desk={desk} settingsNotice={settingsNotice} part="settings" />
+          <DeskPanels desk={desk} settingsNotice={settingsNotice} part="settings" calls={presented.calls} />
         </Fold>
       </main>
     </div>
