@@ -6,6 +6,7 @@ import { EvaluationPanel } from '@/components/regime/EvaluationPanel';
 import { FeedBanner } from '@/components/regime/FeedBanner';
 import { FreshnessPanel, Fold, OwnerBrief } from '@/components/regime/OwnerBrief';
 import { PathToBuyPanel } from '@/components/regime/PathToBuyPanel';
+import { VisserPanel } from '@/components/regime/VisserPanel';
 import { RuleCards } from '@/components/regime/RuleCards';
 import { ValidationStudy, type ReplayView } from '@/components/regime/ValidationStudy';
 import type { PaperMarkPayload } from '@/lib/regime/paperLog';
@@ -20,6 +21,7 @@ import type { RefreshHealth } from '@/lib/regime/refreshHealth';
 import type { SelfCheckRecord } from '@/lib/regime/selfcheck';
 import { sydneyClock } from '@/lib/regime/time';
 import { ComponentBars } from '@/components/regime/viz/ComponentBars';
+import type { VisserPanelModel } from '@/lib/regime/visserPresent';
 import type { RegimeView } from '@/lib/regime/view';
 import type { HistoryPoint } from '@/lib/regime/types';
 
@@ -196,6 +198,7 @@ export function RegimeDashboard({
   validation,
   replay,
   paperLog,
+  visser,
 }: {
   view: RegimeView;
   selfCheck: SelfCheckRecord | null;
@@ -248,6 +251,7 @@ export function RegimeDashboard({
   } | null;
   replay: ReplayView | null;
   paperLog: { status: string; decisions: number; marks: number; latest: PaperMarkPayload | null };
+  visser: VisserPanelModel;
 }) {
   const { snapshot, ideas, desk, consistency } = view;
   const failedRules = consistency.rules.filter((rule) => !rule.pass);
@@ -336,6 +340,7 @@ export function RegimeDashboard({
             calls={presented.calls}
             capKnown={presented.capKnown}
           />
+          <VisserPanel model={visser} csrf={csrf} />
         </div>
         <OwnerBrief
           view={view}
