@@ -1,3 +1,4 @@
+import { CASH_YIELD_BPS, TAX_FRANKING_NOTE } from './cashYield';
 import type { PriceBook } from './prices';
 import { MOMENTUM_LOOKBACK, MOMENTUM_SKIP, TREND_WINDOW, type Bar } from './signals';
 import { RULE_VERSION } from './decision';
@@ -6,7 +7,8 @@ const WARMUP = Math.max(MOMENTUM_LOOKBACK, TREND_WINDOW);
 const YEAR_DAYS = 365.25;
 
 export const DEFAULT_ONE_WAY_BPS = 10;
-export const DEFAULT_CASH_YIELD_BPS = 0;
+/** RBA cash rate target. See lib/regime/cashYield.ts. A page address can still override it. */
+export const DEFAULT_CASH_YIELD_BPS = CASH_YIELD_BPS;
 export const MAX_ONE_WAY_BPS = 100;
 export const MAX_CASH_YIELD_BPS = 500;
 
@@ -50,6 +52,14 @@ export interface SymbolEvaluation {
   outOfSample: { monthlyWealthPerUnit: number | null; tacticalWealthPerUnit: number | null } | null;
 }
 
+export interface TimingSummary {
+  compared: number;
+  priceRuleAhead: number;
+  monthlyAhead: number;
+  tied: number;
+  sentence: string;
+}
+
 export interface EvaluationReport {
   ruleVersion: string;
   fullStrategy: 'not_validated';
@@ -62,6 +72,7 @@ export interface EvaluationReport {
   lookAhead: string;
   sampleNote: string;
   returnLabel: string;
+  timing: TimingSummary;
   symbols: SymbolEvaluation[];
   included: number;
   skipped: number;
@@ -380,6 +391,27 @@ function wealthSplit(
   };
 }
 
+/** Price-rule timing against putting the same cash in every month. Does not change a live rule. */
+export function timingSummary(symbols: SymbolEvaluation[]): TimingSummary {
+  let priceRuleAhead = 0;
+  let monthlyAhead = 0;
+  let tied = 0;
+  for (const symbol of symbols) {
+    if (symbol.skipped) continue;
+    const monthly = symbol.paths.find((path) => path.id === 'monthly_invest')?.wealthPerUnitContributed ?? null;
+    const tactical = symbol.paths.find((path) => path.id === 'tactical_price')?.wealthPerUnitContributed ?? null;
+    if (monthly == null || tactical == null) continue;
+    if (tactical > monthly) priceRuleAhead += 1;
+    else if (tactical < monthly) monthlyAhead += 1;
+    else tied += 1;
+  }
+  const compared = priceRuleAhead + monthlyAhead + tied;
+  const sentence = compared === 0
+    ? 'No symbol was long enough to compare the price rules with monthly investing.'
+    : `On ${compared} symbol${compared === 1 ? '' : 's'}, dropping the entry and exit price rules (plain monthly investing) beat those rules on ${monthlyAhead}, lagged on ${priceRuleAhead}, and tied on ${tied}. The live book still uses the price rules. This count does not change them.`;
+  return { compared, priceRuleAhead, monthlyAhead, tied, sentence };
+}
+
 function dividendNote(symbols: SymbolEvaluation[]): string {
   const included = symbols.filter((symbol) => symbol.skipped == null);
   if (included.length === 0) return 'No symbol was long enough to describe dividends.';
@@ -404,12 +436,13 @@ export function evaluateBook(book: PriceBook | null, assumptions: ResearchAssump
     assumptions,
     costNote: `One-way cost assumption is ${assumptions.oneWayBps} bps on every buy and every sell, including the first entry and later rebalances. Monthly and tactical use that same charge. It is an assumption, not a broker quote.${assumptions.clamped ? ' An entered value was outside 0–100 bps for costs or 0–500 bps for cash yield and was clamped.' : ''}`,
     cashNote: assumptions.cashYieldAnnual > 0
-      ? `Leftover cash accrues ${assumptions.cashYieldBps} bps a year, compounded by the calendar gap between sessions. That yield is an assumption.`
-      : 'Leftover cash earns nothing in this table. Cash yield is an explicit assumption and is currently zero.',
+      ? `Leftover cash accrues ${(assumptions.cashYieldBps / 100).toFixed(2)}% a year (${assumptions.cashYieldBps} hundredths of a percent), compounded by the calendar gap between sessions. ${TAX_FRANKING_NOTE}`
+      : `Leftover cash earns nothing in this table. ${TAX_FRANKING_NOTE}`,
     dividendNote: dividendNote(symbols),
     lookAhead: 'The fill at a session uses the signal from the previous session of that symbol. It trades at that session’s close, so it does not use the move after the fill, and it does not trade the close that created the signal. Holidays with no bar are not sessions.',
     sampleNote: 'Monthly and tactical receive the same cash on the same dates. Ending wealth per unit contributed is not a time-weighted return. The lump sum funds the same total on the first date only, so it is a different funding schedule, not a measure of tactical skill. A later half is shown only when each half has at least 12 contribution months. Thresholds are not searched.',
     returnLabel: 'Ending wealth per unit contributed. Not a time-weighted return.',
+    timing: timingSummary(symbols),
     symbols,
     included,
     skipped: symbols.length - included,

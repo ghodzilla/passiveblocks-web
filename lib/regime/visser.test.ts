@@ -267,6 +267,12 @@ describe('Visser page copy', () => {
     assert.equal(VISSER_BACKTEST.usdCagr2005to2014, 0.051);
     const panel = sampleVisserPanel();
     assert.equal(panel.caveat, VISSER_CAVEAT);
+    assert.match(panel.paperRule, /Paper only/);
+    assert.match(panel.paperRule, /QQQ/);
+    assert.match(panel.frozen, /frozen/);
+    assert.match(panel.record, /No week is saved yet/);
+    assert.match(panel.cashYield, /4\.85%/);
+    assert.match(panel.cashYield, /Tax and franking/);
     assert.equal(panel.cards.map((card) => card.call).join(','), 'Buy,Trim,Wait,Hold,Sell');
     assert.match(panel.summary ?? '', /Buy Chips/);
     assert.match(panel.summary ?? '', /5,250/);

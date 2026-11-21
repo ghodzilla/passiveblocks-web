@@ -9,7 +9,7 @@ import { REGIME_COOKIE } from '@/lib/regime/session';
 import { readSelfCheck } from '@/lib/regime/state';
 import { replayResults, validationStudy } from '@/lib/regime/validationArtifacts';
 import { toVisserPanel } from '@/lib/regime/visserPresent';
-import { readVisser } from '@/lib/regime/visserStore';
+import { readVisser, readVisserWeeks } from '@/lib/regime/visserStore';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -25,15 +25,17 @@ export default async function RegimePage({
   const csrf = secret && secret.length >= 32 ? signRefreshCsrf(secret, sessionToken) : null;
   const attempt = secret ? openAttemptCookie(secret, cookies().get(ATTEMPT_COOKIE)?.value) : null;
   const assumptions = parseResearchAssumptions(searchParams);
-  const [{ snapshot, ideas, desk, consistency, health, blockReason, auditNote, evaluation }, selfCheck, paperLog, visser] = await Promise.all([
+  const [{ snapshot, ideas, desk, consistency, health, blockReason, auditNote, evaluation, book }, selfCheck, paperLog, visser, weeks] = await Promise.all([
     getRegimeDesk(new Date(), attempt, undefined, assumptions),
     readSelfCheck(),
     readPaperLog(),
     readVisser(),
+    readVisserWeeks(),
   ]);
+  const closes = (symbol: string) => (book?.series.find((series) => series.symbol === symbol)?.bars ?? []).map((bar) => ({ date: bar.date, close: bar.close }));
   const settingsFlag = Array.isArray(searchParams?.settings) ? searchParams?.settings[0] : searchParams?.settings;
   const settingsNotice = settingsFlag === 'store'
-    ? 'Capital and the aspiration were not saved. Neon did not keep the write, and this server did not keep a local copy.'
+    ? 'The starting amount was not saved. Neon did not keep the write, and this server did not keep a local copy.'
     : null;
   return (
     <RegimeDashboard
@@ -49,12 +51,16 @@ export default async function RegimePage({
       validation={validationStudy}
       replay={replayResults}
       paperLog={paperLog}
+      spy={closes('SPY')}
       visser={toVisserPanel({
         status: visser.status,
         snapshot: visser.record?.snapshot ?? null,
         banner: visser.record?.attempt.banner ?? null,
         outcome: visser.record?.attempt.outcome ?? null,
         shareNote: visser.record?.shareNote ?? null,
+        weeks,
+        qqq: closes('QQQ'),
+        spy: closes('SPY'),
       })}
     />
   );

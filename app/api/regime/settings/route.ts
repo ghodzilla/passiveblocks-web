@@ -18,16 +18,18 @@ export async function POST(request: Request) {
   const capitalRaw = String(form.get('capital') ?? '').trim();
   const targetRaw = String(form.get('targetCagr') ?? '').trim();
   const capital = Number(capitalRaw);
-  const targetPct = Number(targetRaw);
   if (!Number.isFinite(capital) || capital <= 0 || capital > 1e12) {
     return NextResponse.redirect(new URL('/private/regime?settings=capital', request.url), 303);
   }
-  if (!Number.isFinite(targetPct) || targetPct < 0 || targetPct > 200) {
-    return NextResponse.redirect(new URL('/private/regime?settings=target', request.url), 303);
-  }
   const journal = await readJournal();
   journal.settings.capital = capital;
-  journal.settings.targetCagr = targetPct / 100;
+  if (targetRaw !== '') {
+    const targetPct = Number(targetRaw);
+    if (!Number.isFinite(targetPct) || targetPct < 0 || targetPct > 200) {
+      return NextResponse.redirect(new URL('/private/regime?settings=target', request.url), 303);
+    }
+    journal.settings.targetCagr = targetPct / 100;
+  }
   if (String(form.get('intent') ?? '') === 'rebaseline') {
     const next = rebaselineAudBook(journal, melbourneDate(new Date()), capital);
     journal.audBook = next.audBook;

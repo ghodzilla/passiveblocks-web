@@ -149,7 +149,7 @@ export function decisionFromRefresh(refresh: StoredRefresh, fx: Bar[] | null = n
     costBps: PAPER_COST_BPS,
     cashYieldBps: PAPER_CASH_YIELD_BPS,
     taxes: 'excluded',
-    benchmark: '60% SPY and 40% cash in AUD, same cost and zero cash yield, only once AUDUSD and the prices exist.',
+    benchmark: '60% SPY and 40% cash in AUD, same trading cost. The comparison credits cash at the RBA cash rate target, 4.85% a year. The paper book’s own cash is the cash it holds and is not given extra interest inside these stored marks. Tax and franking are not modelled. Priced only once AUDUSD and the prices exist.',
     valuation: {
       unit: 'time-weighted AUD NAV excluding contributions',
       needs: 'A later mark values the shares the AUD book still holds. A suggestion of 0% is not a sale. The price change uses the previous mark’s stored AUD prices. A missing price or AUDUSD leaves NAV empty. The first insert for a session date is kept. This is not a historical backtest.',

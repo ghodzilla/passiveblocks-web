@@ -1,3 +1,7 @@
+import { CASH_YIELD_ANNUAL, cashYieldSentence } from './cashYield';
+import { accrueCash } from './evaluate';
+import { sharpeRatio } from './improve';
+import { VISSER_PAPER_RULE } from './judgement';
 import { audMoney } from './ownerCopy';
 import {
   VISSER_BACKTEST,
@@ -47,6 +51,10 @@ export interface VisserPanelModel {
   audHistory: string;
   mapping: { label: string; weight: string; buy: string; signal: string; why: string }[];
   rules: string[];
+  paperRule: string;
+  frozen: string;
+  cashYield: string;
+  record: string;
 }
 
 export interface VisserViewInput {
@@ -55,6 +63,77 @@ export interface VisserViewInput {
   banner: string | null;
   outcome: VisserOutcome | null;
   shareNote: string | null;
+  weeks?: VisserSnapshot[];
+  qqq?: { date: string; close: number }[];
+  spy?: { date: string; close: number }[];
+}
+
+export const VISSER_FROZEN = 'The weights and the price rules are frozen. The Friday job does not retune them.';
+
+function closeOn(bars: { date: string; close: number }[], date: string): number | null {
+  let found: number | null = null;
+  for (const bar of bars) {
+    if (bar.date <= date && bar.close > 0) found = bar.close;
+  }
+  return found;
+}
+
+function calendarDays(left: string, right: string): number {
+  const start = Date.parse(`${left}T00:00:00Z`);
+  const end = Date.parse(`${right}T00:00:00Z`);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return 0;
+  return Math.round((end - start) / 86_400_000);
+}
+
+function signedPct(value: number): string {
+  const sign = value > 0 ? '+' : '';
+  return `${sign}${(value * 100).toFixed(2)}%`;
+}
+
+/** Weeks saved, and the sleeve's own value against 60/40 and against QQQ once two filled weeks store it. */
+export function visserRecordSentence(
+  weeks: VisserSnapshot[] | undefined,
+  qqq: { date: string; close: number }[] | undefined,
+  spy: { date: string; close: number }[] | undefined,
+): string {
+  const saved = (weeks ?? []).filter((week) => week.decisionDate);
+  if (saved.length === 0) {
+    return 'No week is saved yet. The live record starts when the first snapshot is stored.';
+  }
+  const first = saved[0];
+  const last = saved[saved.length - 1];
+  const span = `${saved.length} week${saved.length === 1 ? '' : 's'} recorded, ${plainDate(first.decisionDate)} to ${plainDate(last.decisionDate)}.`;
+  const valued = saved.filter((week) => week.phase === 'filled' && typeof week.sleeveNav === 'number' && week.sleeveNav > 0);
+  if (valued.length < 2) {
+    return `${span} A return against 60/40 and against QQQ needs two filled weeks that store a sleeve value.`;
+  }
+  const start = valued[0];
+  const end = valued[valued.length - 1];
+  const sleeve = end.sleeveNav / start.sleeveNav - 1;
+  const qqqThen = closeOn(qqq ?? [], start.decisionDate);
+  const qqqNow = closeOn(qqq ?? [], end.decisionDate);
+  const qqqReturn = qqqThen && qqqNow ? qqqNow / qqqThen - 1 : null;
+  const spyThen = closeOn(spy ?? [], start.decisionDate);
+  const spyNow = closeOn(spy ?? [], end.decisionDate);
+  const mix = spyThen && spyNow
+    ? 0.6 * (spyNow / spyThen - 1) + 0.4 * (accrueCash(1, CASH_YIELD_ANNUAL, calendarDays(start.decisionDate, end.decisionDate)) - 1)
+    : null;
+  const changes: number[] = [];
+  for (let i = 1; i < valued.length; i++) {
+    const prev = valued[i - 1].sleeveNav;
+    const next = valued[i].sleeveNav;
+    if (prev > 0 && next > 0) changes.push(next / prev - 1);
+  }
+  const sharpe = changes.length >= 8 ? sharpeRatio(changes) : null;
+  const versus = [
+    `Sleeve ${signedPct(sleeve)}`,
+    mix == null ? '60/40 not priced on these dates' : `60/40 ${signedPct(mix)}`,
+    qqqReturn == null ? 'QQQ not priced on these dates' : `QQQ ${signedPct(qqqReturn)}`,
+  ].join('. ');
+  const risk = sharpe == null
+    ? 'Not enough weeks for a Sharpe (that starts after 8 weekly changes).'
+    : `Sleeve Sharpe ${sharpe.toFixed(2)}. That Sharpe treats each stored week as one step.`;
+  return `${span} ${versus}. ${risk}`;
 }
 
 function pct(value: number, digits = 0): string {
@@ -248,6 +327,10 @@ export function toVisserPanel(input: VisserViewInput): VisserPanelModel {
     audHistory: historyLine(),
     mapping,
     rules: RULES,
+    paperRule: VISSER_PAPER_RULE,
+    frozen: VISSER_FROZEN,
+    cashYield: cashYieldSentence(),
+    record: visserRecordSentence(input.weeks, input.qqq, input.spy),
   };
   if (input.status === 'unconfigured') {
     return {
@@ -330,7 +413,7 @@ export function toVisserPanel(input: VisserViewInput): VisserPanelModel {
     : `Set at the US close on ${plainDate(snapshot.decisionDate)}. Act at the next close.${nextFriday ? ` Next check after the US close on ${plainDate(nextFriday)}.` : ' Next check after the next Friday close in the US.'}`;
   const cash = pause
     ? `Cash stays at ${audMoney(snapshot.cashAud)}. The feed is down, so the sleeve is not rebalanced.`
-    : `Cash in the sleeve after this call: ${audMoney(snapshot.targetCashAud)}.${Math.abs(snapshot.cashAud - snapshot.targetCashAud) > 1 ? ` Cash now: ${audMoney(snapshot.cashAud)}.` : ''}${snapshot.costAud >= 0.5 ? ` Trading cost ${audMoney(snapshot.costAud)}.` : ''}`;
+    : `Cash in the sleeve after this call: ${audMoney(snapshot.targetCashAud)}.${Math.abs(snapshot.cashAud - snapshot.targetCashAud) > 1 ? ` Cash now: ${audMoney(snapshot.cashAud)}.` : ''}${(snapshot.cashInterestAud ?? 0) > 0.5 ? ` Idle cash earned ${audMoney(snapshot.cashInterestAud ?? 0)} since the previous fill.` : ''}${snapshot.costAud >= 0.5 ? ` Trading cost ${audMoney(snapshot.costAud)}.` : ''}`;
   const trades = snapshot.trades.length > 0
     ? `Done: ${snapshot.trades.map((trade) => `${trade.side === 'buy' ? 'bought' : 'sold'} ${audMoney(trade.notionalAud)} of ${trade.symbol}`).join(', ')}.`
     : null;

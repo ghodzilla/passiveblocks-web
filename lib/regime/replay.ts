@@ -14,10 +14,13 @@ import { themesForSymbol } from './themes';
 import { THEMES } from './themes.config';
 import { THEME_WEIGHT_CAP } from './sizing';
 import type { RegimeSnapshot } from './types';
-import { DEFAULT_ONE_WAY_BPS } from './evaluate';
+import { CASH_YIELD_ANNUAL, CASH_YIELD_BPS } from './cashYield';
+import { accrueCash, DEFAULT_ONE_WAY_BPS } from './evaluate';
 
 export const REPLAY_ONE_WAY_BPS = DEFAULT_ONE_WAY_BPS;
-export const REPLAY_CASH_YIELD_BPS = 0;
+/** Same RBA cash-rate constant as the price-rule comparison. The saved replay file is only updated when that study is re-run. */
+export const REPLAY_CASH_YIELD_BPS = CASH_YIELD_BPS;
+const REPLAY_CASH_YIELD = CASH_YIELD_ANNUAL;
 export const CREDIT_WINDOW = 756;
 export const CREDIT_MIN_OBS = 252;
 
@@ -48,6 +51,13 @@ export interface TargetBook {
   action: string;
   omissions: string[];
   label: 'production_rules' | 'price_only_diagnostic' | 'static_benchmark';
+}
+
+function calendarDays(left: string, right: string): number {
+  const start = Date.parse(`${left}T00:00:00Z`);
+  const end = Date.parse(`${right}T00:00:00Z`);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return 0;
+  return Math.round((end - start) / 86_400_000);
 }
 
 export function previousCalendarDay(iso: string): string {
@@ -747,6 +757,7 @@ export function walkAudPaper(input: {
   const fx = input.book.series.find((series) => series.symbol === 'AUDUSD=X');
   const oneWay = (input.oneWayBps ?? REPLAY_ONE_WAY_BPS) / 10_000;
   const policy = input.policy ?? 'add_hold';
+  let lastCashDate: string | null = null;
   const journal = emptyJournal();
   journal.settings.capital = 1;
   journal.paper.cash = 1;
@@ -834,7 +845,8 @@ export function walkAudPaper(input: {
       continue;
     }
     const heldBefore = new Set(journal.paper.positions.map((position) => position.symbol));
-    const before: number = journal.paper.cash ?? 1;
+    const rawCash: number = journal.paper.cash ?? 1;
+    const before = lastCashDate ? accrueCash(rawCash, REPLAY_CASH_YIELD, calendarDays(lastCashDate, date)) : rawCash;
     let wealthBefore = before;
     for (const position of journal.paper.positions) wealthBefore += position.qty * (fills.aud[position.symbol] ?? 0);
     let cashAfter: number = before;
@@ -897,6 +909,7 @@ export function walkAudPaper(input: {
     units = funded.units;
     if (nav > peak) peak = nav;
     journal.paper.cash = cashAfter;
+    lastCashDate = date;
     journal.paper.positions = positionsAfter;
     for (const position of positionsAfter) heldSymbols.add(position.symbol);
     journal.paper.peakEquity = peak;
@@ -1012,6 +1025,7 @@ export function walkNav(input: {
   const oneWay = (input.oneWayBps ?? REPLAY_ONE_WAY_BPS) / 10_000;
   let held = [{ symbol: 'CASH', weight: 1 }];
   let entry: Record<string, number> | null = null;
+  let lastDate: string | null = null;
   let nav = 1;
   let units = 1;
   let peak = 1;
@@ -1048,7 +1062,8 @@ export function walkNav(input: {
       const drifted: { symbol: string; weight: number }[] = [];
       for (const row of held) {
         if (row.symbol === 'CASH' || !(row.weight > 0)) {
-          cashWeight += row.weight;
+          const days = lastDate ? calendarDays(lastDate, date) : 0;
+          cashWeight += accrueCash(row.weight, REPLAY_CASH_YIELD, days);
           continue;
         }
         const now = fills[row.symbol];
@@ -1084,6 +1099,7 @@ export function walkNav(input: {
     units = funded.units;
     held = decision.weights;
     entry = fills;
+    lastDate = date;
     points.push({ date, nav, wealth: funded.wealth, units, gross: decision.gross, turnover, contribution });
   }
   return { points, missing, targets };

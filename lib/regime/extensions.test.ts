@@ -4,7 +4,7 @@ import { describe, it } from 'node:test';
 import { applyPaperDay, type Desk, type RiskLine } from './desk';
 import { dipSignal } from './dip';
 import { dipDisplay } from './plain';
-import { changeAllowed, chooseTweak, neighbors, PARAM_BOUNDS, snapToBound, type FoldMetric } from './improve';
+import { changeAllowed, chooseTweak, neighbors, PARAM_BOUNDS, PARAMETER_AUTOTUNE, snapToBound, type FoldMetric } from './improve';
 import { emptyJournal, openJournal, sealJournal } from './journal';
 import type { Bar } from './signals';
 import { reviewBook } from './weekly';
@@ -151,7 +151,7 @@ describe('theme switches', () => {
   });
 
   it('keeps the theme list versioned for a quarterly human review', () => {
-    assert.equal(THEME_CONFIG_VERSION, '2026-Q4.2');
+    assert.equal(THEME_CONFIG_VERSION, '2026-Q4.3');
     assert.match(THEME_CHANGELOG[0].note, /quarter/);
     assert.match(THEME_CHANGELOG[1].note, /GOLD\.AX/);
     assert.equal(THEMES.length, 3);
@@ -277,8 +277,32 @@ describe('walk-forward acceptance', () => {
       sixty: [],
       ideas: { signalHealth: [] } as unknown as IdeasReport,
       nowIso: '2026-11-04T22:00:00.000Z',
+      tune: true,
     });
     assert.equal(reviewed.changes.some((change) => change.ruleId === 'risk-pct'), false);
+  });
+
+  it('does not move a parameter unless a retune is asked for', () => {
+    const bars: Bar[] = [];
+    let price = 100;
+    for (let i = 0; i < 90; i++) {
+      price *= 1.001;
+      const date = new Date(Date.UTC(2020, 0, 1) + i * 86_400_000).toISOString().slice(0, 10);
+      bars.push({ date, close: price, high: price * 1.01, low: price * 0.99 });
+    }
+    const before = emptyJournal();
+    const reviewed = reviewBook({
+      journal: before,
+      spyBars: bars,
+      sixty: [],
+      ideas: { signalHealth: [] } as unknown as IdeasReport,
+      nowIso: '2026-11-04T22:00:00.000Z',
+    });
+    assert.equal(PARAMETER_AUTOTUNE, false);
+    assert.equal(reviewed.journal.params.atrK, before.params.atrK);
+    assert.equal(reviewed.journal.params.riskPct, before.params.riskPct);
+    assert.equal(reviewed.journal.params.momentumLookback, before.params.momentumLookback);
+    assert.match(reviewed.journal.weeks.at(-1)?.note ?? '', /Parameters were not moved/);
   });
 
   it('does not loosen risk bounds when the aspiration gap widens', () => {
@@ -317,6 +341,7 @@ describe('walk-forward acceptance', () => {
         sixty: [],
         ideas: { signalHealth: [] } as unknown as IdeasReport,
         nowIso: '2026-11-04T22:00:00.000Z',
+        tune: true,
       });
     };
     const tight = run(0.01);
@@ -344,7 +369,20 @@ describe('walk-forward acceptance', () => {
     assert.equal(improve.includes('targetCagr'), false);
     assert.equal(improve.includes('gapToTarget'), false);
     assert.match(desk, /drawdownState\(equity, peak\)/);
-    assert.match(panel, /\{ASPIRATION_LABEL\}/);
+    const timing = JSON.parse(readFileSync('research/regime-validation/timing-summary.json', 'utf8')) as {
+      cashYieldBps: number;
+      timing: { compared: number; monthlyAhead: number; priceRuleAhead: number; tied: number; sentence: string };
+    };
+    assert.equal(timing.cashYieldBps, 485);
+    assert.equal(timing.timing.compared, 58);
+    assert.equal(timing.timing.monthlyAhead, 49);
+    assert.equal(timing.timing.priceRuleAhead, 7);
+    assert.equal(timing.timing.tied, 2);
+    assert.match(timing.timing.sentence, /does not change them/);
+    assert.equal(panel.includes('ASPIRATION_LABEL'), false);
+    assert.equal(panel.includes('66% a year'), false);
+    assert.match(panel, /RETUNE_RULE/);
+    assert.equal(PARAMETER_AUTOTUNE, false);
   });
 });
 

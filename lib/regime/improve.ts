@@ -12,7 +12,16 @@ export interface ParamBound {
   default: number;
 }
 
-/** The weekly job may only move these. Theme switches are not in this list. */
+/**
+ * Weekly parameter moves are off.
+ * A person may retune at most once a year, and only on data that tune did not use.
+ * The Sunday job reads this constant and does not move a parameter while it is false.
+ * The bounds below are what that yearly check is allowed to touch. Theme switches are not in the list.
+ */
+export const PARAMETER_AUTOTUNE = false;
+export const RETUNE_RULE = 'Parameters stay frozen. A retune is allowed at most once a year, and only on data the last tune did not use.';
+
+/** The only knobs a yearly retune may move. Theme switches are not in this list. */
 export const PARAM_BOUNDS: ParamBound[] = [
   { id: 'atr-k', label: 'ATR multiple', min: 1.5, max: 4, step: 0.5, default: DEFAULT_ATR_K },
   { id: 'risk-pct', label: 'Risk per entry', min: 0.005, max: 0.01, step: 0.0025, default: DEFAULT_RISK_PCT },

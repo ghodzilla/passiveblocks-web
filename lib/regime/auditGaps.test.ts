@@ -277,7 +277,7 @@ describe('price-only evaluation', () => {
     assert.equal(report.fullStrategy, 'not_validated');
     assert.match(report.fullStrategyReason, /not validated/);
     assert.equal(report.assumptions.oneWayBps, 10);
-    assert.equal(report.assumptions.cashYieldBps, 0);
+    assert.equal(report.assumptions.cashYieldBps, 485);
     assert.match(report.returnLabel, /Not a time-weighted return/);
     assert.equal(report.symbols[0]?.skipped == null, false);
     assert.equal(JSON.stringify(report).includes('composite'), false);

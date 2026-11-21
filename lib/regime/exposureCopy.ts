@@ -26,7 +26,7 @@ export function paperLogSentence(paper: {
       return `Paper record: ${paper.marks} stored marks from ${paper.decisions} decisions.${change} Invested in that mark ${(paper.latest.gross * 100).toFixed(1)}%. Cash ${(paper.latest.cashWeight * 100).toFixed(1)}%.`;
     }
     const after = paper.latest?.nav == null ? '' : ` Latest: ${((paper.latest.nav - 1) * 100).toFixed(2)}% after trading costs.`;
-    return `Paper record: ${paper.marks} daily values.${after}`;
+    return `After-cost paper log: ${paper.marks} stored row${paper.marks === 1 ? '' : 's'}.${after} This count is the log, not the share-record sparkline.`;
   }
   if (paper.status === 'ok') {
     return 'Paper log table is present. Decisions 0. Marks 0. A first mark, once written, includes entry cost only and is not a performance record.';

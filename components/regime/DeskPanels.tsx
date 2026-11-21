@@ -3,7 +3,9 @@ import type { PresentCall } from '@/lib/regime/presentCall';
 import { presentGateDetail, scrubFalseTheme } from '@/lib/regime/presentCall';
 import { bookExposureSentence } from '@/lib/regime/exposureCopy';
 import { CheckRow } from './ui/Chip';
-import { ASPIRATION_LABEL } from '@/lib/regime/sizing';
+import { cashYieldSentence } from '@/lib/regime/cashYield';
+import { RETUNE_RULE } from '@/lib/regime/improve';
+import { SIXTY_FORTY_MEANS } from '@/lib/regime/judgement';
 import { themesForSymbol } from '@/lib/regime/themes';
 import { sydneyClock } from '@/lib/regime/time';
 
@@ -151,7 +153,6 @@ export function DeskPanels({
           <form method="POST" action="/api/regime/settings" className="mt-3">
             <input type="hidden" name="intent" value="rebaseline" />
             <input type="hidden" name="capital" value={desk.capital} />
-            <input type="hidden" name="targetCagr" value={Math.round(desk.targetCagr * 100)} />
             <button type="submit" className="rounded-full border border-[var(--border)] px-3 py-2 text-sm font-semibold text-[var(--text-2)]">
               Start a new Australian-dollar paper book
             </button>
@@ -164,13 +165,15 @@ export function DeskPanels({
       <section className="mt-10" id="improvement">
         <h2 className="text-lg font-bold tracking-tight">The record, then the settings</h2>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--text-2)]">
-          Long-term aspiration: 66% a year (a famous fund&apos;s best record). Display only; it never changes a limit. {ASPIRATION_LABEL}.
+          The book is judged on whether it beats a 60/40 mix after costs, on a risk-adjusted basis (Sharpe), over five years. {SIXTY_FORTY_MEANS}
         </p>
+        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--text-2)]">{RETUNE_RULE}</p>
+        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--text-2)]">{cashYieldSentence()}</p>
         {desk.halted ? (
           <div className="mt-4 rounded-[var(--radius-xl)] border border-[color:var(--call-sell)]/40 bg-[var(--surface-1)] px-5 py-4">
             <p className="text-xs font-semibold text-[var(--call-sell)]">New buys are paused</p>
             <p className="mt-2 text-base font-semibold leading-relaxed text-[var(--text-1)]">
-              The paper book is {pct(desk.drawdown, 1)} below its highest value. No new buys until it recovers. The {pct(desk.targetCagr, 0)} a year aspiration does not override this.
+              The paper book is {pct(desk.drawdown, 1)} below its highest value. No new buys until it recovers.
             </p>
           </div>
         ) : null}
@@ -194,10 +197,6 @@ export function DeskPanels({
           <label className="text-sm text-[var(--text-2)]">
             Capital
             <input name="capital" type="number" min="1" step="1" defaultValue={desk.capital} className="mt-1 block w-40 rounded border border-[var(--border)] bg-[var(--surface-1)] px-2 py-1 font-mono text-sm text-[var(--text-1)]" />
-          </label>
-          <label className="text-sm text-[var(--text-2)]">
-            Long-term aspiration, % a year
-            <input name="targetCagr" type="number" min="0" max="200" step="1" defaultValue={Math.round(desk.targetCagr * 100)} className="mt-1 block w-32 rounded border border-[var(--border)] bg-[var(--surface-1)] px-2 py-1 font-mono text-sm text-[var(--text-1)]" />
           </label>
           <button type="submit" className="rounded-full border border-[var(--border)] px-3 py-2 text-sm font-semibold text-[var(--text-1)]">
             Save
