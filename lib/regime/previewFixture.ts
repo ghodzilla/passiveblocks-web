@@ -9,6 +9,7 @@ import type { PaperMarkPayload } from './paperLog';
 import { THEME_CHANGELOG, THEME_CONFIG_VERSION } from './themes.config';
 import type { ComponentScore, HistoryPoint, RegimeSnapshot } from './types';
 import type { RegimeView } from './view';
+import { sampleDruckPanel } from './druckPresent';
 import { sampleVisserPanel } from './visserPresent';
 import replayJson from '../../research/regime-validation/replay-results.json';
 
@@ -395,6 +396,7 @@ function shell(view: RegimeView, extra: Partial<DashboardProps>): DashboardProps
     replay: replayJson as unknown as DashboardProps['replay'],
     paperLog: { status: 'ok', decisions: 40, marks: 3, latest: mark },
     visser: sampleVisserPanel(),
+    druck: sampleDruckPanel(),
     spy: [
       { date: '2026-11-07', close: 500 },
       { date: '2026-11-14', close: 505 },

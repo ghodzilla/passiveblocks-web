@@ -13,6 +13,9 @@ export const PAPER_ONLY_RULE =
 export const VISSER_PAPER_RULE =
   'Paper only. No real money in this sleeve until 12 months of its live record beats a 60/40 mix and beats QQQ, after costs, on a risk-adjusted basis (Sharpe).';
 
+export const DRUCK_PAPER_RULE =
+  'Paper only. No real money in this book until 12 months of its live record beats a 60/40 mix and beats QQQ, after costs, on a risk-adjusted basis (Sharpe).';
+
 /** US 7–10 year Treasuries. AGG is not in this price book, so the bond sleeve is IEF. */
 export const SIXTY_FORTY_BOND = 'IEF';
 /** Same 0.10% the paper book charges, on each buy and each sell. */

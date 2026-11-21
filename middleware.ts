@@ -151,7 +151,7 @@ export async function middleware(request: NextRequest) {
 
     const cronAuthorized = isRegimeApi
       && (method === 'GET' || method === 'HEAD')
-      && (pathname.startsWith('/api/regime/refresh') || pathname.startsWith('/api/regime/improve') || pathname.startsWith('/api/regime/selfcheck') || pathname.startsWith('/api/regime/visser'))
+      && (pathname.startsWith('/api/regime/refresh') || pathname.startsWith('/api/regime/improve') || pathname.startsWith('/api/regime/selfcheck') || pathname.startsWith('/api/regime/visser') || pathname.startsWith('/api/regime/druck'))
       && isCronAuthorized(request.headers.get('authorization'));
 
     const sessionValid = ipAllowed || cronAuthorized

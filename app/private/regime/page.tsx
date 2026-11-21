@@ -8,6 +8,8 @@ import { ATTEMPT_COOKIE, openAttemptCookie, signRefreshCsrf } from '@/lib/regime
 import { REGIME_COOKIE } from '@/lib/regime/session';
 import { readSelfCheck } from '@/lib/regime/state';
 import { replayResults, validationStudy } from '@/lib/regime/validationArtifacts';
+import { toDruckPanel } from '@/lib/regime/druckPresent';
+import { readDruck, readDruckWeeks } from '@/lib/regime/druckStore';
 import { toVisserPanel } from '@/lib/regime/visserPresent';
 import { readVisser, readVisserWeeks } from '@/lib/regime/visserStore';
 
@@ -25,12 +27,14 @@ export default async function RegimePage({
   const csrf = secret && secret.length >= 32 ? signRefreshCsrf(secret, sessionToken) : null;
   const attempt = secret ? openAttemptCookie(secret, cookies().get(ATTEMPT_COOKIE)?.value) : null;
   const assumptions = parseResearchAssumptions(searchParams);
-  const [{ snapshot, ideas, desk, consistency, health, blockReason, auditNote, evaluation, book }, selfCheck, paperLog, visser, weeks] = await Promise.all([
+  const [{ snapshot, ideas, desk, consistency, health, blockReason, auditNote, evaluation, book }, selfCheck, paperLog, visser, weeks, druck, druckWeeks] = await Promise.all([
     getRegimeDesk(new Date(), attempt, undefined, assumptions),
     readSelfCheck(),
     readPaperLog(),
     readVisser(),
     readVisserWeeks(),
+    readDruck(),
+    readDruckWeeks(),
   ]);
   const closes = (symbol: string) => (book?.series.find((series) => series.symbol === symbol)?.bars ?? []).map((bar) => ({ date: bar.date, close: bar.close }));
   const settingsFlag = Array.isArray(searchParams?.settings) ? searchParams?.settings[0] : searchParams?.settings;
@@ -60,6 +64,16 @@ export default async function RegimePage({
         outcome: visser.record?.attempt.outcome ?? null,
         shareNote: visser.record?.shareNote ?? null,
         weeks,
+        qqq: closes('QQQ'),
+        spy: closes('SPY'),
+        bonds: closes('IEF'),
+      })}
+      druck={toDruckPanel({
+        status: druck.status,
+        snapshot: druck.record?.snapshot ?? null,
+        banner: druck.record?.attempt.banner ?? null,
+        outcome: druck.record?.attempt.outcome ?? null,
+        weeks: druckWeeks,
         qqq: closes('QQQ'),
         spy: closes('SPY'),
         bonds: closes('IEF'),

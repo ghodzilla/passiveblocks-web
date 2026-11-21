@@ -6,6 +6,7 @@ import { EvaluationPanel } from '@/components/regime/EvaluationPanel';
 import { FeedBanner } from '@/components/regime/FeedBanner';
 import { FreshnessPanel, Fold, OwnerBrief } from '@/components/regime/OwnerBrief';
 import { PathToBuyPanel } from '@/components/regime/PathToBuyPanel';
+import { DruckPanel } from '@/components/regime/DruckPanel';
 import { VisserPanel } from '@/components/regime/VisserPanel';
 import { RuleCards } from '@/components/regime/RuleCards';
 import { ValidationStudy, type ReplayView } from '@/components/regime/ValidationStudy';
@@ -22,6 +23,7 @@ import type { SelfCheckRecord } from '@/lib/regime/selfcheck';
 import { sydneyClock } from '@/lib/regime/time';
 import { ComponentBars } from '@/components/regime/viz/ComponentBars';
 import { PAPER_ONLY_RULE } from '@/lib/regime/judgement';
+import type { DruckPanelModel } from '@/lib/regime/druckPresent';
 import type { VisserPanelModel } from '@/lib/regime/visserPresent';
 import type { RegimeView } from '@/lib/regime/view';
 import type { HistoryPoint } from '@/lib/regime/types';
@@ -200,6 +202,7 @@ export function RegimeDashboard({
   replay,
   paperLog,
   visser,
+  druck,
   spy = [],
   bonds = [],
 }: {
@@ -255,6 +258,7 @@ export function RegimeDashboard({
   replay: ReplayView | null;
   paperLog: { status: string; decisions: number; marks: number; latest: PaperMarkPayload | null };
   visser: VisserPanelModel;
+  druck: DruckPanelModel;
   spy?: { date: string; close: number }[];
   bonds?: { date: string; close: number }[];
 }) {
@@ -351,6 +355,7 @@ export function RegimeDashboard({
             capKnown={presented.capKnown}
           />
           <VisserPanel model={visser} csrf={csrf} />
+          <DruckPanel model={druck} csrf={csrf} />
         </div>
         <OwnerBrief
           view={view}
