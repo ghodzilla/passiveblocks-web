@@ -32,6 +32,7 @@ import {
 import { runDruckRefresh } from './druckRefresh';
 import { sampleDruckPanel, toDruckPanel } from './druckPresent';
 import { readDruck } from './druckStore';
+import { retiredBookLines } from './retiredBooks';
 
 const MIGRATION = readFileSync('db/regime/001_durable_state.sql', 'utf8');
 const DRUCK_SQL = readFileSync('db/regime/004_druck_snapshots.sql', 'utf8');
@@ -469,6 +470,25 @@ describe('Druckenmiller storage', () => {
     assert.equal(readFileSync('lib/regime/visser.ts', 'utf8').includes('druck'), false);
     assert.match(readFileSync('middleware.ts', 'utf8'), /\/api\/regime\/druck/);
     assert.match(readFileSync('vercel.json', 'utf8'), /\/api\/regime\/druck/);
+    assert.match(readFileSync('vercel.json', 'utf8'), /45 22 \* \* 1-5/);
+    assert.doesNotMatch(readFileSync('vercel.json', 'utf8'), /visser/);
+    assert.equal(readFileSync('components/regime/RegimeDashboard.tsx', 'utf8').includes('VisserPanel'), false);
+    assert.equal(readFileSync('components/regime/RegimeDashboard.tsx', 'utf8').includes('PathToBuyPanel'), false);
+    assert.equal(readFileSync('components/regime/DruckPanel.tsx', 'utf8').includes('Update basket'), false);
+    const retired = retiredBookLines(
+      { equity: 100_464, valued: true, asOf: '2026-11-19', nav: 1.0046, decisions: 40 },
+      { status: 'ok', decisionDate: '2026-11-13', equityAud: 15_000, sleeveNav: 1 },
+    );
+    assert.match(retired[0] ?? '', /aud-paper-v1/);
+    assert.match(retired[0] ?? '', /100,464/);
+    assert.match(retired[0] ?? '', /database/);
+    assert.match(retired[1] ?? '', /visser-aud-paper-v1/);
+    assert.match(retired[1] ?? '', /15,000/);
+    const missing = retiredBookLines(
+      { equity: null, valued: false, asOf: null, nav: null, decisions: 0 },
+      { status: 'missing_schema', decisionDate: null, equityAud: null, sleeveNav: null },
+    );
+    assert.match(missing[1] ?? '', /Nothing was deleted/);
     assert.equal(sample.prices[FX_SYMBOL][0].close, 0.65);
   });
 });

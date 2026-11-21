@@ -9,10 +9,6 @@
       "schedule": "0 22 * * 0"
     },
     {
-      "path": "/api/regime/visser",
-      "schedule": "30 22 * * 1-5"
-    },
-    {
       "path": "/api/regime/druck",
       "schedule": "45 22 * * 1-5"
     }

@@ -30,7 +30,7 @@ export function DruckPanel({
           <form method="POST" action="/api/regime/druck">
             <input type="hidden" name="csrf" value={csrf} />
             <button type="submit" className="rounded-full border border-[var(--accent)]/40 bg-[var(--accent-muted)] px-3 py-1.5 text-xs font-bold text-[var(--accent-soft)]">
-              Update book
+              Update
             </button>
           </form>
         ) : null}

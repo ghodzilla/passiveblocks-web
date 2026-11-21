@@ -14,7 +14,7 @@ export function FeedBanner({
   const failures = (health?.sources ?? []).filter((source) => source.mandatory && source.error).slice(0, 4);
   return (
     <section role="status" className="rounded-[var(--radius-xl)] border border-rose-300/50 bg-rose-500/15 px-4 py-3" id="feed-banner">
-      <p className="text-sm font-bold text-[var(--text-1)]">New buys are paused until a refresh succeeds.</p>
+      <p className="text-sm font-bold text-[var(--text-1)]">A required market feed failed. The book keeps its last week and does not trade off this read.</p>
       <p className="mt-1 text-sm leading-relaxed text-[var(--text-2)]">{blockReason}</p>
       <p className="mt-1 text-sm text-[var(--text-1)]">
         Last good data: {lastGood ? sydneyClock(lastGood) : 'no successful fetch is stored'}.
