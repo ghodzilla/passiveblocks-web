@@ -8,6 +8,8 @@ import { ATTEMPT_COOKIE, openAttemptCookie, signRefreshCsrf } from '@/lib/regime
 import { REGIME_COOKIE } from '@/lib/regime/session';
 import { readSelfCheck } from '@/lib/regime/state';
 import { replayResults, validationStudy } from '@/lib/regime/validationArtifacts';
+import { toVisserPanel } from '@/lib/regime/visserPresent';
+import { readVisser } from '@/lib/regime/visserStore';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -23,10 +25,11 @@ export default async function RegimePage({
   const csrf = secret && secret.length >= 32 ? signRefreshCsrf(secret, sessionToken) : null;
   const attempt = secret ? openAttemptCookie(secret, cookies().get(ATTEMPT_COOKIE)?.value) : null;
   const assumptions = parseResearchAssumptions(searchParams);
-  const [{ snapshot, ideas, desk, consistency, health, blockReason, auditNote, evaluation }, selfCheck, paperLog] = await Promise.all([
+  const [{ snapshot, ideas, desk, consistency, health, blockReason, auditNote, evaluation }, selfCheck, paperLog, visser] = await Promise.all([
     getRegimeDesk(new Date(), attempt, undefined, assumptions),
     readSelfCheck(),
     readPaperLog(),
+    readVisser(),
   ]);
   const settingsFlag = Array.isArray(searchParams?.settings) ? searchParams?.settings[0] : searchParams?.settings;
   const settingsNotice = settingsFlag === 'store'
@@ -46,6 +49,13 @@ export default async function RegimePage({
       validation={validationStudy}
       replay={replayResults}
       paperLog={paperLog}
+      visser={toVisserPanel({
+        status: visser.status,
+        snapshot: visser.record?.snapshot ?? null,
+        banner: visser.record?.attempt.banner ?? null,
+        outcome: visser.record?.attempt.outcome ?? null,
+        shareNote: visser.record?.shareNote ?? null,
+      })}
     />
   );
 }
