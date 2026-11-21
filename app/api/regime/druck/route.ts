@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { regimeApiAllowed, regimeDenied } from '@/lib/regime/guard';
 import { refreshCsrfMatches } from '@/lib/regime/refreshHealth';
 import { REGIME_COOKIE } from '@/lib/regime/session';
-import { runVisserRefresh } from '@/lib/regime/visserRefresh';
+import { runDruckRefresh } from '@/lib/regime/druckRefresh';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -31,7 +31,7 @@ function sameOrigin(request: Request): boolean {
 
 export async function GET() {
   if (!(await regimeApiAllowed(true))) return regimeDenied();
-  const result = await runVisserRefresh({ trigger: 'cron' });
+  const result = await runDruckRefresh({ trigger: 'cron' });
   const status = result.outcome === 'outage' ? 500 : 200;
   return NextResponse.json({
     outcome: result.outcome,
@@ -57,11 +57,11 @@ export async function POST(request: Request) {
   }
   if (!secret || secret.length < 32 || !refreshCsrfMatches(secret, sessionToken, provided)) return regimeDenied();
   try {
-    await runVisserRefresh({ trigger: 'owner' });
+    await runDruckRefresh({ trigger: 'owner' });
   } catch {
-    return NextResponse.redirect(new URL('/private/regime#visser-basket', request.url), 303);
+    return NextResponse.redirect(new URL('/private/regime#druck-book', request.url), 303);
   }
-  const response = NextResponse.redirect(new URL('/private/regime#visser-basket', request.url), 303);
+  const response = NextResponse.redirect(new URL('/private/regime#druck-book', request.url), 303);
   response.headers.set('x-robots-tag', 'noindex, nofollow');
   response.headers.set('cache-control', 'private, no-store');
   return response;

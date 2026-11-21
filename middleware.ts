@@ -21,7 +21,7 @@ import {
 // Private surfaces fail closed.
 // /drafts and /os: ALLOWED_IPS or a signed-in email in OS_ALLOWED_EMAILS (Supabase).
 // /private and /api/regime: REGIME_ALLOWED_IPS, a signed pb_regime_session cookie,
-// or (refresh, the Sunday review, the daily check, and the Visser basket) Authorization: Bearer CRON_SECRET.
+// or (refresh, the Sunday review, the daily check, and the Druckenmiller book) Authorization: Bearer CRON_SECRET.
 // Regime does not call Supabase. Login uses REGIME_PASSWORD_HASH and REGIME_SESSION_SECRET.
 
 function makeSupabase(request: NextRequest, response: NextResponse) {
@@ -151,7 +151,7 @@ export async function middleware(request: NextRequest) {
 
     const cronAuthorized = isRegimeApi
       && (method === 'GET' || method === 'HEAD')
-      && (pathname.startsWith('/api/regime/refresh') || pathname.startsWith('/api/regime/improve') || pathname.startsWith('/api/regime/selfcheck') || pathname.startsWith('/api/regime/visser'))
+      && (pathname.startsWith('/api/regime/refresh') || pathname.startsWith('/api/regime/improve') || pathname.startsWith('/api/regime/selfcheck') || pathname.startsWith('/api/regime/druck'))
       && isCronAuthorized(request.headers.get('authorization'));
 
     const sessionValid = ipAllowed || cronAuthorized

@@ -9,8 +9,8 @@ import type { PaperMarkPayload } from './paperLog';
 import { THEME_CHANGELOG, THEME_CONFIG_VERSION } from './themes.config';
 import type { ComponentScore, HistoryPoint, RegimeSnapshot } from './types';
 import type { RegimeView } from './view';
-import { sampleVisserPanel } from './visserPresent';
-import replayJson from '../../research/regime-validation/replay-results.json';
+import { sampleDruckPanel } from './druckPresent';
+import { sampleMarket as visserSample } from './visser';
 
 type DashboardProps = ComponentProps<typeof RegimeDashboard>;
 
@@ -358,6 +358,7 @@ function shell(view: RegimeView, extra: Partial<DashboardProps>): DashboardProps
     prices: [],
     basis: 'held-book',
   };
+  const prior = visserSample().previous;
   return {
     view,
     selfCheck: null,
@@ -365,46 +366,14 @@ function shell(view: RegimeView, extra: Partial<DashboardProps>): DashboardProps
     attempt: null,
     blockReason: null,
     csrf: null,
-    settingsNotice: null,
-    auditNote: 'Checklist stored with the 19 Nov 2026 snapshot. The page does not replace those sentences. Labels below are the display reading.',
-    evaluation: {
-      ruleVersion: 'regime-v2',
-      fullStrategy: 'not_validated',
-      fullStrategyReason: 'The saved-price check is separate from the replay bars.',
-      priceOnly: true,
-      assumptions: { oneWayBps: 10, cashYieldBps: 485, oneWay: 0.001, cashYieldAnnual: 0.0485, clamped: false },
-      costNote: '',
-      cashNote: 'Idle cash in a benchmark or a comparison earns 4.85% a year (RBA cash rate target, 4.85% a year, effective 4 November 2026). Tax and franking are not modelled.',
-      dividendNote: '',
-      lookAhead: '',
-      sampleNote: '',
-      returnLabel: '',
-      symbols: [],
-      included: 0,
-      skipped: 0,
-      unavailableReason: null,
-      timing: {
-        compared: 0,
-        priceRuleAhead: 0,
-        monthlyAhead: 0,
-        tied: 0,
-        sentence: 'No symbol was long enough to compare the price rules with monthly investing.',
-      },
-    },
-    validation: null,
-    replay: replayJson as unknown as DashboardProps['replay'],
     paperLog: { status: 'ok', decisions: 40, marks: 3, latest: mark },
-    visser: sampleVisserPanel(),
-    spy: [
-      { date: '2026-11-07', close: 500 },
-      { date: '2026-11-14', close: 505 },
-      { date: '2026-11-19', close: 508 },
-    ],
-    bonds: [
-      { date: '2026-11-07', close: 96 },
-      { date: '2026-11-14', close: 96.2 },
-      { date: '2026-11-19', close: 96.1 },
-    ],
+    druck: sampleDruckPanel(),
+    visserRetired: {
+      status: 'ok',
+      decisionDate: prior.decisionDate,
+      equityAud: prior.cashAud + prior.investedAud,
+      sleeveNav: prior.sleeveNav,
+    },
     ...extra,
   };
 }

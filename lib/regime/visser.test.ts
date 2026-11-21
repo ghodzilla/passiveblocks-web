@@ -336,8 +336,10 @@ describe('Visser storage', () => {
     assert.match(readFileSync('db/regime/003_visser_snapshots.sql', 'utf8'), /REVOKE UPDATE, DELETE, TRUNCATE ON TABLE regime_visser_week/);
     assert.equal(readFileSync('lib/regime/refreshRun.ts', 'utf8').includes('visser'), false);
     assert.equal(readFileSync('lib/regime/audPaper.ts', 'utf8').includes('visser'), false);
-    assert.match(readFileSync('middleware.ts', 'utf8'), /\/api\/regime\/visser/);
-    assert.match(readFileSync('vercel.json', 'utf8'), /\/api\/regime\/visser/);
+    assert.doesNotMatch(readFileSync('middleware.ts', 'utf8'), /\/api\/regime\/visser/);
+    assert.doesNotMatch(readFileSync('vercel.json', 'utf8'), /\/api\/regime\/visser/);
+    assert.equal(readFileSync('components/regime/RegimeDashboard.tsx', 'utf8').includes('VisserPanel'), false);
+    assert.equal(readFileSync('components/regime/RegimeDashboard.tsx', 'utf8').includes('PathToBuyPanel'), false);
     assert.equal(ageDays('2026-11-20', '2026-11-21'), 1);
   });
 });

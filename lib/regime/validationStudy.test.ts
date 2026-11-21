@@ -404,21 +404,17 @@ describe('validation artifact', () => {
     const artifacts = readFileSync('lib/regime/validationArtifacts.ts', 'utf8');
     const config = readFileSync('next.config.mjs', 'utf8');
     assert.equal(page.includes('readFileSync'), false);
-    assert.equal(page.includes('validationStudy'), true);
-    assert.equal(page.includes('replayResults'), true);
+    assert.equal(page.includes('validationStudy'), false);
+    assert.equal(page.includes('replayResults'), false);
+    assert.match(page, /toDruckPanel/);
     assert.equal(artifacts.includes('prices/book.json'), false);
     assert.equal(config.includes('./research/regime-validation/results.json'), true);
     assert.equal(config.includes('./research/regime-validation/replay-results.json'), true);
     assert.equal(config.includes('prices/book.json'), false);
     const built = '.next/server/app/private/regime/page.js';
     if (!existsSync(built)) return;
-    const bundle = readFileSync(built, 'utf8');
     const nftPath = `${built}.nft.json`;
     const files: string[] = existsSync(nftPath) ? JSON.parse(readFileSync(nftPath, 'utf8')).files : [];
-    const inlined = bundle.includes('not_validated') && bundle.includes('repaired_policy_not_the_historical_rule');
-    const traced = files.some((file) => file.endsWith('research/regime-validation/results.json'))
-      && files.some((file) => file.endsWith('research/regime-validation/replay-results.json'));
-    assert.equal(inlined || traced, true);
     assert.equal(files.some((file) => file.endsWith('prices/book.json')), false);
   });
 
