@@ -201,6 +201,7 @@ export function RegimeDashboard({
   paperLog,
   visser,
   spy = [],
+  bonds = [],
 }: {
   view: RegimeView;
   selfCheck: SelfCheckRecord | null;
@@ -255,6 +256,7 @@ export function RegimeDashboard({
   paperLog: { status: string; decisions: number; marks: number; latest: PaperMarkPayload | null };
   visser: VisserPanelModel;
   spy?: { date: string; close: number }[];
+  bonds?: { date: string; close: number }[];
 }) {
   const { snapshot, ideas, desk, consistency } = view;
   const failedRules = consistency.rules.filter((rule) => !rule.pass);
@@ -340,6 +342,7 @@ export function RegimeDashboard({
             blockReason={blockReason}
             part="hero"
             spy={spy}
+            bonds={bonds}
           />
           <PathToBuyPanel
             market={presented.market}
@@ -357,6 +360,7 @@ export function RegimeDashboard({
           blockReason={blockReason}
           part="book"
           spy={spy}
+          bonds={bonds}
         />
         <Fold title="If this, then that" lede="The rule that applies today is marked.">
           <RuleCards cards={marketRuleCards({ regime: snapshot.regime, actionable: snapshot.actionable })} />

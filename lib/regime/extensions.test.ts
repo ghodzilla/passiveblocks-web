@@ -7,6 +7,7 @@ import { dipDisplay } from './plain';
 import { changeAllowed, chooseTweak, neighbors, PARAM_BOUNDS, PARAMETER_AUTOTUNE, snapToBound, type FoldMetric } from './improve';
 import { emptyJournal, openJournal, sealJournal } from './journal';
 import type { Bar } from './signals';
+import { SIXTY_FORTY_BOND, SIXTY_FORTY_MEANS, walkCashMix, walkSixtyForty } from './judgement';
 import { reviewBook } from './weekly';
 import type { IdeasReport } from './ideas';
 import { priceUniverse } from './load';
@@ -280,6 +281,47 @@ describe('walk-forward acceptance', () => {
       tune: true,
     });
     assert.equal(reviewed.changes.some((change) => change.ruleId === 'risk-pct'), false);
+  });
+
+  it('keeps 60/40 as shares and bonds, rebalanced once a month', () => {
+    assert.equal(SIXTY_FORTY_BOND, 'IEF');
+    assert.match(SIXTY_FORTY_MEANS, /40% US 7–10 year Treasuries \(IEF\)/);
+    assert.equal(SIXTY_FORTY_MEANS.includes('40% cash'), false);
+    const spy = [
+      { date: '2024-01-31', close: 100 },
+      { date: '2024-02-15', close: 110 },
+      { date: '2024-02-20', close: 110 },
+    ];
+    const bonds = [
+      { date: '2024-01-31', close: 100 },
+      { date: '2024-02-15', close: 100 },
+      { date: '2024-02-20', close: 100 },
+    ];
+    const walked = walkSixtyForty({ dates: spy.map((bar) => bar.date), spy, bonds, oneWay: 0.001 });
+    assert.ok(walked);
+    const drifted = 0.999 * (0.6 * 1.1 + 0.4 * 1);
+    const trade = Math.abs((0.999 * 0.6 * 1.1) / drifted - 0.6);
+    const afterRebalance = drifted * (1 - 2 * trade * 0.001);
+    assert.ok(Math.abs((walked?.values[1] ?? 0) - afterRebalance) < 1e-9);
+    assert.equal(walked?.values[2], walked?.values[1]);
+    const sameMonth = walkSixtyForty({
+      dates: ['2024-02-01', '2024-02-15'],
+      spy: [{ date: '2024-02-01', close: 100 }, { date: '2024-02-15', close: 110 }],
+      bonds: [{ date: '2024-02-01', close: 100 }, { date: '2024-02-15', close: 100 }],
+      oneWay: 0,
+    });
+    assert.ok(Math.abs((sameMonth?.values[1] ?? 0) - (0.6 * 1.1 + 0.4)) < 1e-9);
+    assert.equal(walkSixtyForty({ dates: ['2024-01-02', '2024-01-03'], spy, bonds: [] }), null);
+    const cash = walkCashMix({
+      dates: ['2024-01-02', '2024-01-03'],
+      spy: [{ date: '2024-01-02', close: 100 }, { date: '2024-01-03', close: 100 }],
+      oneWay: 0,
+    });
+    assert.ok(cash);
+    assert.ok((cash?.values[1] ?? 0) > 1);
+    const file = JSON.parse(readFileSync('research/regime-validation/sixty-forty.json', 'utf8')) as { bond: string; sessions: number };
+    assert.equal(file.bond, 'IEF');
+    assert.equal(file.sessions, 514);
   });
 
   it('does not move a parameter unless a retune is asked for', () => {

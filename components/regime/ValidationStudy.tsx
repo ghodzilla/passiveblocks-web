@@ -164,7 +164,7 @@ function ReplayResult({ replay }: { replay: ReplayView }) {
       <h3 className="text-sm font-bold text-white">A replay that only uses information known on each past day</h3>
       <p className="mt-2 text-sm leading-relaxed text-[var(--text-3)]">{replay.reason}</p>
       {replay.cashYieldBps === 0 ? (
-        <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">This saved file still credits cash with no interest. It was not rebuilt. The price-rule comparison above, and the live 60/40 Sharpe, use 4.85% a year. Tax and franking are not modelled.</p>
+        <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">This saved file still credits cash with no interest. It was not rebuilt. The mix in this file is 60% SPY and 40% cash, shown as its own line. The 60/40 used for the decision is 60% SPY and 40% IEF, put back to those weights once a month, after costs. Tax and franking are not modelled.</p>
       ) : null}
       <p className="mt-2 text-sm leading-relaxed text-[var(--text-3)]">
         {coverage.weekdayDecisions} weekdays, {coverage.spySessions} SPY sessions, {coverage.replayedSessions} replayed. Holidays skipped: {coverage.holidaysSkipped.length}. Last session dropped because the file has no later ASX bar: {coverage.droppedNoLaterAsxSession.join(', ') || 'none'}. Credit below 252 observations: {coverage.creditBelow252.join(', ')}. Sessions with a credit z-score but short of 756 observations: {coverage.creditShortOf756}. First full credit window: {coverage.firstFullCreditWindow}. Fail-closed dates: {replay.production.failClosedDates.join(', ')}.
@@ -196,7 +196,7 @@ function ReplayResult({ replay }: { replay: ReplayView }) {
       <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-[var(--text-3)]">
         {replay.restricted.map((note) => <li key={note}>{note}</li>)}
       </ul>
-      <p className="mt-2 text-xs leading-relaxed text-[var(--text-3)]">{replay.metricsNote} {replay.production.summary?.dayBasis} Trading cost {replay.costBps} hundredths of a percent each way. Interest on cash {replay.cashYieldBps} hundredths of a percent a year. Taxes {replay.taxes}. Currency {replay.currency}. {replay.clock} {replay.cashYieldBps === 0 ? 'This saved replay was not rebuilt, so it still credits cash with no interest. The price-rule comparison on this page uses 4.85% a year.' : 'Tax and franking are not modelled.'}</p>
+      <p className="mt-2 text-xs leading-relaxed text-[var(--text-3)]">{replay.metricsNote} {replay.production.summary?.dayBasis} Trading cost {replay.costBps} hundredths of a percent each way. Interest on cash {replay.cashYieldBps} hundredths of a percent a year. Taxes {replay.taxes}. Currency {replay.currency}. {replay.clock} {replay.cashYieldBps === 0 ? 'This saved replay was not rebuilt, so its cash line still earns nothing. The separate cash line on the paper book uses 4.85% a year.' : 'Tax and franking are not modelled.'}</p>
       <p className="mt-2 text-xs text-[var(--text-3)]">Ran {replay.ranAt}. Command: {replay.command}.</p>
     </div>
   );

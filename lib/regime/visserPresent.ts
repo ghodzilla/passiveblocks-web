@@ -1,7 +1,6 @@
-import { CASH_YIELD_ANNUAL, cashYieldSentence } from './cashYield';
-import { accrueCash } from './evaluate';
+import { cashYieldSentence } from './cashYield';
 import { sharpeRatio } from './improve';
-import { VISSER_PAPER_RULE } from './judgement';
+import { SIXTY_FORTY_ONE_WAY, VISSER_PAPER_RULE, walkSixtyForty } from './judgement';
 import { audMoney } from './ownerCopy';
 import {
   VISSER_BACKTEST,
@@ -66,6 +65,7 @@ export interface VisserViewInput {
   weeks?: VisserSnapshot[];
   qqq?: { date: string; close: number }[];
   spy?: { date: string; close: number }[];
+  bonds?: { date: string; close: number }[];
 }
 
 export const VISSER_FROZEN = 'The weights and the price rules are frozen. The Friday job does not retune them.';
@@ -78,13 +78,6 @@ function closeOn(bars: { date: string; close: number }[], date: string): number 
   return found;
 }
 
-function calendarDays(left: string, right: string): number {
-  const start = Date.parse(`${left}T00:00:00Z`);
-  const end = Date.parse(`${right}T00:00:00Z`);
-  if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return 0;
-  return Math.round((end - start) / 86_400_000);
-}
-
 function signedPct(value: number): string {
   const sign = value > 0 ? '+' : '';
   return `${sign}${(value * 100).toFixed(2)}%`;
@@ -95,6 +88,7 @@ export function visserRecordSentence(
   weeks: VisserSnapshot[] | undefined,
   qqq: { date: string; close: number }[] | undefined,
   spy: { date: string; close: number }[] | undefined,
+  bonds: { date: string; close: number }[] | undefined,
 ): string {
   const saved = (weeks ?? []).filter((week) => week.decisionDate);
   if (saved.length === 0) {
@@ -112,12 +106,13 @@ export function visserRecordSentence(
   const sleeve = end.sleeveNav / start.sleeveNav - 1;
   const qqqThen = closeOn(qqq ?? [], start.decisionDate);
   const qqqNow = closeOn(qqq ?? [], end.decisionDate);
-  const qqqReturn = qqqThen && qqqNow ? qqqNow / qqqThen - 1 : null;
-  const spyThen = closeOn(spy ?? [], start.decisionDate);
-  const spyNow = closeOn(spy ?? [], end.decisionDate);
-  const mix = spyThen && spyNow
-    ? 0.6 * (spyNow / spyThen - 1) + 0.4 * (accrueCash(1, CASH_YIELD_ANNUAL, calendarDays(start.decisionDate, end.decisionDate)) - 1)
-    : null;
+  const qqqReturn = qqqThen && qqqNow ? (1 - SIXTY_FORTY_ONE_WAY) * (qqqNow / qqqThen) - 1 : null;
+  const mixPath = walkSixtyForty({
+    dates: valued.map((week) => week.decisionDate),
+    spy: spy ?? [],
+    bonds: bonds ?? [],
+  });
+  const mix = mixPath ? mixPath.values[mixPath.values.length - 1] - 1 : null;
   const changes: number[] = [];
   for (let i = 1; i < valued.length; i++) {
     const prev = valued[i - 1].sleeveNav;
@@ -330,7 +325,7 @@ export function toVisserPanel(input: VisserViewInput): VisserPanelModel {
     paperRule: VISSER_PAPER_RULE,
     frozen: VISSER_FROZEN,
     cashYield: cashYieldSentence(),
-    record: visserRecordSentence(input.weeks, input.qqq, input.spy),
+    record: visserRecordSentence(input.weeks, input.qqq, input.spy, input.bonds),
   };
   if (input.status === 'unconfigured') {
     return {

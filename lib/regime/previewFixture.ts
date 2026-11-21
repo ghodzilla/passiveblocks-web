@@ -395,6 +395,16 @@ function shell(view: RegimeView, extra: Partial<DashboardProps>): DashboardProps
     replay: replayJson as unknown as DashboardProps['replay'],
     paperLog: { status: 'ok', decisions: 40, marks: 3, latest: mark },
     visser: sampleVisserPanel(),
+    spy: [
+      { date: '2026-11-07', close: 500 },
+      { date: '2026-11-14', close: 505 },
+      { date: '2026-11-19', close: 508 },
+    ],
+    bonds: [
+      { date: '2026-11-07', close: 96 },
+      { date: '2026-11-14', close: 96.2 },
+      { date: '2026-11-19', close: 96.1 },
+    ],
     ...extra,
   };
 }

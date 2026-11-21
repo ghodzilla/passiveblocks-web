@@ -1,4 +1,5 @@
 import type { ReplaySummary } from '@/lib/regime/ownerCopy';
+import balanced from '@/research/regime-validation/sixty-forty.json';
 
 interface Series {
   label: string;
@@ -61,7 +62,7 @@ export function BenchmarkBoard({
   const rows: Series[] = [
     { label: 'These rules', cagr: rules?.cagr ?? null, maxDrawdown: rules?.maxDrawdown ?? null },
     { label: 'S&P 500, same deposits', cagr: spy?.cagr ?? null, maxDrawdown: spy?.maxDrawdown ?? null },
-    { label: '60% S&P 500 / 40% cash, same deposits', cagr: mix?.cagr ?? null, maxDrawdown: mix?.maxDrawdown ?? null },
+    { label: 'Separate line: 60% S&P 500 / 40% cash, same deposits', cagr: mix?.cagr ?? null, maxDrawdown: mix?.maxDrawdown ?? null },
   ];
   const have = rows.some((row) => row.cagr != null || row.maxDrawdown != null);
   const cagrScale = Math.max(0.05, ...rows.map((row) => Math.abs(row.cagr ?? 0)));
@@ -73,6 +74,11 @@ export function BenchmarkBoard({
         {windowLabel ? `${windowLabel}. ` : ''}
         Bars are the stored yearly pace and the stored worst fall. A day-by-day line is not in the file, so none is drawn.
         VAS.AX is not in this replay next to the S&P 500, so no VAS bar is drawn.
+      </p>
+      <p className="mt-2 text-sm leading-relaxed text-[var(--text-1)]">
+        60/40 is 60% SPY and 40% {balanced.bond} ({balanced.bondName}), put back to those weights on the {balanced.rebalance}, after {(balanced.oneWayBps / 100).toFixed(2)}% on each buy and each sell.
+        From {balanced.start} to {balanced.end}, one dollar in that mix ended at {balanced.endingValue.toFixed(3)} ({(balanced.cagr * 100).toFixed(1)}% a year, worst fall {(balanced.maxDrawdown * 100).toFixed(1)}%).
+        That path is fully invested. It is not the same monthly deposits as the bars. The cash bar is a separate comparison.
       </p>
       {have ? (
         <div className="mt-4 grid gap-5 sm:grid-cols-2">

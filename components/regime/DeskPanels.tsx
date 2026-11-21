@@ -184,7 +184,7 @@ export function DeskPanels({
             <p className="mt-2 text-sm text-[var(--text-2)]">{equityLine(desk)}</p>
           </article>
           <article className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-1)] px-4 py-4">
-            <p className="text-xs font-semibold text-[var(--text-3)]" title="The last weekly review, compared with the US share market and a mix of 60% shares and 40% cash.">Last replay</p>
+            <p className="text-xs font-semibold text-[var(--text-3)]" title="The last weekly review, compared with the US share market and a mix of 60% SPY and 40% IEF.">Last replay</p>
             <p className="mt-2 font-mono text-2xl font-bold text-[var(--text-1)]">{desk.backtestedText}</p>
             <p className="mt-2 text-sm text-[var(--text-2)]">Worst fall from a high was {desk.maxDrawdownText}.</p>
           </article>

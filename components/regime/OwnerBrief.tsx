@@ -90,6 +90,7 @@ export function OwnerBrief({
   blockReason = null,
   part = 'all',
   spy = [],
+  bonds = [],
 }: {
   view: RegimeView;
   paperLog: { status: string; decisions: number; marks: number; latest: PaperMarkPayload | null } | null;
@@ -98,6 +99,7 @@ export function OwnerBrief({
   blockReason?: string | null;
   part?: 'all' | 'hero' | 'book';
   spy?: ClosePoint[];
+  bonds?: ClosePoint[];
 }) {
   const { snapshot, desk } = view;
   const regime = plainRegime(snapshot.regime);
@@ -165,6 +167,7 @@ export function OwnerBrief({
     paperMarks: paperLog?.status === 'ok' ? paperLog.marks : null,
     paperReturn: paperLog?.latest?.basis === 'held-book' && paperLog.latest.nav != null ? paperLog.latest.nav - 1 : null,
     spy,
+    bonds,
     now: snapshot.today,
   });
   const tone = toneFor(action.verb, snapshot.regime);

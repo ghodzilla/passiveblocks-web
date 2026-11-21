@@ -52,6 +52,7 @@ export default async function RegimePage({
       replay={replayResults}
       paperLog={paperLog}
       spy={closes('SPY')}
+      bonds={closes('IEF')}
       visser={toVisserPanel({
         status: visser.status,
         snapshot: visser.record?.snapshot ?? null,
@@ -61,6 +62,7 @@ export default async function RegimePage({
         weeks,
         qqq: closes('QQQ'),
         spy: closes('SPY'),
+        bonds: closes('IEF'),
       })}
     />
   );

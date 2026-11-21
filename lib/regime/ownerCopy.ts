@@ -473,7 +473,7 @@ export function trustLine(input: {
   if (rules?.cagr != null && rules.maxDrawdown != null && spy?.cagr != null && spy.maxDrawdown != null) {
     const window = rules.start && rules.end ? ` (${rules.start.slice(0, 7)}–${rules.end.slice(0, 7)})` : '';
     const mix = input.mix?.cagr != null && input.mix.maxDrawdown != null
-      ? ` A 60/40 mix of the S&P 500 and cash made ${(input.mix.cagr * 100).toFixed(1)}% a year with a worst fall of ${(input.mix.maxDrawdown * 100).toFixed(1)}%.`
+      ? ` A separate line, 60% the S&P 500 and 40% cash, made ${(input.mix.cagr * 100).toFixed(1)}% a year with a worst fall of ${(input.mix.maxDrawdown * 100).toFixed(1)}%.`
       : '';
     return `Not proven yet. In a 2-year replay${window} the rules made about ${(rules.cagr * 100).toFixed(1)}% a year with a worst fall of ${(rules.maxDrawdown * 100).toFixed(1)}%. The S&P 500 with the same deposits made ${(spy.cagr * 100).toFixed(1)}% a year with a worst fall of ${(spy.maxDrawdown * 100).toFixed(1)}%.${mix} Much steadier so far, but it earned less.`;
   }
