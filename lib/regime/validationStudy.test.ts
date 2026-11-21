@@ -464,7 +464,7 @@ describe('validation artifact', () => {
         basis: 'held-book',
       },
     });
-    assert.match(heldCopy, /Paper record: 1 daily values/);
+    assert.match(heldCopy, /After-cost paper log: 1 stored row/);
     assert.match(heldCopy, /after trading costs/);
     assert.equal(heldCopy.includes('not comparable'), false);
     const missing = paperLogSentence({ status: 'missing_schema', decisions: 0, marks: 0, latest: null });

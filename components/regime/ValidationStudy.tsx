@@ -139,13 +139,16 @@ function pct(value: number | null | undefined): string {
   return `${(value * 100).toFixed(1)}%`;
 }
 
-function PathRow({ label, summary }: { label: string; summary: PathSummary | null }) {
+function PathRow({ label, summary, cashYieldBps }: { label: string; summary: PathSummary | null; cashYieldBps: number }) {
   if (!summary) return <p className="mt-2 text-sm text-[var(--text-3)]">{label}: no completed path.</p>;
+  const cashWords = cashYieldBps === 0
+    ? 'Sharpe. This saved file credited cash with no interest.'
+    : `Sharpe. Cash in this saved file earns ${(cashYieldBps / 100).toFixed(2)}% a year.`;
   return (
     <div className="mt-3 border-t border-white/10 pt-3">
       <p className="text-sm font-bold text-white">{label}</p>
       <p className="mt-1 text-sm leading-relaxed text-[var(--text-3)]">
-        {summary.start} to {summary.end}. Value of one unit {summary.unitNavEnd.toFixed(3)} (unit value). Yearly pace {pct(summary.cagr)} (compound growth). Worst fall {pct(summary.maxDrawdown)}. Yearly pace divided by that fall {summary.returnPerDrawdown == null ? '—' : summary.returnPerDrawdown.toFixed(2)}. Smoothness of the ride {summary.sharpe == null ? '—' : summary.sharpe.toFixed(2)} (Sharpe, with cash interest set to zero). Average amount invested {pct(summary.averageGross)}. Share of days invested {pct(summary.timeInMarket)}. How much of the book was traded {summary.turnover.toFixed(2)}. Days that traded {summary.trades}.
+        {summary.start} to {summary.end}. Value of one unit {summary.unitNavEnd.toFixed(3)} (unit value). Yearly pace {pct(summary.cagr)} (compound growth). Worst fall {pct(summary.maxDrawdown)}. Yearly pace divided by that fall {summary.returnPerDrawdown == null ? '—' : summary.returnPerDrawdown.toFixed(2)}. Smoothness of the ride {summary.sharpe == null ? '—' : summary.sharpe.toFixed(2)} ({cashWords} Tax and franking are not modelled). Average amount invested {pct(summary.averageGross)}. Share of days invested {pct(summary.timeInMarket)}. How much of the book was traded {summary.turnover.toFixed(2)}. Days that traded {summary.trades}.
       </p>
       <p className="mt-1 text-sm leading-relaxed text-[var(--text-3)]">
         First half: yearly pace {pct(summary.firstHalfCagr)}, worst fall {pct(summary.firstHalfDrawdown)}. Second half: yearly pace {pct(summary.secondHalfCagr)}, worst fall {pct(summary.secondHalfDrawdown)}.
@@ -160,6 +163,9 @@ function ReplayResult({ replay }: { replay: ReplayView }) {
     <div className="mt-4 rounded-[var(--radius-xl)] border border-white/10 px-5 py-4">
       <h3 className="text-sm font-bold text-white">A replay that only uses information known on each past day</h3>
       <p className="mt-2 text-sm leading-relaxed text-[var(--text-3)]">{replay.reason}</p>
+      {replay.cashYieldBps === 0 ? (
+        <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">This saved file still credits cash with no interest. It was not rebuilt. The mix in this file is 60% SPY and 40% cash, shown as its own line. The 60/40 used for the decision is 60% SPY and 40% IEF, put back to those weights once a month, after costs. Tax and franking are not modelled.</p>
+      ) : null}
       <p className="mt-2 text-sm leading-relaxed text-[var(--text-3)]">
         {coverage.weekdayDecisions} weekdays, {coverage.spySessions} SPY sessions, {coverage.replayedSessions} replayed. Holidays skipped: {coverage.holidaysSkipped.length}. Last session dropped because the file has no later ASX bar: {coverage.droppedNoLaterAsxSession.join(', ') || 'none'}. Credit below 252 observations: {coverage.creditBelow252.join(', ')}. Sessions with a credit z-score but short of 756 observations: {coverage.creditShortOf756}. First full credit window: {coverage.firstFullCreditWindow}. Fail-closed dates: {replay.production.failClosedDates.join(', ')}.
       </p>
@@ -181,16 +187,16 @@ function ReplayResult({ replay }: { replay: ReplayView }) {
           Recommended weights stayed inside the day’s gross cap on {replay.production.ledger.recommendedDaysOverGross === 0 ? 'every session' : `${replay.production.ledger.recommendedDaysOverGross} sessions`}. Post-fill book versus that day’s cap, which includes market drift: gross {replay.production.ledger.daysHeldGrossOverBudget} sessions, net {replay.production.ledger.daysHeldNetOverBudget} sessions, a single name {replay.production.ledger.daysHeldSingleOverCap} sessions. Largest held name {replay.production.ledger.heldMaxSingleSymbol ?? '—'} at {(replay.production.ledger.heldMaxSingle * 100).toFixed(1)}%. Average sleeves: risk {(replay.production.ledger.averageRiskGross * 100).toFixed(1)}%, defensive {(replay.production.ledger.averageDefensiveGross * 100).toFixed(1)}%, cash {(replay.production.ledger.averageCash * 100).toFixed(1)}%.
         </p>
       ) : null}
-      <PathRow label="Whole-book limits, repaired policy" summary={replay.production.summary} />
-      <PathRow label="Ablation: stand-down removed, same whole-book limits" summary={replay.priceOnlyDiagnostic.summary} />
-      {replay.addHoldDiagnostic ? <PathRow label="Historical add-and-hold ledger, not the policy" summary={replay.addHoldDiagnostic.summary} /> : null}
-      <PathRow label="60% SPY / 40% cash, same contributions" summary={replay.staticSixtyForty.summary} />
-      <PathRow label="SPY, same contributions" summary={replay.spySameContributions.summary} />
-      {replay.spyLumpSum ? <PathRow label="SPY buy and hold, one unit and no later contribution" summary={replay.spyLumpSum.summary} /> : null}
+      <PathRow label="Whole-book limits, repaired policy" summary={replay.production.summary} cashYieldBps={replay.cashYieldBps} />
+      <PathRow label="Ablation: stand-down removed, same whole-book limits" summary={replay.priceOnlyDiagnostic.summary} cashYieldBps={replay.cashYieldBps} />
+      {replay.addHoldDiagnostic ? <PathRow label="Historical add-and-hold ledger, not the policy" summary={replay.addHoldDiagnostic.summary} cashYieldBps={replay.cashYieldBps} /> : null}
+      <PathRow label="60% SPY / 40% cash, same contributions" summary={replay.staticSixtyForty.summary} cashYieldBps={replay.cashYieldBps} />
+      <PathRow label="SPY, same contributions" summary={replay.spySameContributions.summary} cashYieldBps={replay.cashYieldBps} />
+      {replay.spyLumpSum ? <PathRow label="SPY buy and hold, one unit and no later contribution" summary={replay.spyLumpSum.summary} cashYieldBps={replay.cashYieldBps} /> : null}
       <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-[var(--text-3)]">
         {replay.restricted.map((note) => <li key={note}>{note}</li>)}
       </ul>
-      <p className="mt-2 text-xs leading-relaxed text-[var(--text-3)]">{replay.metricsNote} {replay.production.summary?.dayBasis} Trading cost {replay.costBps} hundredths of a percent each way. Interest on cash {replay.cashYieldBps} hundredths of a percent a year. Taxes {replay.taxes}. Currency {replay.currency}. {replay.clock}</p>
+      <p className="mt-2 text-xs leading-relaxed text-[var(--text-3)]">{replay.metricsNote} {replay.production.summary?.dayBasis} Trading cost {replay.costBps} hundredths of a percent each way. Interest on cash {replay.cashYieldBps} hundredths of a percent a year. Taxes {replay.taxes}. Currency {replay.currency}. {replay.clock} {replay.cashYieldBps === 0 ? 'This saved replay was not rebuilt, so its cash line still earns nothing. The separate cash line on the paper book uses 4.85% a year.' : 'Tax and franking are not modelled.'}</p>
       <p className="mt-2 text-xs text-[var(--text-3)]">Ran {replay.ranAt}. Command: {replay.command}.</p>
     </div>
   );

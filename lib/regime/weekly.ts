@@ -5,6 +5,8 @@ import {
   foldMetric,
   metricsByFold,
   momentumReturns,
+  PARAMETER_AUTOTUNE,
+  RETUNE_RULE,
   reviewParameter,
   stopSystemReturns,
   type WeekChange,
@@ -58,6 +60,8 @@ export function reviewBook(input: {
   sixty: number[];
   ideas: IdeasReport;
   nowIso: string;
+  /** Defaults to PARAMETER_AUTOTUNE, which is off. Tests can pass true to exercise the old yearly check. */
+  tune?: boolean;
 }): { journal: Journal; changes: WeekChange[] } {
   const journal: Journal = JSON.parse(JSON.stringify(input.journal)) as Journal;
   const changes: WeekChange[] = [];
@@ -73,6 +77,7 @@ export function reviewBook(input: {
     return { journal, changes };
   }
 
+  const tune = input.tune ?? PARAMETER_AUTOTUNE;
   const specs: { ruleId: 'momentum-lookback' | 'atr-k' | 'risk-pct' | 'dip-low' | 'dip-high'; current: number; seriesFor: (value: number) => number[] }[] = [
     {
       ruleId: 'momentum-lookback',
@@ -104,7 +109,7 @@ export function reviewBook(input: {
     },
   ];
 
-  for (const spec of specs) {
+  if (tune) for (const spec of specs) {
     const change = reviewParameter({
       ruleId: spec.ruleId,
       current: spec.current,
@@ -148,9 +153,13 @@ export function reviewBook(input: {
     portfolio: { cagr: portfolio.cagr, maxDrawdown: portfolio.maxDrawdown, sharpe: portfolio.sharpe },
     spy: { cagr: spyMetric.cagr, maxDrawdown: spyMetric.maxDrawdown, sharpe: spyMetric.sharpe },
     sixtyForty: { cagr: sixty.cagr, maxDrawdown: sixty.maxDrawdown, sharpe: sixty.sharpe },
-    note: changes.length
-      ? `Reviewed ${changes.length} rule note${changes.length === 1 ? '' : 's'}. Acceptance used out-of-sample folds only.`
-      : 'No parameter beat the current setting on at least 2 of 3 out-of-sample folds.',
+    note: tune
+      ? (changes.length
+        ? `Reviewed ${changes.length} rule note${changes.length === 1 ? '' : 's'}. Acceptance used out-of-sample folds only.`
+        : 'No parameter beat the current setting on at least 2 of 3 out-of-sample folds.')
+      : (changes.length
+        ? `Parameters were not moved. ${RETUNE_RULE} ${changes.length} signal note${changes.length === 1 ? '' : 's'} recorded.`
+        : `Parameters were not moved. ${RETUNE_RULE}`),
   }]);
   return { journal, changes };
 }

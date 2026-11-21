@@ -25,7 +25,7 @@ H1. Following the unchanged production rule with point-in-time inputs has a high
 
 H2. Turning the macro gate off, while keeping the price checks, changes time in market. This is an ablation, not a new production rule. It is reported only if H1’s inputs exist.
 
-Benchmark, if a replay is possible: 60% SPY and 40% cash, translated to AUD with the AUDUSD rate that was tradable on the execution session. Cash yield 0. One-way cost 10 bps on buys and sells. Taxes excluded. Lump-sum funding is reported separately and is not the skill comparison.
+Benchmark, if a replay is possible: 60% SPY and 40% cash, translated to AUD with the AUDUSD rate that was tradable on the execution session. Cash yield 0. One-way cost 10 bps on buys and sells. Taxes excluded. Lump-sum funding is reported separately and is not the skill comparison. The live decision on the page uses a different 60/40: 60% SPY and 40% IEF, put back to those weights once a month, after costs. The cash mix in this file stays a separate line.
 
 A result can be **supported** only if the point-in-time replay exists, the metric above favours the production rule on both the earlier and later half, and the later half was not used to choose the thresholds. It is **unsupported** only if that same replay shows the rule failing the metric. If the replay cannot be built, both hypotheses are **not tested**. That is inconclusive, not a failure of the rule and not evidence for it.
 

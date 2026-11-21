@@ -1,0 +1,304 @@
+{
+  "ranAt": "2026-11-21T08:21:45.322Z",
+  "cashYieldBps": 485,
+  "costBps": 10,
+  "timing": {
+    "compared": 58,
+    "priceRuleAhead": 7,
+    "monthlyAhead": 49,
+    "tied": 2,
+    "sentence": "On 58 symbols, dropping the entry and exit price rules (plain monthly investing) beat those rules on 49, lagged on 7, and tied on 2. The live book still uses the price rules. This count does not change them."
+  },
+  "symbols": [
+    {
+      "symbol": "SPY",
+      "monthly": 1.3988254490557785,
+      "tactical": 1.2676941876086518
+    },
+    {
+      "symbol": "VAS.AX",
+      "monthly": 1.2076062159486889,
+      "tactical": 1.0252724355641698
+    },
+    {
+      "symbol": "VGS.AX",
+      "monthly": 1.3273441550093354,
+      "tactical": 1.2138586270635319
+    },
+    {
+      "symbol": "IOZ.AX",
+      "monthly": 1.2115801025746462,
+      "tactical": 1.0407739439319952
+    },
+    {
+      "symbol": "QQQ",
+      "monthly": 1.4634248098828766,
+      "tactical": 1.3614201592437607
+    },
+    {
+      "symbol": "MTUM",
+      "monthly": 1.343048658552844,
+      "tactical": 1.2249565257818331
+    },
+    {
+      "symbol": "XLK",
+      "monthly": 1.5779470147912482,
+      "tactical": 1.3968708789392157
+    },
+    {
+      "symbol": "XLC",
+      "monthly": 1.3008525452873207,
+      "tactical": 1.279109001432391
+    },
+    {
+      "symbol": "XLY",
+      "monthly": 1.2606091293994997,
+      "tactical": 0.9978150505088521
+    },
+    {
+      "symbol": "XLI",
+      "monthly": 1.3035685146361427,
+      "tactical": 1.1649238538106579
+    },
+    {
+      "symbol": "XLE",
+      "monthly": 1.424540008240222,
+      "tactical": 1.2043825236784262
+    },
+    {
+      "symbol": "XLF",
+      "monthly": 1.3637576812364796,
+      "tactical": 1.2042396004533453
+    },
+    {
+      "symbol": "XLB",
+      "monthly": 1.2181353863268563,
+      "tactical": 1.1544279208033987
+    },
+    {
+      "symbol": "IWM",
+      "monthly": 1.3089916378825257,
+      "tactical": 1.242227476750464
+    },
+    {
+      "symbol": "XLP",
+      "monthly": 1.2180609378168508,
+      "tactical": 1.043786230648884
+    },
+    {
+      "symbol": "XLU",
+      "monthly": 1.2292339314339165,
+      "tactical": 1.1418143953923567
+    },
+    {
+      "symbol": "XLV",
+      "monthly": 1.3364781744038066,
+      "tactical": 1.1146001778994021
+    },
+    {
+      "symbol": "XLRE",
+      "monthly": 1.1764172351456377,
+      "tactical": 0.9389964432602804
+    },
+    {
+      "symbol": "USMV",
+      "monthly": 1.2265110577488592,
+      "tactical": 1.1372625145507584
+    },
+    {
+      "symbol": "TLT",
+      "monthly": 0.9700801315494852,
+      "tactical": 0.9771575507724914
+    },
+    {
+      "symbol": "IEF",
+      "monthly": 1.039859999184592,
+      "tactical": 1.031598798370628
+    },
+    {
+      "symbol": "VAF.AX",
+      "monthly": 1.0628586136019955,
+      "tactical": 1.0137422014744433
+    },
+    {
+      "symbol": "SHY",
+      "monthly": 1.0700064970220569,
+      "tactical": 1.0650234892516899
+    },
+    {
+      "symbol": "AAA.AX",
+      "monthly": 1.088423764917113,
+      "tactical": 1.088423764917113
+    },
+    {
+      "symbol": "BILL.AX",
+      "monthly": 1.0883446400883445,
+      "tactical": 1.0883446400883445
+    },
+    {
+      "symbol": "UUP",
+      "monthly": 1.100727733077153,
+      "tactical": 1.0571589118995957
+    },
+    {
+      "symbol": "FXA",
+      "monthly": 1.0571417607913354,
+      "tactical": 1.0572074070314676
+    },
+    {
+      "symbol": "GLD",
+      "monthly": 1.5262344259945624,
+      "tactical": 1.5537003432460559
+    },
+    {
+      "symbol": "GOLD.AX",
+      "monthly": 1.4654971705467235,
+      "tactical": 1.5914774037111767
+    },
+    {
+      "symbol": "AAPL",
+      "monthly": 1.6593697769214686,
+      "tactical": 1.4954047173926541
+    },
+    {
+      "symbol": "MSFT",
+      "monthly": 1.4108417650403868,
+      "tactical": 1.0201034600712933
+    },
+    {
+      "symbol": "NVDA",
+      "monthly": 3.0159238669226585,
+      "tactical": 2.0174953449641384
+    },
+    {
+      "symbol": "AMZN",
+      "monthly": 1.551158358673161,
+      "tactical": 1.0186721904580238
+    },
+    {
+      "symbol": "GOOGL",
+      "monthly": 1.7325278267806068,
+      "tactical": 1.4952166476430442
+    },
+    {
+      "symbol": "META",
+      "monthly": 1.6441151146057997,
+      "tactical": 1.235950697303078
+    },
+    {
+      "symbol": "AVGO",
+      "monthly": 2.2697593866114723,
+      "tactical": 2.1530061173028026
+    },
+    {
+      "symbol": "LLY",
+      "monthly": 2.060207667648189,
+      "tactical": 1.361647537144611
+    },
+    {
+      "symbol": "TSLA",
+      "monthly": 1.3924595055603142,
+      "tactical": 0.8833213033700631
+    },
+    {
+      "symbol": "BRK-B",
+      "monthly": 1.3712179006322744,
+      "tactical": 1.2954198849050194
+    },
+    {
+      "symbol": "BHP.AX",
+      "monthly": 1.399447680020597,
+      "tactical": 1.1693207032877124
+    },
+    {
+      "symbol": "CBA.AX",
+      "monthly": 1.3686129621133751,
+      "tactical": 1.0533054725522777
+    },
+    {
+      "symbol": "CSL.AX",
+      "monthly": 0.9443799759242932,
+      "tactical": 1.0782290208045535
+    },
+    {
+      "symbol": "NAB.AX",
+      "monthly": 1.2535506976362734,
+      "tactical": 1.0422473723632284
+    },
+    {
+      "symbol": "WBC.AX",
+      "monthly": 1.45963123849649,
+      "tactical": 1.177913997585158
+    },
+    {
+      "symbol": "ANZ.AX",
+      "monthly": 1.5284254597737288,
+      "tactical": 1.2221490528345613
+    },
+    {
+      "symbol": "WES.AX",
+      "monthly": 1.3226990513221104,
+      "tactical": 1.1289103409581833
+    },
+    {
+      "symbol": "MQG.AX",
+      "monthly": 1.313414284447142,
+      "tactical": 1.100330406785381
+    },
+    {
+      "symbol": "WOW.AX",
+      "monthly": 1.339106095805814,
+      "tactical": 1.3504747183763435
+    },
+    {
+      "symbol": "TLS.AX",
+      "monthly": 1.3023827776665224,
+      "tactical": 1.2236092021318594
+    },
+    {
+      "symbol": "SMH",
+      "monthly": 2.189639989517209,
+      "tactical": 1.97247933837944
+    },
+    {
+      "symbol": "EQIX",
+      "monthly": 1.2887547619697424,
+      "tactical": 0.8233387856756132
+    },
+    {
+      "symbol": "DLR",
+      "monthly": 1.2931631602793812,
+      "tactical": 0.9797274658292001
+    },
+    {
+      "symbol": "BTC-USD",
+      "monthly": 1.7329092851807826,
+      "tactical": 1.1391971958068654
+    },
+    {
+      "symbol": "ETH-USD",
+      "monthly": 1.0310138709271306,
+      "tactical": 0.9036993679587892
+    },
+    {
+      "symbol": "SOL-USD",
+      "monthly": 1.746617934856016,
+      "tactical": 0.8016205066762473
+    },
+    {
+      "symbol": "SLV",
+      "monthly": 1.6005713106013217,
+      "tactical": 1.5064269396958756
+    },
+    {
+      "symbol": "AUDUSD=X",
+      "monthly": 1.0315453616338908,
+      "tactical": 1.0856060702999701
+    },
+    {
+      "symbol": "RSP",
+      "monthly": 1.3106644332185255,
+      "tactical": 1.1619728312437172
+    }
+  ]
+}

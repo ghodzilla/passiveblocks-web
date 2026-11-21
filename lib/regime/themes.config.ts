@@ -2,7 +2,7 @@
  * Visser overlay. Quarterly human review only.
  * The improvement loop is not allowed to edit this file or flip these switches.
  */
-export const THEME_CONFIG_VERSION = '2026-Q4.2';
+export const THEME_CONFIG_VERSION = '2026-Q4.3';
 
 export interface ThemeChangelogEntry {
   version: string;
@@ -20,6 +20,11 @@ export const THEME_CHANGELOG: ThemeChangelogEntry[] = [
     version: '2026-Q4.2',
     date: '2026-11-04',
     note: 'Scarcity: GLD, GOLD.AX, SLV, BTC. The ASX gold ETF reads the same live switch as the US listing. Bonds such as IEF and VAF.AX stay outside every theme. The weekly job still cannot edit this list.',
+  },
+  {
+    version: '2026-Q4.3',
+    date: '2026-11-21',
+    note: 'Parameter auto-tuning is off. The Sunday job no longer moves ATR k, risk percent, momentum lookback, or the dip band. A retune is allowed at most once a year, and only on data the last tune did not use. This list is still not edited by that job.',
   },
 ];
 

@@ -33,6 +33,10 @@ export function VisserPanel({
           </form>
         ) : null}
       </div>
+      <p className="mt-3 text-sm font-semibold leading-relaxed text-amber-100">{model.paperRule}</p>
+      <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{model.frozen}</p>
+      <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{model.cashYield}</p>
+      <p className="mt-2 text-sm leading-relaxed text-[var(--text-1)]">{model.record}</p>
       <p className="mt-3 text-sm font-semibold leading-relaxed text-amber-100">{model.caveat}</p>
       {model.banner ? (
         <p role="status" className="mt-3 rounded-[var(--radius-lg)] border border-rose-300/50 bg-rose-500/15 px-3 py-3 text-sm leading-relaxed text-[var(--text-1)]" data-visser-banner="down">
@@ -105,7 +109,7 @@ export function VisserPanel({
               <li key={rule}>{rule}</li>
             ))}
           </ul>
-          <p className="text-xs leading-relaxed text-[var(--text-3)]">Backtest VS1, weekly, 0.10% trading cost, idle money in 3-month US T-bills, no borrowing, before tax. This sleeve leaves idle money as Australian dollar cash and charges the same 0.10% when it trades.</p>
+          <p className="text-xs leading-relaxed text-[var(--text-3)]">Backtest VS1, weekly, 0.10% trading cost, idle money in 3-month US T-bills, no borrowing, before tax. This sleeve leaves idle money as Australian dollar cash, credits that cash at the rate above, and charges the same 0.10% when it trades. Tax and franking are not modelled.</p>
         </div>
       </details>
     </section>

@@ -372,9 +372,9 @@ function shell(view: RegimeView, extra: Partial<DashboardProps>): DashboardProps
       fullStrategy: 'not_validated',
       fullStrategyReason: 'The saved-price check is separate from the replay bars.',
       priceOnly: true,
-      assumptions: { oneWayBps: 10, cashYieldBps: 0, oneWay: 0.001, cashYieldAnnual: 0, clamped: false },
+      assumptions: { oneWayBps: 10, cashYieldBps: 485, oneWay: 0.001, cashYieldAnnual: 0.0485, clamped: false },
       costNote: '',
-      cashNote: '',
+      cashNote: 'Idle cash in a benchmark or a comparison earns 4.85% a year (RBA cash rate target, 4.85% a year, effective 4 November 2026). Tax and franking are not modelled.',
       dividendNote: '',
       lookAhead: '',
       sampleNote: '',
@@ -383,11 +383,28 @@ function shell(view: RegimeView, extra: Partial<DashboardProps>): DashboardProps
       included: 0,
       skipped: 0,
       unavailableReason: null,
+      timing: {
+        compared: 0,
+        priceRuleAhead: 0,
+        monthlyAhead: 0,
+        tied: 0,
+        sentence: 'No symbol was long enough to compare the price rules with monthly investing.',
+      },
     },
     validation: null,
     replay: replayJson as unknown as DashboardProps['replay'],
-    paperLog: { status: 'ok', decisions: 40, marks: 30, latest: mark },
+    paperLog: { status: 'ok', decisions: 40, marks: 3, latest: mark },
     visser: sampleVisserPanel(),
+    spy: [
+      { date: '2026-11-07', close: 500 },
+      { date: '2026-11-14', close: 505 },
+      { date: '2026-11-19', close: 508 },
+    ],
+    bonds: [
+      { date: '2026-11-07', close: 96 },
+      { date: '2026-11-14', close: 96.2 },
+      { date: '2026-11-19', close: 96.1 },
+    ],
     ...extra,
   };
 }
@@ -460,7 +477,7 @@ export function quietProps(): DashboardProps {
     paperLog: {
       status: 'ok',
       decisions: 40,
-      marks: 30,
+      marks: 3,
       latest: {
         currency: 'AUD',
         nav: 1.0046,
@@ -545,7 +562,7 @@ export function buyProps(): DashboardProps {
     paperLog: {
       status: 'ok',
       decisions: 40,
-      marks: 30,
+      marks: 3,
       latest: {
         currency: 'AUD',
         nav: 1.084,

@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
+import { CASH_YIELD_BPS } from '../../lib/regime/cashYield';
 import { priceUniverse } from '../../lib/regime/load';
 import { parseYahooChart } from '../../lib/regime/prices';
 import {
@@ -208,7 +209,7 @@ async function main() {
     taxes: 'excluded',
     currency: 'AUD',
     costBps: 10,
-    cashYieldBps: 0,
+    cashYieldBps: CASH_YIELD_BPS,
     universe: 'Current survivor list. Hypothetical frozen-rule lookback. Pre-exposed to the 2021–2026 paths already published.',
     clock: 'Decision instant is 13:15:00Z on a SPY session. US and crypto signals hide that session’s close. Every fill, including ASX, is the next session after the decision date. Weekdays with no SPY bar are not trades. Date.now is not the engine clock.',
   };
@@ -332,7 +333,7 @@ async function main() {
       'DFEDTARU intervals are joined across the 2022-12-31 and 2023-01-01 realtime chunks. A row whose rt_start is the chunk boundary is the copy that contains the vintage, not a claim about the original release minute.',
       'The three dates with fewer than 252 credit observations are not actionable. Defensive names can still be held or added inside the preservation budget.',
     ],
-    reason: 'Prior-day vintages, the current survivor universe, 10 bps, cash yield 0, and next-session fills. The scored book is the repaired whole-book policy. The add-and-hold path is a historical diagnostic on the same dates. CFTC is omitted. This is not a guarantee and the aspiration label is not a result.',
+    reason: 'Prior-day vintages, the current survivor universe, 10 bps, cash yield at the RBA cash rate target, and next-session fills. The scored book is the repaired whole-book policy. The add-and-hold path is a historical diagnostic on the same dates. CFTC is omitted. This is not a guarantee. Tax and franking are not modelled.',
     audit,
     coverage: {
       weekdayDecisions: weekdays.length,

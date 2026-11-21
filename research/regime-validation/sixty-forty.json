@@ -1,0 +1,13 @@
+{
+  "bond": "IEF",
+  "bondName": "US 7–10 year Treasuries",
+  "start": "2024-10-18",
+  "end": "2026-11-05",
+  "sessions": 514,
+  "oneWayBps": 10,
+  "rebalance": "first session of each new month",
+  "totalReturn": 0.18066181256924252,
+  "endingValue": 1.1806618125692425,
+  "cagr": 0.0850036947062629,
+  "maxDrawdown": 0.10577094268547209
+}

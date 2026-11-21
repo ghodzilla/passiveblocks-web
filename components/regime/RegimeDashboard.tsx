@@ -21,6 +21,7 @@ import type { RefreshHealth } from '@/lib/regime/refreshHealth';
 import type { SelfCheckRecord } from '@/lib/regime/selfcheck';
 import { sydneyClock } from '@/lib/regime/time';
 import { ComponentBars } from '@/components/regime/viz/ComponentBars';
+import { PAPER_ONLY_RULE } from '@/lib/regime/judgement';
 import type { VisserPanelModel } from '@/lib/regime/visserPresent';
 import type { RegimeView } from '@/lib/regime/view';
 import type { HistoryPoint } from '@/lib/regime/types';
@@ -199,6 +200,8 @@ export function RegimeDashboard({
   replay,
   paperLog,
   visser,
+  spy = [],
+  bonds = [],
 }: {
   view: RegimeView;
   selfCheck: SelfCheckRecord | null;
@@ -252,6 +255,8 @@ export function RegimeDashboard({
   replay: ReplayView | null;
   paperLog: { status: string; decisions: number; marks: number; latest: PaperMarkPayload | null };
   visser: VisserPanelModel;
+  spy?: { date: string; close: number }[];
+  bonds?: { date: string; close: number }[];
 }) {
   const { snapshot, ideas, desk, consistency } = view;
   const failedRules = consistency.rules.filter((rule) => !rule.pass);
@@ -325,6 +330,9 @@ export function RegimeDashboard({
           </div>
         ) : null}
         <div className="grid gap-3">
+          <p className="rounded-[var(--radius-xl)] border border-amber-300/50 bg-amber-400/10 px-4 py-3 text-sm font-semibold leading-relaxed text-[var(--text-1)]">
+            {PAPER_ONLY_RULE}
+          </p>
           <FeedBanner blockReason={blockReason} health={health ?? attempt} />
           <OwnerBrief
             view={view}
@@ -333,6 +341,8 @@ export function RegimeDashboard({
             drivers={presented.market.drivers}
             blockReason={blockReason}
             part="hero"
+            spy={spy}
+            bonds={bonds}
           />
           <PathToBuyPanel
             market={presented.market}
@@ -349,6 +359,8 @@ export function RegimeDashboard({
           drivers={presented.market.drivers}
           blockReason={blockReason}
           part="book"
+          spy={spy}
+          bonds={bonds}
         />
         <Fold title="If this, then that" lede="The rule that applies today is marked.">
           <RuleCards cards={marketRuleCards({ regime: snapshot.regime, actionable: snapshot.actionable })} />
@@ -503,7 +515,7 @@ export function RegimeDashboard({
           />
           <RefreshHealthPanel health={health} attempt={attempt} csrf={csrf} showButton={false} />
         </Fold>
-        <Fold title="Settings" lede="Starting amount, the long-term aspiration, and starting the paper book over.">
+        <Fold title="Settings" lede="Starting amount, and starting the paper book over. Parameters are not tuned from this page.">
           <DeskPanels desk={desk} settingsNotice={settingsNotice} part="settings" calls={presented.calls} />
         </Fold>
       </main>

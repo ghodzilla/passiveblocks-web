@@ -1,6 +1,7 @@
 import type { EvaluationReport, EvalPath, SymbolEvaluation } from '@/lib/regime/evaluate';
 import { researchPathLines, researchSpan, researchVerdict } from '@/lib/regime/researchCopy';
 import { Chip } from '@/components/regime/ui/Chip';
+import savedTiming from '@/research/regime-validation/timing-summary.json';
 
 const APPROACHES: { id: EvalPath['id']; title: string; about: string }[] = [
   { id: 'monthly_invest', title: 'Steady monthly', about: '$1 bought every month.' },
@@ -92,6 +93,11 @@ export function EvaluationPanel({ report }: { report: EvaluationReport }) {
         </div>
       </form>
 
+      <p className="mt-4 max-w-3xl text-sm leading-relaxed text-[var(--text-1)]">{savedTiming.timing.sentence}</p>
+      <p className="mt-1 max-w-3xl text-sm leading-relaxed text-[var(--text-3)]">That count is the saved research price book, with idle cash at {(savedTiming.cashYieldBps / 100).toFixed(2)}% a year. Tax and franking are not modelled. It does not change the live rules.</p>
+      {report.timing.compared > 0 ? (
+        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--text-2)]">This visit&apos;s saved prices: {report.timing.sentence}</p>
+      ) : null}
       {report.unavailableReason ? (
         <p className="mt-4 text-sm text-[var(--text-3)]">{report.unavailableReason}</p>
       ) : null}

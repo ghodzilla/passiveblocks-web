@@ -1,6 +1,10 @@
 import { openRegimeSql, storeProblem, type RegimeSql } from './db';
 import { VISSER_BOOK_ID, VISSER_RULE, type VisserOutcome, type VisserSnapshot } from './visser';
 
+const WEEKS = `SELECT payload FROM regime_visser_week
+  WHERE rule_version = $1
+  ORDER BY decision_date ASC`;
+
 const UPSERT = `INSERT INTO regime_visser (id, payload, updated_at)
   VALUES (1, $1::jsonb, now())
   ON CONFLICT (id) DO UPDATE SET payload = EXCLUDED.payload, updated_at = now()`;
@@ -58,6 +62,28 @@ export function parseVisserRecord(value: unknown): VisserRecord | null {
 async function resolveSql(sql?: RegimeSql | null): Promise<RegimeSql | null> {
   if (sql === null) return null;
   return sql === undefined ? openRegimeSql() : sql;
+}
+
+export function parseVisserSnapshot(value: unknown): VisserSnapshot | null {
+  const row = jsonValue(value) as Partial<VisserSnapshot> | null;
+  if (!row || row.ruleVersion !== VISSER_RULE || typeof row.decisionDate !== 'string' || !Array.isArray(row.sleeves)) return null;
+  return row as VisserSnapshot;
+}
+
+export async function readVisserWeeks(sql?: RegimeSql | null): Promise<VisserSnapshot[]> {
+  const db = await resolveSql(sql);
+  if (!db) return [];
+  try {
+    const rows = await db.query<{ payload: unknown }>(WEEKS, [VISSER_RULE]);
+    const weeks: VisserSnapshot[] = [];
+    for (const row of rows) {
+      const snapshot = parseVisserSnapshot(row.payload);
+      if (snapshot) weeks.push(snapshot);
+    }
+    return weeks;
+  } catch {
+    return [];
+  }
 }
 
 export async function readVisser(sql?: RegimeSql | null): Promise<VisserRead> {

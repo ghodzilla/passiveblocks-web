@@ -1,3 +1,4 @@
+import { alignedHoldings, holdingsDisagree, paperJudgement, type ClosePoint } from '@/lib/regime/judgement';
 import type { PaperMarkPayload } from '@/lib/regime/paperLog';
 import { DriverBoard } from '@/components/regime/DriverBoard';
 import type { DriverPath } from '@/lib/regime/pathToBuy';
@@ -88,6 +89,8 @@ export function OwnerBrief({
   drivers,
   blockReason = null,
   part = 'all',
+  spy = [],
+  bonds = [],
 }: {
   view: RegimeView;
   paperLog: { status: string; decisions: number; marks: number; latest: PaperMarkPayload | null } | null;
@@ -95,6 +98,8 @@ export function OwnerBrief({
   drivers: DriverPath[];
   blockReason?: string | null;
   part?: 'all' | 'hero' | 'book';
+  spy?: ClosePoint[];
+  bonds?: ClosePoint[];
 }) {
   const { snapshot, desk } = view;
   const regime = plainRegime(snapshot.regime);
@@ -105,7 +110,12 @@ export function OwnerBrief({
     capital: desk.capital,
     valued: desk.paperLedger?.valued === true,
   });
-  const weights = paperLog?.latest?.basis === 'held-book' ? paperLog.latest.weights : null;
+  const rawWeights = paperLog?.latest?.basis === 'held-book' ? paperLog.latest.weights : null;
+  const exposures = desk.paperLedger?.exposures ?? null;
+  const weights = rawWeights
+    ? alignedHoldings({ weights: rawWeights, invested: exposures?.gross ?? null, cash: exposures?.cash ?? null })
+    : null;
+  const scaled = holdingsDisagree({ weights: rawWeights, invested: exposures?.gross ?? null, cash: exposures?.cash ?? null });
   const held = weights?.map((row) => ({
     symbol: row.symbol,
     name: row.symbol === 'CASH' ? 'Cash' : (names[row.symbol] ?? row.symbol),
@@ -149,8 +159,17 @@ export function OwnerBrief({
     ? `${((paperLog.latest.nav - 1) * 100).toFixed(2)}%`
     : null;
   const previous = snapshot.history.length > 1 ? snapshot.history[snapshot.history.length - 2]?.composite ?? null : null;
-  const exposures = desk.paperLedger?.exposures ?? null;
   const parts = bookParts({ weights, exposures });
+  const judgement = paperJudgement({
+    capital: desk.capital,
+    equity: desk.paperLedger?.currency === 'AUD' ? desk.paperLedger.equity : null,
+    marks: desk.paperLedger?.marks ?? [],
+    paperMarks: paperLog?.status === 'ok' ? paperLog.marks : null,
+    paperReturn: paperLog?.latest?.basis === 'held-book' && paperLog.latest.nav != null ? paperLog.latest.nav - 1 : null,
+    spy,
+    bonds,
+    now: snapshot.today,
+  });
   const tone = toneFor(action.verb, snapshot.regime);
   const moodTone: ChipTone = snapshot.regime === 'risk_on'
     ? 'buy'
@@ -197,8 +216,14 @@ export function OwnerBrief({
       {part === 'hero' ? null : (
       <Fold title="Your paper book" lede={heldBook.sentence}>
         <p className="text-[15px] leading-relaxed text-[var(--text-2)]">{performance.sentence}</p>
+        <p className="mt-1 text-sm leading-relaxed text-[var(--text-2)]">{judgement.progress}</p>
+        <p className="mt-1 text-sm leading-relaxed text-[var(--text-2)]">{judgement.marks}</p>
+        <p className="mt-1 text-sm leading-relaxed text-[var(--text-2)]">{judgement.sharpe}</p>
+        <p className="mt-1 text-sm leading-relaxed text-[var(--text-2)]">{judgement.benchmark}</p>
+        <p className="mt-1 text-sm leading-relaxed text-[var(--text-3)]">{judgement.means}</p>
+        <p className="mt-1 text-sm leading-relaxed text-[var(--text-3)]">{judgement.cash}</p>
         {afterCosts ? <p className="mt-1 text-sm text-[var(--text-3)]">Share record, before trading costs: {book.amount == null ? '—' : `A$${Math.round(book.amount).toLocaleString('en-AU')}`}. Paper log, after the 0.10% cost: {afterCosts}.</p> : null}
-        <p className="mt-1 text-[15px] text-[var(--text-2)]">{heldBook.sentence}</p>
+        {scaled ? <p className="mt-1 text-sm text-[var(--text-3)]">The stored weight list did not add up to the invested and cash split, so these lines are scaled to that split.</p> : null}
         {book.amount != null ? <p className="mt-1 text-xs text-[var(--text-3)]">{action.means}</p> : null}
         <div className="mt-4">
           <EquitySpark marks={desk.paperLedger?.marks ?? []} baseline={desk.capital} />

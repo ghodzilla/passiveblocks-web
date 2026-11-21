@@ -1,3 +1,6 @@
+import { CASH_YIELD_ANNUAL } from './cashYield';
+import { accrueCash } from './evaluate';
+
 /**
  * VS1 Visser basket. Rules fixed in the 21 Nov 2026 research script:
  * weekly decision on the last US session of the week, trade at the next close.
@@ -162,9 +165,15 @@ export interface VisserSnapshot {
   portfolioBasis: 'paper value' | 'starting amount';
   budgetAud: number;
   cashAud: number;
+  /** Interest added to idle cash since the previous fill. Zero on a week with no previous cash. */
+  cashInterestAud: number;
   targetCashAud: number;
   investedAud: number;
   costAud: number;
+  /** Sleeve value, starting at 1. A top-up that resizes the sleeve to the main book is not part of this. */
+  sleeveNav: number;
+  /** Cash plus holdings at the previous fill, before this week's price move. Null on the first week. */
+  prevEndAud: number | null;
   sleeves: VisserSleeveState[];
   positions: VisserPosition[];
   trades: VisserTrade[];
@@ -289,6 +298,20 @@ export function satelliteShare(raw: string | undefined): { share: number; note: 
     return { share: VISSER_SHARE_MAX, note: 'The sleeve size was over 20%, so it is set to 20%.' };
   }
   return { share, note: null };
+}
+
+/** Idle sleeve cash earns the RBA cash-rate constant across the calendar gap. */
+export function idleInterest(cash: number, from: string | null, to: string): { cash: number; interest: number } {
+  if (!from || !(cash > 0)) return { cash: round2(Math.max(0, cash)), interest: 0 };
+  const start = Date.parse(`${from}T00:00:00Z`);
+  const end = Date.parse(`${to}T00:00:00Z`);
+  const days = Number.isFinite(start) && Number.isFinite(end) && end > start ? Math.round((end - start) / 86_400_000) : 0;
+  const next = round2(accrueCash(cash, CASH_YIELD_ANNUAL, days));
+  return { cash: next, interest: round2(next - cash) };
+}
+
+function roundNav(value: number): number {
+  return Math.round(value * 1e6) / 1e6;
 }
 
 function round2(value: number): number {
@@ -485,6 +508,9 @@ function shell(input: {
   portfolioBasis: VisserSnapshot['portfolioBasis'];
   budgetAud: number;
   cashAud: number;
+  cashInterestAud?: number;
+  sleeveNav?: number;
+  prevEndAud?: number | null;
   sleeves: VisserSleeveState[];
   targetCashAud: number;
   investedAud: number;
@@ -504,9 +530,12 @@ function shell(input: {
     portfolioBasis: input.portfolioBasis,
     budgetAud: input.budgetAud,
     cashAud: round2(input.cashAud),
+    cashInterestAud: round2(input.cashInterestAud ?? 0),
     targetCashAud: input.targetCashAud,
     investedAud: input.investedAud,
     costAud: 0,
+    sleeveNav: input.sleeveNav ?? 1,
+    prevEndAud: input.prevEndAud ?? null,
     sleeves: input.sleeves,
     positions: input.positions.filter((position) => position.qty > 1e-10),
     trades: [],
@@ -545,6 +574,7 @@ function tryFill(pending: VisserSnapshot, market: VisserMarket): { ok: true; sna
     marked += size * bar.close;
   });
   if (missingMark) return { ok: false };
+  const opening = marked;
   cash += pending.budgetAud - marked;
   const trades: VisserTrade[] = [];
   let traded = 0;
@@ -596,6 +626,10 @@ function tryFill(pending: VisserSnapshot, market: VisserMarket): { ok: true; sna
   cash -= cost;
   if (cash < -0.05) return { ok: false };
   if (cash < 0) cash = 0;
+  const prevNav = pending.sleeveNav ?? 1;
+  const sleeveNav = pending.prevEndAud && pending.prevEndAud > 0
+    ? roundNav(prevNav * (opening / pending.prevEndAud))
+    : prevNav;
   const sleeves = pending.sleeves.map((sleeve) => {
     const bar = prices.get(sleeve.id);
     const size = next.get(sleeve.id) ?? 0;
@@ -616,6 +650,7 @@ function tryFill(pending: VisserSnapshot, market: VisserMarket): { ok: true; sna
       cashAud: round2(cash),
       investedAud: round2(invested),
       costAud: cost,
+      sleeveNav,
       sleeves,
       positions: VISSER_SLEEVES.map((def) => ({ sleeve: def.id, qty: next.get(def.id) ?? 0 })).filter((position) => position.qty > 1e-10),
       trades,
@@ -678,6 +713,9 @@ export function stepVisser(
   const built = buildSleeves(signals, marked.held, budgetAud);
   if ('error' in built) return fail([built.error], previous);
   const skipped = previous && previous.phase === 'pending' ? previous.decisionDate : null;
+  const accrued = previous
+    ? idleInterest(previous.cashAud, previous.filledOn ?? previous.decisionDate, decision)
+    : { cash: 0, interest: 0 };
   const pending = shell({
     decisionDate: decision,
     actionDate: nextSession(calendar, decision),
@@ -685,7 +723,10 @@ export function stepVisser(
     portfolioAud: portfolio.aud,
     portfolioBasis: portfolio.basis,
     budgetAud,
-    cashAud: previous?.cashAud ?? 0,
+    cashAud: accrued.cash,
+    cashInterestAud: accrued.interest,
+    sleeveNav: previous?.sleeveNav ?? 1,
+    prevEndAud: previous ? round2(previous.cashAud + previous.investedAud) : null,
     sleeves: built.sleeves,
     targetCashAud: built.targetCashAud,
     investedAud: built.investedAud,
@@ -746,9 +787,12 @@ export function sampleMarket(): { market: VisserMarket; previous: VisserSnapshot
     portfolioBasis: 'starting amount',
     budgetAud: 15_000,
     cashAud: 8_250,
+    cashInterestAud: 0,
     targetCashAud: 8_250,
     investedAud: 6_750,
     costAud: 0,
+    sleeveNav: 1,
+    prevEndAud: null,
     sleeves: [],
     positions: [
       { sleeve: 'nasdaq', qty: 2250 / 57 },
