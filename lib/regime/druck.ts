@@ -140,6 +140,15 @@ export interface DruckBenchmarks {
   ief: number | null;
 }
 
+/** The action and the price at the decision. A later fill must not overwrite this. */
+export interface DruckDecisionCall {
+  id: string;
+  symbol: string;
+  action: DruckCall;
+  priceAud: number;
+  priceLocal: number;
+}
+
 export interface DruckSnapshot {
   ruleVersion: typeof DRUCK_RULE;
   /** Candidate list that built this week. Absent on weeks saved before the list had its own version. */
@@ -166,6 +175,8 @@ export interface DruckSnapshot {
   fxRate: number | null;
   fxDate: string | null;
   aaaPrice: number | null;
+  /** Set when the week is decided. Copied onto the filled week so the call can be scored later. */
+  decisionCalls?: DruckDecisionCall[];
   names: DruckNameState[];
   positions: DruckPosition[];
   trades: DruckTrade[];
@@ -982,6 +993,13 @@ export function stepDruck(previous: DruckSnapshot | null, market: DruckMarket): 
     fxRate: fxQuote.rate,
     fxDate: fxQuote.fxDate,
     aaaPrice: aaa,
+    decisionCalls: names.map((name) => ({
+      id: name.id,
+      symbol: name.symbol,
+      action: name.call,
+      priceAud: name.priceAud,
+      priceLocal: name.priceLocal,
+    })),
     names,
     positions: carried
       .filter((position) => position.qty > 1e-10)

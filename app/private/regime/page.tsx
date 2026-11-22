@@ -4,6 +4,7 @@ import { paperLedgerFrom } from '@/lib/regime/audPaper';
 import { loadBenchmarkCloses } from '@/lib/regime/benchmarks';
 import { FRED_SERIES } from '@/lib/regime/constants';
 import { toControlRoom } from '@/lib/regime/controlRoom';
+import { readDruckContext } from '@/lib/regime/druckContextStore';
 import { toDruckPanel } from '@/lib/regime/druckPresent';
 import { readDruck, readDruckWeeks } from '@/lib/regime/druckStore';
 import { enforceRegimePage } from '@/lib/regime/guard';
@@ -22,7 +23,7 @@ export default async function RegimePage() {
   const secret = process.env.REGIME_SESSION_SECRET;
   const sessionToken = cookies().get(REGIME_COOKIE)?.value ?? 'ip';
   const csrf = secret && secret.length >= 32 ? signRefreshCsrf(secret, sessionToken) : null;
-  const [paperLog, visser, druck, druckWeeks, refresh, journal, benchmarks] = await Promise.all([
+  const [paperLog, visser, druck, druckWeeks, refresh, journal, benchmarks, context] = await Promise.all([
     readPaperLog(),
     readVisser(),
     readDruck(),
@@ -30,6 +31,7 @@ export default async function RegimePage() {
     readRefresh(),
     readJournal(),
     loadBenchmarkCloses(),
+    readDruckContext(),
   ]);
   const ledger = paperLedgerFrom(journal);
   const marks = ledger.marks ?? [];
@@ -70,6 +72,7 @@ export default async function RegimePage() {
     benchmarkMissing: benchmarks.missing,
     paperRule: panel.paperRule,
     record: panel.record,
+    context,
   });
   return (
     <RegimeDashboard
