@@ -1,4 +1,8 @@
 import { cashYieldSentence } from './cashYield';
+import type { DruckContextData } from './druckContextStore';
+import { earningsCopy, type EarningsCardCopy } from './druckEarnings';
+import { presentFiling, type FilingCardModel } from './druck13f';
+import { presentScorecard, type ScorecardModel } from './druckScore';
 import {
   DRUCK_ADD_GAIN,
   DRUCK_CASH_SYMBOL,
@@ -12,6 +16,8 @@ import type { DruckCall, DruckColour, DruckNameState, DruckOutcome, DruckPositio
 import { DRUCK_PAPER_RULE, SIXTY_FORTY_ONE_WAY, walkSixtyForty, type ClosePoint } from './judgement';
 import { bookPercent } from './ownerCopy';
 import { plainDate } from './visser';
+
+export type { FilingCardModel, ScorecardModel };
 
 export const COMPARISON_EMPTY = 'First comparison appears after the first filled week';
 
@@ -45,6 +51,7 @@ export interface HoldingCard {
   levelsNote: string | null;
   themeText: string;
   themeHot: boolean;
+  earnings: EarningsCardCopy;
 }
 
 export interface WatchChip {
@@ -52,6 +59,7 @@ export interface WatchChip {
   name: string;
   text: string;
   below: boolean;
+  earningsFlag: string | null;
 }
 
 export interface CashCardModel {
@@ -114,6 +122,8 @@ export interface ControlRoomModel {
   freshTone: 'fresh' | 'old' | 'down' | 'waiting';
   cards: HoldingCard[];
   watch: WatchChip[];
+  scorecard: ScorecardModel;
+  filings: FilingCardModel;
   cash: CashCardModel | null;
   chart: {
     empty: string | null;
@@ -148,6 +158,7 @@ export interface ControlRoomInput {
   benchmarkMissing?: string[];
   paperRule?: string;
   record?: string | null;
+  context?: DruckContextData | null;
 }
 
 function audDollars(value: number): string {
@@ -502,8 +513,40 @@ function holdingAction(
   return name.note ?? `Do not buy ${name.symbol}.`;
 }
 
+function sydneyDay(date: Date): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Australia/Sydney',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+}
+
+function contextPanels(input: ControlRoomInput, now: Date): {
+  scorecard: ScorecardModel;
+  filings: FilingCardModel;
+  earnings: Map<string, EarningsCardCopy>;
+  freshness: FreshLine[];
+} {
+  const data = input.context;
+  const status = data?.status ?? 'empty';
+  const today = sydneyDay(now);
+  const earnings = new Map((data?.earnings ?? []).map((check) => [check.symbol, earningsCopy(check, today)]));
+  const filingDay = data?.filing?.latest.filed ? plainDate(data.filing.latest.filed) : null;
+  return {
+    scorecard: presentScorecard({ status, calls: data?.calls ?? [], scores: data?.scores ?? [] }),
+    filings: presentFiling({ status, report: data?.filing ?? null }),
+    earnings,
+    freshness: [
+      { label: 'Earnings', value: data?.earnings?.length ? 'saved' : status === 'missing_schema' ? 'not in the database yet' : 'not saved' },
+      { label: 'Duquesne 13F', value: filingDay ? `filed ${filingDay}` : status === 'missing_schema' ? 'not in the database yet' : 'not saved' },
+    ],
+  };
+}
+
 export function toControlRoom(input: ControlRoomInput): ControlRoomModel {
   const now = input.now ?? new Date();
+  const context = contextPanels(input, now);
   const nextRun = formatSydney(nextDruckRun(now));
   const paperRule = input.paperRule ?? DRUCK_PAPER_RULE;
   const about = [DRUCK_FROZEN, cashYieldSentence(), RULES_NOTE];
@@ -516,6 +559,7 @@ export function toControlRoom(input: ControlRoomInput): ControlRoomModel {
     { label: 'Liquidity score', value: dayOrMissing(input.liquidityAsOf) },
     { label: 'High-yield spread', value: dayOrMissing(input.spreadAsOf) },
     { label: 'Last run', value: runLine(input, attemptedLabel) },
+    ...context.freshness,
   ];
   const shell = {
     nextRun,
@@ -552,6 +596,8 @@ export function toControlRoom(input: ControlRoomInput): ControlRoomModel {
       orders: [],
       ordersEmpty: 'No orders until a week is saved.',
       orderText: '',
+      scorecard: context.scorecard,
+      filings: context.filings,
     };
   }
 
@@ -578,6 +624,7 @@ export function toControlRoom(input: ControlRoomInput): ControlRoomModel {
         name: name.name,
         text: versus200(name.premium),
         below: name.premium < 0 || name.above200 === false,
+        earningsFlag: context.earnings.get(name.symbol)?.flag ?? null,
       });
       continue;
     }
@@ -615,6 +662,7 @@ export function toControlRoom(input: ControlRoomInput): ControlRoomModel {
       levelsNote: note,
       themeText: `${name.themeLabel} ${bookPercent(used)} of the ${bookPercent(DRUCK_THEME_MAX)} theme cap`,
       themeHot: used > DRUCK_THEME_MAX + 1e-9,
+      earnings: context.earnings.get(name.symbol) ?? earningsCopy(null, sydneyDay(now)),
     });
     if (!pause && side && shares > 0) {
       const limit = Math.round(name.priceLocal * 100) / 100;
@@ -676,5 +724,7 @@ export function toControlRoom(input: ControlRoomInput): ControlRoomModel {
       ? 'No orders. A feed is down, so nothing is sent.'
       : 'No orders this week.',
     orderText: orders.length ? orderText(orders) : '',
+    scorecard: context.scorecard,
+    filings: context.filings,
   };
 }

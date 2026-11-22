@@ -21,6 +21,7 @@ import {
   type DruckOutcome,
   type DruckSnapshot,
 } from './druck';
+import { attachDruckContext } from './druckContext';
 import { readDruck, writeDruck, type DruckRecord } from './druckStore';
 
 export interface DruckRefreshResult {
@@ -209,6 +210,15 @@ export async function runDruckRefresh(input: {
     }
     const step = stepDruck(previous, market);
     const wrote = await writeDruck(sql, recordFrom(step, at), step.week, step.sealed);
+    if (wrote === 'saved' && market) {
+      await attachDruckContext({
+        sql,
+        week: step.week,
+        market,
+        now,
+        liveFeeds: input.market == null,
+      });
+    }
     const outcome: DruckRefreshResult['outcome'] = wrote === 'saved' ? step.outcome : wrote;
     log({
       phase: 'end',

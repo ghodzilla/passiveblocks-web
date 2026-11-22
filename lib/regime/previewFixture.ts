@@ -1,8 +1,12 @@
 import type { ComponentProps } from 'react';
 import type { RegimeDashboard } from '@/components/regime/RegimeDashboard';
 import { toControlRoom } from './controlRoom';
+import type { DruckContextData } from './druckContextStore';
 import { sampleStep } from './druck';
+import { sampleFilingReport } from './druck13f';
+import { sampleEarningsChecks } from './druckEarnings';
 import { toDruckPanel } from './druckPresent';
+import { sampleScoreHistory } from './druckScore';
 import { retiredBookLines } from './retiredBooks';
 
 type DashboardProps = ComponentProps<typeof RegimeDashboard>;
@@ -14,6 +18,19 @@ function retired() {
     { equity: 100_464, valued: true, asOf: '2026-11-19', nav: 1.0046, decisions: 40 },
     { status: 'ok', decisionDate: '2026-11-13', equityAud: 15_000, sleeveNav: 1 },
   );
+}
+
+export function sampleContext(): DruckContextData {
+  const history = sampleScoreHistory();
+  const filing = sampleFilingReport();
+  return {
+    status: 'ok',
+    calls: history.calls,
+    scores: history.scores,
+    earnings: sampleEarningsChecks(),
+    filing: { latest: filing.latest, previous: filing.previous, analysis: filing.analysis },
+    filingFetchedAt: '2026-11-21T21:00:00.000Z',
+  };
 }
 
 /** Red 25% sample book: NTRA, HACK.AX, AMZN, INSM, and cash in AAA.AX. */
@@ -42,6 +59,7 @@ export function buyProps(): DashboardProps {
       attemptedAt: step.snapshot?.fetchedAt ?? null,
       paperRule: panel.paperRule,
       record: panel.record,
+      context: sampleContext(),
     }),
   };
 }
