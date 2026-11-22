@@ -111,6 +111,17 @@ function closeOn(bars: { date: string; close: number }[], date: string): number 
   return found;
 }
 
+function storedMarks(weeks: DruckSnapshot[], key: 'qqq' | 'spy' | 'ief'): { date: string; close: number }[] | null {
+  const series: { date: string; close: number }[] = [];
+  for (const week of weeks) {
+    const close = week.benchmarks?.[key];
+    const date = week.benchmarks?.date;
+    if (typeof close !== 'number' || !(close > 0) || !date) return null;
+    series.push({ date, close });
+  }
+  return series;
+}
+
 function signedPct(value: number): string {
   const sign = value > 0 ? '+' : '';
   return `${sign}${(value * 100).toFixed(2)}%`;
@@ -134,13 +145,20 @@ export function druckRecordSentence(
   const start = valued[0];
   const end = valued[valued.length - 1];
   const book = end.nav / start.nav - 1;
-  const qqqThen = closeOn(qqq ?? [], start.decisionDate);
-  const qqqNow = closeOn(qqq ?? [], end.decisionDate);
+  const storedQqq = storedMarks(valued, 'qqq');
+  const storedSpy = storedMarks(valued, 'spy');
+  const storedBonds = storedMarks(valued, 'ief');
+  const marked = (week: DruckSnapshot, stored: boolean) => (stored && week.benchmarks?.date ? week.benchmarks.date : week.decisionDate);
+  const qqqSeries = storedQqq ?? qqq ?? [];
+  const spySeries = storedSpy ?? spy ?? [];
+  const bondSeries = (storedSpy && storedBonds ? storedBonds : null) ?? bonds ?? [];
+  const qqqThen = closeOn(qqqSeries, marked(start, storedQqq != null));
+  const qqqNow = closeOn(qqqSeries, marked(end, storedQqq != null));
   const qqqReturn = qqqThen && qqqNow ? (1 - SIXTY_FORTY_ONE_WAY) * (qqqNow / qqqThen) - 1 : null;
   const mixPath = walkSixtyForty({
-    dates: valued.map((week) => week.decisionDate),
-    spy: spy ?? [],
-    bonds: bonds ?? [],
+    dates: valued.map((week) => marked(week, storedSpy != null)),
+    spy: spySeries,
+    bonds: bondSeries,
   });
   const mix = mixPath ? mixPath.values[mixPath.values.length - 1] - 1 : null;
   const changes: number[] = [];

@@ -1,13 +1,22 @@
 /**
  * Druckenmiller paper book, quarterly list.
- * Edit this file after each Duquesne 13F (mid-February, May, August, November).
+ * Edit the candidates in this file after each Duquesne 13F (mid-February, May, August, November).
+ * When the list changes, change DRUCK_LIST only. Leave DRUCK_RULE as it is.
+ * DRUCK_RULE is the strategy identity stored on the book. Changing it makes the saved book
+ * look like an outage and hides the week history.
  * Weights are fractions of the whole book. A new position cannot start above 10%.
  * Set `active` to false to sell a name at the next week's close.
  * Set `openWeight` to 0 to keep a name on the list without buying it.
  * The hard caps (25% a name, 40% a theme, the weekly invested cap) still apply.
  */
 
+/** Strategy identity. Do not change this when the candidate list is edited. */
 export const DRUCK_RULE = 'DRUCK-2026-11-21';
+/**
+ * Quarterly candidate list. Change this when the names or opening sizes are edited.
+ * It is written onto new weeks and is not used to accept or reject saved history.
+ */
+export const DRUCK_LIST = '2026-11';
 export const DRUCK_BOOK_ID = 'druck-aud-paper-v1';
 export const DRUCK_START_AUD = 100_000;
 export const DRUCK_COST = 0.001;
