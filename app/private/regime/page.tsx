@@ -1,15 +1,18 @@
 import { cookies } from 'next/headers';
 import { RegimeDashboard } from '@/components/regime/RegimeDashboard';
-import { enforceRegimePage } from '@/lib/regime/guard';
-import { getRegimeDesk } from '@/lib/regime/load';
-import { readPaperLog } from '@/lib/regime/paperLog';
-import { ATTEMPT_COOKIE, openAttemptCookie, signRefreshCsrf } from '@/lib/regime/refreshHealth';
-import { REGIME_COOKIE } from '@/lib/regime/session';
-import { readSelfCheck } from '@/lib/regime/state';
+import { paperLedgerFrom } from '@/lib/regime/audPaper';
+import { loadBenchmarkCloses } from '@/lib/regime/benchmarks';
+import { FRED_SERIES } from '@/lib/regime/constants';
+import { toControlRoom } from '@/lib/regime/controlRoom';
 import { toDruckPanel } from '@/lib/regime/druckPresent';
 import { readDruck, readDruckWeeks } from '@/lib/regime/druckStore';
+import { enforceRegimePage } from '@/lib/regime/guard';
+import { readPaperLog } from '@/lib/regime/paperLog';
+import { signRefreshCsrf } from '@/lib/regime/refreshHealth';
+import { retiredBookLines, type RetiredVisser } from '@/lib/regime/retiredBooks';
+import { REGIME_COOKIE } from '@/lib/regime/session';
+import { readJournal, readRefresh } from '@/lib/regime/state';
 import { readVisser } from '@/lib/regime/visserStore';
-import type { RetiredVisser } from '@/lib/regime/retiredBooks';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -19,16 +22,18 @@ export default async function RegimePage() {
   const secret = process.env.REGIME_SESSION_SECRET;
   const sessionToken = cookies().get(REGIME_COOKIE)?.value ?? 'ip';
   const csrf = secret && secret.length >= 32 ? signRefreshCsrf(secret, sessionToken) : null;
-  const attempt = secret ? openAttemptCookie(secret, cookies().get(ATTEMPT_COOKIE)?.value) : null;
-  const [{ snapshot, ideas, desk, book, consistency, health, blockReason }, selfCheck, paperLog, visser, druck, druckWeeks] = await Promise.all([
-    getRegimeDesk(new Date(), attempt),
-    readSelfCheck(),
+  const [paperLog, visser, druck, druckWeeks, refresh, journal, benchmarks] = await Promise.all([
     readPaperLog(),
     readVisser(),
     readDruck(),
     readDruckWeeks(),
+    readRefresh(),
+    readJournal(),
+    loadBenchmarkCloses(),
   ]);
-  const closes = (symbol: string) => (book?.series.find((series) => series.symbol === symbol)?.bars ?? []).map((bar) => ({ date: bar.date, close: bar.close }));
+  const ledger = paperLedgerFrom(journal);
+  const marks = ledger.marks ?? [];
+  const lastMark = marks.length > 0 ? marks[marks.length - 1] : null;
   const saved = visser.record?.snapshot ?? null;
   const visserRetired: RetiredVisser = {
     status: visser.status,
@@ -36,26 +41,47 @@ export default async function RegimePage() {
     equityAud: saved ? saved.cashAud + saved.investedAud : null,
     sleeveNav: saved?.sleeveNav ?? null,
   };
+  const stored = refresh.status === 'ok' ? refresh.value : null;
+  const liquidity = stored?.snapshot?.components?.find((row) => row.id === 'liquidity') ?? null;
+  const spreadSource = stored?.health.sources.find((row) => row.id === FRED_SERIES.hy) ?? null;
+  const spreadFresh = stored?.snapshot?.freshness?.find((row) => row.id === FRED_SERIES.hy) ?? null;
+  const panel = toDruckPanel({
+    status: druck.status,
+    snapshot: druck.record?.snapshot ?? null,
+    banner: druck.record?.attempt.banner ?? null,
+    outcome: druck.record?.attempt.outcome ?? null,
+    weeks: druckWeeks,
+    qqq: benchmarks.qqq,
+    spy: benchmarks.spy,
+    bonds: benchmarks.bonds,
+  });
+  const room = toControlRoom({
+    status: druck.status,
+    snapshot: druck.record?.snapshot ?? null,
+    banner: panel.banner,
+    outcome: druck.record?.attempt.outcome ?? null,
+    weeks: druckWeeks,
+    qqq: benchmarks.qqq,
+    spy: benchmarks.spy,
+    bonds: benchmarks.bonds,
+    liquidityAsOf: liquidity?.asOf ?? stored?.snapshot?.today ?? null,
+    spreadAsOf: spreadSource?.observationDate ?? spreadFresh?.asOf ?? null,
+    attemptedAt: druck.record?.attempt.at ?? null,
+    benchmarkMissing: benchmarks.missing,
+    paperRule: panel.paperRule,
+    record: panel.record,
+  });
   return (
     <RegimeDashboard
-      view={{ snapshot, ideas, desk, consistency }}
-      selfCheck={selfCheck.status === 'ok' ? selfCheck.value : null}
-      health={health}
-      attempt={attempt}
-      blockReason={blockReason}
+      room={room}
       csrf={csrf}
-      paperLog={paperLog}
-      visserRetired={visserRetired}
-      druck={toDruckPanel({
-        status: druck.status,
-        snapshot: druck.record?.snapshot ?? null,
-        banner: druck.record?.attempt.banner ?? null,
-        outcome: druck.record?.attempt.outcome ?? null,
-        weeks: druckWeeks,
-        qqq: closes('QQQ'),
-        spy: closes('SPY'),
-        bonds: closes('IEF'),
-      })}
+      retired={retiredBookLines({
+        equity: ledger.equity,
+        valued: ledger.valued === true && (ledger.equity ?? 0) > 0,
+        asOf: lastMark?.date ?? null,
+        nav: paperLog.latest?.nav ?? null,
+        decisions: paperLog.decisions,
+      }, visserRetired)}
     />
   );
 }
