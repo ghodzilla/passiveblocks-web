@@ -117,8 +117,11 @@ export function parseYahooChart(body: unknown, yahooSymbol: string, now: Date = 
   return deduped;
 }
 
-async function fetchYahooOnce(host: string, yahoo: string): Promise<{ bars: Bar[]; adjusted: boolean }> {
-  const url = `https://${host}/v8/finance/chart/${encodeURIComponent(yahoo)}?range=5y&interval=1d&includeAdjustedClose=true`;
+async function fetchYahooOnce(host: string, yahoo: string, range: string, period1?: number): Promise<{ bars: Bar[]; adjusted: boolean }> {
+  const span = period1 == null
+    ? `range=${encodeURIComponent(range)}`
+    : `period1=${period1}&period2=${Math.floor(Date.now() / 1000) + 86_400}`;
+  const url = `https://${host}/v8/finance/chart/${encodeURIComponent(yahoo)}?${span}&interval=1d&includeAdjustedClose=true`;
   const response = await fetch(url, {
     cache: 'no-store',
     signal: AbortSignal.timeout(8_000),
@@ -137,11 +140,11 @@ function chartUsesAdjustedClose(body: unknown): boolean {
   return Array.isArray(adjusted);
 }
 
-export async function fetchYahooBars(yahoo: string): Promise<{ bars: Bar[]; adjusted: boolean | null; error: string | null }> {
+export async function fetchYahooBars(yahoo: string, range = '5y', period1?: number): Promise<{ bars: Bar[]; adjusted: boolean | null; error: string | null }> {
   let last = 'price request failed';
   for (const host of HOSTS) {
     try {
-      const fetched = await fetchYahooOnce(host, yahoo);
+      const fetched = await fetchYahooOnce(host, yahoo, range, period1);
       if (fetched.bars.length === 0) {
         last = `${yahoo} returned no prices`;
         continue;

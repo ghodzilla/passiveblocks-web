@@ -1,0 +1,74 @@
+{
+  "ok": true,
+  "computedAt": "2026-11-22T09:48:54.145Z",
+  "firstDate": "2024-03-04",
+  "lastDate": "2026-11-16",
+  "skippedWeeks": 582,
+  "note": "2013–22: not enough of a path to compare. The free high-yield series starts on 2023-11-21, so this window was not run. 2023–26: v2 did not grow faster than the current rules. Its worst fall was deeper. The book path runs from 2024-03-04 to 2026-11-16.",
+  "rows": [
+    {
+      "period": "2013–22",
+      "book": "Current rules",
+      "cagr": null,
+      "worst": null,
+      "sharpe": null,
+      "turnover": null
+    },
+    {
+      "period": "2013–22",
+      "book": "v2 rules",
+      "cagr": null,
+      "worst": null,
+      "sharpe": null,
+      "turnover": null
+    },
+    {
+      "period": "2013–22",
+      "book": "60/40",
+      "cagr": 0.12570798380263226,
+      "worst": -0.1651389834077991,
+      "sharpe": 0.7306451313069354,
+      "turnover": 0.2745772135670998
+    },
+    {
+      "period": "2013–22",
+      "book": "QQQ",
+      "cagr": 0.211037744760584,
+      "worst": -0.2977254900343559,
+      "sharpe": 0.882999758589398,
+      "turnover": 0.10015080888401426
+    },
+    {
+      "period": "2023–26",
+      "book": "Current rules",
+      "cagr": 0.16444094688059474,
+      "worst": -0.07137562124115238,
+      "sharpe": 1.1590989389826676,
+      "turnover": 2.205935802447519
+    },
+    {
+      "period": "2023–26",
+      "book": "v2 rules",
+      "cagr": 0.1593621888559953,
+      "worst": -0.08302661555797197,
+      "sharpe": 1.3465820134486934,
+      "turnover": 2.2980862623746026
+    },
+    {
+      "period": "2023–26",
+      "book": "60/40",
+      "cagr": 0.0920584936405775,
+      "worst": -0.08867812315630497,
+      "sharpe": 0.6033266184667884,
+      "turnover": 0.5400302114204436
+    },
+    {
+      "period": "2023–26",
+      "book": "QQQ",
+      "cagr": 0.15044427819178985,
+      "worst": -0.1666697908571536,
+      "sharpe": 0.6386800779420558,
+      "turnover": 0.37006079027355626
+    }
+  ]
+}

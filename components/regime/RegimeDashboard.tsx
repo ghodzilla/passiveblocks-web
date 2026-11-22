@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Inter } from 'next/font/google';
 import { CopyOrders } from '@/components/regime/CopyOrders';
-import type { ChartPoint, ControlRoomModel, HoldingCard } from '@/lib/regime/controlRoom';
+import type { ChartPoint, ControlRoomModel, FilingCardModel, HoldingCard, ScorecardModel, ShadowCardModel } from '@/lib/regime/controlRoom';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
@@ -205,6 +205,135 @@ function ComparisonChart({ chart }: { chart: ControlRoomModel['chart'] }) {
   );
 }
 
+function Scorecard({ card }: { card: ScorecardModel }) {
+  return (
+    <section className={`${CARD} p-4 sm:p-5`} id="druck-scorecard" data-druck-scorecard={card.empty ? 'empty' : 'ready'} aria-label={card.title}>
+      <h2 className="text-sm font-semibold">{card.title}</h2>
+      {card.empty ? (
+        <p className="mt-2 text-sm leading-relaxed text-[#d5deea]">{card.empty}</p>
+      ) : (
+        <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+          {card.rows.map((row) => (
+            <li key={`${row.action}-${row.horizon}`} className="rounded-xl border border-white/10 bg-black/20 px-3 py-2">
+              <p className="text-sm font-semibold">{row.action} · {row.horizon}</p>
+              <p className="mt-1 text-sm leading-relaxed text-[#d5deea]">Hit rate {row.hitRate}. Extra vs SPY {row.extraSpy}. Vs AAA {row.extraAaa}.</p>
+              {row.caution ? <p className="mt-1 text-xs text-[#fde68a]">{row.caution}</p> : null}
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className="mt-3 text-xs leading-relaxed text-[#c5d0e0]">{card.footnote}</p>
+    </section>
+  );
+}
+
+function Filings({ card }: { card: FilingCardModel }) {
+  return (
+    <section className={`${CARD} p-4 sm:p-5`} id="druck-13f" data-druck-13f={card.lines.length > 0 ? 'ready' : 'empty'} aria-label={card.title}>
+      <h2 className="text-sm font-semibold">{card.title}</h2>
+      <p className="mt-2 text-sm leading-relaxed text-[#d5deea]">{card.headline}</p>
+      {card.flags.length > 0 ? (
+        <ul className="mt-3 grid gap-2">
+          {card.flags.map((flag) => (
+            <li key={flag} className="rounded-xl border border-[#fbbf24]/30 bg-[#fbbf24]/10 px-3 py-2 text-sm leading-relaxed text-[#fffbeb]" data-druck-13f-flag>
+              {flag}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {card.lines.length > 0 ? (
+        <ul className="mt-3 grid gap-1 text-sm leading-relaxed text-[#d5deea]">
+          {card.lines.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
+      ) : null}
+      {card.suggestions.length > 0 ? (
+        <ul className="mt-3 grid gap-1 text-sm leading-relaxed text-[#f4f7fb]">
+          {card.suggestions.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
+      ) : null}
+      <p className="mt-3 text-xs leading-relaxed text-[#c5d0e0]">{card.footnote}</p>
+    </section>
+  );
+}
+
+function ShadowRules({ card }: { card: ShadowCardModel }) {
+  return (
+    <section className={`${CARD} p-4 sm:p-5`} id="druck-shadow" data-druck-shadow={card.lines.length > 0 ? 'ready' : 'empty'} aria-label={card.title}>
+      <h2 className="text-sm font-semibold">{card.title}</h2>
+      <p className="mt-2 text-sm leading-relaxed text-[#d5deea]">{card.headline}</p>
+      {card.lines.length > 0 ? (
+        <ul className="mt-3 grid gap-1 text-sm leading-relaxed text-[#f4f7fb] sm:grid-cols-2">
+          {card.lines.map((line) => (
+            <li key={line.symbol}>{line.text}</li>
+          ))}
+        </ul>
+      ) : null}
+      {card.checks.length > 0 ? (
+        <ul className="mt-3 grid gap-1 text-xs leading-relaxed text-[#c5d0e0]">
+          {card.checks.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
+      ) : null}
+      <h3 className="mt-4 text-sm font-semibold">{card.tableTitle}</h3>
+      {card.rows.length > 0 ? (
+        <div className="mt-2 overflow-x-auto">
+          <table className="w-full min-w-[520px] text-left text-sm text-[#d5deea]">
+            <thead className="text-xs text-[#c5d0e0]">
+              <tr>
+                <th className="py-1 pr-3 font-medium">Window</th>
+                <th className="py-1 pr-3 font-medium">Book</th>
+                <th className="py-1 pr-3 font-medium">CAGR</th>
+                <th className="py-1 pr-3 font-medium">Worst fall</th>
+                <th className="py-1 pr-3 font-medium">Sharpe</th>
+                <th className="py-1 font-medium">Turnover</th>
+              </tr>
+            </thead>
+            <tbody>
+              {card.rows.map((row) => (
+                <tr key={`${row.period}-${row.book}`} className="border-t border-white/10">
+                  <td className="py-1.5 pr-3">{row.period}</td>
+                  <td className="py-1.5 pr-3">{row.book}</td>
+                  <td className="py-1.5 pr-3 tabular-nums">{row.cagr}</td>
+                  <td className="py-1.5 pr-3 tabular-nums">{row.worst}</td>
+                  <td className="py-1.5 pr-3 tabular-nums">{row.sharpe}</td>
+                  <td className="py-1.5 tabular-nums">{row.turnover}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="mt-2 text-sm leading-relaxed text-[#d5deea]">No backtest numbers are saved yet.</p>
+      )}
+      <p className="mt-3 text-sm leading-relaxed text-[#f4f7fb]">{card.note}</p>
+      <ul className="mt-3 grid gap-1 text-xs leading-relaxed text-[#c5d0e0]">
+        {card.caveats.map((line) => (
+          <li key={line}>{line}</li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function EarningsBlock({ card }: { card: HoldingCard }) {
+  return (
+    <div className="mt-3 border-t border-white/10 pt-3 text-xs leading-relaxed text-[#d5deea]" data-earnings={card.symbol}>
+      {card.earnings.flag ? (
+        <p className="mb-1 font-semibold text-[#fbbf24]" data-earnings-flag>{card.earnings.flag}</p>
+      ) : null}
+      <p>{card.earnings.next}</p>
+      <p className="mt-1">{card.earnings.eps}</p>
+      <p className="mt-1">{card.earnings.revenue}</p>
+      <p className="mt-1">{card.earnings.revision}</p>
+    </div>
+  );
+}
+
 function actionClass(tone: HoldingCard['actionTone']): string {
   if (tone === 'buy') return 'text-[#34d399]';
   if (tone === 'trim') return 'text-[#fbbf24]';
@@ -332,6 +461,13 @@ export function RegimeDashboard({
           </div>
         </section>
 
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          <Scorecard card={room.scorecard} />
+          <Filings card={room.filings} />
+        </div>
+
+        <ShadowRules card={room.shadow} />
+
         {room.cards.length > 0 || room.cash ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
             {room.cards.map((card) => (
@@ -351,6 +487,7 @@ export function RegimeDashboard({
                 <div className="mt-4">
                   <PriceScale card={card} />
                 </div>
+                <EarningsBlock card={card} />
               </article>
             ))}
             {room.cash ? (
@@ -385,6 +522,7 @@ export function RegimeDashboard({
                   <span title={chip.name} className="inline-flex items-baseline gap-2 rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-sm">
                     <span className="font-semibold">{chip.symbol}</span>
                     <span className={chip.below ? 'text-[#fb7185]' : 'text-[#34d399]'}>{chip.text}</span>
+                    {chip.earningsFlag ? <span className="font-semibold text-[#fbbf24]" data-earnings-flag>{chip.earningsFlag}</span> : null}
                   </span>
                 </li>
               ))}

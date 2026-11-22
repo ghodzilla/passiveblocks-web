@@ -14,6 +14,8 @@ import {
   DRUCK_MAX_POSITIONS,
   DRUCK_NAME_MAX,
   DRUCK_RULE,
+  DRUCK_SHADOW_BOOK_ID,
+  DRUCK_SHADOW_RULE,
   DRUCK_SPY,
   DRUCK_START_AUD,
   DRUCK_STARTER_MAX,
@@ -66,7 +68,7 @@ export type DruckTag =
   | 'wait';
 
 export interface DruckCheck {
-  id: 'liquidity' | 'credit' | 'trend';
+  id: 'liquidity' | 'credit' | 'trend' | 'rates' | 'dollar' | 'global';
   label: string;
   pass: boolean;
   detail: string;
@@ -140,11 +142,20 @@ export interface DruckBenchmarks {
   ief: number | null;
 }
 
+/** The action and the price at the decision. A later fill must not overwrite this. */
+export interface DruckDecisionCall {
+  id: string;
+  symbol: string;
+  action: DruckCall;
+  priceAud: number;
+  priceLocal: number;
+}
+
 export interface DruckSnapshot {
-  ruleVersion: typeof DRUCK_RULE;
+  ruleVersion: string;
   /** Candidate list that built this week. Absent on weeks saved before the list had its own version. */
   listVersion?: string;
-  bookId: typeof DRUCK_BOOK_ID;
+  bookId: string;
   decisionDate: string;
   actionDate: string | null;
   filledOn: string | null;
@@ -166,6 +177,8 @@ export interface DruckSnapshot {
   fxRate: number | null;
   fxDate: string | null;
   aaaPrice: number | null;
+  /** Set when the week is decided. Copied onto the filled week so the call can be scored later. */
+  decisionCalls?: DruckDecisionCall[];
   names: DruckNameState[];
   positions: DruckPosition[];
   trades: DruckTrade[];
@@ -173,6 +186,16 @@ export interface DruckSnapshot {
   skippedFill: string | null;
   fetchedAt: string;
   signalAsOf: string;
+}
+
+/** Extra checks for the v2 shadow. Absent on the live book, which keeps the three-check read. */
+export interface V2MarketRead {
+  yield10Now: number | null;
+  yield10Then: number | null;
+  curveNow: number | null;
+  curveThen: number | null;
+  dollarAbove200: boolean | null;
+  liquidityUp: boolean | null;
 }
 
 export interface DruckMarket {
@@ -184,6 +207,18 @@ export interface DruckMarket {
   spreadThen: number | null;
   spreadAsOf: string | null;
   errors: string[];
+  /** Present only when the v2 shadow is being stepped. The live step ignores it. */
+  v2?: V2MarketRead | null;
+}
+
+export interface DruckStepOptions {
+  /** Live book when omitted. v2 is the shadow and is stored under its own book id. */
+  rules?: 'v1' | 'v2';
+  /**
+   * Backtest only. A name with no 200-day average and no shares is left off that week.
+   * The live step does not set this: a missing price still blocks new buys.
+   */
+  skipUnlisted?: boolean;
 }
 
 export interface DruckStep {
@@ -209,6 +244,11 @@ export interface PlanMark {
   premium: number | null;
   /** The 60% trim has already fired and the price has not fallen back to the line. */
   extensionTrimmed?: boolean;
+  /**
+   * Average of the 3-month and 6-month return, skipping the latest month.
+   * Set by the v2 shadow only. The live book leaves this unset, so buy order stays as written.
+   */
+  strength?: number | null;
 }
 
 export interface PlanRow {
@@ -343,6 +383,93 @@ export function classifyRead(input: {
   ];
   const fails = checks.filter((check) => !check.pass).length;
   const colour: DruckColour = fails === 0 ? 'green' : fails >= 2 ? 'red' : 'amber';
+  return { ok: true, colour, cap: DRUCK_CAPS[colour], checks };
+}
+
+const STRENGTH_SKIP = 21;
+const STRENGTH_3M = 63;
+const STRENGTH_6M = 126;
+
+/**
+ * Average of the 3-month and 6-month return, ending 21 sessions before the decision.
+ * The latest month is left out on purpose. Null when either window is missing.
+ */
+export function relativeStrength(closes: readonly (number | null)[], index: number): number | null {
+  const end = index - STRENGTH_SKIP;
+  if (end < STRENGTH_6M) return null;
+  const windowReturn = (sessions: number): number | null => {
+    const start = end - sessions;
+    if (start < 0) return null;
+    const left = closes[start];
+    const right = closes[end];
+    if (left == null || right == null || !(left > 0) || !(right > 0)) return null;
+    return right / left - 1;
+  };
+  const three = windowReturn(STRENGTH_3M);
+  const six = windowReturn(STRENGTH_6M);
+  if (three == null || six == null) return null;
+  return (three + six) / 2;
+}
+
+function pctPoints(value: number): string {
+  const sign = value > 0 ? '+' : value < 0 ? '−' : '';
+  return `${sign}${Math.abs(value).toFixed(2)}`;
+}
+
+/**
+ * Six checks. Green when all pass, Amber when one or two fail, Red when three or more fail.
+ * The live book does not call this. A missing extra check stops the shadow week. It does not invent a pass.
+ */
+export function classifyReadV2(input: {
+  liquidity: number | null;
+  spreadNow: number | null;
+  spreadThen: number | null;
+  spyAbove200: boolean | null;
+  extra: V2MarketRead | null;
+}): { ok: true; colour: DruckColour; cap: number; checks: DruckCheck[] } | { ok: false; error: string } {
+  const base = classifyRead({
+    liquidity: input.liquidity,
+    spreadNow: input.spreadNow,
+    spreadThen: input.spreadThen,
+    spyAbove200: input.spyAbove200,
+  });
+  if (!base.ok) return base;
+  const extra = input.extra;
+  if (!extra || extra.yield10Now == null || extra.yield10Then == null || extra.curveNow == null || extra.curveThen == null || extra.dollarAbove200 == null || extra.liquidityUp == null) {
+    return { ok: false, error: 'A v2 market check is missing. No new buys.' };
+  }
+  const ratesPass = extra.yield10Now <= extra.yield10Then + 1e-9 && extra.curveNow + 1e-9 >= extra.curveThen;
+  const dollarPass = extra.dollarAbove200 === false;
+  const globalPass = extra.liquidityUp === true;
+  const checks: DruckCheck[] = [
+    ...base.checks,
+    {
+      id: 'rates',
+      label: 'Rate direction',
+      pass: ratesPass,
+      detail: ratesPass
+        ? `The 10-year yield is ${extra.yield10Now.toFixed(2)}%, not above ${extra.yield10Then.toFixed(2)}% three months ago, and the 10-year minus the 2-year is ${pctPoints(extra.curveNow)}, not below ${pctPoints(extra.curveThen)}.`
+        : `Rates are a headwind. The 10-year is ${extra.yield10Now.toFixed(2)}% against ${extra.yield10Then.toFixed(2)}% three months ago. The 10-year minus the 2-year is ${pctPoints(extra.curveNow)} against ${pctPoints(extra.curveThen)}.`,
+    },
+    {
+      id: 'dollar',
+      label: 'US dollar',
+      pass: dollarPass,
+      detail: dollarPass
+        ? 'The US dollar index is not above its 200-day average.'
+        : 'The US dollar index is above its 200-day average.',
+    },
+    {
+      id: 'global',
+      label: 'Global liquidity',
+      pass: globalPass,
+      detail: globalPass
+        ? 'Fed net liquidity is at or above its level three months ago.'
+        : 'Fed net liquidity is below its level three months ago.',
+    },
+  ];
+  const fails = checks.filter((check) => !check.pass).length;
+  const colour: DruckColour = fails === 0 ? 'green' : fails <= 2 ? 'amber' : 'red';
   return { ok: true, colour, cap: DRUCK_CAPS[colour], checks };
 }
 
@@ -483,9 +610,24 @@ export function planBook(input: {
     used = roundW(used + extra);
   }
 
+  const ranked = input.marks.some((mark) => typeof mark.strength === 'number');
+  const themeOrder: string[] = [];
+  for (const candidate of input.candidates) {
+    if (!themeOrder.includes(candidate.theme)) themeOrder.push(candidate.theme);
+  }
   const ordered = input.candidates
     .map((candidate, index) => ({ candidate, index }))
     .sort((a, b) => {
+      if (ranked) {
+        const themeDelta = themeOrder.indexOf(a.candidate.theme) - themeOrder.indexOf(b.candidate.theme);
+        if (themeDelta !== 0) return themeDelta;
+        const aStrength = markOf.get(a.candidate.id)?.strength;
+        const bStrength = markOf.get(b.candidate.id)?.strength;
+        const aNum = typeof aStrength === 'number' ? aStrength : Number.NEGATIVE_INFINITY;
+        const bNum = typeof bStrength === 'number' ? bStrength : Number.NEGATIVE_INFINITY;
+        if (aNum !== bNum) return bNum - aNum;
+        return a.index - b.index;
+      }
       if (a.candidate.role !== b.candidate.role) return a.candidate.role === 'core' ? -1 : 1;
       return a.index - b.index;
     })
@@ -849,7 +991,8 @@ function tryFill(pending: DruckSnapshot, market: DruckMarket): { ok: true; snaps
   };
 }
 
-export function stepDruck(previous: DruckSnapshot | null, market: DruckMarket): DruckStep {
+export function stepDruck(previous: DruckSnapshot | null, market: DruckMarket, options?: DruckStepOptions): DruckStep {
+  const rules = options?.rules ?? 'v1';
   if (market.errors.length > 0) return fail(market.errors, previous);
   const ny = newYorkClock(market.now);
   const calendar = (() => {
@@ -895,24 +1038,43 @@ export function stepDruck(previous: DruckSnapshot | null, market: DruckMarket): 
   const candidates = candidateList(carried);
   const signals = new Map<string, Signal>();
   const audPrices = new Map<string, number>();
+  const strengths = new Map<string, number | null>();
+  const skipped = new Set<string>();
   for (const candidate of candidates) {
     if (candidate.symbol === DRUCK_SPY) continue;
     const values = alignToCalendar(market.prices[candidate.symbol] ?? [], calendar);
     const signal = signalAt(values, index);
-    if (!signal) return fail([`${candidate.symbol} does not have a full 200-day average yet.`], previous);
+    if (!signal) {
+      const held = carried.some((position) => position.id === candidate.id && position.qty > 0);
+      if (options?.skipUnlisted && !held) {
+        skipped.add(candidate.id);
+        continue;
+      }
+      return fail([`${candidate.symbol} does not have a full 200-day average yet.`], previous);
+    }
     const aud = audOf(candidate.symbol, signal.price, fx, decision);
     if (!aud) return fail([`${candidate.symbol} has no Australian dollar price. No new buys.`], previous);
     signals.set(candidate.id, signal);
     audPrices.set(candidate.id, aud.aud);
+    strengths.set(candidate.id, rules === 'v2' ? relativeStrength(values, index) : null);
   }
+  const listed = candidates.filter((candidate) => !skipped.has(candidate.id));
   const spy = signalAt(alignToCalendar(market.prices[DRUCK_SPY] ?? [], calendar), index);
   if (!spy) return fail(['SPY does not have a full 200-day average yet.'], previous);
-  const read = classifyRead({
-    liquidity: market.liquidity,
-    spreadNow: market.spreadNow,
-    spreadThen: market.spreadThen,
-    spyAbove200: spy.above200,
-  });
+  const read = rules === 'v2'
+    ? classifyReadV2({
+      liquidity: market.liquidity,
+      spreadNow: market.spreadNow,
+      spreadThen: market.spreadThen,
+      spyAbove200: spy.above200,
+      extra: market.v2 ?? null,
+    })
+    : classifyRead({
+      liquidity: market.liquidity,
+      spreadNow: market.spreadNow,
+      spreadThen: market.spreadThen,
+      spyAbove200: spy.above200,
+    });
   if (!read.ok) return fail([read.error], previous);
 
   const accrued = previous
@@ -921,7 +1083,7 @@ export function stepDruck(previous: DruckSnapshot | null, market: DruckMarket): 
   const vsCost = new Map<string, number | null>();
   const marks: PlanMark[] = [];
   let heldValue = 0;
-  for (const candidate of candidates) {
+  for (const candidate of listed) {
     const position = carried.find((item) => item.id === candidate.id);
     const priceAud = audPrices.get(candidate.id) ?? 0;
     const heldAud = position && position.qty > 0 ? position.qty * priceAud : 0;
@@ -939,6 +1101,7 @@ export function stepDruck(previous: DruckSnapshot | null, market: DruckMarket): 
       above200: signal?.above200 ?? null,
       premium: signal?.premium ?? null,
       extensionTrimmed: position?.extensionTrimmed === true,
+      strength: strengths.get(candidate.id) ?? null,
     });
   }
   const cash = round2(accrued.cash);
@@ -950,18 +1113,18 @@ export function stepDruck(previous: DruckSnapshot | null, market: DruckMarket): 
     equity,
     colour: read.colour,
   });
-  const plan = planBook({ candidates, marks, equity, cap: brake.cap });
+  const plan = planBook({ candidates: listed, marks, equity, cap: brake.cap });
   const overweight = plan.some((row) => row.weight > DRUCK_NAME_MAX + 1e-6)
     || plan.reduce((sum, row) => sum + row.weight, 0) > brake.cap + 1e-4;
   if (overweight) return fail(['The weights would break a cap. No order was built.'], previous);
-  const names = buildNames({ candidates, plan, signals, aud: audPrices, vsCost, equity });
+  const names = buildNames({ candidates: listed, plan, signals, aud: audPrices, vsCost, equity });
   const targetInvested = round2(names.reduce((sum, name) => sum + name.targetAud, 0));
   const aaa = closeOnOrBefore(closedBars(DRUCK_CASH_SYMBOL, market.prices[DRUCK_CASH_SYMBOL], market.now), decision);
   const carriedBook = carryForward(previous);
   const pending: DruckSnapshot = {
-    ruleVersion: DRUCK_RULE,
+    ruleVersion: rules === 'v2' ? DRUCK_SHADOW_RULE : DRUCK_RULE,
     listVersion: DRUCK_LIST,
-    bookId: DRUCK_BOOK_ID,
+    bookId: rules === 'v2' ? DRUCK_SHADOW_BOOK_ID : DRUCK_BOOK_ID,
     decisionDate: decision,
     actionDate: nextSession(calendar, decision),
     filledOn: null,
@@ -982,6 +1145,13 @@ export function stepDruck(previous: DruckSnapshot | null, market: DruckMarket): 
     fxRate: fxQuote.rate,
     fxDate: fxQuote.fxDate,
     aaaPrice: aaa,
+    decisionCalls: names.map((name) => ({
+      id: name.id,
+      symbol: name.symbol,
+      action: name.call,
+      priceAud: name.priceAud,
+      priceLocal: name.priceLocal,
+    })),
     names,
     positions: carried
       .filter((position) => position.qty > 1e-10)
