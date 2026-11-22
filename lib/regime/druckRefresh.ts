@@ -22,6 +22,7 @@ import {
   type DruckSnapshot,
 } from './druck';
 import { attachDruckContext } from './druckContext';
+import { attachDruckShadow } from './druckShadowStore';
 import { readDruck, writeDruck, type DruckRecord } from './druckStore';
 
 export interface DruckRefreshResult {
@@ -216,6 +217,11 @@ export async function runDruckRefresh(input: {
         week: step.week,
         market,
         now,
+        liveFeeds: input.market == null,
+      });
+      await attachDruckShadow({
+        sql,
+        market,
         liveFeeds: input.market == null,
       });
     }

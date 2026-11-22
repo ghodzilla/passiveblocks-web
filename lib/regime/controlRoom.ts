@@ -3,6 +3,7 @@ import type { DruckContextData } from './druckContextStore';
 import { earningsCopy, type EarningsCardCopy } from './druckEarnings';
 import { presentFiling, type FilingCardModel } from './druck13f';
 import { presentScorecard, type ScorecardModel } from './druckScore';
+import type { ShadowCardModel } from './druckShadowPresent';
 import {
   DRUCK_ADD_GAIN,
   DRUCK_CASH_SYMBOL,
@@ -17,7 +18,7 @@ import { DRUCK_PAPER_RULE, SIXTY_FORTY_ONE_WAY, walkSixtyForty, type ClosePoint 
 import { bookPercent } from './ownerCopy';
 import { plainDate } from './visser';
 
-export type { FilingCardModel, ScorecardModel };
+export type { FilingCardModel, ScorecardModel, ShadowCardModel };
 
 export const COMPARISON_EMPTY = 'First comparison appears after the first filled week';
 
@@ -124,6 +125,7 @@ export interface ControlRoomModel {
   watch: WatchChip[];
   scorecard: ScorecardModel;
   filings: FilingCardModel;
+  shadow: ShadowCardModel;
   cash: CashCardModel | null;
   chart: {
     empty: string | null;
@@ -159,6 +161,7 @@ export interface ControlRoomInput {
   paperRule?: string;
   record?: string | null;
   context?: DruckContextData | null;
+  shadow?: ShadowCardModel | null;
 }
 
 function audDollars(value: number): string {
@@ -598,6 +601,7 @@ export function toControlRoom(input: ControlRoomInput): ControlRoomModel {
       orderText: '',
       scorecard: context.scorecard,
       filings: context.filings,
+      shadow: input.shadow ?? emptyShadow(),
     };
   }
 
@@ -726,5 +730,19 @@ export function toControlRoom(input: ControlRoomInput): ControlRoomModel {
     orderText: orders.length ? orderText(orders) : '',
     scorecard: context.scorecard,
     filings: context.filings,
+    shadow: input.shadow ?? emptyShadow(),
+  };
+}
+
+function emptyShadow(): ShadowCardModel {
+  return {
+    title: 'What v2 rules would do',
+    headline: 'v2 has not saved a week yet. The live book is unchanged.',
+    lines: [],
+    checks: [],
+    tableTitle: 'Point-in-time test',
+    rows: [],
+    note: 'The backtest has not been saved yet.',
+    caveats: ['NOT VALIDATED. Paper only. The live book still uses the current rules.'],
   };
 }

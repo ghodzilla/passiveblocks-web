@@ -2,7 +2,10 @@ import type { ComponentProps } from 'react';
 import type { RegimeDashboard } from '@/components/regime/RegimeDashboard';
 import { toControlRoom } from './controlRoom';
 import type { DruckContextData } from './druckContextStore';
-import { sampleStep } from './druck';
+import { sampleMarket, sampleStep, stepDruck } from './druck';
+import type { ShadowReport } from './druckShadow';
+import shadowReport from './druckShadowResults.json';
+import { presentShadow } from './druckShadowPresent';
 import { sampleFilingReport } from './druck13f';
 import { sampleEarningsChecks } from './druckEarnings';
 import { toDruckPanel } from './druckPresent';
@@ -33,6 +36,24 @@ export function sampleContext(): DruckContextData {
   };
 }
 
+function sampleShadow(example: boolean) {
+  const market = sampleMarket();
+  market.v2 = {
+    yield10Now: 4.1,
+    yield10Then: 4.4,
+    curveNow: 0.4,
+    curveThen: 0.2,
+    dollarAbove200: false,
+    liquidityUp: true,
+  };
+  const step = stepDruck(null, market, { rules: 'v2' });
+  return presentShadow({
+    read: { status: step.snapshot ? 'ok' : 'empty', snapshot: step.snapshot },
+    report: shadowReport as ShadowReport,
+    example,
+  });
+}
+
 /** Red 25% sample book: NTRA, HACK.AX, AMZN, INSM, and cash in AAA.AX. */
 export function buyProps(): DashboardProps {
   const step = sampleStep();
@@ -60,6 +81,7 @@ export function buyProps(): DashboardProps {
       paperRule: panel.paperRule,
       record: panel.record,
       context: sampleContext(),
+      shadow: sampleShadow(true),
     }),
   };
 }
@@ -76,6 +98,10 @@ export function quietProps(): DashboardProps {
       outcome: null,
       now: NOW,
       paperRule: panel.paperRule,
+      shadow: presentShadow({
+        read: { status: 'empty', snapshot: null },
+        report: shadowReport as ShadowReport,
+      }),
     }),
   };
 }
