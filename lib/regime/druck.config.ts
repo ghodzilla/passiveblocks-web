@@ -18,6 +18,12 @@ export const DRUCK_RULE = 'DRUCK-2026-11-21';
  */
 export const DRUCK_LIST = '2026-11';
 export const DRUCK_BOOK_ID = 'druck-aud-paper-v1';
+/**
+ * Shadow book. It runs the v2 checks beside the live book and is stored apart from it.
+ * It does not replace DRUCK_RULE or DRUCK_BOOK_ID, and it does not rewrite live history.
+ */
+export const DRUCK_SHADOW_RULE = 'DRUCK-V2-SHADOW-2026-11-22';
+export const DRUCK_SHADOW_BOOK_ID = 'druck-aud-paper-v2-shadow';
 export const DRUCK_START_AUD = 100_000;
 export const DRUCK_COST = 0.001;
 export const DRUCK_CASH_SYMBOL = 'AAA.AX';

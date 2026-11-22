@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Inter } from 'next/font/google';
 import { CopyOrders } from '@/components/regime/CopyOrders';
-import type { ChartPoint, ControlRoomModel, FilingCardModel, HoldingCard, ScorecardModel } from '@/lib/regime/controlRoom';
+import type { ChartPoint, ControlRoomModel, FilingCardModel, HoldingCard, ScorecardModel, ShadowCardModel } from '@/lib/regime/controlRoom';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
@@ -260,6 +260,66 @@ function Filings({ card }: { card: FilingCardModel }) {
   );
 }
 
+function ShadowRules({ card }: { card: ShadowCardModel }) {
+  return (
+    <section className={`${CARD} p-4 sm:p-5`} id="druck-shadow" data-druck-shadow={card.lines.length > 0 ? 'ready' : 'empty'} aria-label={card.title}>
+      <h2 className="text-sm font-semibold">{card.title}</h2>
+      <p className="mt-2 text-sm leading-relaxed text-[#d5deea]">{card.headline}</p>
+      {card.lines.length > 0 ? (
+        <ul className="mt-3 grid gap-1 text-sm leading-relaxed text-[#f4f7fb] sm:grid-cols-2">
+          {card.lines.map((line) => (
+            <li key={line.symbol}>{line.text}</li>
+          ))}
+        </ul>
+      ) : null}
+      {card.checks.length > 0 ? (
+        <ul className="mt-3 grid gap-1 text-xs leading-relaxed text-[#c5d0e0]">
+          {card.checks.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
+      ) : null}
+      <h3 className="mt-4 text-sm font-semibold">{card.tableTitle}</h3>
+      {card.rows.length > 0 ? (
+        <div className="mt-2 overflow-x-auto">
+          <table className="w-full min-w-[520px] text-left text-sm text-[#d5deea]">
+            <thead className="text-xs text-[#c5d0e0]">
+              <tr>
+                <th className="py-1 pr-3 font-medium">Window</th>
+                <th className="py-1 pr-3 font-medium">Book</th>
+                <th className="py-1 pr-3 font-medium">CAGR</th>
+                <th className="py-1 pr-3 font-medium">Worst fall</th>
+                <th className="py-1 pr-3 font-medium">Sharpe</th>
+                <th className="py-1 font-medium">Turnover</th>
+              </tr>
+            </thead>
+            <tbody>
+              {card.rows.map((row) => (
+                <tr key={`${row.period}-${row.book}`} className="border-t border-white/10">
+                  <td className="py-1.5 pr-3">{row.period}</td>
+                  <td className="py-1.5 pr-3">{row.book}</td>
+                  <td className="py-1.5 pr-3 tabular-nums">{row.cagr}</td>
+                  <td className="py-1.5 pr-3 tabular-nums">{row.worst}</td>
+                  <td className="py-1.5 pr-3 tabular-nums">{row.sharpe}</td>
+                  <td className="py-1.5 tabular-nums">{row.turnover}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="mt-2 text-sm leading-relaxed text-[#d5deea]">No backtest numbers are saved yet.</p>
+      )}
+      <p className="mt-3 text-sm leading-relaxed text-[#f4f7fb]">{card.note}</p>
+      <ul className="mt-3 grid gap-1 text-xs leading-relaxed text-[#c5d0e0]">
+        {card.caveats.map((line) => (
+          <li key={line}>{line}</li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 function EarningsBlock({ card }: { card: HoldingCard }) {
   return (
     <div className="mt-3 border-t border-white/10 pt-3 text-xs leading-relaxed text-[#d5deea]" data-earnings={card.symbol}>
@@ -405,6 +465,8 @@ export function RegimeDashboard({
           <Scorecard card={room.scorecard} />
           <Filings card={room.filings} />
         </div>
+
+        <ShadowRules card={room.shadow} />
 
         {room.cards.length > 0 || room.cash ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
