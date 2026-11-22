@@ -68,6 +68,8 @@ export function liquidityFromSnapshot(snapshot: { today?: string; generatedAt?: 
 export async function loadDruckMarket(input: {
   now: Date;
   symbols: string[];
+  /** Prices used for the record. A miss does not block the book. */
+  optionalSymbols?: string[];
   liquidity: { z: number | null; asOf: string | null; error: string | null };
   fetchBars?: (symbol: string) => Promise<{ bars: CloseBar[]; error: string | null }>;
   fetchSpreads?: () => Promise<SeriesPoint[]>;
@@ -79,7 +81,8 @@ export async function loadDruckMarket(input: {
   const fetchSpreads = input.fetchSpreads ?? (() => fetchFredSeries(FRED_SERIES.hy, '2012-01-01'));
   const errors: string[] = [];
   if (input.liquidity.error) errors.push(input.liquidity.error);
-  const symbols = input.symbols.filter((symbol, index) => input.symbols.indexOf(symbol) === index);
+  const required = new Set(input.symbols);
+  const symbols = [...input.symbols, ...(input.optionalSymbols ?? [])].filter((symbol, index, all) => all.indexOf(symbol) === index);
   const [quotes, spreads] = await Promise.all([
     mapPool(symbols, 6, async (symbol) => {
       try {
@@ -96,8 +99,9 @@ export async function loadDruckMarket(input: {
   ]);
   const prices: Record<string, CloseBar[]> = {};
   for (const quote of quotes) {
-    if (quote.error || quote.bars.length === 0) errors.push(quote.error ?? `${quote.symbol} did not arrive.`);
     prices[quote.symbol] = quote.bars;
+    if (!required.has(quote.symbol)) continue;
+    if (quote.error || quote.bars.length === 0) errors.push(quote.error ?? `${quote.symbol} did not arrive.`);
   }
   let spreadNow: number | null = null;
   let spreadThen: number | null = null;
@@ -199,11 +203,12 @@ export async function runDruckRefresh(input: {
       market = await loadDruckMarket({
         now,
         symbols: wantedSymbols(previous?.positions ?? []),
+        optionalSymbols: ['QQQ', 'IEF'],
         liquidity,
       });
     }
     const step = stepDruck(previous, market);
-    const wrote = await writeDruck(sql, recordFrom(step, at), step.week);
+    const wrote = await writeDruck(sql, recordFrom(step, at), step.week, step.sealed);
     const outcome: DruckRefreshResult['outcome'] = wrote === 'saved' ? step.outcome : wrote;
     log({
       phase: 'end',

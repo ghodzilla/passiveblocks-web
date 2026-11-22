@@ -10,6 +10,7 @@ import {
   DRUCK_CASH_SYMBOL,
   DRUCK_COST,
   DRUCK_LIQUIDITY_MIN,
+  DRUCK_LIST,
   DRUCK_MAX_POSITIONS,
   DRUCK_NAME_MAX,
   DRUCK_RULE,
@@ -22,6 +23,7 @@ import {
   DRUCK_TRIM_MA,
   type DruckCandidate,
 } from './druck.config';
+import { sessionHasClosed } from './prices';
 import {
   ageDays,
   alignToCalendar,
@@ -75,6 +77,12 @@ export interface DruckPosition {
   symbol: string;
   qty: number;
   avgCostAud: number;
+  /**
+   * True after the 60% trim has fired for this stretch.
+   * Cleared once the price is no longer more than 60% above its 200-day average.
+   * Absent on positions saved before this field.
+   */
+  extensionTrimmed?: boolean;
 }
 
 export interface DruckTrade {
@@ -124,8 +132,18 @@ export interface DruckReadState {
   checks: DruckCheck[];
 }
 
+export interface DruckBenchmarks {
+  /** Session the marks were taken from. The fill close, once the week has filled. */
+  date: string;
+  qqq: number | null;
+  spy: number | null;
+  ief: number | null;
+}
+
 export interface DruckSnapshot {
   ruleVersion: typeof DRUCK_RULE;
+  /** Candidate list that built this week. Absent on weeks saved before the list had its own version. */
+  listVersion?: string;
   bookId: typeof DRUCK_BOOK_ID;
   decisionDate: string;
   actionDate: string | null;
@@ -143,6 +161,8 @@ export interface DruckSnapshot {
   costAud: number;
   nav: number;
   prevEndAud: number | null;
+  /** Closes of QQQ, SPY, and IEF stored when the week fills. Null until then. Absent on older weeks. */
+  benchmarks?: DruckBenchmarks | null;
   fxRate: number | null;
   fxDate: string | null;
   aaaPrice: number | null;
@@ -171,8 +191,13 @@ export interface DruckStep {
   banner: string | null;
   errors: string[];
   snapshot: DruckSnapshot | null;
-  /** Pending decision to insert once. Null when this step does not open a new week. */
+  /**
+   * History row for this decision. A fill carries the filled week (trades, book value, benchmark marks),
+   * so a pending row already stored for that date can be replaced. Null when nothing new is decided.
+   */
   week: DruckSnapshot | null;
+  /** Previous filled week, when this step opens a later decision. Its row is sealed if it is still pending. */
+  sealed: DruckSnapshot | null;
 }
 
 export interface PlanMark {
@@ -182,6 +207,8 @@ export interface PlanMark {
   priceAud: number | null;
   above200: boolean | null;
   premium: number | null;
+  /** The 60% trim has already fired and the price has not fallen back to the line. */
+  extensionTrimmed?: boolean;
 }
 
 export interface PlanRow {
@@ -228,6 +255,7 @@ function fail(errors: string[], previous: DruckSnapshot | null): DruckStep {
     errors,
     snapshot: previous,
     week: null,
+    sealed: null,
   };
 }
 
@@ -402,7 +430,8 @@ export function planBook(input: {
       } else if (mark.premium != null && pct(mark.premium) < -DRUCK_STOP_MA) {
         weight = 0;
         tag = 'sell-trend';
-      } else if (mark.premium != null && pct(mark.premium) > DRUCK_TRIM_MA) {
+      } else if (mark.premium != null && pct(mark.premium) > DRUCK_TRIM_MA && mark.extensionTrimmed !== true) {
+        // Sell half once per stretch. A later week holds until the price is back at or under the line.
         weight = roundW(heldWeight / 2);
         tag = 'trim-extension';
       }
@@ -636,10 +665,23 @@ function buildNames(input: {
   });
 }
 
+function closedBars(symbol: string, bars: readonly CloseBar[] | undefined, now: Date): CloseBar[] {
+  return (bars ?? []).filter((bar) => bar.close > 0 && sessionHasClosed(bar.date, symbol, now));
+}
+
+function stretchHot(premium: number | null): boolean {
+  return premium != null && pct(premium) > DRUCK_TRIM_MA;
+}
+
+function markClose(symbol: string, bars: readonly CloseBar[] | undefined, date: string, now: Date): number | null {
+  const price = closeOnOrBefore(closedBars(symbol, bars, now), date);
+  return price != null && price > 0 ? price : null;
+}
+
 function tryFill(pending: DruckSnapshot, market: DruckMarket): { ok: true; snapshot: DruckSnapshot } | { ok: false } {
   const actionDate = pending.actionDate;
   if (!actionDate) return { ok: false };
-  const fx = market.prices[FX_SYMBOL] ?? [];
+  const fx = closedBars(FX_SYMBOL, market.prices[FX_SYMBOL], market.now);
   const quotes = new Map<string, { date: string; aud: number }>();
   const needed: string[] = [];
   const want = (symbol: string) => {
@@ -652,7 +694,7 @@ function tryFill(pending: DruckSnapshot, market: DruckMarket): { ok: true; snaps
     if (position.qty > 0) want(position.symbol);
   }
   for (const symbol of needed) {
-    const bar = closeOnOrAfter(market.prices[symbol] ?? [], actionDate);
+    const bar = closeOnOrAfter(closedBars(symbol, market.prices[symbol], market.now), actionDate);
     if (!bar) return { ok: false };
     const aud = audOf(symbol, bar.close, fx, bar.date);
     if (!aud) return { ok: false };
@@ -762,8 +804,31 @@ function tryFill(pending: DruckSnapshot, market: DruckMarket): { ok: true; snaps
     ? roundNav((pending.nav || 1) * (post / pending.prevEndAud))
     : roundNav(post / DRUCK_START_AUD);
   const positions = pending.names
-    .map((name) => ({ id: name.id, symbol: name.symbol, qty: qty.get(name.id) ?? 0, avgCostAud: avg.get(name.id) ?? 0 }))
+    .map((name) => {
+      const prior = pending.positions.find((position) => position.id === name.id);
+      const hot = stretchHot(name.premium);
+      const fired = name.tag === 'trim-extension';
+      return {
+        id: name.id,
+        symbol: name.symbol,
+        qty: qty.get(name.id) ?? 0,
+        avgCostAud: avg.get(name.id) ?? 0,
+        extensionTrimmed: hot && (fired || prior?.extensionTrimmed === true),
+      };
+    })
     .filter((position) => position.qty > 1e-10);
+  let markDate = filledOn ?? actionDate;
+  if (!filledOn) {
+    quotes.forEach((quote) => {
+      if (quote.date > markDate) markDate = quote.date;
+    });
+  }
+  const benchmarks: DruckBenchmarks = {
+    date: markDate,
+    qqq: markClose('QQQ', market.prices.QQQ, markDate, market.now),
+    spy: markClose(DRUCK_SPY, market.prices[DRUCK_SPY], markDate, market.now),
+    ief: markClose('IEF', market.prices.IEF, markDate, market.now),
+  };
   return {
     ok: true,
     snapshot: {
@@ -775,6 +840,7 @@ function tryFill(pending: DruckSnapshot, market: DruckMarket): { ok: true; snaps
       equityAud: post,
       costAud: cost,
       nav,
+      benchmarks,
       peakAud: Math.max(pending.peakAud, post),
       names: settled,
       positions,
@@ -795,23 +861,23 @@ export function stepDruck(previous: DruckSnapshot | null, market: DruckMarket): 
   })();
   if (calendar.length === 0) return fail([`${DRUCK_SPY} did not arrive.`], previous);
   const decision = decisionSession(calendar, market.now);
-  if (!decision) return { outcome: 'waiting', banner: null, errors: [], snapshot: previous, week: null };
+  if (!decision) return { outcome: 'waiting', banner: null, errors: [], snapshot: previous, week: null, sealed: null };
   const carried = previous?.positions ?? [];
   const symbols = neededSymbols(carried);
   symbols.push(FX_SYMBOL);
   const problems = seriesProblems(market, unique(symbols), decision, ny.date);
   if (problems.length > 0) return fail(problems, previous);
   if (previous?.decisionDate === decision && previous.phase === 'filled') {
-    return { outcome: 'unchanged', banner: null, errors: [], snapshot: previous, week: null };
+    return { outcome: 'unchanged', banner: null, errors: [], snapshot: previous, week: previous, sealed: null };
   }
   if (previous?.decisionDate === decision && previous.phase === 'pending') {
     const pending = { ...previous, actionDate: previous.actionDate ?? nextSession(calendar, decision) };
     const filled = tryFill(pending, market);
-    if (filled.ok) return { outcome: 'filled', banner: null, errors: [], snapshot: filled.snapshot, week: null };
+    if (filled.ok) return { outcome: 'filled', banner: null, errors: [], snapshot: filled.snapshot, week: filled.snapshot, sealed: null };
     if (pending.actionDate !== previous.actionDate) {
-      return { outcome: 'saved', banner: null, errors: [], snapshot: pending, week: null };
+      return { outcome: 'saved', banner: null, errors: [], snapshot: pending, week: null, sealed: null };
     }
-    return { outcome: 'unchanged', banner: null, errors: [], snapshot: previous, week: null };
+    return { outcome: 'unchanged', banner: null, errors: [], snapshot: previous, week: null, sealed: null };
   }
 
   for (const candidate of DRUCK_CANDIDATES) {
@@ -872,6 +938,7 @@ export function stepDruck(previous: DruckSnapshot | null, market: DruckMarket): 
       priceAud: priceAud > 0 ? priceAud : null,
       above200: signal?.above200 ?? null,
       premium: signal?.premium ?? null,
+      extensionTrimmed: position?.extensionTrimmed === true,
     });
   }
   const cash = round2(accrued.cash);
@@ -889,9 +956,11 @@ export function stepDruck(previous: DruckSnapshot | null, market: DruckMarket): 
   if (overweight) return fail(['The weights would break a cap. No order was built.'], previous);
   const names = buildNames({ candidates, plan, signals, aud: audPrices, vsCost, equity });
   const targetInvested = round2(names.reduce((sum, name) => sum + name.targetAud, 0));
-  const aaa = closeOnOrBefore(market.prices[DRUCK_CASH_SYMBOL] ?? [], decision);
+  const aaa = closeOnOrBefore(closedBars(DRUCK_CASH_SYMBOL, market.prices[DRUCK_CASH_SYMBOL], market.now), decision);
+  const carriedBook = carryForward(previous);
   const pending: DruckSnapshot = {
     ruleVersion: DRUCK_RULE,
+    listVersion: DRUCK_LIST,
     bookId: DRUCK_BOOK_ID,
     decisionDate: decision,
     actionDate: nextSession(calendar, decision),
@@ -907,13 +976,20 @@ export function stepDruck(previous: DruckSnapshot | null, market: DruckMarket): 
     investedAud: round2(heldValue),
     targetCashAud: round2(equity - targetInvested),
     costAud: 0,
-    nav: previous?.nav ?? 1,
-    prevEndAud: previous ? round2(previous.cashAud + previous.investedAud) : null,
+    nav: carriedBook.nav,
+    prevEndAud: carriedBook.prevEndAud,
+    benchmarks: null,
     fxRate: fxQuote.rate,
     fxDate: fxQuote.fxDate,
     aaaPrice: aaa,
     names,
-    positions: carried.filter((position) => position.qty > 1e-10),
+    positions: carried
+      .filter((position) => position.qty > 1e-10)
+      .map((position) => {
+        const mark = marks.find((item) => item.id === position.id);
+        if (mark && !stretchHot(mark.premium)) return { ...position, extensionTrimmed: false };
+        return position;
+      }),
     trades: [],
     read: {
       liquidity: market.liquidity as number,
@@ -927,9 +1003,25 @@ export function stepDruck(previous: DruckSnapshot | null, market: DruckMarket): 
     fetchedAt: market.now.toISOString(),
     signalAsOf: decision,
   };
+  const sealed = previous?.phase === 'filled' && previous.decisionDate !== decision ? previous : null;
   const filled = tryFill(pending, market);
-  if (filled.ok) return { outcome: 'filled', banner: null, errors: [], snapshot: filled.snapshot, week: pending };
-  return { outcome: 'saved', banner: null, errors: [], snapshot: pending, week: pending };
+  if (filled.ok) return { outcome: 'filled', banner: null, errors: [], snapshot: filled.snapshot, week: filled.snapshot, sealed };
+  return { outcome: 'saved', banner: null, errors: [], snapshot: pending, week: pending, sealed };
+}
+
+/**
+ * Book value carried into a new week.
+ * A missed fill leaves the old nav on a snapshot whose cash and shares are already marked at later prices.
+ * Measuring the next fill from that pair would drop the move. Revalue the nav to the marked book first.
+ */
+function carryForward(previous: DruckSnapshot | null): { nav: number; prevEndAud: number | null } {
+  if (!previous) return { nav: 1, prevEndAud: null };
+  const marked = round2(previous.cashAud + previous.investedAud);
+  const missed = previous.phase === 'pending' && previous.prevEndAud != null && previous.prevEndAud > 0;
+  const nav = missed
+    ? roundNav((previous.nav || 1) * (marked / (previous.prevEndAud as number)))
+    : (previous.nav ?? 1);
+  return { nav, prevEndAud: marked };
 }
 
 const SAMPLE_LAST: Record<string, { price: number; premium: number }> = {

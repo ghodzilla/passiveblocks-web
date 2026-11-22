@@ -12,7 +12,7 @@ import {
   SYSTEMATIC_CAP,
   volTargetWeight,
 } from './ideas';
-import { parseYahooChart } from './prices';
+import { parseYahooChart, sessionDate, sessionHasClosed } from './prices';
 import {
   computeSignals,
   quantAgrees,
@@ -288,6 +288,35 @@ describe('yahoo prices and the watchlist', () => {
       },
     }, 'SPY');
     assert.equal(quoteOnly[0]?.close, 42);
+  });
+
+  it('drops a session that has not closed and keeps it after the cash close', () => {
+    const usOpen = Date.parse('2026-11-23T14:30:00.000Z') / 1000;
+    const usDate = sessionDate(usOpen, 'SPY');
+    const asxOpen = Date.parse('2026-11-22T23:00:00.000Z') / 1000;
+    const asxDate = sessionDate(asxOpen, 'HACK.AX');
+    const body = (timestamps: number[], close: number[]) => ({
+      chart: { result: [{ timestamp: timestamps, indicators: { quote: [{ close }] } }] },
+    });
+    const usMid = new Date('2026-11-23T20:00:00.000Z');
+    const usAfter = new Date('2026-11-23T21:05:00.000Z');
+    assert.equal(usDate, '2026-11-23');
+    assert.equal(sessionHasClosed(usDate, 'SPY', usMid), false);
+    assert.equal(sessionHasClosed(usDate, 'SPY', usAfter), true);
+    assert.deepEqual(parseYahooChart(body([usOpen], [100]), 'SPY', usMid), []);
+    assert.equal(parseYahooChart(body([usOpen], [100]), 'SPY', usAfter)[0]?.close, 100);
+
+    const asxMid = new Date('2026-11-23T04:00:00.000Z');
+    const asxAfter = new Date('2026-11-23T05:05:00.000Z');
+    assert.equal(asxDate, '2026-11-23');
+    assert.equal(sessionHasClosed(asxDate, 'HACK.AX', asxMid), false);
+    assert.equal(sessionHasClosed(asxDate, 'HACK.AX', asxAfter), true);
+    assert.deepEqual(parseYahooChart(body([asxOpen], [18]), 'HACK.AX', asxMid), []);
+    assert.equal(parseYahooChart(body([asxOpen], [18]), 'HACK.AX', asxAfter)[0]?.close, 18);
+
+    const prior = Date.parse('2026-11-20T14:30:00.000Z') / 1000;
+    const kept = parseYahooChart(body([prior, usOpen], [90, 100]), 'SPY', usMid);
+    assert.deepEqual(kept.map((bar) => bar.close), [90]);
   });
 
   it('keeps every playbook ticker in the catalog and lets the watchlist replace the default', () => {

@@ -19,8 +19,13 @@ export interface PriceBook {
 
 const HOSTS = ['query1.finance.yahoo.com', 'query2.finance.yahoo.com'];
 
+/** US listings use New York. ASX listings (.AX) use Sydney. FX uses the New York clock. */
+export function exchangeTimeZone(yahooSymbol: string): string {
+  return yahooSymbol.endsWith('.AX') ? 'Australia/Sydney' : 'America/New_York';
+}
+
 export function sessionDate(unixSeconds: number, yahooSymbol: string): string {
-  const timeZone = yahooSymbol.endsWith('.AX') ? 'Australia/Sydney' : 'America/New_York';
+  const timeZone = exchangeTimeZone(yahooSymbol);
   return new Intl.DateTimeFormat('en-CA', {
     timeZone,
     year: 'numeric',
@@ -29,11 +34,46 @@ export function sessionDate(unixSeconds: number, yahooSymbol: string): string {
   }).format(new Date(unixSeconds * 1000));
 }
 
+const SESSION_CLOSE_MINUTES = 16 * 60;
+
+function zonedClock(now: Date, timeZone: string): { date: string; minutes: number } {
+  const fmt = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  });
+  const bag: Record<string, string> = {};
+  for (const part of fmt.formatToParts(now)) bag[part.type] = part.value;
+  let hour = Number(bag.hour);
+  if (hour === 24) hour = 0;
+  return {
+    date: `${bag.year}-${bag.month}-${bag.day}`,
+    minutes: hour * 60 + Number(bag.minute),
+  };
+}
+
+/**
+ * A daily bar is a close only after that exchange's cash session ends.
+ * US listings close at 16:00 New York. ASX listings close at 16:00 Sydney.
+ * A later calendar day has already closed. A session still in progress has not.
+ */
+export function sessionHasClosed(session: string, yahooSymbol: string, now: Date): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(session)) return false;
+  const clock = zonedClock(now, exchangeTimeZone(yahooSymbol));
+  if (session < clock.date) return true;
+  if (session > clock.date) return false;
+  return clock.minutes >= SESSION_CLOSE_MINUTES;
+}
+
 /**
  * Read adjusted closes from a Yahoo chart payload. Null closes are skipped.
- * Nothing is forward-filled.
+ * Nothing is forward-filled. The current session is omitted until it has closed.
  */
-export function parseYahooChart(body: unknown, yahooSymbol: string): Bar[] {
+export function parseYahooChart(body: unknown, yahooSymbol: string, now: Date = new Date()): Bar[] {
   if (!body || typeof body !== 'object') return [];
   const result = (body as { chart?: { result?: unknown[] } }).chart?.result?.[0];
   if (!result || typeof result !== 'object') return [];
@@ -60,7 +100,9 @@ export function parseYahooChart(body: unknown, yahooSymbol: string): Bar[] {
     if (typeof close !== 'number' || !Number.isFinite(close) || close <= 0) continue;
     const high = highs[i];
     const low = lows[i];
-    const bar: Bar = { date: sessionDate(ts, yahooSymbol), close };
+    const date = sessionDate(ts, yahooSymbol);
+    if (!sessionHasClosed(date, yahooSymbol, now)) continue;
+    const bar: Bar = { date, close };
     if (typeof high === 'number' && Number.isFinite(high) && high > 0) bar.high = high;
     if (typeof low === 'number' && Number.isFinite(low) && low > 0) bar.low = low;
     bars.push(bar);

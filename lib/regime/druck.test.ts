@@ -10,6 +10,8 @@ import {
   DRUCK_BOOK_ID,
   DRUCK_CAVEAT,
   DRUCK_COST,
+  DRUCK_LIST,
+  DRUCK_RULE,
   DRUCK_START_AUD,
 } from './druck.config';
 import {
@@ -29,10 +31,12 @@ import {
   type DruckMarket,
   type PlanMark,
 } from './druck';
-import { runDruckRefresh } from './druckRefresh';
+import { loadDruckMarket, runDruckRefresh } from './druckRefresh';
 import { sampleDruckPanel, toDruckPanel } from './druckPresent';
-import { readDruck } from './druckStore';
+import { parseDruckRecord, readDruck, readDruckWeeks } from './druckStore';
+import { sessionHasClosed } from './prices';
 import { retiredBookLines } from './retiredBooks';
+import type { DruckSnapshot } from './druck';
 
 const MIGRATION = readFileSync('db/regime/001_durable_state.sql', 'utf8');
 const DRUCK_SQL = readFileSync('db/regime/004_druck_snapshots.sql', 'utf8');
@@ -490,5 +494,271 @@ describe('Druckenmiller storage', () => {
     );
     assert.match(missing[1] ?? '', /Nothing was deleted/);
     assert.equal(sample.prices[FX_SYMBOL][0].close, 0.65);
+  });
+});
+
+const SAMPLE_PREMIUM: Record<string, number> = {
+  SPY: -0.055,
+  'AAA.AX': 0.002,
+  NTRA: 0.001,
+  'HACK.AX': 0.18,
+  AMZN: 0.007,
+  INSM: 0.15,
+  STX: -0.35,
+  WDC: -0.38,
+  'GDX.AX': -0.18,
+  'SEMI.AX': -0.12,
+  SE: -0.22,
+  YPF: -0.28,
+  EWZ: -0.34,
+};
+
+function marketEnding(
+  end: string,
+  now: Date,
+  opts?: { premiums?: Record<string, number>; bumps?: Record<string, number>; extra?: string[] },
+): DruckMarket {
+  const calendar = businessDaysEnding(end, 260);
+  const sample = sampleMarket();
+  const prices: DruckMarket['prices'] = {};
+  for (const [symbol, bars] of Object.entries(sample.prices)) {
+    if (symbol === FX_SYMBOL) {
+      prices[symbol] = calendar.map((date) => ({ date, close: 0.65 }));
+      continue;
+    }
+    const last = bars[bars.length - 1].close * (opts?.bumps?.[symbol] ?? 1);
+    prices[symbol] = closesFor(calendar, last, opts?.premiums?.[symbol] ?? SAMPLE_PREMIUM[symbol] ?? 0.01);
+  }
+  for (const date of opts?.extra ?? []) {
+    for (const bars of Object.values(prices)) bars.push({ date, close: bars[bars.length - 1].close });
+  }
+  prices.QQQ = prices.SPY.map((bar) => ({ date: bar.date, close: 400 }));
+  prices.IEF = prices.SPY.map((bar) => ({ date: bar.date, close: 95 }));
+  return {
+    ...sample,
+    now,
+    prices,
+    liquidityAsOf: end,
+    spreadAsOf: end,
+  };
+}
+
+function positionQty(snapshot: DruckSnapshot | null | undefined, id: string): number {
+  return snapshot?.positions.find((position) => position.id === id)?.qty ?? 0;
+}
+
+describe('Druckenmiller week history', () => {
+  it('records a filled week over the pending row and renders 60/40 and QQQ', async () => {
+    const db = new PGlite();
+    await db.exec(MIGRATION);
+    await db.exec(DRUCK_SQL);
+    const fillSql = readFileSync('db/regime/005_druck_week_fill.sql', 'utf8');
+    await db.exec(fillSql);
+    await db.exec(fillSql);
+    assert.match(fillSql, /GRANT UPDATE ON TABLE regime_druck_week/);
+    assert.doesNotMatch(fillSql, /GRANT DELETE/);
+    const base = adapter(db);
+    let denyUpdate = true;
+    const sql: RegimeSql = {
+      query(text, params) {
+        if (denyUpdate && text.includes('UPDATE regime_druck_week')) {
+          const error = new Error('permission denied for table regime_druck_week') as Error & { code: string };
+          error.code = '42501';
+          throw error;
+        }
+        return base.query(text, params);
+      },
+      transaction: (run) => base.transaction(run),
+    };
+    const opened = await runDruckRefresh({ now: sampleMarket().now, trigger: 'cron', sql, market: sampleMarket() });
+    assert.equal(opened.outcome, 'saved');
+    const tuesday = new Date('2026-11-23T22:45:00.000Z');
+    const fillMarket = marketEnding('2026-11-20', tuesday, { extra: ['2026-11-23'] });
+    const filled = await runDruckRefresh({ now: tuesday, trigger: 'owner', sql, market: fillMarket });
+    assert.equal(filled.outcome, 'filled');
+    const pendingRow = await sql.query<{ payload: { phase?: string } }>('SELECT payload FROM regime_druck_week');
+    assert.equal(pendingRow[0]?.payload.phase, 'pending');
+    const live = await readDruck(sql);
+    assert.equal(live.record?.snapshot?.phase, 'filled');
+
+    denyUpdate = false;
+    const sealed = await runDruckRefresh({ now: tuesday, trigger: 'cron', sql, market: fillMarket });
+    assert.equal(sealed.outcome, 'unchanged');
+    const weekRows = await sql.query<{ payload: DruckSnapshot }>('SELECT payload FROM regime_druck_week ORDER BY decision_date');
+    assert.equal(weekRows[0]?.payload.phase, 'filled');
+    assert.ok((weekRows[0]?.payload.trades.length ?? 0) >= 4);
+    assert.ok((weekRows[0]?.payload.nav ?? 0) > 0);
+    assert.equal(weekRows[0]?.payload.benchmarks?.qqq, 400);
+    assert.ok((weekRows[0]?.payload.benchmarks?.spy ?? 0) > 0);
+    assert.equal(weekRows[0]?.payload.benchmarks?.ief, 95);
+
+    const secondNow = new Date('2026-11-30T22:45:00.000Z');
+    const second = await runDruckRefresh({
+      now: secondNow,
+      trigger: 'cron',
+      sql,
+      market: marketEnding('2026-11-27', secondNow, { extra: ['2026-11-30'] }),
+    });
+    assert.equal(second.outcome, 'filled');
+    const weeks = await readDruckWeeks(sql);
+    assert.equal(weeks.filter((week) => week.phase === 'filled').length, 2);
+    const panel = toDruckPanel({
+      status: 'ok',
+      snapshot: (await readDruck(sql)).record?.snapshot ?? null,
+      banner: null,
+      outcome: 'filled',
+      weeks,
+    });
+    assert.match(panel.record, /Book [+-]/);
+    assert.match(panel.record, /60\/40 [+-]/);
+    assert.match(panel.record, /QQQ [+-]/);
+    assert.doesNotMatch(panel.record, /needs two filled weeks/);
+    assert.doesNotMatch(panel.record, /not priced/);
+  });
+
+  it('loads a book saved before the candidate list had its own version', async () => {
+    const db = new PGlite();
+    await db.exec(MIGRATION);
+    await db.exec(DRUCK_SQL);
+    const sql = adapter(db);
+    const snapshot = structuredClone(sampleStep().snapshot) as DruckSnapshot;
+    delete snapshot.listVersion;
+    delete snapshot.benchmarks;
+    const record = {
+      ruleVersion: DRUCK_RULE,
+      bookId: DRUCK_BOOK_ID,
+      updatedAt: '2026-11-21T15:00:00.000Z',
+      attempt: { at: '2026-11-21T15:00:00.000Z', outcome: 'saved', errors: [], banner: null },
+      snapshot,
+    };
+    await sql.query('INSERT INTO regime_druck (id, payload) VALUES (1, $1::jsonb)', [JSON.stringify(record)]);
+    const oldWeek = { ...snapshot, listVersion: '2026-08', phase: 'filled' as const, nav: 1.01 };
+    await sql.query(
+      'INSERT INTO regime_druck_week (rule_version, decision_date, payload) VALUES ($1, $2::date, $3::jsonb)',
+      [DRUCK_RULE, snapshot.decisionDate, JSON.stringify(oldWeek)],
+    );
+    const stored = await readDruck(sql);
+    assert.equal(stored.status, 'ok');
+    assert.equal(stored.record?.snapshot?.decisionDate, '2026-11-20');
+    assert.equal(stored.record?.snapshot?.listVersion, undefined);
+    assert.notEqual(DRUCK_LIST, '2026-08');
+    const weeks = await readDruckWeeks(sql);
+    assert.equal(weeks.length, 1);
+    assert.equal(weeks[0]?.listVersion, '2026-08');
+    assert.equal(parseDruckRecord({ ...record, ruleVersion: 'DRUCK-OTHER' }), null);
+  });
+});
+
+describe('Druckenmiller stretch trim', () => {
+  it('sells half once while the price stays extended, then again after it dips', () => {
+    const opened = stepDruck(null, sampleMarket());
+    const first = stepDruck(opened.snapshot, marketEnding('2026-11-20', new Date('2026-11-23T22:45:00.000Z'), { extra: ['2026-11-23'] }));
+    assert.equal(first.outcome, 'filled');
+    const startQty = positionQty(first.snapshot, 'ntra');
+    assert.ok(startQty > 0);
+
+    const hot = { premiums: { NTRA: 0.7 } };
+    const trim = stepDruck(first.snapshot, marketEnding('2026-11-27', new Date('2026-11-30T22:45:00.000Z'), { ...hot, extra: ['2026-11-30'] }));
+    assert.equal(trim.outcome, 'filled');
+    assert.equal(trim.snapshot?.trades.some((trade) => trade.symbol === 'NTRA' && trade.side === 'sell'), true);
+    const halved = positionQty(trim.snapshot, 'ntra');
+    assert.ok(Math.abs(halved - startQty / 2) / startQty < 0.05);
+    assert.equal(trim.snapshot?.positions.find((position) => position.id === 'ntra')?.extensionTrimmed, true);
+
+    const held = stepDruck(trim.snapshot, marketEnding('2026-12-04', new Date('2026-12-07T22:45:00.000Z'), { ...hot, extra: ['2026-12-07'] }));
+    assert.equal(held.outcome, 'filled');
+    assert.equal(held.snapshot?.trades.some((trade) => trade.symbol === 'NTRA' && trade.side === 'sell'), false);
+    assert.ok(Math.abs(positionQty(held.snapshot, 'ntra') - halved) / halved < 0.02);
+    assert.equal(held.snapshot?.positions.find((position) => position.id === 'ntra')?.extensionTrimmed, true);
+
+    const cool = stepDruck(held.snapshot, marketEnding('2026-12-11', new Date('2026-12-14T22:45:00.000Z'), { premiums: { NTRA: 0.2 }, extra: ['2026-12-14'] }));
+    assert.equal(cool.outcome, 'filled');
+    assert.equal(cool.snapshot?.positions.find((position) => position.id === 'ntra')?.extensionTrimmed, false);
+    const cooledQty = positionQty(cool.snapshot, 'ntra');
+
+    const again = stepDruck(cool.snapshot, marketEnding('2026-12-18', new Date('2026-12-21T22:45:00.000Z'), { ...hot, extra: ['2026-12-21'] }));
+    assert.equal(again.outcome, 'filled');
+    assert.equal(again.snapshot?.trades.some((trade) => trade.symbol === 'NTRA' && trade.side === 'sell'), true);
+    assert.ok(Math.abs(positionQty(again.snapshot, 'ntra') - cooledQty / 2) / cooledQty < 0.05);
+    assert.equal(again.snapshot?.positions.find((position) => position.id === 'ntra')?.extensionTrimmed, true);
+  });
+});
+
+describe('Druckenmiller session close', () => {
+  it('fills the 20 Nov week at the Monday close on Tuesday morning, and not at a live bar', () => {
+    const opened = stepDruck(null, sampleMarket());
+    assert.equal(opened.snapshot?.phase, 'pending');
+    assert.equal(opened.snapshot?.decisionDate, '2026-11-20');
+
+    const liveMonday = new Date('2026-11-23T20:00:00.000Z');
+    assert.equal(sessionHasClosed('2026-11-23', 'SPY', liveMonday), false);
+    const early = stepDruck(opened.snapshot, marketEnding('2026-11-20', liveMonday, { extra: ['2026-11-23'] }));
+    assert.notEqual(early.outcome, 'filled');
+    assert.equal(early.snapshot?.phase, 'pending');
+
+    const tuesday = new Date('2026-11-23T22:45:00.000Z');
+    assert.equal(sessionHasClosed('2026-11-23', 'SPY', tuesday), true);
+    assert.equal(sessionHasClosed('2026-11-24', 'HACK.AX', tuesday), false);
+    const ready = marketEnding('2026-11-20', tuesday, { extra: ['2026-11-23'] });
+    ready.prices['HACK.AX'].push({ date: '2026-11-24', close: 99 });
+    const filled = stepDruck(opened.snapshot, ready);
+    assert.equal(filled.outcome, 'filled');
+    assert.equal(filled.snapshot?.filledOn, '2026-11-23');
+    const hack = filled.snapshot?.trades.find((trade) => trade.symbol === 'HACK.AX');
+    assert.ok(hack);
+    assert.ok(Math.abs((hack?.priceAud ?? 0) - 18.26) < 0.01);
+
+    const missingMonday = marketEnding('2026-11-20', tuesday, { extra: ['2026-11-23'] });
+    missingMonday.prices['HACK.AX'] = missingMonday.prices['HACK.AX'].filter((bar) => bar.date !== '2026-11-23');
+    missingMonday.prices['HACK.AX'].push({ date: '2026-11-24', close: 99 });
+    const refused = stepDruck(opened.snapshot, missingMonday);
+    assert.notEqual(refused.outcome, 'filled');
+    assert.equal(refused.snapshot?.trades.some((trade) => trade.priceAud === 99), false);
+  });
+});
+
+describe('Druckenmiller book value', () => {
+  it('keeps the gain when the next week fills after a missed fill', () => {
+    const opened = stepDruck(null, sampleMarket());
+    const first = stepDruck(opened.snapshot, marketEnding('2026-11-20', new Date('2026-11-23T22:45:00.000Z'), { extra: ['2026-11-23'] }));
+    assert.equal(first.outcome, 'filled');
+    assert.ok(first.snapshot);
+    const bumps = { NTRA: 1.4, 'HACK.AX': 1.4, AMZN: 1.4, INSM: 1.4 };
+    const skipped = stepDruck(first.snapshot, marketEnding('2026-11-27', new Date('2026-11-28T04:00:00.000Z'), { bumps }));
+    assert.equal(skipped.outcome, 'saved');
+    assert.equal(skipped.snapshot?.phase, 'pending');
+    assert.equal(skipped.snapshot?.decisionDate, '2026-11-27');
+    const marked = (skipped.snapshot?.cashAud ?? 0) + (skipped.snapshot?.investedAud ?? 0);
+    const base = first.snapshot.cashAud + first.snapshot.investedAud;
+    const gain = marked / base;
+    assert.ok(gain > 1.05);
+
+    const next = stepDruck(skipped.snapshot, marketEnding('2026-12-04', new Date('2026-12-07T22:45:00.000Z'), { bumps, extra: ['2026-12-07'] }));
+    assert.equal(next.outcome, 'filled');
+    assert.ok(next.snapshot);
+    assert.ok(next.snapshot.nav > first.snapshot.nav * 1.05);
+    assert.ok(Math.abs(next.snapshot.nav / first.snapshot.nav - gain) < 0.03);
+  });
+});
+
+describe('Druckenmiller benchmark feed', () => {
+  it('does not block the book when QQQ is missing', async () => {
+    const market = await loadDruckMarket({
+      now: new Date('2026-11-21T15:00:00.000Z'),
+      symbols: ['SPY'],
+      optionalSymbols: ['QQQ'],
+      liquidity: { z: 0.2, asOf: '2026-11-20', error: null },
+      fetchBars: async (symbol) => {
+        if (symbol === 'QQQ') return { bars: [], error: 'QQQ returned no prices' };
+        return { bars: [{ date: '2026-11-20', close: 560 }], error: null };
+      },
+      fetchSpreads: async () => [
+        { date: '2026-08-20', value: 3 },
+        { date: '2026-11-20', value: 3.1 },
+      ],
+    });
+    assert.equal(market.errors.some((error) => error.includes('QQQ')), false);
+    assert.equal(market.prices.SPY.length, 1);
+    assert.deepEqual(market.prices.QQQ, []);
   });
 });
