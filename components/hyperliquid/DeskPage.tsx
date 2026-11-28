@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Inter } from 'next/font/google';
 import { Chip, CheckChip } from '@/components/regime/ui/Chip';
 import type { ChipTone } from '@/components/regime/ui/Chip';
+import { Cockpit } from '@/components/hyperliquid/Cockpit';
 import type { DeskSnapshot } from '@/lib/hyperliquid/types';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
@@ -302,7 +303,20 @@ export function DeskPage({ desk }: { desk: DeskSnapshot }) {
   const classes = ['crypto', 'us_equity', 'metals', 'energy'];
 
   return (
-    <div className={`${inter.className} relative min-h-screen overflow-x-hidden bg-[#070d18] text-[#f4f7fb]`}>
+    <div className={`${inter.className} hl-grid relative min-h-screen overflow-x-hidden text-[#f4f7fb]`}>
+      <style>{`
+        .hl-grid {
+          background-color: #070b10;
+          background-image:
+            linear-gradient(rgba(90, 200, 230, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(90, 200, 230, 0.05) 1px, transparent 1px);
+          background-size: 52px 52px;
+        }
+        .hl-panel {
+          background: linear-gradient(180deg, rgba(16, 26, 36, 0.94), rgba(8, 12, 18, 0.96));
+          box-shadow: inset 0 0 0 1px rgba(110, 220, 255, 0.42);
+        }
+      `}</style>
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-[520px]"
@@ -311,7 +325,7 @@ export function DeskPage({ desk }: { desk: DeskSnapshot }) {
             'radial-gradient(ellipse 70% 55% at 8% -10%, rgba(56,189,248,0.16), transparent 55%), radial-gradient(ellipse 42% 36% at 100% 0%, rgba(251,113,133,0.10), transparent 50%)',
         }}
       />
-      <header className="relative border-b border-white/10 bg-[#070d18]/80 backdrop-blur-xl">
+      <header className="relative border-b border-white/10 bg-[#070b10]/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1440px] flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
             <Link href="/" className="shrink-0 rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#34d399]">
@@ -337,24 +351,19 @@ export function DeskPage({ desk }: { desk: DeskSnapshot }) {
       </header>
 
       <main className="relative mx-auto max-w-[1440px] space-y-4 px-4 py-5 sm:px-6 sm:py-6">
-        <div className={`${CARD} p-5 sm:p-6`}>
-          {desk.banner ? (
-            <p className="mb-3 rounded-xl border border-[#fbbf24]/40 bg-[#fbbf24]/15 px-3 py-2 text-sm font-semibold text-[#f4f7fb]">
-              {desk.banner}
+        <Cockpit desk={desk} />
+
+        <details className="group rounded-md border border-white/10 bg-[#0c1218]/80">
+          <summary className="cursor-pointer list-none px-4 py-3 text-sm font-semibold tracking-wide text-[#e7eef6] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7ef0ff] [&::-webkit-details-marker]:hidden">
+            <span className="mr-2 text-[#7ef0ff] group-open:hidden" aria-hidden>▸</span>
+            <span className="mr-2 hidden text-[#7ef0ff] group-open:inline" aria-hidden>▾</span>
+            Engine details
+          </summary>
+          <div className="space-y-4 px-4 pb-5">
+            <p className="text-sm leading-relaxed text-[#d5e2ee]">{desk.headline}</p>
+            <p className="text-sm leading-relaxed text-[#c5d0e0]">
+              {desk.source} Captured {desk.as_of_sydney ?? 'at an unknown time'}. {desk.pnl.note}
             </p>
-          ) : null}
-          <div className="flex flex-wrap gap-2">
-            <Chip tone="watch">SIMULATION</Chip>
-            <Chip tone="sell">NOT VALIDATED</Chip>
-            <Chip tone="hold">{desk.feed === 'live' ? 'Live paper' : 'Recorded replay'}</Chip>
-          </div>
-          <h1 className="mt-3 max-w-4xl text-2xl font-semibold leading-snug tracking-tight sm:text-3xl">
-            {desk.headline}
-          </h1>
-          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#c5d0e0]">
-            {desk.source} Captured {desk.as_of_sydney ?? 'at an unknown time'}. {desk.pnl.note}
-          </p>
-        </div>
 
         <Section
           index="01"
@@ -716,6 +725,8 @@ export function DeskPage({ desk }: { desk: DeskSnapshot }) {
           </div>
           <p className="mt-3 text-sm text-[#fbbf24]">These buttons stay off. They are enabled when the engine runs on the server.</p>
         </Section>
+          </div>
+        </details>
       </main>
     </div>
   );
