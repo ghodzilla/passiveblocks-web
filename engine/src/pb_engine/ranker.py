@@ -1,7 +1,8 @@
 """Shrink a strategy's past results and decide shadow versus live.
 
-Nothing here places a trade. A live rank is still only a candidate.
-This cycle has no gate, so a live rank is not a taken fill.
+Nothing here places a trade. The rank is a label. The gate decides
+whether a simulated cycle takes the idea, and a shadow rank can still
+be taken for research.
 """
 
 from __future__ import annotations

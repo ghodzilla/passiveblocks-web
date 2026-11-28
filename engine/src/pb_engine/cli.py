@@ -80,11 +80,21 @@ def _run_once(args: argparse.Namespace) -> int:
                 f"signals={result.signals}",
                 f"shadow_fills={result.shadow_fills}",
                 f"taken={result.taken}",
+                f"closed={result.closed}",
+                f"shadow_equity={result.equity:.2f}",
+                f"ungated_mean_r={_mean_r(result.ungated_mean_r)}",
+                f"gated_mean_r={_mean_r(result.gated_mean_r)}",
             ]
         )
         + "\n"
     )
-    return 0 if result.taken == 0 else 2
+    return 0
+
+
+def _mean_r(value: float | None) -> str:
+    if value is None:
+        return "n/a"
+    return f"{value:.4f}"
 
 
 def _not_built(name: str) -> int:

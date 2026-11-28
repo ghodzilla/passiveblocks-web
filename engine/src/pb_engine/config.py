@@ -147,3 +147,20 @@ INDEX_ROOTS: tuple[str, ...] = ("XYZ100", "SP500")
 
 # Spec §5.1.4 and §6.4. Leveraged products and crypto proxies.
 EXCLUDED_ROOTS: tuple[str, ...] = ("SOXL", "SOXS", "KORU", "MSTR", "COIN")
+
+# Spec §5.7. Spread wider than this rejects. Warn is half of the hard cap.
+SPREAD_HARD_BTC_ETH: float = 0.002
+SPREAD_HARD_SOL: float = 0.003
+SPREAD_HARD_INDEX: float = 0.001
+SPREAD_HARD_STOCK: float = 0.002
+SPREAD_HARD_COMMODITY: float = 0.001
+SPREAD_WARN_FRACTION: float = 0.5
+
+# Spec §9.1. Depth under this many times the order rejects.
+DEPTH_MULTIPLE: int = 50
+BORDERLINE_EDGE_R: float = 0.15
+FUNDING_WARN_OF_EDGE: float = 0.10
+VERIFY_BARS: int = 3
+TRAIL_BARS: int = 10
+GATE_REJECT_PROBABILITY: float = 0.9
+GATE_VERIFY_PROBABILITY: float = 0.6

@@ -135,28 +135,48 @@ and writes a local SQLite file. `--db` chooses the file. The default
 is `var/pb-engine.sqlite3`. `--live-data` is refused. This command does
 not open a socket.
 
-The cycle writes a heartbeat, an equity row at the starting 1,000 USDC,
-one strategy row per idea that fired, a skip signal, and an ungated
-shadow trade when the book can fill. It writes no gate decision, no
-trade plan, no close, and no order row. `taken` in the output is 0.
-Equity does not move, because nothing is closed. The funding number on
-a shadow trade is the expected cost of the planned hold, not a payment
-that has settled.
+The cycle replays the hourly candles, then looks at the recorded book
+at the capture time. It writes a heartbeat, an equity row, a strategy
+row, a signal, and a gate verdict for each setup it keeps. A missing
+verdict is a signal escape: it is logged and not taken.
 
-At the start there is no 30-trade history. Every strategy is stored as
-`shadow`. The ranker skip is `no_proven_edge`. A live rank would still
-not be taken: there is no gate yet, and the label would be `no_gate`.
-`pred_win_prob` is 0.5 because nothing has calibrated it. The stored
-`pred_edge_r` is the strategy's planned R, not a proven edge.
-`edge_lcb_r` is 0 until there is history.
+The gate returns exactly `accept`, `verify_more`, or `reject`, plus a
+confidence in that verdict. The same facts always return the same
+answer. Strategies do not import it, and the ranker's shadow label does
+not grade the idea. A reject is stale data, a closed session, a stop
+inside 3× the round-trip fee, a predicted edge that is not positive, a
+spread past the hard cap, a book thinner than 50× the order, or funding
+that eats more than 25% of the planned edge. `verify_more` is a missing
+book, a warmup, the first bar, a spread in the warning band, an edge
+only just above 0.05R, or funding that is large but still under the
+hard skip. Anything still unresolved after 3 bars becomes a reject.
+`accept` is everything else. The confidence starts at 0.55 and moves a
+little with the lower-bound edge, the spread, the book age, and the
+depth. It is not a win probability.
 
-Baselines `btc_hold_1x` and `random_entry` are walked for a $11 research
-size and never join the open book. `random_entry` uses a seeded
-generator, so the same seed replays the same side. On this snapshot the
-4h momentum rule fires; the other four rules do not, because the tape
-is short of their warmup (the 4h EMA needs 51 bars, and funding fade
-needs 720 hourly prints). Hand-built series in the tests cover the
-fire and the no-fire case for each rule.
+Rejected and `verify_more` setups still get an ungated shadow walk, so
+the two books can be compared later. That comparison is a count of
+closed R. It is not a significance test and it is not an edge. An
+`accept` that also passes the risk limits is taken on the gated book
+and is labelled not live: nothing here has 30 closed trades, so every
+strategy row stays `shadow`. Baselines are walked for a $11 research
+size and are never taken.
+
+Historical bars have no order book of their own. Those shadows fill at
+the candle close. The recorded book is used only at the capture, which
+is when a setup can be accepted. A taken trade that is still open gets
+a close row of `verify_more` and does not move equity. Equity moves
+when a shadow round trip actually closes. On this snapshot some
+ungated momentum trades close on a flip, a stop, or a target, and the
+gated trades taken at the capture stay open. `pred_win_prob` is 0.5
+because nothing has calibrated it. The stored `pred_edge_r` is the
+strategy's planned R. `edge_lcb_r` is 0 until there is history.
+
+The other four rules do not fire on this tape. The 4h EMA needs 51 bars
+and the tape has 43, and funding fade needs 720 hourly prints.
+Hand-built series in the tests cover the fire and the no-fire case for
+each rule. `random_entry` uses a seeded generator, so the same seed
+replays the same side.
 
 ## Shadow fills
 
@@ -167,9 +187,11 @@ The fee is the published tier-0 taker rate. Core is 0.045% even if a
 growth flag is set. A HIP-3 name is 0.009% in growth mode and 0.09%
 otherwise, times `deployerFeeScale` when the meta row has one. There is
 no account fee lookup. Entries are IOC, so the maker rates are recorded
-and not charged. Funding uses the asset context's current hourly rate
-when the tape has one, otherwise the latest hourly print. A positive
-rate is paid by longs, on oracle notional.
+and not charged. A bar earlier than the capture uses the latest hourly
+funding print at that bar. At the capture, the asset context rate is
+used when the tape has one. A positive rate is paid by longs. On a
+closed shadow the funding number is the hold that actually elapsed. An
+open shadow still stores the planned hold.
 
 ## Guards beyond the leverage cap
 
@@ -202,13 +224,30 @@ weekdays do not yet skip a futures holiday, except the two full closures
 above. `SOXL`, `SOXS`, `KORU`, `MSTR`, and `COIN` are refused.
 
 The momentum threshold that is not numeric in the spec is frozen as
-one 4h ATR divided by price. The Donchian trail and the other exit
-rules are stored on the candidate. This cycle does not move a stop.
+one 4h ATR divided by price. While a Donchian shadow is open, the stop
+ratchets to the prior 10 one-hour bars. A long stop only moves up, and
+only while that low is still below the entry. It does not loosen. This
+snapshot does not open a Donchian trade. A hand-built series covers the
+ratchet. A time stop, a flip, and a target are applied the same way.
+If one bar hits the stop and the target, the stop wins. A gap through
+the stop fills at the open.
+
+## Closer
+
+A taken trade is not closed because a timer or a mark says so. The
+closer lines the simulated fills up against the plan. `closed_as_planned`
+needs an entry and an exit, the right side, the size, and a price
+within the slip cap of the entry and of the stop, the target, or the
+exit rule's price. A trailed stop is that stop. A missing or partial
+exit stays `verify_more` and does not move equity. The wrong side, a
+missing stop, or a price far from the plan is a `mismatch`. A mismatch
+is written to the local alert outbox. Nothing is sent. No fills means
+there is no close at all.
 
 ## Not in this build
 
-The signal gate, the closer, Telegram, systemd, health, report, and
-alert-test. Also not in this build: the commodity daily-break state
+Telegram, systemd, health, report, and alert-test. The outbox row is
+not a sender. Also not in this build: the commodity daily-break state
 machine, a full exchange holiday calendar, and a live socket inside
 `run-once`. No testnet. No mainnet orders. No keys. Do not commit an
 env file, a token, or a wallet address; the repo is public.
