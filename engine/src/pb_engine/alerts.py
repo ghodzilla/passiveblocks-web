@@ -6,6 +6,7 @@ the outbox with an empty sent time.
 
 from __future__ import annotations
 
+import re
 from datetime import UTC, datetime
 
 from pb_engine.models import AlertOutbox
@@ -36,6 +37,24 @@ def enqueue(store: Store, *, severity: str, dedup_key: str, body: str) -> AlertO
             created_at=datetime.now(UTC),
         )
     )
+
+
+_UNIT = re.compile(r"^[A-Za-z0-9_@.-]{1,80}$")
+
+
+def alert_failure(store: Store, unit: str) -> str:
+    """Queue a note that a unit failed. Nothing is sent."""
+
+    if not isinstance(unit, str) or _UNIT.fullmatch(unit) is None:
+        raise ValueError("unit name must be a plain service name")
+    hour = datetime.now(UTC).strftime("%Y%m%d%H")
+    enqueue(
+        store,
+        severity="WARN",
+        dedup_key=f"unit-failed:{unit}:{hour}",
+        body=f"{unit} failed. The note stays on this machine.",
+    )
+    return NOTHING_SENT
 
 
 def alert_test(store: Store) -> str:

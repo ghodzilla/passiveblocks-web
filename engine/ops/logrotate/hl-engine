@@ -1,0 +1,13 @@
+# App logs only. Nine files of 10 MB is 90 MB, under the 200 MB cap.
+# The system journal is left alone.
+/var/log/hl-engine/*.log {
+    size 10M
+    rotate 8
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+    dateext
+    maxage 14
+}

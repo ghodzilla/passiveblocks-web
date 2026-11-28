@@ -68,6 +68,12 @@ RowT = TypeVar("RowT", bound=Row)
 
 DEFAULT_SQLITE_PATH = Path("var") / "pb-engine.sqlite3"
 
+# Log tables only. The shadow book is not in this set.
+_PRUNE_TABLES = frozenset({"hl_desk_health", "hl_risk_event", "hl_alert_outbox"})
+_PRUNE_KEEP = {"hl_desk_health": 48, "hl_risk_event": 200, "hl_alert_outbox": 100}
+_PRUNE_TIGHT = {"hl_desk_health": 12, "hl_risk_event": 50, "hl_alert_outbox": 20}
+_DB_CAP_BYTES = 32 * 1024 * 1024
+
 _INSERT_TABLE: dict[type[Any], str] = {
     Strategy: "hl_strategy",
     MarketSnapshot: "hl_market",
@@ -481,6 +487,44 @@ class Store:
             raise ValueError("read expects one select")
         cursor = self._conn.execute(sql, params)
         return [{str(key): row[key] for key in row.keys()} for row in cursor.fetchall()]
+
+    def prune(self) -> dict[str, int]:
+        """Drop old health, risk, and outbox rows, then vacuum.
+
+        The shadow book is left as it is. This only keeps the log tables small.
+        """
+
+        removed = self._trim_logs(_PRUNE_KEEP)
+        self._conn.commit()
+        self._conn.execute("VACUUM")
+        if self._db_bytes() > _DB_CAP_BYTES:
+            removed_tight = self._trim_logs(_PRUNE_TIGHT)
+            for name, count in removed_tight.items():
+                removed[name] = removed.get(name, 0) + count
+            self._conn.commit()
+            self._conn.execute("VACUUM")
+        removed["db_bytes"] = self._db_bytes()
+        return removed
+
+    def _trim_logs(self, keep: dict[str, int]) -> dict[str, int]:
+        removed: dict[str, int] = {}
+        for table, limit in keep.items():
+            if table not in _PRUNE_TABLES:
+                raise ValueError("prune refuses this table")
+            before = int(self._conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0])
+            self._conn.execute(
+                f"DELETE FROM {table} WHERE id NOT IN "
+                f"(SELECT id FROM {table} ORDER BY id DESC LIMIT ?)",
+                (limit,),
+            )
+            after = int(self._conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0])
+            removed[table] = before - after
+        return removed
+
+    def _db_bytes(self) -> int:
+        if str(self.path) == ":memory:":
+            return 0
+        return int(Path(self.path).stat().st_size)
 
     def get(self, kind: type[RowT], row_id: int) -> RowT | None:
         table = _READ_TABLE[kind]
