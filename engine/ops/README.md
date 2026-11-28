@@ -43,24 +43,32 @@ a key in that install.
 
 ## What the service does
 
-`hl-engine.service` runs `ops/hl-engine-sim`.
+`hl-engine.service` runs `ops/hl-engine-sim`, a live paper loop.
 
-- One recorded replay of `fixtures/mainnet` into
-  `/var/lib/hl-engine/pb-engine.sqlite3`, and only when that file has
-  no equity row yet. A second start does not walk the tape again.
-- Then it stays up, tells systemd it is healthy every 20 seconds, and
-  once an hour trims old health, risk, and outbox rows and vacuums the
-  database. The shadow book is not deleted.
-- `--live-data` is refused by the command and is not in the unit. The
-  service may open only a local Unix socket (`RestrictAddressFamilies=AF_UNIX`),
-  which is what the systemd watchdog uses. It cannot open a market connection.
-- No `EnvironmentFile`. Nothing in the unit is a key, a token, or a
-  database URL.
+- Each pass runs `pb-engine run-once --live-data`. That reads public
+  mainnet info and the public websocket, then one simulated cycle: stale
+  data blocks new entries, the daily universe filter records who is
+  eligible, and the gate, closer, risk limits, and session calendars are
+  the ones the replay already uses.
+- SQLite at `/var/lib/hl-engine/pb-engine.sqlite3` is always written.
+  If `HL_DATABASE_URL` is set, the same rows are copied into schema `hl`.
+  A failed copy is logged without the URL and the loop stays up. The
+  outbox stays in SQLite.
+- The loop tells systemd it is healthy before each pass. Once an hour it
+  trims old health, risk, and outbox rows and vacuums. The shadow book
+  is not deleted.
+- The unit may open a Unix socket for the watchdog, plus TCP
+  (`AF_INET` and `AF_INET6`) for the public Hyperliquid host and the
+  database host. `ProtectSystem=strict` is unchanged.
+  `ReadWritePaths` is still only `/var/lib/hl-engine` and
+  `/var/log/hl-engine`. `/etc/hl-engine` is readable, not writable.
+- `EnvironmentFile=/etc/hl-engine/engine.env`. The unit file does not
+  contain a key, a token, or a database URL.
 
 `Type=notify` and `WatchdogSec=60` need `systemd-notify`, which Ubuntu
 already ships. `NotifyAccess=all` is set because the shell calls
-`systemd-notify` rather than the Python process. The Python package
-does not read the process environment.
+`systemd-notify` rather than the Python process. The only environment
+variable the package reads is `HL_DATABASE_URL`.
 
 `Restart=always` with `RestartSec=30` is in the unit, so once the
 service is started it comes back after a crash. The install does not
@@ -108,17 +116,34 @@ If the service fails, `pb-alert@hl-engine.service` runs
 outbox and sends nothing. The same unit name in the same hour does not
 add a second row. There is no Telegram sender and no token file.
 
-## Starting it, by hand
+## The env file, before you restart
 
-The unit stays disabled until you say so. On the droplet, as root,
-after a manual replay looks right:
+Create this yourself. The install script does not write it, and it is
+not in git.
 
 ```bash
-sudo -u hlengine /opt/hl-engine/.venv/bin/pb-engine \
-  run-once --replay /opt/hl-engine/app/fixtures/mainnet \
-  --db /var/lib/hl-engine/pb-engine.sqlite3
+sudo install -d -m 755 -o root -g root /etc/hl-engine
+sudo install -m 600 -o root -g root /dev/null /etc/hl-engine/engine.env
+```
 
-sudo systemctl enable --now hl-engine.service
+The only variable the engine reads is `HL_DATABASE_URL`. Put the Neon
+connection string for the writer role in that file, one line. If the
+variable is absent, paper mode still runs
+and writes only SQLite. Do not put a key, a token, or a Telegram URL in
+the file.
+
+The file has to exist before the new unit starts. systemd refuses the
+service when `EnvironmentFile=` is missing. An empty file is enough for
+SQLite-only paper mode.
+
+## Starting it, by hand
+
+The unit is already enabled on the droplet. The install script still
+does not enable or start it. After the env file is in place, as root:
+
+```bash
+sudo bash engine/ops/install.sh
+sudo systemctl restart hl-engine.service
 sudo systemctl status hl-engine.service
 ```
 
@@ -130,8 +155,9 @@ sudo systemctl disable --now hl-engine.service
 
 ## Not in this install
 
-A live market connection, an order path, a key, a Neon migration, a
-Telegram sender, a healthchecks.io ping, a weekly calibration timer,
-and any change to Estait. Calibration is not a unit yet because that
-job does not exist and a second timer would compete for a nearly full
-disk.
+An order path, a key, a role, a grant, a Telegram sender, a
+healthchecks.io ping, a weekly calibration timer, and any change to
+Estait. Roles `hl_engine` and `hl_reader`, and their grants, are a later
+hardening step. The schema file does not create them. Calibration is
+not a unit yet because that job does not exist and a second timer would
+compete for a nearly full disk.

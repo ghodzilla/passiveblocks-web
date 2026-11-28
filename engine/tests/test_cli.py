@@ -57,7 +57,7 @@ def test_run_once_without_a_tape_does_not_trade(capsys: pytest.CaptureFixture[st
     assert "run-once" in captured.err
 
 
-def test_run_once_live_data_is_refused(capsys: pytest.CaptureFixture[str]) -> None:
+def test_run_once_live_data_does_not_take_a_replay(capsys: pytest.CaptureFixture[str]) -> None:
     assert main(["run-once", "--live-data", "--replay", str(FIXTURES)]) == 2
     captured = capsys.readouterr()
     assert captured.out == ""

@@ -338,10 +338,15 @@ export function DeskPage({ desk }: { desk: DeskSnapshot }) {
 
       <main className="relative mx-auto max-w-[1440px] space-y-4 px-4 py-5 sm:px-6 sm:py-6">
         <div className={`${CARD} p-5 sm:p-6`}>
+          {desk.banner ? (
+            <p className="mb-3 rounded-xl border border-[#fbbf24]/40 bg-[#fbbf24]/15 px-3 py-2 text-sm font-semibold text-[#f4f7fb]">
+              {desk.banner}
+            </p>
+          ) : null}
           <div className="flex flex-wrap gap-2">
             <Chip tone="watch">SIMULATION</Chip>
             <Chip tone="sell">NOT VALIDATED</Chip>
-            <Chip tone="hold">Recorded replay</Chip>
+            <Chip tone="hold">{desk.feed === 'live' ? 'Live paper' : 'Recorded replay'}</Chip>
           </div>
           <h1 className="mt-3 max-w-4xl text-2xl font-semibold leading-snug tracking-tight sm:text-3xl">
             {desk.headline}
@@ -354,11 +359,15 @@ export function DeskPage({ desk }: { desk: DeskSnapshot }) {
         <Section
           index="01"
           title="Status"
-          lede="Where the recording sits. A live desk would show a heartbeat from the server. This one is the snapshot itself."
+          lede="SIMULATION. NOT VALIDATED. No order has been sent."
         >
           <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <StatusItem label="Mode" value="SIMULATION" note="No order has been sent." />
-            <StatusItem label="Heartbeat" value="At the capture" note="There is no live pulse to age." />
+            <StatusItem
+              label="Heartbeat"
+              value={desk.status.heartbeat_at ? stamp(desk.status.heartbeat_at) : 'None'}
+              note={desk.feed === 'live' ? 'From the paper loop.' : 'From the recorded snapshot.'}
+            />
             <StatusItem
               label="Halt and drain"
               value={desk.status.halt || desk.status.drain ? 'On' : 'Off'}

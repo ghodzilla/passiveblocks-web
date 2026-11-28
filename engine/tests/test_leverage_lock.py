@@ -54,6 +54,9 @@ def test_max_leverage_is_exactly_two() -> None:
 
 def test_package_does_not_read_environment_or_config_files() -> None:
     for path in SRC.rglob("*.py"):
+        if path.name == "database_url.py":
+            _assert_only_database_url(path)
+            continue
         text = path.read_text(encoding="utf-8")
         banned = re.search(
             r"\bos\.environ\b|\bgetenv\b|\bdotenv\b|HL_LEVERAGE|HL_AGENT|private_key",
@@ -80,6 +83,57 @@ def test_package_does_not_read_environment_or_config_files() -> None:
                 for name in imported:
                     if name and name.split(".")[0] in {"dotenv", "tomllib", "configparser", "yaml"}:
                         pytest.fail(f"{path.name} imports {name}")
+
+
+def _assert_only_database_url(path: Path) -> None:
+    """HL_DATABASE_URL is the only environment read. Leverage stays a literal."""
+
+    text = path.read_text(encoding="utf-8")
+    for banned in ("HL_LEVERAGE", "HL_AGENT", "private_key", "dotenv", "MAX_LEVERAGE"):
+        assert banned not in text
+    tree = ast.parse(text)
+    reads = 0
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Attribute) and node.attr == "environ":
+            reads += 1
+        if isinstance(node, ast.Attribute) and node.attr == "getenv":
+            pytest.fail("database url reader uses getenv")
+        if isinstance(node, ast.Name) and node.id in {"getenv", "environ"}:
+            pytest.fail("database url reader uses a bare environ name")
+        opened = (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id == "open"
+        )
+        if opened:
+            pytest.fail("database url reader opens a file")
+        if not isinstance(node, ast.Call) or not isinstance(node.func, ast.Attribute):
+            continue
+        if node.func.attr != "get":
+            continue
+        value = node.func.value
+        if not isinstance(value, ast.Attribute) or value.attr != "environ":
+            continue
+        assert node.args, "environ.get needs the database url name"
+        assert _assigned_string(tree, node.args[0]) == "HL_DATABASE_URL"
+    assert reads == 1
+
+
+def _assigned_string(tree: ast.AST, node: ast.AST) -> str:
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return node.value
+    if not isinstance(node, ast.Name):
+        pytest.fail("environ.get argument is not a name")
+    for item in ast.walk(tree):
+        if not isinstance(item, ast.Assign):
+            continue
+        names = [target.id for target in item.targets if isinstance(target, ast.Name)]
+        if node.id not in names:
+            continue
+        if isinstance(item.value, ast.Constant) and isinstance(item.value.value, str):
+            return item.value.value
+    pytest.fail("environ key is not a string")
+    return ""
 
 
 def test_risk_module_does_not_copy_a_literal_two() -> None:

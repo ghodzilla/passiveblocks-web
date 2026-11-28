@@ -1,6 +1,8 @@
 export type DeskSnapshot = {
   headline: string;
   source: string;
+  banner?: string;
+  feed?: 'replay' | 'live';
   as_of: string | null;
   as_of_sydney: string | null;
   notices: string[];

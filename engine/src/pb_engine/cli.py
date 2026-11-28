@@ -44,14 +44,31 @@ def _print_status() -> int:
 
 
 def _run_once(args: argparse.Namespace) -> int:
-    if args.live_data:
+    if args.live_data and args.replay:
         print(
-            "run-once --live-data is not in this build. "
-            "Pass --replay with a fixture directory. "
+            "run-once --live-data does not take --replay. "
             "This package does not send orders.",
             file=sys.stderr,
         )
         return 2
+    if args.live_data:
+        from pb_engine.database_url import redact
+        from pb_engine.live import run_live_cycle
+
+        try:
+            result = run_live_cycle(args.db, seed=args.seed)
+        except Exception as exc:
+            print(
+                "live cycle failed. nothing was sent. " + redact(str(exc)),
+                file=sys.stderr,
+            )
+            print("orders=none", file=sys.stderr)
+            print("keys=none", file=sys.stderr)
+            return 1
+        _print_cycle(result)
+        print("live-data=public-mainnet")
+        print("nothing was sent")
+        return 0
     if not args.replay:
         print(
             "run-once needs --replay. "
@@ -70,6 +87,11 @@ def _run_once(args: argparse.Namespace) -> int:
             file=sys.stderr,
         )
         return 2
+    _print_cycle(result)
+    return 0
+
+
+def _print_cycle(result) -> None:
     sys.stdout.write(
         "\n".join(
             [
@@ -88,7 +110,6 @@ def _run_once(args: argparse.Namespace) -> int:
         )
         + "\n"
     )
-    return 0
 
 
 def _mean_r(value: float | None) -> str:
@@ -321,9 +342,16 @@ def main(argv: list[str] | None = None) -> int:
     status = commands.add_parser("status", help="Print the hard risk limits.")
     status.set_defaults(func=lambda _args: _print_status())
 
-    run_once = commands.add_parser("run-once", help="Simulate one cycle from a recorded book.")
+    run_once = commands.add_parser(
+        "run-once",
+        help="Simulate one cycle. --live-data reads public mainnet and does not send orders.",
+    )
     run_once.add_argument("--replay", default=None, help="Fixture directory.")
-    run_once.add_argument("--live-data", action="store_true", help="Not in this build.")
+    run_once.add_argument(
+        "--live-data",
+        action="store_true",
+        help="Public mainnet info and websocket, simulation only. No keys and no orders.",
+    )
     run_once.add_argument("--db", default=None, help="SQLite file. Default is the local var file.")
     run_once.add_argument("--seed", type=int, default=1)
     run_once.set_defaults(func=_run_once)

@@ -1,18 +1,14 @@
 #!/bin/bash
-# Stay up in simulation. One recorded replay, then a quiet watchdog loop.
-# Live data is refused. Nothing here sends an order or reads a key.
+# Live paper loop. Public mainnet info and websocket only.
+# Nothing here sends an order or prints a connection string.
+# SQLite is the local book. A database URL, when systemd supplies one,
+# is read by the engine and is not echoed.
 
 set -euo pipefail
 umask 027
 
-if [[ "${1:-}" == "--live-data" || "${*:-}" == *"--live-data"* ]]; then
-  echo "live data is refused. orders=none." >&2
-  exit 2
-fi
-
 ENGINE=/opt/hl-engine/.venv/bin/pb-engine
 DB=/var/lib/hl-engine/pb-engine.sqlite3
-REPLAY=/opt/hl-engine/app/fixtures/mainnet
 LOCK=/var/lib/hl-engine/hl-engine.lock
 
 case "$DB" in
@@ -38,36 +34,24 @@ mkdir -p /var/lib/hl-engine /var/log/hl-engine
 touch "$LOCK"
 exec 9<>"$LOCK"
 if ! flock -n 9; then
-  echo "hl-engine sim loop is already running" >&2
+  echo "hl-engine paper loop is already running" >&2
   exit 1
 fi
 
 notify --ready
 notify WATCHDOG=1
-echo "simulation loop up. orders=none. keys=none. live data refused."
-
-state=""
-if ! state=$("$ENGINE" sim-state --db "$DB"); then
-  echo "sim-state failed. staying up. nothing was sent." >&2
-  state=""
-fi
-if grep -q '^equity_rows=0$' <<<"$state"; then
-  if ! "$ENGINE" run-once --replay "$REPLAY" --db "$DB" --seed 1; then
-    echo "replay did not finish. staying up. nothing was sent." >&2
-  fi
-elif grep -q '^equity_rows=' <<<"$state"; then
-  echo "a replay is already stored. not walking it again."
-fi
-
-"$ENGINE" prune --db "$DB" || echo "prune skipped" >&2
+echo "live paper loop. orders=none. keys=none. NOT VALIDATED."
 
 last_prune=$(date +%s)
 while true; do
   notify WATCHDOG=1
-  sleep 20
+  if ! "$ENGINE" run-once --live-data --db "$DB" --seed 1; then
+    echo "cycle failed. staying up. nothing was sent." >&2
+  fi
   now=$(date +%s)
   if (( now - last_prune >= 3600 )); then
     "$ENGINE" prune --db "$DB" || echo "prune skipped" >&2
     last_prune=$now
   fi
+  sleep 15
 done

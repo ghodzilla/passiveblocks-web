@@ -5,6 +5,7 @@ description = "Hyperliquid perps engine, Stage 1 simulation scaffold. NOT VALIDA
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "psycopg[binary]>=3.2.3",
     "websockets>=17.4",
 ]
 

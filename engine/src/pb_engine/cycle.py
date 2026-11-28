@@ -131,18 +131,60 @@ def run_once(
     *,
     seed: int = 1,
     now: datetime | None = None,
+    replay_history: bool = True,
+    git_sha: str = "replay",
+    require_stream: bool = False,
+    stream_time: datetime | None = None,
+    prior_equity: float | None = None,
 ) -> CycleResult:
     clock = tape.captured_at if now is None else now
     if clock.tzinfo is None or clock.utcoffset() is None:
         raise ValueError("now must be a timezone-aware datetime")
-    fresh = _fresh(_book(tape, "BTC"), clock)
-    if not fresh:
-        setups = _blocked_pass(tape, clock, seed)
+    book = _book(tape, "BTC")
+    if require_stream:
+        report = assess(
+            book_time=None if book is None else book_clock(book),
+            stream_time=stream_time,
+            now=clock,
+            require_stream=True,
+        )
+        fresh = not report.blocks_new_entries
     else:
+        fresh = _fresh(book, clock)
+    skip: set[tuple[str, str]] = set()
+    seeded: list[OpenPosition] = []
+    if not replay_history:
+        hour = clock.replace(minute=0, second=0, microsecond=0)
+        skip = _recent_signal_keys(store, hour)
+        seeded = _open_risk_positions(store)
+    if not fresh:
+        setups = _blocked_pass(tape, clock, seed, skip=skip)
+    elif replay_history:
         setups = _replay(tape, clock, seed)
         equity = float(config.SIM_STARTING_EQUITY_USDC) + _closed_pnl(setups)
         setups.extend(_capture(tape, clock, seed, setups=setups, equity=equity))
-    return _persist(store, tape, clock, setups, fresh=fresh)
+    else:
+        equity = (
+            float(config.SIM_STARTING_EQUITY_USDC) if prior_equity is None else prior_equity
+        )
+        setups = _capture(
+            tape,
+            clock,
+            seed,
+            setups=[],
+            equity=equity,
+            skip=skip,
+            seeded=seeded,
+        )
+    return _persist(
+        store,
+        tape,
+        clock,
+        setups,
+        fresh=fresh,
+        git_sha=git_sha,
+        prior_equity=None if replay_history else prior_equity,
+    )
 
 
 def log_signal_escape(store: Store, now: datetime, market: str) -> None:
@@ -215,6 +257,8 @@ def _capture(
     *,
     setups: list[_Setup],
     equity: float,
+    skip: set[tuple[str, str]] | None = None,
+    seeded: list[OpenPosition] | None = None,
 ) -> list[_Setup]:
     found: list[_Setup] = []
     ideas = propose(tape, seed=seed, include_baselines=True)
@@ -223,9 +267,12 @@ def _capture(
         key=lambda item: (-item.pred_edge_r * item.weight, item.strategy, item.market),
     )
     ordered.extend(item for item in ideas if item.baseline)
-    taken_book: list[OpenPosition] = []
-    taken = 0
+    taken_book: list[OpenPosition] = list(seeded or [])
+    taken = len(taken_book)
+    blocked = skip or set()
     for candidate in ordered:
+        if (candidate.strategy, candidate.market) in blocked:
+            continue
         _consider(
             found,
             tape,
@@ -260,11 +307,20 @@ def _capture(
     return found
 
 
-def _blocked_pass(tape: Tape, clock: datetime, seed: int) -> list[_Setup]:
+def _blocked_pass(
+    tape: Tape,
+    clock: datetime,
+    seed: int,
+    *,
+    skip: set[tuple[str, str]] | None = None,
+) -> list[_Setup]:
     """The book is stale, so nothing is walked and nothing is taken."""
 
     found: list[_Setup] = []
+    blocked = skip or set()
     for candidate in propose(tape, seed=seed, include_baselines=True):
+        if (candidate.strategy, candidate.market) in blocked:
+            continue
         _consider(
             found,
             tape,
@@ -600,6 +656,8 @@ def _persist(
     setups: list[_Setup],
     *,
     fresh: bool,
+    git_sha: str = "replay",
+    prior_equity: float | None = None,
 ) -> CycleResult:
     strategy_ids: dict[str, int] = {}
     signals = 0
@@ -621,6 +679,7 @@ def _persist(
                 strategy_id=_ensure_strategy(store, setup.candidate, strategy_ids),
                 decision=setup.decision,
                 gate=setup.verdict.verdict,
+                git_sha=git_sha,
             )
         )
         signals += 1
@@ -635,7 +694,7 @@ def _persist(
                 features=setup.gate_features,
                 created_at=setup.when,
                 strategy_id=signal.strategy_id,
-                git_sha="replay",
+                git_sha=git_sha,
             )
         )
         for sim in setup.sims:
@@ -652,7 +711,8 @@ def _persist(
                 continue
             _store_plan(store, signal.id, gate.id, sim, setup.when)
             taken += 1
-    equity = float(config.SIM_STARTING_EQUITY_USDC) + pnl
+    base = float(config.SIM_STARTING_EQUITY_USDC) if prior_equity is None else prior_equity
+    equity = base + pnl
     store.add(
         Heartbeat(
             ts=clock,
@@ -859,6 +919,7 @@ def _signal(
     strategy_id: int,
     decision: str,
     gate: str,
+    git_sha: str = "replay",
 ) -> Signal:
     ranked = rank_history(mean_r=0.0, n=0, std_r=0.0, weight=_unit(candidate.weight))
     if candidate.side == "long":
@@ -888,7 +949,7 @@ def _signal(
         features=features,
         skip_reason=reason,
         session_state=session_state(candidate.market, clock),
-        git_sha="replay",
+        git_sha=git_sha,
     )
 
 
@@ -896,6 +957,14 @@ def _ensure_strategy(store: Store, candidate: Candidate, ids: dict[str, int]) ->
     found = ids.get(candidate.strategy)
     if found is not None:
         return found
+    existing = store.read(
+        "SELECT id FROM hl_strategy WHERE name = ? AND version = ? AND asset_class = ?",
+        (candidate.strategy, "1", "crypto"),
+    )
+    if existing:
+        row_id = int(existing[0]["id"])
+        ids[candidate.strategy] = row_id
+        return row_id
     params = dict(
         CRYPTO_PARAMS.get(candidate.strategy) or BASELINE_PARAMS.get(candidate.strategy) or {}
     )
@@ -1022,6 +1091,45 @@ def _try_walk(book: Book | None, candidate: Candidate, notional: float | None, f
         slip_cap=slip_cap(candidate.market),
         fee_rate=fee_rate,
     )
+
+
+def _recent_signal_keys(store: Store, since: datetime) -> set[tuple[str, str]]:
+    rows = store.read(
+        "SELECT st.name AS name, sig.market AS market FROM hl_signal sig "
+        "JOIN hl_strategy st ON st.id = sig.strategy_id WHERE sig.ts >= ?",
+        (since.isoformat(),),
+    )
+    return {(str(row["name"]), str(row["market"])) for row in rows}
+
+
+def _open_risk_positions(store: Store) -> list[OpenPosition]:
+    rows = store.read(
+        "SELECT sig.market AS market, sig.side AS side, sig.entry_px AS entry_px, "
+        "sig.stop_px AS stop_px, pl.size AS size "
+        "FROM hl_shadow_trade sh "
+        "JOIN hl_signal sig ON sig.id = sh.signal_id "
+        "LEFT JOIN hl_trade_plan pl ON pl.signal_id = sh.signal_id "
+        "WHERE sh.exit_px IS NULL AND sh.book = 'gated'",
+    )
+    found: list[OpenPosition] = []
+    for row in rows:
+        market = str(row["market"])
+        cluster = cluster_name(market)
+        entry = float(row["entry_px"] or 0)
+        stop = float(row["stop_px"] or 0)
+        size = float(row["size"] or 0)
+        if cluster is None or entry <= 0:
+            continue
+        found.append(
+            OpenPosition(
+                market,
+                entry * size,
+                str(row["side"]),
+                abs(entry - stop) / entry,
+                cluster,
+            )
+        )
+    return found
 
 
 def _fresh(book: Book | None, now: datetime) -> bool:
