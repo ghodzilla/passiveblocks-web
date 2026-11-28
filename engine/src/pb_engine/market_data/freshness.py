@@ -1,8 +1,8 @@
 """Stale public data. Spec §5.7.
 
 A book older than the configured limit, or a live stream that has been
-silent longer than its limit, blocks new entries. This module only
-reports that. The run-once loop does not call it yet.
+silent longer than its limit, blocks new entries. This module only reports that. The simulated
+cycle calls it before a new shadow entry.
 """
 
 from __future__ import annotations
