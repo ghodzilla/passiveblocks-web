@@ -1,0 +1,23 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments and tool caches
+.venv
+.pytest_cache/
+.ruff_cache/
+
+# Local simulation output. Never commit a database or a spool.
+var/
+*.sqlite
+*.sqlite3
+
+# Secrets. This repo is public. Only an example file with placeholders
+# would be committable, and Stage 1 does not need one.
+.env
+.env.*
+!.env.example
