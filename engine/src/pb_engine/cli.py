@@ -1,19 +1,19 @@
 """Command line for the Stage 1 simulation.
 
 ``status`` prints the hard limits. ``run-once --replay`` walks one
-recorded cycle and does not send an order. The other commands are
-not in this build. Nothing here reads a secret.
+recorded cycle and does not send an order. ``health``, ``report`` and
+``alert-test`` only read or queue a local row. Nothing here reads a secret.
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
 
 from pb_engine import __version__, config
-
-_UNBUILT = ("health", "report", "alert-test")
 
 
 def status_lines() -> list[str]:
@@ -97,14 +97,148 @@ def _mean_r(value: float | None) -> str:
     return f"{value:.4f}"
 
 
-def _not_built(name: str) -> int:
-    print(
-        f"{name} is not in this build. "
-        "This package is a simulation scaffold: it does not read the "
-        "exchange and it does not send orders.",
-        file=sys.stderr,
+def _store(path: str | None):
+    from pb_engine.store import Store
+
+    return Store(path)
+
+
+def _health(args: argparse.Namespace) -> int:
+    from pb_engine.desk_api import get_desk_health
+    from pb_engine.health import record_health
+
+    store = _store(args.db)
+    record_health(store, as_of=datetime.now(UTC))
+    view = get_desk_health(store)
+    sys.stdout.write(
+        "\n".join(
+            [
+                "NOT VALIDATED",
+                "stage=simulation",
+                "orders=none",
+                "keys=none",
+                "nothing was sent",
+                f"signal_escapes={view['signal_escapes']}",
+                f"false_closes={view['false_closes']}",
+                f"stale_blocks={view['stale_blocks']}",
+                f"routing_accuracy={float(view['routing_accuracy']):.4f}",
+                f"equity_usdc={float(view['equity_usdc']):.2f}",
+                f"drawdown={float(view['drawdown']):.4f}",
+            ]
+        )
+        + "\n"
     )
-    return 2
+    return 0
+
+
+def _report(args: argparse.Namespace) -> int:
+    from pb_engine.desk_api import snapshot
+
+    view = snapshot(_store(args.db))
+    if args.write_snapshot:
+        Path(args.write_snapshot).write_text(
+            json.dumps(view, indent=2, sort_keys=True, allow_nan=False) + "\n",
+            encoding="utf-8",
+        )
+    pnl = view["pnl"]
+    assert isinstance(pnl, dict)
+    sys.stdout.write(
+        "\n".join(
+            [
+                "NOT VALIDATED",
+                "stage=simulation",
+                "orders=none",
+                "keys=none",
+                "nothing was sent",
+                str(view["headline"]),
+                f"ungated_mean_r={_mean_r(pnl.get('ungated_mean_r'))}",
+                f"gated_mean_r={_mean_r(pnl.get('gated_mean_r'))}",
+            ]
+        )
+        + "\n"
+    )
+    return 0
+
+
+def _alert_test(args: argparse.Namespace) -> int:
+    from pb_engine.alerts import alert_test
+
+    message = alert_test(_store(args.db))
+    sys.stdout.write(
+        "\n".join(
+            [
+                "NOT VALIDATED",
+                "orders=none",
+                "keys=none",
+                message,
+            ]
+        )
+        + "\n"
+    )
+    return 0
+
+
+def _autonomy(args: argparse.Namespace) -> int:
+    from pb_engine.autonomy import AutonomyRefused, describe, promote
+
+    store = _store(args.db)
+    if args.autonomy_command == "show":
+        state = describe(store)
+        sys.stdout.write(
+            "\n".join(
+                [
+                    "NOT VALIDATED",
+                    "orders=none",
+                    "keys=none",
+                    f"exercised_level={state.exercised}",
+                    f"autonomy_cap={state.cap}",
+                    f"name={state.name}",
+                ]
+            )
+            + "\n"
+        )
+        return 0
+    try:
+        state = promote(
+            store,
+            args.level,
+            confirmed=bool(args.confirm),
+            actor=args.actor or "",
+            reason=args.reason or "",
+        )
+    except AutonomyRefused as exc:
+        print(
+            f"autonomy promote refused: {exc}. This package does not send orders.",
+            file=sys.stderr,
+        )
+        return 2
+    sys.stdout.write(
+        f"exercised_level={state.exercised}\n"
+        f"autonomy_cap={state.cap}\n"
+        "orders=none\n"
+        "nothing was sent\n"
+    )
+    return 0
+
+
+def _control(args: argparse.Namespace) -> int:
+    from pb_engine.autonomy import AutonomyRefused
+    from pb_engine.controls import pause_entries
+
+    try:
+        message = pause_entries(
+            _store(args.db),
+            actor=args.actor or "",
+            reason=args.reason or "",
+        )
+    except AutonomyRefused as exc:
+        print(
+            f"control refused: {exc}. This package does not send orders.",
+            file=sys.stderr,
+        )
+        return 2
+    sys.stdout.write(message + "\norders=none\n")
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -132,9 +266,38 @@ def main(argv: list[str] | None = None) -> int:
     run_once.add_argument("--seed", type=int, default=1)
     run_once.set_defaults(func=_run_once)
 
-    for name in _UNBUILT:
-        command = commands.add_parser(name, help="Not in this build.")
-        command.set_defaults(func=lambda _args, command_name=name: _not_built(command_name))
+    health = commands.add_parser("health", help="Write a local desk-health row and print it.")
+    health.add_argument("--db", default=None)
+    health.set_defaults(func=_health)
+
+    report = commands.add_parser("report", help="Print the read-only desk snapshot.")
+    report.add_argument("--db", default=None)
+    report.add_argument("--write-snapshot", default=None)
+    report.set_defaults(func=_report)
+
+    alert = commands.add_parser("alert-test", help="Queue a local test alert. Nothing is sent.")
+    alert.add_argument("--db", default=None)
+    alert.set_defaults(func=_alert_test)
+
+    autonomy = commands.add_parser("autonomy", help="Show or manually set the exercised level.")
+    autonomy.add_argument("--db", default=None)
+    autonomy_commands = autonomy.add_subparsers(dest="autonomy_command", required=True)
+    show = autonomy_commands.add_parser("show")
+    show.set_defaults(func=_autonomy)
+    promote = autonomy_commands.add_parser("promote")
+    promote.add_argument("--level", type=int, required=True)
+    promote.add_argument("--confirm", action="store_true")
+    promote.add_argument("--actor", default="")
+    promote.add_argument("--reason", default="")
+    promote.set_defaults(func=_autonomy)
+
+    control = commands.add_parser("control", help="Human control. Refused below L2.")
+    control.add_argument("--db", default=None)
+    control_commands = control.add_subparsers(dest="control_command", required=True)
+    pause = control_commands.add_parser("pause-entries")
+    pause.add_argument("--actor", default="")
+    pause.add_argument("--reason", default="")
+    pause.set_defaults(func=_control)
 
     args = parser.parse_args(argv)
     return int(args.func(args))

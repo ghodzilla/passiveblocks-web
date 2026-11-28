@@ -25,16 +25,28 @@ def test_status_prints_the_locked_limits(capsys: pytest.CaptureFixture[str]) -> 
     assert "hl_network=sim-mainnet-data" in out
 
 
-@pytest.mark.parametrize("command", ["health", "report", "alert-test"])
-def test_unbuilt_commands_do_not_pretend_to_run(
-    command: str,
+def test_health_report_and_alert_stay_local(
     capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
 ) -> None:
-    assert main([command]) == 2
-    captured = capsys.readouterr()
-    assert captured.out == ""
-    assert "does not send orders" in captured.err
-    assert command in captured.err
+    db = tmp_path / "desk.sqlite3"
+    assert main(["health", "--db", str(db)]) == 0
+    health = capsys.readouterr().out
+    assert "orders=none" in health
+    assert "nothing was sent" in health
+    assert "signal_escapes=0" in health
+
+    assert main(["report", "--db", str(db)]) == 0
+    report = capsys.readouterr().out
+    assert "NOT VALIDATED" in report
+    assert "nothing was sent" in report
+    assert "orders=none" in report
+
+    assert main(["alert-test", "--db", str(db)]) == 0
+    alert = capsys.readouterr().out
+    assert "nothing was sent" in alert
+    assert "orders=none" in alert
+    assert "no token was read" in alert
 
 
 def test_run_once_without_a_tape_does_not_trade(capsys: pytest.CaptureFixture[str]) -> None:

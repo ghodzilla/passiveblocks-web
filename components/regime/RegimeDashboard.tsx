@@ -384,6 +384,9 @@ export function RegimeDashboard({
             <p className="min-w-0 text-sm leading-snug text-[#d5deea]">Druckenmiller-style paper portfolio</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <Link href="/private/hyperliquid" className="rounded-full border border-white/15 bg-[#0c1424] px-3 py-1.5 text-xs font-semibold text-[#f4f7fb] hover:bg-white/10">
+              Hyperliquid desk
+            </Link>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-[#0c1424] px-3 py-1.5 text-xs font-semibold tracking-wide text-[#f4f7fb]">
               <LockIcon />
               Paper only · NOT VALIDATED

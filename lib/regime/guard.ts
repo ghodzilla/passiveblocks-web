@@ -21,7 +21,7 @@ export async function hasRegimeSession(): Promise<boolean> {
   );
 }
 
-export async function enforceRegimePage(): Promise<void> {
+export async function enforceRegimePage(next = '/private/regime'): Promise<void> {
   const ipAllowed = requestIpAllowed();
   const sessionValid = ipAllowed ? false : await hasRegimeSession();
   const decision = decideRegimeAccess({
@@ -31,7 +31,7 @@ export async function enforceRegimePage(): Promise<void> {
     sessionValid,
     loginConfigured: regimeLoginConfigured(),
   });
-  if (decision === 'login') redirect('/private/login?next=/private/regime');
+  if (decision === 'login') redirect(`/private/login?next=${encodeURIComponent(next)}`);
   if (decision === 'deny') notFound();
 }
 
