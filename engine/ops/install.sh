@@ -3,6 +3,7 @@
 # Copies this engine under /opt/hl-engine, installs its units and logrotate
 # drop-in, and reloads systemd. It does not enable or start the service,
 # does not create the user, and does not write a key or an env file.
+# /etc/hl-engine/engine.env is created by hand, mode 600, root-owned.
 
 set -euo pipefail
 umask 027
@@ -98,4 +99,4 @@ fi
 echo "Installed under ${OPT}."
 echo "SQLite directory ${LIB}. Logs ${LOGDIR}."
 echo "The service is not enabled and not started."
-echo "Live data stays refused. No env file was written."
+echo "No env file was written. Live paper reads /etc/hl-engine/engine.env when you restart."

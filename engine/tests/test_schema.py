@@ -101,10 +101,14 @@ def test_checks_match_in_postgres_and_sqlite() -> None:
 def test_migration_file_has_no_credentials_and_is_not_applied() -> None:
     sql = MIGRATION.read_text(encoding="utf-8")
     lowered = sql.lower()
-    assert "must not be applied in stage 1" in lowered
+    assert "paper/simulation" in sql
+    assert "does not execute this file" in lowered
     assert "hl_engine" in sql
     assert "hl_reader" in sql
-    assert "created later" in lowered
+    assert "later" in lowered
+    assert "hardening" in lowered
+    assert "grant " not in lowered
+    assert "create role" not in lowered
     assert "timestamptz" in lowered
     assert "jsonb" in lowered
     for banned in ("postgres://", "neon.tech", "database_url", "password", "private_key"):

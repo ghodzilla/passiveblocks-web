@@ -37,20 +37,24 @@ broker. `HL_NETWORK` is the label `sim-mainnet-data`. It does not select a
 signing endpoint.
 
 `pb-engine status` prints the limits. `pb-engine run-once --replay
-fixtures/mainnet` runs one cycle and prints the taken and closed counts.
-It does not send an order.
+fixtures/mainnet` runs one cycle on the fixture. `pb-engine run-once
+--live-data` runs one paper cycle on public mainnet info and the public
+websocket. Both print the taken and closed counts. Neither sends an order.
 
 ## Local store
 
 Stage 1 writes one SQLite file, `var/pb-engine.sqlite3`, relative to the
 working directory. That directory is gitignored. JSON is stored as text.
-Timestamps are ISO-8601 text. `src/pb_engine/store.py` is the only module
-that opens the file.
+Timestamps are ISO-8601 text. `src/pb_engine/store.py` opens that file.
+`src/pb_engine/neon_sync.py` can copy rows out of it. The copy reads
+`HL_DATABASE_URL` and nothing else from the environment. If that variable
+is unset, or the copy fails, the SQLite file remains the book. The URL
+is not printed.
 
 `db/hl/001_init.sql` is the Postgres shape of the same tables, under schema
-`hl`. It is a file only. Nothing applies it. It does not connect to Neon,
-and it does not create the `hl_engine` or `hl_reader` roles. Those roles are
-named in comments for a later review. The file has no credentials.
+`hl`. The owner has applied it for paper/simulation. This package does not
+execute the file. It does not create the `hl_engine` or `hl_reader` roles
+or their grants. Those are a later hardening step. The file has no credentials.
 
 `hl_control` is a single row. It can halt, request a flatten, drain, or
 pause new entries. It cannot change a risk limit.
@@ -257,30 +261,33 @@ exercised level needs `autonomy promote --level N --confirm --actor
 itself. `control pause-entries` is refused while the exercised level is
 L1. None of these commands send an order.
 
-The private page at `/private/hyperliquid` renders a committed replay
-snapshot, behind the same sign-in as `/private/regime`. Regenerate that
-file from a fresh replay with:
+The private page at `/private/hyperliquid` reads schema `hl` through the
+site's existing `REGIME_DATABASE_URL`. If that variable is unset, the
+query fails, or `hl_equity` has no rows, the page shows the committed
+replay and a banner that says `no live data yet`. The labels stay
+SIMULATION and NOT VALIDATED. Regenerate the replay file with:
 
 ```
 pb-engine run-once --replay fixtures/mainnet --db /tmp/desk.sqlite3
 pb-engine report --db /tmp/desk.sqlite3 --write-snapshot ../lib/hyperliquid/replaySnapshot.json
 ```
 
-No Neon migration is applied. The extra health fields sit in the
-recovery JSON the schema already has. The exercised level is a local
-risk-event row, not a new column.
+The migration file is not executed by this package. The extra health
+fields sit in the recovery JSON the schema already has. The exercised
+level is a local risk-event row, not a new column.
 
 ## Host install
 
-Units, the sim loop, log caps, and the install script are in `ops/`.
-Read `ops/README.md`. The service is simulation only, is not enabled by
-the install, and is capped so it can share the existing Sydney droplet.
-It does not read a key and it does not send an alert.
+Units, the paper loop, log caps, and the install script are in `ops/`.
+Read `ops/README.md`. The service is live paper on public mainnet data.
+The install does not enable it. It is capped so it can share the existing
+Sydney droplet. It does not read a key and it does not send an alert.
 
 ## Not in this build
 
 A live Telegram sender. The outbox row is not a sender. Also not in
 this build: the commodity daily-break state machine, a full exchange
-holiday calendar, and a live socket inside `run-once`. No testnet. No
+holiday calendar, and any order or signing path. `--live-data` reads
+public mainnet info and the public websocket only. No testnet. No
 mainnet orders. No keys. Do not commit an env file, a token, or a
 wallet address; the repo is public.

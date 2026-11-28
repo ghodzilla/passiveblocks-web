@@ -1,19 +1,15 @@
 -- Hyperliquid engine schema hl.
--- This file must not be applied in Stage 1.
--- Do not run it against Neon or any other database yet.
--- It does not create roles, grants, or credentials.
--- Roles hl_engine and hl_reader are created later, after review.
--- hl_engine will write schema hl. hl_reader will read schema hl
--- and write hl_control only. Those grants are not in this file.
+-- Applied for paper/simulation. The package does not execute this file.
+-- It does not add roles, grants, or credentials.
+-- Roles hl_engine and hl_reader, and their grants, are a later
+-- hardening step. They are created later, not in this file.
 --
--- Stage 1 runs on a local SQLite file. JSON there is stored as text.
--- This Postgres file uses timestamptz and jsonb. Nothing in the
--- package executes this script.
+-- Stage 1 also keeps a local SQLite file. JSON there is stored as text.
+-- This Postgres file uses timestamptz and jsonb.
 
 CREATE SCHEMA IF NOT EXISTS hl;
 
-COMMENT ON SCHEMA hl IS
-    'Hyperliquid engine tables. This file must not be applied in Stage 1. Roles hl_engine and hl_reader are created later and are not created here.';
+COMMENT ON SCHEMA hl IS 'paper/simulation';
 
 CREATE TABLE IF NOT EXISTS hl.hl_strategy (
     id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

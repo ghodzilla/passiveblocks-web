@@ -1,5 +1,5 @@
 [Unit]
-Description=Hyperliquid engine, simulation replay only, no orders
+Description=Hyperliquid engine, live paper simulation, no orders
 Documentation=file:/opt/hl-engine/app/ops/README.md
 OnFailure=pb-alert@%n.service
 
@@ -33,14 +33,15 @@ RestrictRealtime=yes
 RestrictNamespaces=yes
 LockPersonality=yes
 CapabilityBoundingSet=
-RestrictAddressFamilies=AF_UNIX
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 ReadWritePaths=/var/lib/hl-engine /var/log/hl-engine
-ReadOnlyPaths=/opt/hl-engine
+ReadOnlyPaths=/opt/hl-engine /etc/hl-engine
 StateDirectory=hl-engine
 LogsDirectory=hl-engine
 StateDirectoryMode=0750
 LogsDirectoryMode=0750
 Environment=PYTHONDONTWRITEBYTECODE=1
+EnvironmentFile=/etc/hl-engine/engine.env
 StandardOutput=append:/var/log/hl-engine/hl-engine.log
 StandardError=append:/var/log/hl-engine/hl-engine.log
 

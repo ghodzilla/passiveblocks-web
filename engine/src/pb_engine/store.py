@@ -488,6 +488,91 @@ class Store:
         cursor = self._conn.execute(sql, params)
         return [{str(key): row[key] for key in row.keys()} for row in cursor.fetchall()]
 
+    def finish_shadow(
+        self,
+        row_id: int,
+        *,
+        exit_px: float,
+        exit_reason: str,
+        realised_r: float | None,
+        fees: float | None,
+        funding: float | None,
+        hold_seconds: int | None,
+    ) -> bool:
+        """Record an exit on a shadow that is still open. This does not send an order."""
+
+        if exit_reason not in {"stop", "target", "time", "trail", "flip"}:
+            raise ValueError("exit reason is not a shadow exit")
+        cursor = self._conn.execute(
+            """
+            UPDATE hl_shadow_trade
+            SET exit_px = ?, exit_reason = ?, realised_r = ?, fees = ?,
+                funding = ?, hold_seconds = ?
+            WHERE id = ? AND exit_px IS NULL
+            """,
+            (
+                exit_px,
+                exit_reason,
+                realised_r,
+                fees,
+                funding,
+                hold_seconds,
+                row_id,
+            ),
+        )
+        self._conn.commit()
+        return cursor.rowcount == 1
+
+    def trim_series(self, *, heartbeats: int = 2000, equity_rows: int = 8000) -> None:
+        """Keep the live pulse short. The shadow book is not touched."""
+
+        for table, keep in (("hl_heartbeat", heartbeats), ("hl_equity", equity_rows)):
+            if keep < 1:
+                raise ValueError("trim keep must be at least 1")
+            self._conn.execute(
+                f"DELETE FROM {table} WHERE id NOT IN "
+                f"(SELECT id FROM {table} ORDER BY id DESC LIMIT ?)",
+                (keep,),
+            )
+        self._conn.commit()
+
+    def mirror_map(self) -> dict[tuple[str, int], int]:
+        """Local ids already copied out. This table is not part of schema hl."""
+
+        self._conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS hl_mirror_cursor (
+                table_name TEXT NOT NULL,
+                sqlite_id INTEGER NOT NULL,
+                remote_id INTEGER NOT NULL,
+                PRIMARY KEY (table_name, sqlite_id)
+            )
+            """
+        )
+        self._conn.commit()
+        rows = self._conn.execute(
+            "SELECT table_name, sqlite_id, remote_id FROM hl_mirror_cursor"
+        )
+        return {(str(name), int(sqlite_id)): int(remote) for name, sqlite_id, remote in rows}
+
+    def save_mirror_map(self, mapping: dict[tuple[str, int], int]) -> None:
+        self.mirror_map()
+        self._conn.executemany(
+            """
+            INSERT INTO hl_mirror_cursor (table_name, sqlite_id, remote_id)
+            VALUES (?, ?, ?)
+            ON CONFLICT (table_name, sqlite_id) DO UPDATE SET remote_id = excluded.remote_id
+            """,
+            [(table, sqlite_id, remote) for (table, sqlite_id), remote in mapping.items()],
+        )
+        self._conn.commit()
+
+    def latest_equity(self) -> float | None:
+        rows = self.read("SELECT shadow_equity FROM hl_equity ORDER BY id DESC LIMIT 1")
+        if not rows:
+            return None
+        return float(rows[0]["shadow_equity"])
+
     def prune(self) -> dict[str, int]:
         """Drop old health, risk, and outbox rows, then vacuum.
 

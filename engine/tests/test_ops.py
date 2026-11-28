@@ -16,7 +16,6 @@ ROOT = Path(__file__).resolve().parents[1]
 OPS = ROOT / "ops"
 
 BANNED = (
-    "EnvironmentFile",
     "private_key",
     "HL_AGENT",
     "api.telegram.org",
@@ -24,6 +23,8 @@ BANNED = (
     "MemoryLow=",
     "systemctl enable",
     "systemctl start",
+    "postgres://",
+    "postgresql://",
 )
 
 
@@ -35,9 +36,13 @@ def test_units_are_capped_and_hardened() -> None:
     slice_text = _text(OPS / "systemd" / "hl-engine.slice")
     service = _text(OPS / "systemd" / "hl-engine.service")
     alert = _text(OPS / "systemd" / "pb-alert@.service")
-    for name, text in ("slice", slice_text), ("service", service), ("alert", alert):
-        for banned in BANNED:
+    for name, text in ("slice", slice_text), ("alert", alert):
+        for banned in (*BANNED, "EnvironmentFile"):
             assert banned not in text, name
+    for banned in BANNED:
+        assert banned not in service
+    assert service.count("EnvironmentFile=") == 1
+    assert "EnvironmentFile=/etc/hl-engine/engine.env" in service
     assert "CPUQuota=60%" in slice_text
     assert "MemoryMax=900M" in slice_text
     assert "MemoryHigh=700M" in slice_text
@@ -55,8 +60,11 @@ def test_units_are_capped_and_hardened() -> None:
     assert "PrivateTmp=yes" in service
     assert "PrivateDevices=yes" in service
     assert "CapabilityBoundingSet=" in service
-    assert "RestrictAddressFamilies=AF_UNIX" in service
+    assert "RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6" in service
+    assert "RestrictAddressFamilies=AF_UNIX\n" in alert
     assert "ReadWritePaths=/var/lib/hl-engine /var/log/hl-engine" in service
+    assert "ReadOnlyPaths=/opt/hl-engine /etc/hl-engine" in service
+    assert "ProtectSystem=strict" in service
     assert "ExecStart=/opt/hl-engine/app/ops/hl-engine-sim" in service
     assert "ExecStart=/opt/hl-engine/app/ops/pb-alert-fail %i" in alert
     assert "Type=oneshot" in alert
@@ -66,23 +74,19 @@ def test_units_are_capped_and_hardened() -> None:
     assert "copytruncate" in rotate
 
 
-def test_sim_script_refuses_live_data() -> None:
+def test_sim_script_runs_live_paper() -> None:
     script = OPS / "hl-engine-sim"
     text = _text(script)
-    assert "--replay" in text
+    assert "run-once --live-data" in text
     assert "systemd-notify" in text
+    assert "orders=none" in text
     assert "api.telegram.org" not in text
+    assert "postgres://" not in text
+    assert "postgresql://" not in text
+    assert "EnvironmentFile" not in text
     subprocess.run(["bash", "-n", str(script)], check=True)
     subprocess.run(["bash", "-n", str(OPS / "pb-alert-fail")], check=True)
     subprocess.run(["bash", "-n", str(OPS / "install.sh")], check=True)
-    refused = subprocess.run(
-        ["bash", str(script), "--live-data"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    assert refused.returncode == 2
-    assert "refused" in refused.stderr
 
 
 def test_install_script_is_idempotent(tmp_path: Path) -> None:
