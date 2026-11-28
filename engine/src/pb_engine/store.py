@@ -468,6 +468,20 @@ class Store:
             raise RuntimeError("inserted row could not be read back")
         return loaded
 
+    def read(self, sql: str, params: tuple[object, ...] = ()) -> list[dict[str, object]]:
+        """Run one SELECT. Anything else is refused."""
+
+        if not isinstance(sql, str) or ";" in sql:
+            raise ValueError("read expects one select")
+        words = sql.lower().split()
+        if not words or words[0] != "select":
+            raise ValueError("read expects one select")
+        banned = {"insert", "update", "delete", "drop", "alter", "create", "replace"}
+        if banned.intersection(words):
+            raise ValueError("read expects one select")
+        cursor = self._conn.execute(sql, params)
+        return [{str(key): row[key] for key in row.keys()} for row in cursor.fetchall()]
+
     def get(self, kind: type[RowT], row_id: int) -> RowT | None:
         table = _READ_TABLE[kind]
         cursor = self._conn.execute(f"SELECT * FROM {table} WHERE id = ?", (row_id,))

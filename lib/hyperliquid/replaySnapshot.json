@@ -1,0 +1,774 @@
+{
+  "as_of": "2026-11-28T08:28:44+00:00",
+  "as_of_sydney": "Saturday 28 Nov 2026, 7:28 PM Sydney",
+  "autonomy": {
+    "cap": 3,
+    "exercised": 1,
+    "name": "Prepare",
+    "promotion": "manual confirm flag only"
+  },
+  "balance": {
+    "currency": "USDC",
+    "equity_usdc": 982.4117052016842,
+    "source": "simulation"
+  },
+  "baseline_curve": [
+    {
+      "equity": 1000.0,
+      "t": "2026-11-25T08:00:00+00:00"
+    },
+    {
+      "equity": 1000.0,
+      "t": "2026-11-25T08:00:00+00:00"
+    },
+    {
+      "equity": 1000.0,
+      "t": "2026-11-25T08:00:00+00:00"
+    },
+    {
+      "equity": 1000.0,
+      "t": "2026-11-25T08:00:00+00:00"
+    },
+    {
+      "equity": 1000.0,
+      "t": "2026-11-26T00:00:00+00:00"
+    },
+    {
+      "equity": 1000.0,
+      "t": "2026-11-26T04:00:00+00:00"
+    },
+    {
+      "equity": 1000.0,
+      "t": "2026-11-26T04:00:00+00:00"
+    },
+    {
+      "equity": 1000.0,
+      "t": "2026-11-28T05:00:00+00:00"
+    },
+    {
+      "equity": 1000.0,
+      "t": "2026-11-28T05:00:00+00:00"
+    },
+    {
+      "equity": 1000.0,
+      "t": "2026-11-28T08:28:44+00:00"
+    }
+  ],
+  "equity_curve": [
+    {
+      "equity": 1000.0,
+      "t": "2026-11-25T08:00:00+00:00"
+    },
+    {
+      "equity": 994.78,
+      "t": "2026-11-25T08:00:00+00:00"
+    },
+    {
+      "equity": 989.56,
+      "t": "2026-11-25T08:00:00+00:00"
+    },
+    {
+      "equity": 984.32,
+      "t": "2026-11-25T08:00:00+00:00"
+    },
+    {
+      "equity": 982.79,
+      "t": "2026-11-26T00:00:00+00:00"
+    },
+    {
+      "equity": 981.17,
+      "t": "2026-11-26T04:00:00+00:00"
+    },
+    {
+      "equity": 981.91,
+      "t": "2026-11-26T04:00:00+00:00"
+    },
+    {
+      "equity": 981.95,
+      "t": "2026-11-28T05:00:00+00:00"
+    },
+    {
+      "equity": 982.01,
+      "t": "2026-11-28T05:00:00+00:00"
+    },
+    {
+      "equity": 982.41,
+      "t": "2026-11-28T08:28:44+00:00"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-28T08:28:44+00:00",
+      "kind": "risk",
+      "severity": "INFO",
+      "text": "one simulated cycle; no orders"
+    }
+  ],
+  "headline": "Day 0 of 28 \u00b7 SIMULATION \u00b7 NOT VALIDATED \u00b7 4 strategies shadow \u00b7 shadow P&L -1.8%",
+  "health": {
+    "close_mix": {
+      "verify_more": 2
+    },
+    "drawdown": 0.017588294798315814,
+    "equity_usdc": 982.4117052016842,
+    "false_closes": 0,
+    "gate_mix": {
+      "accept": 3,
+      "reject": 11,
+      "verify_more": 5
+    },
+    "limits": {
+      "cluster_risk_cap": 0.015,
+      "daily_loss_stop": 0.02,
+      "drawdown_kill": 0.1,
+      "max_leverage": 2,
+      "max_positions": 3,
+      "total_risk_cap": 0.02
+    },
+    "open_risk": {
+      "cluster_risk": {
+        "crypto": 0.010008481331591013,
+        "energy": 0.0,
+        "metals": 0.0,
+        "us_equity": 0.0
+      },
+      "daily_pnl_pct": -0.017588294798315814,
+      "gross_leverage": 0.21593798086561755,
+      "positions": 2,
+      "total_risk": 0.010008481331591013
+    },
+    "routing_accuracy": 1.0,
+    "signal_escapes": 0,
+    "stale_blocks": 0,
+    "unnecessary_interruptions": 0
+  },
+  "notices": [
+    "No server is attached. Reboot and disk notices appear when the engine runs on its own machine."
+  ],
+  "plans": [
+    {
+      "entry": 59649.0,
+      "gaps": [
+        "no_exit_fill"
+      ],
+      "id": 1,
+      "legs": [
+        {
+          "fill": "present",
+          "fill_px": 59649.0,
+          "fill_size": 0.0019426319643572056,
+          "plan_px": 59649.0,
+          "plan_size": 0.0019426319643572056,
+          "role": "entry"
+        },
+        {
+          "fill": "missing",
+          "initial_stop_px": 62178.600870118906,
+          "plan_px": 62178.600870118906,
+          "role": "stop",
+          "trailed": false
+        },
+        {
+          "fill": "missing",
+          "fill_px": null,
+          "fill_size": 0.0,
+          "plan_px": 54592.79825976219,
+          "role": "target"
+        }
+      ],
+      "market": "BTC",
+      "outcome": "verify_more",
+      "side": "short",
+      "size": 0.0019426319643572056,
+      "stop": 62178.600870118906,
+      "strategy": "tsmom_4h",
+      "target": 54592.79825976219,
+      "verdict": "accept"
+    },
+    {
+      "entry": 1654.9,
+      "gaps": [
+        "no_exit_fill"
+      ],
+      "id": 2,
+      "legs": [
+        {
+          "fill": "present",
+          "fill_px": 1654.9,
+          "fill_size": 0.05816634455693905,
+          "plan_px": 1654.9,
+          "plan_size": 0.05816634455693905,
+          "role": "entry"
+        },
+        {
+          "fill": "missing",
+          "initial_stop_px": 1739.453568166963,
+          "plan_px": 1739.453568166963,
+          "role": "stop",
+          "trailed": false
+        },
+        {
+          "fill": "missing",
+          "fill_px": null,
+          "fill_size": 0.0,
+          "plan_px": 1486.0928636660742,
+          "role": "target"
+        }
+      ],
+      "market": "ETH",
+      "outcome": "verify_more",
+      "side": "short",
+      "size": 0.05816634455693905,
+      "stop": 1739.453568166963,
+      "strategy": "tsmom_4h",
+      "target": 1486.0928636660742,
+      "verdict": "accept"
+    }
+  ],
+  "pnl": {
+    "gated_mean_r": null,
+    "note": "Closed shadow round trips only. An open take is not in this P&L.",
+    "shadow_equity_usdc": 982.4117052016842,
+    "shadow_pnl_pct": -0.017588294798315814,
+    "shadow_pnl_usdc": -17.588294798315815,
+    "start_usdc": 1000.0,
+    "ungated_mean_r": -0.2322722596277077
+  },
+  "positions": [
+    {
+      "book": "ungated",
+      "counts_toward_limits": false,
+      "entry": 60002.0,
+      "funding_usdc": -0.051482418363266245,
+      "market": "BTC",
+      "notional_usdc": 111.04,
+      "opened": "2026-11-28T00:00:00+00:00",
+      "side": "short",
+      "stop": 62703.80929315565,
+      "stop_in_plan": true,
+      "stop_note": "The stop is in the simulation. It is not an order on an exchange.",
+      "strategy": "tsmom_4h",
+      "target": 54598.381413688694
+    },
+    {
+      "book": "ungated",
+      "counts_toward_limits": false,
+      "entry": 1665.2,
+      "funding_usdc": -0.00743688,
+      "market": "ETH",
+      "notional_usdc": 11.0,
+      "opened": "2026-11-28T00:00:00+00:00",
+      "side": "short",
+      "stop": 1756.3636056847618,
+      "stop_in_plan": true,
+      "stop_note": "The stop is in the simulation. It is not an order on an exchange.",
+      "strategy": "tsmom_4h",
+      "target": 1482.8727886304766
+    },
+    {
+      "book": "ungated",
+      "counts_toward_limits": false,
+      "entry": 71.252,
+      "funding_usdc": -0.06365000100110789,
+      "market": "SOL",
+      "notional_usdc": 94.15,
+      "opened": "2026-11-28T04:00:00+00:00",
+      "side": "short",
+      "stop": 75.0360957099719,
+      "stop_in_plan": true,
+      "stop_note": "The stop is in the simulation. It is not an order on an exchange.",
+      "strategy": "tsmom_4h",
+      "target": 63.68380858005618
+    },
+    {
+      "book": "ungated",
+      "counts_toward_limits": false,
+      "entry": 59677.0,
+      "funding_usdc": 0.0008896956933333335,
+      "market": "BTC",
+      "notional_usdc": 11.0,
+      "opened": "2026-11-28T07:00:00+00:00",
+      "side": "short",
+      "stop": 60016.90245969858,
+      "stop_in_plan": true,
+      "stop_note": "The stop is in the simulation. It is not an order on an exchange.",
+      "strategy": "utc_range_break",
+      "target": 59337.09754030142
+    },
+    {
+      "book": "ungated",
+      "counts_toward_limits": false,
+      "entry": 1653.7,
+      "funding_usdc": -0.000860122615,
+      "market": "ETH",
+      "notional_usdc": 11.0,
+      "opened": "2026-11-28T07:00:00+00:00",
+      "side": "short",
+      "stop": 1664.2100782297089,
+      "stop_in_plan": true,
+      "stop_note": "The stop is in the simulation. It is not an order on an exchange.",
+      "strategy": "utc_range_break",
+      "target": 1643.1899217702912
+    },
+    {
+      "book": "ungated",
+      "counts_toward_limits": false,
+      "entry": 71.19,
+      "funding_usdc": 0.0010189915083333335,
+      "market": "SOL",
+      "notional_usdc": 11.0,
+      "opened": "2026-11-28T07:00:00+00:00",
+      "side": "short",
+      "stop": 71.70274152530247,
+      "stop_in_plan": true,
+      "stop_note": "The stop is in the simulation. It is not an order on an exchange.",
+      "strategy": "utc_range_break",
+      "target": 70.67725847469752
+    },
+    {
+      "book": "gated",
+      "counts_toward_limits": true,
+      "entry": 59649.0,
+      "funding_usdc": 0.024262498998674956,
+      "market": "BTC",
+      "notional_usdc": 115.88,
+      "opened": "2026-11-28T08:28:44+00:00",
+      "side": "short",
+      "stop": 62178.600870118906,
+      "stop_in_plan": true,
+      "stop_note": "The stop is in the simulation. It is not an order on an exchange.",
+      "strategy": "tsmom_4h",
+      "target": 54592.79825976219
+    },
+    {
+      "book": "ungated",
+      "counts_toward_limits": false,
+      "entry": 59649.0,
+      "funding_usdc": 0.024262498998674956,
+      "market": "BTC",
+      "notional_usdc": 115.88,
+      "opened": "2026-11-28T08:28:44+00:00",
+      "side": "short",
+      "stop": 62178.600870118906,
+      "stop_in_plan": true,
+      "stop_note": "The stop is in the simulation. It is not an order on an exchange.",
+      "strategy": "tsmom_4h",
+      "target": 54592.79825976219
+    },
+    {
+      "book": "gated",
+      "counts_toward_limits": true,
+      "entry": 1654.9,
+      "funding_usdc": -0.028669462552070497,
+      "market": "ETH",
+      "notional_usdc": 96.26,
+      "opened": "2026-11-28T08:28:44+00:00",
+      "side": "short",
+      "stop": 1739.453568166963,
+      "stop_in_plan": true,
+      "stop_note": "The stop is in the simulation. It is not an order on an exchange.",
+      "strategy": "tsmom_4h",
+      "target": 1486.0928636660742
+    },
+    {
+      "book": "ungated",
+      "counts_toward_limits": false,
+      "entry": 1654.9,
+      "funding_usdc": -0.028669462552070497,
+      "market": "ETH",
+      "notional_usdc": 96.26,
+      "opened": "2026-11-28T08:28:44+00:00",
+      "side": "short",
+      "stop": 1739.453568166963,
+      "stop_in_plan": true,
+      "stop_note": "The stop is in the simulation. It is not an order on an exchange.",
+      "strategy": "tsmom_4h",
+      "target": 1486.0928636660742
+    },
+    {
+      "book": "ungated",
+      "counts_toward_limits": false,
+      "entry": 71.186,
+      "funding_usdc": 0.008897169600000001,
+      "market": "SOL",
+      "notional_usdc": 11.0,
+      "opened": "2026-11-28T08:28:44+00:00",
+      "side": "short",
+      "stop": 74.7752317306882,
+      "stop_in_plan": true,
+      "stop_note": "The stop is in the simulation. It is not an order on an exchange.",
+      "strategy": "tsmom_4h",
+      "target": 64.0495365386236
+    },
+    {
+      "book": "ungated",
+      "counts_toward_limits": false,
+      "entry": 59650.0,
+      "funding_usdc": -0.0007677384,
+      "market": "BTC",
+      "notional_usdc": 11.0,
+      "opened": "2026-11-28T08:28:44+00:00",
+      "side": "long",
+      "stop": 53685.0,
+      "stop_in_plan": true,
+      "stop_note": "The stop is in the simulation. It is not an order on an exchange.",
+      "strategy": "btc_hold_1x",
+      "target": 65615.0
+    },
+    {
+      "book": "ungated",
+      "counts_toward_limits": false,
+      "entry": 1655.0,
+      "funding_usdc": 4.55026e-05,
+      "market": "ETH",
+      "notional_usdc": 11.0,
+      "opened": "2026-11-28T08:28:44+00:00",
+      "side": "long",
+      "stop": 1638.45,
+      "stop_in_plan": true,
+      "stop_note": "The stop is in the simulation. It is not an order on an exchange.",
+      "strategy": "random_entry",
+      "target": 1671.55
+    }
+  ],
+  "scorecard": {
+    "items": [
+      {
+        "detail": "0 setups reached a take without an accept.",
+        "name": "Signal escapes",
+        "pass": true
+      },
+      {
+        "detail": "0 closes claimed done without matching fills.",
+        "name": "False closes",
+        "pass": true
+      },
+      {
+        "detail": "The desk view has no order or write tools.",
+        "name": "Desk reads only",
+        "pass": true
+      },
+      {
+        "detail": "Nothing is sent. The outbox stays on this machine.",
+        "name": "Alerts delivered",
+        "pass": false
+      },
+      {
+        "detail": "There is no server and no exchange stop yet.",
+        "name": "Uptime and stops on an exchange",
+        "pass": false
+      },
+      {
+        "detail": "A go-live call needs a full window of taken trades. This is day 0.",
+        "name": "Edge sample",
+        "pass": false
+      },
+      {
+        "detail": "Gated trades from this replay are still open, so the comparison is not ready.",
+        "name": "Gate versus ungated",
+        "pass": false
+      }
+    ],
+    "plain": "Not ready for real money. This recording is a simulation on day 0 of 28.",
+    "shadow_pnl_pct": -0.017588294798315814,
+    "verdict": "NO-GO"
+  },
+  "signals": [
+    {
+      "at": "2026-11-25T08:00:00+00:00",
+      "confidence": 0.9,
+      "decision": "skip",
+      "market": "BTC",
+      "side": "short",
+      "skip_reason": "verify_expired",
+      "strategy": "tsmom_4h",
+      "verdict": "reject"
+    },
+    {
+      "at": "2026-11-25T08:00:00+00:00",
+      "confidence": 0.9,
+      "decision": "skip",
+      "market": "ETH",
+      "side": "short",
+      "skip_reason": "verify_expired",
+      "strategy": "tsmom_4h",
+      "verdict": "reject"
+    },
+    {
+      "at": "2026-11-25T08:00:00+00:00",
+      "confidence": 0.9,
+      "decision": "skip",
+      "market": "SOL",
+      "side": "short",
+      "skip_reason": "verify_expired",
+      "strategy": "tsmom_4h",
+      "verdict": "reject"
+    },
+    {
+      "at": "2026-11-26T00:00:00+00:00",
+      "confidence": 0.9,
+      "decision": "skip",
+      "market": "BTC",
+      "side": "long",
+      "skip_reason": "verify_expired",
+      "strategy": "tsmom_4h",
+      "verdict": "reject"
+    },
+    {
+      "at": "2026-11-26T04:00:00+00:00",
+      "confidence": 0.9,
+      "decision": "skip",
+      "market": "ETH",
+      "side": "long",
+      "skip_reason": "verify_expired",
+      "strategy": "tsmom_4h",
+      "verdict": "reject"
+    },
+    {
+      "at": "2026-11-26T04:00:00+00:00",
+      "confidence": 0.9,
+      "decision": "skip",
+      "market": "SOL",
+      "side": "long",
+      "skip_reason": "verify_expired",
+      "strategy": "tsmom_4h",
+      "verdict": "reject"
+    },
+    {
+      "at": "2026-11-28T00:00:00+00:00",
+      "confidence": 0.9,
+      "decision": "skip",
+      "market": "BTC",
+      "side": "short",
+      "skip_reason": "verify_expired",
+      "strategy": "tsmom_4h",
+      "verdict": "reject"
+    },
+    {
+      "at": "2026-11-28T00:00:00+00:00",
+      "confidence": 0.9,
+      "decision": "skip",
+      "market": "ETH",
+      "side": "short",
+      "skip_reason": "verify_expired",
+      "strategy": "tsmom_4h",
+      "verdict": "reject"
+    },
+    {
+      "at": "2026-11-28T04:00:00+00:00",
+      "confidence": 0.9,
+      "decision": "skip",
+      "market": "SOL",
+      "side": "short",
+      "skip_reason": "verify_expired",
+      "strategy": "tsmom_4h",
+      "verdict": "reject"
+    },
+    {
+      "at": "2026-11-28T05:00:00+00:00",
+      "confidence": 0.6,
+      "decision": "skip",
+      "market": "ETH",
+      "side": "short",
+      "skip_reason": "max_positions",
+      "strategy": "utc_range_break",
+      "verdict": "verify_more"
+    },
+    {
+      "at": "2026-11-28T05:00:00+00:00",
+      "confidence": 0.6,
+      "decision": "skip",
+      "market": "SOL",
+      "side": "short",
+      "skip_reason": "bad_book",
+      "strategy": "utc_range_break",
+      "verdict": "verify_more"
+    },
+    {
+      "at": "2026-11-28T07:00:00+00:00",
+      "confidence": 0.6,
+      "decision": "skip",
+      "market": "BTC",
+      "side": "short",
+      "skip_reason": "max_positions",
+      "strategy": "utc_range_break",
+      "verdict": "verify_more"
+    },
+    {
+      "at": "2026-11-28T07:00:00+00:00",
+      "confidence": 0.6,
+      "decision": "skip",
+      "market": "ETH",
+      "side": "short",
+      "skip_reason": "bad_book",
+      "strategy": "utc_range_break",
+      "verdict": "verify_more"
+    },
+    {
+      "at": "2026-11-28T07:00:00+00:00",
+      "confidence": 0.6,
+      "decision": "skip",
+      "market": "SOL",
+      "side": "short",
+      "skip_reason": "bad_book",
+      "strategy": "utc_range_break",
+      "verdict": "verify_more"
+    },
+    {
+      "at": "2026-11-28T08:28:44+00:00",
+      "confidence": 0.6987426550096816,
+      "decision": "trade",
+      "market": "BTC",
+      "side": "short",
+      "skip_reason": null,
+      "strategy": "tsmom_4h",
+      "verdict": "accept"
+    },
+    {
+      "at": "2026-11-28T08:28:44+00:00",
+      "confidence": 0.6954681410314553,
+      "decision": "trade",
+      "market": "ETH",
+      "side": "short",
+      "skip_reason": null,
+      "strategy": "tsmom_4h",
+      "verdict": "accept"
+    },
+    {
+      "at": "2026-11-28T08:28:44+00:00",
+      "confidence": 0.6964881968295473,
+      "decision": "skip",
+      "market": "SOL",
+      "side": "short",
+      "skip_reason": "cluster_risk",
+      "strategy": "tsmom_4h",
+      "verdict": "accept"
+    },
+    {
+      "at": "2026-11-28T08:28:44+00:00",
+      "confidence": 0.9,
+      "decision": "skip",
+      "market": "BTC",
+      "side": "long",
+      "skip_reason": "baseline",
+      "strategy": "btc_hold_1x",
+      "verdict": "reject"
+    },
+    {
+      "at": "2026-11-28T08:28:44+00:00",
+      "confidence": 0.9,
+      "decision": "skip",
+      "market": "ETH",
+      "side": "long",
+      "skip_reason": "baseline",
+      "strategy": "random_entry",
+      "verdict": "reject"
+    }
+  ],
+  "skip_pnl": [
+    {
+      "mean_r": 0.8627874308208934,
+      "n": 1,
+      "reason": "bad_book"
+    },
+    {
+      "mean_r": 0.8177147785584991,
+      "n": 1,
+      "reason": "max_positions"
+    },
+    {
+      "mean_r": -0.589780047733509,
+      "n": 6,
+      "reason": "verify_expired"
+    }
+  ],
+  "source": "Recorded simulation from the public mainnet snapshot. Not a live book.",
+  "status": {
+    "book_age_s": 0.0,
+    "drain": false,
+    "flatten_requested": false,
+    "fresh": true,
+    "halt": false,
+    "heartbeat_at": "2026-11-28T08:28:44+00:00",
+    "keys": "none",
+    "mode": "SIMULATION",
+    "network": "sim-mainnet-data",
+    "orders": "none",
+    "pause_new_entries": false,
+    "validated": false,
+    "version": "0.1.0",
+    "window_day": 0,
+    "window_days": 28
+  },
+  "strategies": [
+    {
+      "asset_class": "crypto",
+      "calibration_slope": null,
+      "lcb": 0.0,
+      "mean_r": 0.0,
+      "n": 0,
+      "name": "btc_hold_1x",
+      "pnl_usdc": 0,
+      "shrunk_edge": 0.0,
+      "status": "shadow",
+      "weight": 1.0,
+      "win_rate": null
+    },
+    {
+      "asset_class": "crypto",
+      "calibration_slope": null,
+      "lcb": 0.0,
+      "mean_r": 0.0,
+      "n": 0,
+      "name": "random_entry",
+      "pnl_usdc": 0,
+      "shrunk_edge": 0.0,
+      "status": "shadow",
+      "weight": 1.0,
+      "win_rate": null
+    },
+    {
+      "asset_class": "crypto",
+      "calibration_slope": null,
+      "lcb": -0.30130638217481187,
+      "mean_r": -0.589780047733509,
+      "n": 6,
+      "name": "tsmom_4h",
+      "pnl_usdc": -18.094854296397493,
+      "shrunk_edge": -0.0982966746222515,
+      "status": "shadow",
+      "weight": 1.0,
+      "win_rate": 0.16666666666666666
+    },
+    {
+      "asset_class": "crypto",
+      "calibration_slope": null,
+      "lcb": 0.029979367911908857,
+      "mean_r": 0.8402511046896962,
+      "n": 2,
+      "name": "utc_range_break",
+      "pnl_usdc": 0.10480120718207567,
+      "shrunk_edge": 0.05251569404310601,
+      "status": "shadow",
+      "weight": 1.0,
+      "win_rate": 1.0
+    }
+  ],
+  "whitelist": {
+    "blocked": [],
+    "eligible": [
+      "BTC",
+      "ETH",
+      "SOL"
+    ],
+    "stocks_and_commodities": {
+      "commodities": "Gold, silver and oil are not in this replay. Their session would reopen Sunday 6:00 PM New York, Monday 10:00 AM Sydney.",
+      "earnings": "No earnings dates are loaded.",
+      "eligible_note": "This replay only simulates BTC, ETH and SOL.",
+      "macro": "No CPI, FOMC or EIA blackout is loaded.",
+      "next_stock_open": "2026-11-29T20:05:00-05:00",
+      "oil_roll": "No oil position is open, so the roll window is not in play.",
+      "stocks": "US stock perps are closed. Next open is Sunday 8:05 PM New York, Monday 12:05 PM Sydney."
+    }
+  }
+}

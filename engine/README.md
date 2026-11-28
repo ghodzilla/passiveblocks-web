@@ -7,9 +7,10 @@ passiveblocks website (Next.js, on Vercel) stays a separate app. The website
 does not import this package.
 
 This change runs one simulated cycle on a recorded mainnet book, on top
-of the local store and the hard risk limits. It does not send a Telegram
-message or place an order. The signal gate and the closer are not in
-this build. Nothing here is evidence that a strategy has an edge.
+of the local store and the hard risk limits. The signal gate and the
+closer are in the cycle. A desk view can read that result. It does not
+send a Telegram message or place an order. Nothing here is evidence
+that a strategy has an edge.
 
 Long and short simulated entries are both allowed. Leverage is not.
 
@@ -36,8 +37,8 @@ broker. `HL_NETWORK` is the label `sim-mainnet-data`. It does not select a
 signing endpoint.
 
 `pb-engine status` prints the limits. `pb-engine run-once --replay
-fixtures/mainnet` runs one cycle and prints `taken=0`. It does not send
-an order.
+fixtures/mainnet` runs one cycle and prints the taken and closed counts.
+It does not send an order.
 
 ## Local store
 
@@ -244,10 +245,35 @@ missing stop, or a price far from the plan is a `mismatch`. A mismatch
 is written to the local alert outbox. Nothing is sent. No fills means
 there is no close at all.
 
+## Desk view
+
+`pb-engine health` writes one local health row and prints it.
+`pb-engine report` prints the read-only snapshot.
+`pb-engine alert-test` queues one outbox row and sends nothing. No token
+is read. `pb-engine autonomy show` prints the exercised level, which
+starts at L1 (Prepare). The ceiling stays `autonomy_cap=3`. Raising the
+exercised level needs `autonomy promote --level N --confirm --actor
+--reason`. Without `--confirm` it is refused. The cycle never promotes
+itself. `control pause-entries` is refused while the exercised level is
+L1. None of these commands send an order.
+
+The private page at `/private/hyperliquid` renders a committed replay
+snapshot, behind the same sign-in as `/private/regime`. Regenerate that
+file from a fresh replay with:
+
+```
+pb-engine run-once --replay fixtures/mainnet --db /tmp/desk.sqlite3
+pb-engine report --db /tmp/desk.sqlite3 --write-snapshot ../lib/hyperliquid/replaySnapshot.json
+```
+
+No Neon migration is applied. The extra health fields sit in the
+recovery JSON the schema already has. The exercised level is a local
+risk-event row, not a new column.
+
 ## Not in this build
 
-Telegram, systemd, health, report, and alert-test. The outbox row is
-not a sender. Also not in this build: the commodity daily-break state
-machine, a full exchange holiday calendar, and a live socket inside
-`run-once`. No testnet. No mainnet orders. No keys. Do not commit an
-env file, a token, or a wallet address; the repo is public.
+A live Telegram sender and systemd. The outbox row is not a sender.
+Also not in this build: the commodity daily-break state machine, a full
+exchange holiday calendar, and a live socket inside `run-once`. No
+testnet. No mainnet orders. No keys. Do not commit an env file, a token,
+or a wallet address; the repo is public.

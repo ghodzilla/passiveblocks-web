@@ -672,6 +672,9 @@ def _persist(
             payload={"signals": signals, "shadow_fills": fills, "taken": taken, "closed": closed},
         )
     )
+    from pb_engine.health import record_health
+
+    record_health(store, as_of=clock)
     return CycleResult(
         now=clock,
         signals=signals,
