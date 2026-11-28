@@ -45,6 +45,16 @@ SIM_STARTING_EQUITY_USDC: int = 1000
 # Informational label. Must not be used to select a signing endpoint.
 HL_NETWORK: str = "sim-mainnet-data"
 
+# Spec §5.7. A book older than this blocks new entries.
+BOOK_STALE_SECONDS: int = 5
+
+# Spec §5.7. A silent mainnet stream longer than this blocks new entries.
+STREAM_SILENT_SECONDS: int = 10
+
+# Public mainnet market data. Not a signing endpoint, and not configurable.
+INFO_URL: str = "https://api.hyperliquid.xyz/info"
+WS_URL: str = "wss://api.hyperliquid.xyz/ws"
+
 # Spec §5.3 clusters. Stage 1's loop is BTC, ETH, and SOL only.
 # The other names are pinned so they cannot be filed under crypto.
 CLUSTERS: tuple[str, ...] = ("crypto", "us_equity", "metals", "energy")

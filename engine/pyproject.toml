@@ -4,7 +4,9 @@ version = "0.1.0"
 description = "Hyperliquid perps engine, Stage 1 simulation scaffold. NOT VALIDATED. No keys and no orders."
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "websockets>=17.4",
+]
 
 [project.scripts]
 pb-engine = "pb_engine.cli:main"
@@ -21,6 +23,8 @@ build-backend = "uv_build"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = "-m 'not network'"
+markers = ["network: live public mainnet info; CI does not run this"]
 
 [tool.ruff]
 target-version = "py312"

@@ -1,0 +1,21 @@
+{
+  "captured_at": "2026-11-28T08:28:44+00:00",
+  "source": "https://api.hyperliquid.xyz/info",
+  "note": "Public mainnet info snapshots. No account and no key. Deployer addresses from the dex list were not stored.",
+  "coins": [
+    "BTC",
+    "ETH",
+    "SOL",
+    "xyz:GOLD",
+    "xyz:SILVER",
+    "xyz:CL",
+    "xyz:BRENTOIL",
+    "xyz:NVDA"
+  ],
+  "candles": {
+    "15m": "24h",
+    "1h": "3d",
+    "4h": "7d"
+  },
+  "funding": "3d"
+}
