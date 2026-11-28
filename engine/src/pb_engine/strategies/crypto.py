@@ -1,7 +1,7 @@
 """Five crypto strategies from the spec. They return a candidate or nothing.
 
 The trail, the flip exit, and the funding-normal exit are recorded in
-features. This module does not move a stop and does not mark a fill.
+features. This module does not move a stop. The replay applies them.
 """
 
 from __future__ import annotations

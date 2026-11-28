@@ -60,7 +60,11 @@ def test_run_once_replay_exits_zero(capsys: pytest.CaptureFixture[str], tmp_path
     assert "NOT VALIDATED" in out
     assert "orders=none" in out
     assert "keys=none" in out
-    assert "taken=0" in out
+    assert "taken=" in out
+    assert "closed=" in out
+    assert "shadow_equity=" in out
+    assert "ungated_mean_r=" in out
+    assert "gated_mean_r=" in out
     assert db.is_file()
 
 
