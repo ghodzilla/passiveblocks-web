@@ -160,6 +160,68 @@ def _report(args: argparse.Namespace) -> int:
     return 0
 
 
+def _sim_state(args: argparse.Namespace) -> int:
+    store = _store(args.db)
+    rows = store.read("select count(*) as n from hl_equity")
+    count = int(rows[0]["n"]) if rows else 0
+    sys.stdout.write(
+        "\n".join(
+            [
+                "NOT VALIDATED",
+                "stage=simulation",
+                "orders=none",
+                "keys=none",
+                f"equity_rows={count}",
+            ]
+        )
+        + "\n"
+    )
+    return 0
+
+
+def _prune(args: argparse.Namespace) -> int:
+    removed = _store(args.db).prune()
+    sys.stdout.write(
+        "\n".join(
+            [
+                "NOT VALIDATED",
+                "stage=simulation",
+                "orders=none",
+                "keys=none",
+                "nothing was sent",
+                f"db_bytes={removed['db_bytes']}",
+                f"trimmed_health={removed['hl_desk_health']}",
+                f"trimmed_events={removed['hl_risk_event']}",
+                f"trimmed_alerts={removed['hl_alert_outbox']}",
+            ]
+        )
+        + "\n"
+    )
+    return 0
+
+
+def _alert_fail(args: argparse.Namespace) -> int:
+    from pb_engine.alerts import alert_failure
+
+    try:
+        message = alert_failure(_store(args.db), args.unit)
+    except ValueError as exc:
+        print(f"alert-fail refused: {exc}. This package does not send orders.", file=sys.stderr)
+        return 2
+    sys.stdout.write(
+        "\n".join(
+            [
+                "NOT VALIDATED",
+                "orders=none",
+                "keys=none",
+                message,
+            ]
+        )
+        + "\n"
+    )
+    return 0
+
+
 def _alert_test(args: argparse.Namespace) -> int:
     from pb_engine.alerts import alert_test
 
@@ -278,6 +340,22 @@ def main(argv: list[str] | None = None) -> int:
     alert = commands.add_parser("alert-test", help="Queue a local test alert. Nothing is sent.")
     alert.add_argument("--db", default=None)
     alert.set_defaults(func=_alert_test)
+
+    failed = commands.add_parser(
+        "alert-fail",
+        help="Queue a local unit-failure note. Nothing is sent.",
+    )
+    failed.add_argument("--db", default=None)
+    failed.add_argument("--unit", required=True)
+    failed.set_defaults(func=_alert_fail)
+
+    state = commands.add_parser("sim-state", help="Say whether a replay is already stored.")
+    state.add_argument("--db", default=None)
+    state.set_defaults(func=_sim_state)
+
+    prune = commands.add_parser("prune", help="Trim local log rows and vacuum the SQLite file.")
+    prune.add_argument("--db", default=None)
+    prune.set_defaults(func=_prune)
 
     autonomy = commands.add_parser("autonomy", help="Show or manually set the exercised level.")
     autonomy.add_argument("--db", default=None)

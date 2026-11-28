@@ -270,10 +270,17 @@ No Neon migration is applied. The extra health fields sit in the
 recovery JSON the schema already has. The exercised level is a local
 risk-event row, not a new column.
 
+## Host install
+
+Units, the sim loop, log caps, and the install script are in `ops/`.
+Read `ops/README.md`. The service is simulation only, is not enabled by
+the install, and is capped so it can share the existing Sydney droplet.
+It does not read a key and it does not send an alert.
+
 ## Not in this build
 
-A live Telegram sender and systemd. The outbox row is not a sender.
-Also not in this build: the commodity daily-break state machine, a full
-exchange holiday calendar, and a live socket inside `run-once`. No
-testnet. No mainnet orders. No keys. Do not commit an env file, a token,
-or a wallet address; the repo is public.
+A live Telegram sender. The outbox row is not a sender. Also not in
+this build: the commodity daily-break state machine, a full exchange
+holiday calendar, and a live socket inside `run-once`. No testnet. No
+mainnet orders. No keys. Do not commit an env file, a token, or a
+wallet address; the repo is public.

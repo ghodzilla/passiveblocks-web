@@ -1,0 +1,15 @@
+#!/bin/bash
+# OnFailure helper. Writes one local outbox row. Sends nothing.
+
+set -euo pipefail
+umask 027
+
+unit=${1:-}
+if [[ ! "$unit" =~ ^[A-Za-z0-9_@.-]+$ ]]; then
+  echo "refusing an unusual unit name. nothing was sent." >&2
+  exit 2
+fi
+
+exec /opt/hl-engine/.venv/bin/pb-engine alert-fail \
+  --db /var/lib/hl-engine/pb-engine.sqlite3 \
+  --unit "$unit"

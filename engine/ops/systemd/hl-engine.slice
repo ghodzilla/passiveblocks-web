@@ -1,0 +1,13 @@
+[Unit]
+Description=Cap the Hyperliquid engine so the rest of this droplet keeps room
+Documentation=file:/opt/hl-engine/app/ops/README.md
+
+[Slice]
+CPUAccounting=yes
+MemoryAccounting=yes
+IOAccounting=yes
+CPUQuota=60%
+MemoryHigh=700M
+MemoryMax=900M
+IOWeight=20
+TasksMax=64

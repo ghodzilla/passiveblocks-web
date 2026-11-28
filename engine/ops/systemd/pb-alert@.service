@@ -1,0 +1,27 @@
+[Unit]
+Description=Queue a local failure note for %i
+Documentation=file:/opt/hl-engine/app/ops/README.md
+
+[Service]
+Type=oneshot
+User=hlengine
+Group=hlengine
+Slice=hl-engine.slice
+WorkingDirectory=/opt/hl-engine/app
+ExecStart=/opt/hl-engine/app/ops/pb-alert-fail %i
+UMask=0027
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_UNIX
+ReadWritePaths=/var/lib/hl-engine /var/log/hl-engine
+ReadOnlyPaths=/opt/hl-engine
+Environment=PYTHONDONTWRITEBYTECODE=1
+StandardOutput=append:/var/log/hl-engine/hl-engine.log
+StandardError=append:/var/log/hl-engine/hl-engine.log
