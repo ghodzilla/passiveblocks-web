@@ -1,0 +1,12 @@
+{
+  "source": "https://api.hyperliquid.xyz/info",
+  "captured_at": "2026-11-28T08:28:44.372770+00:00",
+  "request": {
+    "type": "allMids"
+  },
+  "response": {
+    "BTC": "59649.5",
+    "ETH": "1654.85",
+    "SOL": "71.1935"
+  }
+}

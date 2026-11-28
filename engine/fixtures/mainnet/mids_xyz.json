@@ -1,0 +1,15 @@
+{
+  "source": "https://api.hyperliquid.xyz/info",
+  "captured_at": "2026-11-28T08:28:44.372770+00:00",
+  "request": {
+    "type": "allMids",
+    "dex": "xyz"
+  },
+  "response": {
+    "xyz:GOLD": "3663.55",
+    "xyz:SILVER": "43.8485",
+    "xyz:CL": "83.437",
+    "xyz:BRENTOIL": "90.7985",
+    "xyz:NVDA": "148.235"
+  }
+}

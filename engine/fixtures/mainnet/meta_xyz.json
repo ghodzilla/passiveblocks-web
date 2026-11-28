@@ -1,0 +1,1047 @@
+{
+  "source": "https://api.hyperliquid.xyz/info",
+  "captured_at": "2026-11-28T08:28:44.372770+00:00",
+  "request": {
+    "type": "meta",
+    "dex": "xyz"
+  },
+  "response": {
+    "universe": [
+      {
+        "name": "xyz:XYZ100",
+        "szDecimals": 4,
+        "maxLeverage": 30,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:TSLA",
+        "szDecimals": 3,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:NVDA",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:GOLD",
+        "szDecimals": 4,
+        "maxLeverage": 25,
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:HOOD",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:INTC",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:PLTR",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:COIN",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:META",
+        "szDecimals": 3,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:AAPL",
+        "szDecimals": 3,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:MSFT",
+        "szDecimals": 3,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:ORCL",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:GOOGL",
+        "szDecimals": 3,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:AMZN",
+        "szDecimals": 3,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:AMD",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:MU",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:SNDK",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:MSTR",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:CRCL",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:NFLX",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:COST",
+        "szDecimals": 4,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:LLY",
+        "szDecimals": 4,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:SKHX",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:TSM",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:JPY",
+        "szDecimals": 2,
+        "maxLeverage": 50,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:EUR",
+        "szDecimals": 1,
+        "maxLeverage": 50,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:SILVER",
+        "szDecimals": 2,
+        "maxLeverage": 25,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:RIVN",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:BABA",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:CL",
+        "szDecimals": 3,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:COPPER",
+        "szDecimals": 2,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:NATGAS",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:URANIUM",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:ALUMINIUM",
+        "szDecimals": 4,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:SMSN",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:PLATINUM",
+        "szDecimals": 4,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:USAR",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:CRWV",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:URNM",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:PALLADIUM",
+        "szDecimals": 4,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:DXY",
+        "szDecimals": 2,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:GME",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:KR200",
+        "szDecimals": 4,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:SOFTBANK",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:JP225",
+        "szDecimals": 5,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:HYUNDAI",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:KIOXIA",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:EWY",
+        "szDecimals": 3,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:EWJ",
+        "szDecimals": 3,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:BRENTOIL",
+        "szDecimals": 2,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:VIX",
+        "szDecimals": 2,
+        "maxLeverage": 3,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:HIMS",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:SP500",
+        "szDecimals": 3,
+        "maxLeverage": 50,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:DKNG",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:LITE",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:CORN",
+        "szDecimals": 0,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:XLE",
+        "szDecimals": 2,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:WHEAT",
+        "szDecimals": 0,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:TTF",
+        "szDecimals": 1,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:BX",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:PURRDAT",
+        "szDecimals": 0,
+        "maxLeverage": 10,
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:MRVL",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:RKLB",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:BIRD",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:VOL",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:DRAM",
+        "szDecimals": 1,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:CBRS",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:EWZ",
+        "szDecimals": 2,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:KRW",
+        "szDecimals": 3,
+        "maxLeverage": 50,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:ZM",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:EBAY",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:H100",
+        "szDecimals": 0,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:NIFTY",
+        "szDecimals": 4,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:ARM",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:EWT",
+        "szDecimals": 2,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:GBP",
+        "szDecimals": 0,
+        "maxLeverage": 50,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:SPCX",
+        "szDecimals": 2,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:IBOV",
+        "szDecimals": 5,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:ASML",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:MINIMAX",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:BB",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:QNT",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:DELL",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:IBM",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:AVGO",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:NOW",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:NBIS",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:WDC",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:NOK",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:SMH",
+        "szDecimals": 3,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:BE",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:ZHIPU",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:QCOM",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:STRC",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:BOT",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:AMAT",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:IBIDEN",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:GIGADEV",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:SHAZ",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:SKHY",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:KSTR",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:CXMT",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:GEV",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:KORU",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:UNITREE",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:LYTE",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:NCLD",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:SOXL",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:MAGS",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:IREN",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:NET",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:CRWD",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:RDDT",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:AAOI",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:MRNA",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:XBI",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:SHEIN",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:YMTC",
+        "szDecimals": 1,
+        "maxLeverage": 5,
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:BMNR",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:SNXX",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:CVX",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:TLT",
+        "szDecimals": 2,
+        "maxLeverage": 20,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:HO",
+        "szDecimals": 0,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:OURA",
+        "szDecimals": 1,
+        "maxLeverage": 5,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:LRCX",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:UMC",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:CAMBRICON",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:TWST",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:GLW",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:ACN",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:INNOLIGHT",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:AMEC",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:CATL",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:RELIANCE",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:JIO",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:SNAP",
+        "szDecimals": 0,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:TTWO",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:MUU",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:ANT",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:NU",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:ICE",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:MELI",
+        "szDecimals": 3,
+        "maxLeverage": 10,
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:STX",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:PANW",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:TENCENT",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:SNOW",
+        "szDecimals": 2,
+        "maxLeverage": 10,
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:SMCI",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:SOXS",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:TQQQ",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "growthMode": "enabled",
+        "deployerFeeScale": "1.0"
+      },
+      {
+        "name": "xyz:RBLX",
+        "szDecimals": 1,
+        "maxLeverage": 10,
+        "deployerFeeScale": "1.0"
+      }
+    ]
+  }
+}

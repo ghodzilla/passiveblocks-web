@@ -1,0 +1,443 @@
+{
+  "source": "https://api.hyperliquid.xyz/info",
+  "captured_at": "2026-11-28T08:28:44.372770+00:00",
+  "request": {
+    "type": "fundingHistory",
+    "coin": "xyz:GOLD",
+    "startTime": 1795595324372
+  },
+  "response": [
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000162898",
+      "premium": "0.0005606375",
+      "time": 1795597200022
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000089733",
+      "premium": "0.0004435728",
+      "time": 1795600800078
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.000010562",
+      "premium": "0.0004689925",
+      "time": 1795604400040
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000125563",
+      "premium": "0.0005009003",
+      "time": 1795608000058
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000105943",
+      "premium": "0.0004695083",
+      "time": 1795611600063
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "0.0003540021",
+      "time": 1795615200049
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "0.00009965",
+      "time": 1795618800017
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "0.0003115483",
+      "time": 1795622400003
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000114224",
+      "premium": "0.0004827591",
+      "time": 1795626000014
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000088016",
+      "premium": "0.0004408251",
+      "time": 1795629600021
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000265134",
+      "premium": "0.0007242146",
+      "time": 1795633200045
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000340157",
+      "premium": "0.0008442509",
+      "time": 1795636800025
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000337911",
+      "premium": "0.0008406583",
+      "time": 1795640400022
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000286787",
+      "premium": "0.0007588595",
+      "time": 1795644000066
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "0.0001610278",
+      "time": 1795647600047
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000229027",
+      "premium": "0.0006664433",
+      "time": 1795651200000
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000178496",
+      "premium": "0.0005855942",
+      "time": 1795654800039
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000159385",
+      "premium": "0.0005550161",
+      "time": 1795658400043
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000251296",
+      "premium": "0.0007020744",
+      "time": 1795662000043
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000186633",
+      "premium": "0.0005986134",
+      "time": 1795665600008
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "0.0003792251",
+      "time": 1795669200025
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000241944",
+      "premium": "0.0006871102",
+      "time": 1795672800115
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000186729",
+      "premium": "0.0005987661",
+      "time": 1795676400035
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000189902",
+      "premium": "0.000603843",
+      "time": 1795680000003
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000176002",
+      "premium": "0.0005816037",
+      "time": 1795683600057
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000194122",
+      "premium": "0.000610595",
+      "time": 1795687200045
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000149455",
+      "premium": "0.0005391281",
+      "time": 1795690800014
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000113226",
+      "premium": "0.000481161",
+      "time": 1795694400034
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000161101",
+      "premium": "0.0005577608",
+      "time": 1795698000109
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.000010026",
+      "premium": "0.0004604153",
+      "time": 1795701600000
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000127784",
+      "premium": "0.0005044537",
+      "time": 1795705200000
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000103885",
+      "premium": "0.0004662155",
+      "time": 1795708800065
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000150491",
+      "premium": "0.0005407856",
+      "time": 1795712400027
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.000014126",
+      "premium": "0.0005260152",
+      "time": 1795716000039
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000078021",
+      "premium": "0.0004248336",
+      "time": 1795719600031
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000348174",
+      "premium": "0.0008570784",
+      "time": 1795723200063
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000194483",
+      "premium": "0.0006111725",
+      "time": 1795726800043
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "0.0003692602",
+      "time": 1795730400035
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "-0.0000062166",
+      "premium": "-0.0003994659",
+      "time": 1795734000004
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.000011556",
+      "premium": "0.0004848954",
+      "time": 1795737600025
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "0.0003760057",
+      "time": 1795741200049
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "0.0003554053",
+      "time": 1795744800000
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000066674",
+      "premium": "0.000406679",
+      "time": 1795748400071
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000128889",
+      "premium": "0.0005062217",
+      "time": 1795752000065
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00001183",
+      "premium": "0.0004892793",
+      "time": 1795755600038
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000123895",
+      "premium": "0.0004982318",
+      "time": 1795759200018
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000181198",
+      "premium": "0.000589917",
+      "time": 1795762800004
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000159561",
+      "premium": "0.0005552972",
+      "time": 1795766400029
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.000025091",
+      "premium": "0.0007014553",
+      "time": 1795770000020
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "0.000222347",
+      "time": 1795773600048
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "0.0003393551",
+      "time": 1795777200028
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "0.0003933372",
+      "time": 1795780800060
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000117017",
+      "premium": "0.000487227",
+      "time": 1795784400020
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000094853",
+      "premium": "0.0004517654",
+      "time": 1795788000014
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "0.0003056697",
+      "time": 1795791600067
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "0.0003565191",
+      "time": 1795795200074
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000214581",
+      "premium": "0.0006433289",
+      "time": 1795798800022
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000269415",
+      "premium": "0.0007310644",
+      "time": 1795802400039
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000347256",
+      "premium": "0.0008556098",
+      "time": 1795806000047
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000352038",
+      "premium": "0.0008632615",
+      "time": 1795809600000
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.0000075576",
+      "premium": "0.0004209216",
+      "time": 1795813200003
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "0.0001392639",
+      "time": 1795816800051
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.000014208",
+      "premium": "0.0005273286",
+      "time": 1795820400040
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "0.0002916677",
+      "time": 1795824000010
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "0.0002178999",
+      "time": 1795827600028
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "-0.0000052135",
+      "premium": "-0.0003834158",
+      "time": 1795831200061
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.000016509",
+      "premium": "0.0005641445",
+      "time": 1795834800013
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "-0.0000002625",
+      "premium": "-0.0003041994",
+      "time": 1795838400051
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "-0.0000263087",
+      "time": 1795842000039
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "-0.0000109712",
+      "premium": "-0.0004755388",
+      "time": 1795845600024
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "-0.0001281427",
+      "time": 1795849200047
+    },
+    {
+      "coin": "xyz:GOLD",
+      "fundingRate": "0.00000625",
+      "premium": "0.000351164",
+      "time": 1795852800004
+    }
+  ]
+}

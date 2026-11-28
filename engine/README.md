@@ -6,10 +6,10 @@ This is Stage 1 of a Hyperliquid perps engine. It lives in this folder so the
 passiveblocks website (Next.js, on Vercel) stays a separate app. The website
 does not import this package.
 
-This change is the schema file and the local SQLite store, on top of the
-hard risk limits. It does not read the market, send a Telegram message, or
-place an order. Later changes add those pieces. Nothing here is evidence
-that a strategy has an edge.
+This change reads public mainnet market data, on top of the local store
+and the hard risk limits. It does not send a Telegram message or place an
+order. Later changes add those pieces. Nothing here is evidence that a
+strategy has an edge.
 
 Long and short simulated entries are both allowed. Leverage is not.
 
@@ -62,6 +62,38 @@ does not send an order. Shadow trades are marked `gated` or `ungated`.
 Asset class includes `commodity`, so a gold, silver, or oil snapshot uses
 the same check as crypto and stock.
 
+## Market data
+
+Public mainnet only: `https://api.hyperliquid.xyz/info` and
+`wss://api.hyperliquid.xyz/ws`. There is no signing and no account query.
+The info client reads mids, the L2 book, candles, funding, open interest,
+and meta. Meta includes trade[XYZ] HIP-3 markets when the request names
+dex `xyz`. A HIP-3 asset id is 100000 plus the dex list position times
+10000, plus the meta position. That list position is not a constant in
+the code.
+
+`fixtures/mainnet/` is a public snapshot from 2026-11-28 08:28 UTC. Books
+for BTC, ETH, SOL, `xyz:GOLD`, `xyz:NVDA`, and `xyz:CL`. Candles are 15m
+(24h), 1h (3d) and 4h (7d) for BTC, ETH, and SOL, plus 1h for `xyz:GOLD`.
+Funding is three days for BTC, ETH, SOL, and `xyz:GOLD`. Deployer
+addresses were not stored. Tests read these files and do not call the
+network. `pytest -m network` is the only live check, and CI does not run
+it. `load_tape` reads the snapshot. `pb-engine run-once` does not use it
+yet.
+
+A book older than 5 seconds is stale. A live stream with no message for
+more than 10 seconds is silent. Either one blocks new entries. A replay
+can ignore stream silence, because there is no live socket. The run-once
+loop does not apply this yet.
+
+The public trade stream includes account addresses. The parser drops
+those fields. The stream keeps the latest book per coin and the last 100
+prints. It does not run in a background thread. The caller pumps it, and
+a dropped socket is opened again with the same subscriptions.
+
+The venue maximum stored from meta is not the engine cap. The cap stays
+the literal 2.
+
 ## Manual restart
 
 `resume_from_drawdown_kill` clears a drawdown halt and sets the peak to the
@@ -95,8 +127,8 @@ typecheck, tests, and `next build` do not run this package.
 
 ## Not in this build
 
-Market data, shadow fills, strategies, the signal gate, Telegram, and
-systemd. Also not in this build: the stale-data halt, the
+Shadow fills, strategies, the signal gate, Telegram, and systemd. Also
+not in this build: wiring the stale check into the run-once loop, the
 stop-versus-cost filter, the funding guard, the 30-entries-a-day cap, and
 the pause after six losses. No testnet. No mainnet orders. No keys. Do not
 commit an env file, a token, or a wallet address; the repo is public.

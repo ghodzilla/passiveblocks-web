@@ -1,0 +1,41 @@
+{
+  "source": "https://api.hyperliquid.xyz/info",
+  "captured_at": "2026-11-28T08:28:44.372770+00:00",
+  "request": {
+    "type": "perpDexs"
+  },
+  "response": [
+    null,
+    {
+      "name": "xyz"
+    },
+    {
+      "name": "flx"
+    },
+    {
+      "name": "vntl"
+    },
+    {
+      "name": "hyna"
+    },
+    {
+      "name": "km"
+    },
+    {
+      "name": "abcd"
+    },
+    {
+      "name": "cash"
+    },
+    {
+      "name": "para"
+    },
+    {
+      "name": "mkts"
+    },
+    {
+      "name": "io"
+    }
+  ],
+  "note": "Names and list position only. Account and deployer fields were not stored."
+}
