@@ -1,17 +1,19 @@
-"""Command line for the Stage 1 scaffold.
+"""Command line for the Stage 1 simulation.
 
-``status`` prints the hard limits. Every other command exits with an
-error. Nothing in this module reads the network or a secret.
+``status`` prints the hard limits. ``run-once --replay`` walks one
+recorded cycle and does not send an order. The other commands are
+not in this build. Nothing here reads a secret.
 """
 
 from __future__ import annotations
 
 import argparse
 import sys
+from pathlib import Path
 
 from pb_engine import __version__, config
 
-_UNBUILT = ("run-once", "health", "report", "alert-test")
+_UNBUILT = ("health", "report", "alert-test")
 
 
 def status_lines() -> list[str]:
@@ -41,6 +43,50 @@ def _print_status() -> int:
     return 0
 
 
+def _run_once(args: argparse.Namespace) -> int:
+    if args.live_data:
+        print(
+            "run-once --live-data is not in this build. "
+            "Pass --replay with a fixture directory. "
+            "This package does not send orders.",
+            file=sys.stderr,
+        )
+        return 2
+    if not args.replay:
+        print(
+            "run-once needs --replay. "
+            "This package does not send orders.",
+            file=sys.stderr,
+        )
+        return 2
+    from pb_engine.cycle import run_once_replay
+
+    try:
+        result = run_once_replay(Path(args.replay), args.db, seed=args.seed)
+    except FileNotFoundError:
+        print(
+            "run-once could not read --replay. "
+            "This package does not send orders.",
+            file=sys.stderr,
+        )
+        return 2
+    sys.stdout.write(
+        "\n".join(
+            [
+                "NOT VALIDATED",
+                "stage=simulation",
+                "orders=none",
+                "keys=none",
+                f"signals={result.signals}",
+                f"shadow_fills={result.shadow_fills}",
+                f"taken={result.taken}",
+            ]
+        )
+        + "\n"
+    )
+    return 0 if result.taken == 0 else 2
+
+
 def _not_built(name: str) -> int:
     print(
         f"{name} is not in this build. "
@@ -68,6 +114,13 @@ def main(argv: list[str] | None = None) -> int:
 
     status = commands.add_parser("status", help="Print the hard risk limits.")
     status.set_defaults(func=lambda _args: _print_status())
+
+    run_once = commands.add_parser("run-once", help="Simulate one cycle from a recorded book.")
+    run_once.add_argument("--replay", default=None, help="Fixture directory.")
+    run_once.add_argument("--live-data", action="store_true", help="Not in this build.")
+    run_once.add_argument("--db", default=None, help="SQLite file. Default is the local var file.")
+    run_once.add_argument("--seed", type=int, default=1)
+    run_once.set_defaults(func=_run_once)
 
     for name in _UNBUILT:
         command = commands.add_parser(name, help="Not in this build.")

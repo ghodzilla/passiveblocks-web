@@ -14,7 +14,7 @@ from __future__ import annotations
 import logging
 import math
 from dataclasses import dataclass
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 
 from pb_engine import config
@@ -43,6 +43,16 @@ class Reason:
     TOTAL_RISK = "total_risk"
     DAILY_LOSS_STOP = "daily_loss_stop"
     DRAWDOWN_KILL = "drawdown_kill"
+    STOP_COST = "stop_vs_cost"
+    FUNDING_EDGE = "funding_edge"
+    FUNDING_BLACKOUT = "funding_blackout"
+    ENTRY_CAP = "entry_cap"
+    LOSS_PAUSE = "loss_pause"
+    SESSION = "session"
+    EARNINGS = "earnings"
+    OIL_ROLL = "oil_roll"
+    EXCLUDED = "excluded_market"
+    STALE = "stale_data"
 
 
 @dataclass(frozen=True, slots=True)
@@ -470,3 +480,112 @@ def _clean_actor(actor: str) -> str:
     if not cleaned or len(cleaned) > 200:
         raise ValueError("manual restart requires a short actor name")
     return cleaned
+
+
+def guard_candidate(
+    *,
+    side: str,
+    now: datetime,
+    stop_distance_pct: float,
+    round_trip_cost: float,
+    pred_edge_r: float,
+    hold_hours: float,
+    funding_rate: float,
+    entries_today: int,
+    consecutive_losses: int,
+    last_loss_at: datetime | None,
+    pace: bool = True,
+) -> str | None:
+    """Stop, funding, daily entry count, and the six-loss pause.
+
+    Session rules live next to the calendar. Sizing is still
+    ``size_position``. A ``None`` return means these checks passed.
+    """
+
+    now_utc = _require_utc(now)
+    if side not in {"long", "short"}:
+        return Reason.BAD_SIDE
+    _count("entries_today", entries_today)
+    _count("consecutive_losses", consecutive_losses)
+    stop = _stop_cost(stop_distance_pct, round_trip_cost)
+    if stop is not None:
+        return stop
+    funding = _funding(
+        side=side,
+        now=now_utc,
+        stop_distance_pct=stop_distance_pct,
+        pred_edge_r=pred_edge_r,
+        hold_hours=hold_hours,
+        funding_rate=funding_rate,
+    )
+    if funding is not None:
+        return funding
+    if not pace:
+        return None
+    if entries_today >= config.MAX_ENTRIES_PER_DAY:
+        return Reason.ENTRY_CAP
+    return _loss_pause(consecutive_losses, last_loss_at, now_utc)
+
+
+def _stop_cost(stop_distance_pct: float, round_trip_cost: float) -> str | None:
+    stop = _optional_stop(stop_distance_pct)
+    cost = _finite_number(round_trip_cost)
+    if stop is None or cost is None or cost < 0:
+        return Reason.BAD_STOP
+    if stop < _d(config.STOP_COST_MULTIPLE) * cost:
+        return Reason.STOP_COST
+    return None
+
+
+def _funding(
+    *,
+    side: str,
+    now: datetime,
+    stop_distance_pct: float,
+    pred_edge_r: float,
+    hold_hours: float,
+    funding_rate: float,
+) -> str | None:
+    edge = _finite_number(pred_edge_r)
+    hours = _finite_number(hold_hours)
+    rate = _finite_number(funding_rate)
+    if edge is None or hours is None or rate is None or hours <= 0:
+        return Reason.BAD_STOP
+    if side == "long":
+        paid = rate if rate > 0 else 0
+    else:
+        paid = -rate if rate < 0 else 0
+    if edge > 0 and stop_distance_pct > 0:
+        cost_r = (paid * hours) / _d(stop_distance_pct)
+        if cost_r > _d(config.FUNDING_OF_EDGE) * edge:
+            return Reason.FUNDING_EDGE
+    seconds_until_tick = (60 - now.minute) * 60 - now.second
+    window = config.FUNDING_BLACKOUT_MINUTES * 60
+    if 0 < seconds_until_tick <= window:
+        against_long = side == "long" and rate > _d(config.FUNDING_AGAINST_PER_HOUR)
+        against_short = side == "short" and rate < -_d(config.FUNDING_AGAINST_PER_HOUR)
+        if against_long or against_short:
+            return Reason.FUNDING_BLACKOUT
+    return None
+
+
+def _loss_pause(
+    consecutive_losses: int,
+    last_loss_at: datetime | None,
+    now: datetime,
+) -> str | None:
+    if consecutive_losses < config.LOSS_STREAK:
+        return None
+    if last_loss_at is None:
+        return Reason.LOSS_PAUSE
+    last = _require_utc(last_loss_at)
+    if now < last + timedelta(hours=config.LOSS_PAUSE_HOURS):
+        return Reason.LOSS_PAUSE
+    return None
+
+
+def _count(label: str, value: object) -> None:
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise TypeError(f"{label} must be an int")
+    if value < 0:
+        raise ValueError(f"{label} must be >= 0")

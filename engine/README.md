@@ -6,10 +6,10 @@ This is Stage 1 of a Hyperliquid perps engine. It lives in this folder so the
 passiveblocks website (Next.js, on Vercel) stays a separate app. The website
 does not import this package.
 
-This change reads public mainnet market data, on top of the local store
-and the hard risk limits. It does not send a Telegram message or place an
-order. Later changes add those pieces. Nothing here is evidence that a
-strategy has an edge.
+This change runs one simulated cycle on a recorded mainnet book, on top
+of the local store and the hard risk limits. It does not send a Telegram
+message or place an order. The signal gate and the closer are not in
+this build. Nothing here is evidence that a strategy has an edge.
 
 Long and short simulated entries are both allowed. Leverage is not.
 
@@ -35,8 +35,9 @@ Simulated starting equity is 1,000 USDC. That number is not a balance at a
 broker. `HL_NETWORK` is the label `sim-mainnet-data`. It does not select a
 signing endpoint.
 
-`pb-engine status` prints the limits. `pb-engine run-once` exits with an
-error. The simulation cycle is not in this build.
+`pb-engine status` prints the limits. `pb-engine run-once --replay
+fixtures/mainnet` runs one cycle and prints `taken=0`. It does not send
+an order.
 
 ## Local store
 
@@ -78,13 +79,14 @@ for BTC, ETH, SOL, `xyz:GOLD`, `xyz:NVDA`, and `xyz:CL`. Candles are 15m
 Funding is three days for BTC, ETH, SOL, and `xyz:GOLD`. Deployer
 addresses were not stored. Tests read these files and do not call the
 network. `pytest -m network` is the only live check, and CI does not run
-it. `load_tape` reads the snapshot. `pb-engine run-once` does not use it
-yet.
+it. `load_tape` reads the snapshot. `pb-engine run-once --replay` uses
+that snapshot as the whole cycle. The clock is the capture time, not
+the wall clock, so the recorded book is still inside the 5 second window.
 
 A book older than 5 seconds is stale. A live stream with no message for
 more than 10 seconds is silent. Either one blocks new entries. A replay
-can ignore stream silence, because there is no live socket. The run-once
-loop does not apply this yet.
+ignores stream silence, because there is no live socket. The cycle does
+apply the book check: pass a later `now` and the new shadow entries stop.
 
 The public trade stream includes account addresses. The parser drops
 those fields. The stream keeps the latest book per coin and the last 100
@@ -125,10 +127,88 @@ It does not build the website.
 TypeScript, ESLint, and the Vercel upload ignore this folder. Website lint,
 typecheck, tests, and `next build` do not run this package.
 
+## One simulated cycle
+
+`pb-engine run-once --replay fixtures/mainnet` loads the snapshot, asks
+the strategies for candidates, screens them, walks the recorded book,
+and writes a local SQLite file. `--db` chooses the file. The default
+is `var/pb-engine.sqlite3`. `--live-data` is refused. This command does
+not open a socket.
+
+The cycle writes a heartbeat, an equity row at the starting 1,000 USDC,
+one strategy row per idea that fired, a skip signal, and an ungated
+shadow trade when the book can fill. It writes no gate decision, no
+trade plan, no close, and no order row. `taken` in the output is 0.
+Equity does not move, because nothing is closed. The funding number on
+a shadow trade is the expected cost of the planned hold, not a payment
+that has settled.
+
+At the start there is no 30-trade history. Every strategy is stored as
+`shadow`. The ranker skip is `no_proven_edge`. A live rank would still
+not be taken: there is no gate yet, and the label would be `no_gate`.
+`pred_win_prob` is 0.5 because nothing has calibrated it. The stored
+`pred_edge_r` is the strategy's planned R, not a proven edge.
+`edge_lcb_r` is 0 until there is history.
+
+Baselines `btc_hold_1x` and `random_entry` are walked for a $11 research
+size and never join the open book. `random_entry` uses a seeded
+generator, so the same seed replays the same side. On this snapshot the
+4h momentum rule fires; the other four rules do not, because the tape
+is short of their warmup (the 4h EMA needs 51 bars, and funding fade
+needs 720 hourly prints). Hand-built series in the tests cover the
+fire and the no-fire case for each rule.
+
+## Shadow fills
+
+A buy walks asks and a sell walks bids, best price first. Filling stops
+at the slip cap: 0.1% for crypto and single stocks, 0.05% for index
+perps and for gold, silver, and oil. The rest of the size is cancelled.
+The fee is the published tier-0 taker rate. Core is 0.045% even if a
+growth flag is set. A HIP-3 name is 0.009% in growth mode and 0.09%
+otherwise, times `deployerFeeScale` when the meta row has one. There is
+no account fee lookup. Entries are IOC, so the maker rates are recorded
+and not charged. Funding uses the asset context's current hourly rate
+when the tape has one, otherwise the latest hourly print. A positive
+rate is paid by longs, on oracle notional.
+
+## Guards beyond the leverage cap
+
+These sit in front of a new shadow entry. They do not change the rule
+that an entry over 2x is rejected rather than cut down.
+
+| Check | Rule |
+| --- | --- |
+| Stop versus cost | Stop distance at least 3× the round-trip taker fee |
+| Funding versus edge | Expected funding over the hold above 25% of the strategy's planned edge skips the entry. A planned edge of 0 does not use this comparison |
+| Funding clock | No new entry in the 2 minutes before the hour when funding is against the side and the hourly rate is past 0.01% |
+| Entries | 30 per UTC day. This cycle starts at 0 |
+| Losses | 6 in a row pauses new strategy entries for 6 hours. This cycle has no loss history, so the pause is idle |
+| Stale book | Older than 5 seconds versus the cycle clock blocks the entry |
+
+Stocks (`xyz:NVDA` and any name that is not in the cluster map) are flat
+from Friday 19:30 ET through Sunday 20:05 ET, on Thanksgiving 2026, 25
+December 2026, and 1 January 2027, and from 12:30 ET on 24 and 31
+December 2026. They are also flat on an earnings date and on the
+weekday before it. Pass the earnings date in; this build does not fetch
+one. The Saturday snapshot blocks `xyz:NVDA` and still allows BTC.
+
+Gold, silver, oil, and the index names `XYZ100` and `SP500` are flat
+from Friday 16:30 ET through Sunday 18:00 ET, and on 25 December 2026
+and 1 January 2027. The Monday–Thursday 17:00 ET break is not applied
+yet. Oil and Brent (`CL`, `WTI`, `BRENTOIL`, with or without the `xyz:`
+prefix) are not held across 17:30 ET on the 5th through 10th weekday of
+the month. In October 2026 that is 7 October through 14 October. Those
+weekdays do not yet skip a futures holiday, except the two full closures
+above. `SOXL`, `SOXS`, `KORU`, `MSTR`, and `COIN` are refused.
+
+The momentum threshold that is not numeric in the spec is frozen as
+one 4h ATR divided by price. The Donchian trail and the other exit
+rules are stored on the candidate. This cycle does not move a stop.
+
 ## Not in this build
 
-Shadow fills, strategies, the signal gate, Telegram, and systemd. Also
-not in this build: wiring the stale check into the run-once loop, the
-stop-versus-cost filter, the funding guard, the 30-entries-a-day cap, and
-the pause after six losses. No testnet. No mainnet orders. No keys. Do not
-commit an env file, a token, or a wallet address; the repo is public.
+The signal gate, the closer, Telegram, systemd, health, report, and
+alert-test. Also not in this build: the commodity daily-break state
+machine, a full exchange holiday calendar, and a live socket inside
+`run-once`. No testnet. No mainnet orders. No keys. Do not commit an
+env file, a token, or a wallet address; the repo is public.
