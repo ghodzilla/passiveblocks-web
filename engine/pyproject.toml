@@ -1,0 +1,34 @@
+[project]
+name = "pb-engine"
+version = "0.1.0"
+description = "Hyperliquid perps engine, Stage 1 simulation scaffold. NOT VALIDATED. No keys and no orders."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+pb-engine = "pb_engine.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "ruff>=0.8",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.10,<0.14.0"]
+build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["pb_engine"]

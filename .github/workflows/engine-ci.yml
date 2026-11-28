@@ -1,0 +1,41 @@
+# Python engine only. Does not build or test the Next.js site.
+name: engine
+
+on:
+  pull_request:
+    paths:
+      - "engine/**"
+      - ".github/workflows/engine-ci.yml"
+  push:
+    branches: ["main"]
+    paths:
+      - "engine/**"
+      - ".github/workflows/engine-ci.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: engine-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: ruff and pytest
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: engine
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v10.4.0
+        with:
+          version: "0.13.10"
+          python-version: "3.12"
+          working-directory: engine
+      - name: Install dependencies
+        run: uv sync --frozen --all-groups
+      - name: Lint
+        run: uv run ruff check .
+      - name: Test
+        run: uv run pytest -q

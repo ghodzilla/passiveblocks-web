@@ -37,3 +37,16 @@ next-env.d.ts
 
 # downloaded research bodies; checksums live in the manifest
 /research/regime-validation/cache/
+
+# Hyperliquid engine runtime and secrets. The repo is public.
+# engine/.gitignore is the full list; these lines stay even if that file is removed.
+/engine/.venv/
+/engine/**/__pycache__/
+/engine/.pytest_cache/
+/engine/.ruff_cache/
+/engine/**/*.sqlite
+/engine/**/*.sqlite3
+/engine/var/
+/engine/.env
+/engine/.env.*
+!/engine/.env.example
