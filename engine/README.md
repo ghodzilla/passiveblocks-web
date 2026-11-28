@@ -6,9 +6,10 @@ This is Stage 1 of a Hyperliquid perps engine. It lives in this folder so the
 passiveblocks website (Next.js, on Vercel) stays a separate app. The website
 does not import this package.
 
-This change is the scaffold and the hard risk limits. It does not read the
-market, write a database, send a Telegram message, or place an order. Later
-changes add those pieces. Nothing here is evidence that a strategy has an edge.
+This change is the schema file and the local SQLite store, on top of the
+hard risk limits. It does not read the market, send a Telegram message, or
+place an order. Later changes add those pieces. Nothing here is evidence
+that a strategy has an edge.
 
 Long and short simulated entries are both allowed. Leverage is not.
 
@@ -36,6 +37,30 @@ signing endpoint.
 
 `pb-engine status` prints the limits. `pb-engine run-once` exits with an
 error. The simulation cycle is not in this build.
+
+## Local store
+
+Stage 1 writes one SQLite file, `var/pb-engine.sqlite3`, relative to the
+working directory. That directory is gitignored. JSON is stored as text.
+Timestamps are ISO-8601 text. `src/pb_engine/store.py` is the only module
+that opens the file.
+
+`db/hl/001_init.sql` is the Postgres shape of the same tables, under schema
+`hl`. It is a file only. Nothing applies it. It does not connect to Neon,
+and it does not create the `hl_engine` or `hl_reader` roles. Those roles are
+named in comments for a later review. The file has no credentials.
+
+`hl_control` is a single row. It can halt, request a flatten, drain, or
+pause new entries. It cannot change a risk limit.
+
+The `max_leverage` column on a market snapshot is the venue's published
+maximum. It is not the engine cap. The cap stays the literal 2, and an
+entry that would go over 2x is still rejected.
+
+A recorded fill may be labelled `shadow` or `exchange`. Writing that row
+does not send an order. Shadow trades are marked `gated` or `ungated`.
+Asset class includes `commodity`, so a gold, silver, or oil snapshot uses
+the same check as crypto and stock.
 
 ## Manual restart
 
@@ -70,8 +95,8 @@ typecheck, tests, and `next build` do not run this package.
 
 ## Not in this build
 
-Market data, shadow fills, strategies, the signal gate, the local database,
-Telegram, and systemd. Also not in this build: the stale-data halt, the
+Market data, shadow fills, strategies, the signal gate, Telegram, and
+systemd. Also not in this build: the stale-data halt, the
 stop-versus-cost filter, the funding guard, the 30-entries-a-day cap, and
 the pause after six losses. No testnet. No mainnet orders. No keys. Do not
 commit an env file, a token, or a wallet address; the repo is public.
